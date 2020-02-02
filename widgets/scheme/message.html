@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.4" />
+<title>nfb_studio.widgets.scheme.message API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.message</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import os
+
+from Qt.QtCore import QRectF
+from Qt.QtGui import QPainter, QFontMetricsF, QBrush, QColor
+from Qt.QtWidgets import QGraphicsItem
+from Qt.QtSvg import QGraphicsSvgItem, QSvgRenderer
+
+from nfb_studio.gui import FontF, inches_to_pixels as px, pixels_to_inches as inches
+from nfb_studio.widgets import RealSizeItem, ElidedLineItem
+from nfb_studio.util import FileDict
+
+icons_dir = os.path.dirname(__file__)
+
+
+class Message(RealSizeItem):
+    icon_size = 0.16
+    &#34;&#34;&#34;Size of the icon (width and height). The icon is expected to be square.&#34;&#34;&#34;
+    max_text_length = 2.5
+    icon_text_margin = 0.05
+
+    text_font_name = &#34;Segoe UI&#34;
+    text_font_size = 10.5
+
+    svg_renderers = FileDict(create_item=QSvgRenderer)
+
+    def __init__(self, text=None, icon_filename=None, parent=None):
+        &#34;&#34;&#34;A message that is displayed to the user.
+        Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
+        ErrorMessage.
+        &#34;&#34;&#34;
+        super(Message, self).__init__(parent)
+        self.setFlag(QGraphicsItem.ItemHasNoContents)
+
+        # Message text -------------------------------------------------------------------------------------------------
+        self._text_item = ElidedLineItem(text or &#34;Message&#34;, self)
+        self._text_item.setFont(FontF(self.text_font_name, self.text_font_size))
+        metrics = QFontMetricsF(self._text_item.font())
+        self._text_item.setMaximumWidth(self.max_text_length)
+
+        # Position
+        self._text_item.setPos(px(self.icon_size + self.icon_text_margin), 0)
+        self._text_item.moveBy(0, metrics.capHeight() / 2)
+        self._text_item.moveBy(0, px(self.icon_size) / 2)
+
+        # Background color
+        self._text_item.setBackgroundBrush(QBrush(QColor(255, 255, 255, 196)))
+
+        # Message icon -------------------------------------------------------------------------------------------------
+        self._icon_item = QGraphicsSvgItem(self)
+        if icon_filename is not None:
+            self.setIcon(icon_filename)
+
+    @classmethod
+    def severity(cls):
+        &#34;&#34;&#34;Message severity: how important is this message. Lower is more important.&#34;&#34;&#34;
+        return 0
+
+    def setText(self, text):
+        self._text_item.setText(text)
+
+    def setIcon(self, icon_filename):
+        &#34;&#34;&#34;Set the icon from an SVG file.&#34;&#34;&#34;
+        renderer: QSvgRenderer = self.svg_renderers[icon_filename]
+        self._icon_item.setSharedRenderer(renderer)
+
+        scale = px(self.icon_size) / renderer.defaultSize().width()
+        self._icon_item.setScale(scale)
+
+    def text(self):
+        return self._text_item.text()
+
+    def boundingRect(self) -&gt; QRectF:
+        return QRectF()
+
+    def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+        pass
+
+    def serialize(self) -&gt; dict:
+        return {
+            &#34;text&#34;: self.text()
+        }
+
+    def deserialize(self, data: dict):
+        self.setText(data[&#34;text&#34;])
+
+
+class InfoMessage(Message):
+    def __init__(self, text=None, parent=None):
+        &#34;&#34;&#34;An informational message that is displayed to the user.
+        This message reports normal events. If these events are unexpected, they do not impact the user&#39;s work in a
+        problematic way.
+        &#34;&#34;&#34;
+        super(InfoMessage, self).__init__(
+            text=text or &#34;Info message&#34;,
+            icon_filename=icons_dir+&#34;/icons/info.svg&#34;,
+            parent=parent
+        )
+
+    @classmethod
+    def severity(cls):
+        &#34;&#34;&#34;Message severity: how important is this message. Lower is more important.&#34;&#34;&#34;
+        return 3
+
+
+class WarningMessage(Message):
+    def __init__(self, text=None, parent=None):
+        &#34;&#34;&#34;A warning message that is displayed to the user.
+        This message reports a problem that does not pose a critical risk to the user&#39;s work.
+        &#34;&#34;&#34;
+        super(WarningMessage, self).__init__(
+            text=text or &#34;Warning message&#34;,
+            icon_filename=icons_dir+&#34;/icons/warning.svg&#34;,
+            parent=parent
+        )
+
+    @classmethod
+    def severity(cls):
+        &#34;&#34;&#34;Message severity: how important is this message. Lower is more important.&#34;&#34;&#34;
+        return 2
+
+
+class ErrorMessage(Message):
+    def __init__(self, text=None, parent=None):
+        &#34;&#34;&#34;An error message that is displayed to the user.
+        This message reports a serious problem that poses a critical risk to the user&#39;s work.
+        &#34;&#34;&#34;
+        super(ErrorMessage, self).__init__(
+            text=text or &#34;Error message&#34;,
+            icon_filename=icons_dir+&#34;/icons/error.svg&#34;,
+            parent=parent
+        )
+
+    @classmethod
+    def severity(cls):
+        &#34;&#34;&#34;Message severity: how important is this message. Lower is more important.&#34;&#34;&#34;
+        return 1</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="nfb_studio.widgets.scheme.message.ErrorMessage"><code class="flex name class">
+<span>class <span class="ident">ErrorMessage</span></span>
+<span>(</span><span>text=None, parent=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
+<p>An error message that is displayed to the user.
+This message reports a serious problem that poses a critical risk to the user's work.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ErrorMessage(Message):
+    def __init__(self, text=None, parent=None):
+        &#34;&#34;&#34;An error message that is displayed to the user.
+        This message reports a serious problem that poses a critical risk to the user&#39;s work.
+        &#34;&#34;&#34;
+        super(ErrorMessage, self).__init__(
+            text=text or &#34;Error message&#34;,
+            icon_filename=icons_dir+&#34;/icons/error.svg&#34;,
+            parent=parent
+        )
+
+    @classmethod
+    def severity(cls):
+        &#34;&#34;&#34;Message severity: how important is this message. Lower is more important.&#34;&#34;&#34;
+        return 1</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="nfb_studio.widgets.scheme.message.Message" href="#nfb_studio.widgets.scheme.message.Message">Message</a></li>
+<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
+<li>PySide2.QtWidgets.QGraphicsItem</li>
+<li>Shiboken.Object</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="nfb_studio.widgets.scheme.message.Message" href="#nfb_studio.widgets.scheme.message.Message">Message</a></b></code>:
+<ul class="hlist">
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.boundingRect" href="#nfb_studio.widgets.scheme.message.Message.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.icon_size" href="#nfb_studio.widgets.scheme.message.Message.icon_size">icon_size</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.icon_text_margin" href="#nfb_studio.widgets.scheme.message.Message.icon_text_margin">icon_text_margin</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.max_text_length" href="#nfb_studio.widgets.scheme.message.Message.max_text_length">max_text_length</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.paint" href="#nfb_studio.widgets.scheme.message.Message.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.position" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.setIcon" href="#nfb_studio.widgets.scheme.message.Message.setIcon">setIcon</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.severity" href="#nfb_studio.widgets.scheme.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_name" href="#nfb_studio.widgets.scheme.message.Message.text_font_name">text_font_name</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_size" href="#nfb_studio.widgets.scheme.message.Message.text_font_size">text_font_size</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.InfoMessage"><code class="flex name class">
+<span>class <span class="ident">InfoMessage</span></span>
+<span>(</span><span>text=None, parent=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
+<p>An informational message that is displayed to the user.
+This message reports normal events. If these events are unexpected, they do not impact the user's work in a
+problematic way.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InfoMessage(Message):
+    def __init__(self, text=None, parent=None):
+        &#34;&#34;&#34;An informational message that is displayed to the user.
+        This message reports normal events. If these events are unexpected, they do not impact the user&#39;s work in a
+        problematic way.
+        &#34;&#34;&#34;
+        super(InfoMessage, self).__init__(
+            text=text or &#34;Info message&#34;,
+            icon_filename=icons_dir+&#34;/icons/info.svg&#34;,
+            parent=parent
+        )
+
+    @classmethod
+    def severity(cls):
+        &#34;&#34;&#34;Message severity: how important is this message. Lower is more important.&#34;&#34;&#34;
+        return 3</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="nfb_studio.widgets.scheme.message.Message" href="#nfb_studio.widgets.scheme.message.Message">Message</a></li>
+<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
+<li>PySide2.QtWidgets.QGraphicsItem</li>
+<li>Shiboken.Object</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="nfb_studio.widgets.scheme.message.Message" href="#nfb_studio.widgets.scheme.message.Message">Message</a></b></code>:
+<ul class="hlist">
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.boundingRect" href="#nfb_studio.widgets.scheme.message.Message.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.icon_size" href="#nfb_studio.widgets.scheme.message.Message.icon_size">icon_size</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.icon_text_margin" href="#nfb_studio.widgets.scheme.message.Message.icon_text_margin">icon_text_margin</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.max_text_length" href="#nfb_studio.widgets.scheme.message.Message.max_text_length">max_text_length</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.paint" href="#nfb_studio.widgets.scheme.message.Message.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.position" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.setIcon" href="#nfb_studio.widgets.scheme.message.Message.setIcon">setIcon</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.severity" href="#nfb_studio.widgets.scheme.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_name" href="#nfb_studio.widgets.scheme.message.Message.text_font_name">text_font_name</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_size" href="#nfb_studio.widgets.scheme.message.Message.text_font_size">text_font_size</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message"><code class="flex name class">
+<span>class <span class="ident">Message</span></span>
+<span>(</span><span>text=None, icon_filename=None, parent=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
+<p>A message that is displayed to the user.
+Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
+ErrorMessage.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Message(RealSizeItem):
+    icon_size = 0.16
+    &#34;&#34;&#34;Size of the icon (width and height). The icon is expected to be square.&#34;&#34;&#34;
+    max_text_length = 2.5
+    icon_text_margin = 0.05
+
+    text_font_name = &#34;Segoe UI&#34;
+    text_font_size = 10.5
+
+    svg_renderers = FileDict(create_item=QSvgRenderer)
+
+    def __init__(self, text=None, icon_filename=None, parent=None):
+        &#34;&#34;&#34;A message that is displayed to the user.
+        Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
+        ErrorMessage.
+        &#34;&#34;&#34;
+        super(Message, self).__init__(parent)
+        self.setFlag(QGraphicsItem.ItemHasNoContents)
+
+        # Message text -------------------------------------------------------------------------------------------------
+        self._text_item = ElidedLineItem(text or &#34;Message&#34;, self)
+        self._text_item.setFont(FontF(self.text_font_name, self.text_font_size))
+        metrics = QFontMetricsF(self._text_item.font())
+        self._text_item.setMaximumWidth(self.max_text_length)
+
+        # Position
+        self._text_item.setPos(px(self.icon_size + self.icon_text_margin), 0)
+        self._text_item.moveBy(0, metrics.capHeight() / 2)
+        self._text_item.moveBy(0, px(self.icon_size) / 2)
+
+        # Background color
+        self._text_item.setBackgroundBrush(QBrush(QColor(255, 255, 255, 196)))
+
+        # Message icon -------------------------------------------------------------------------------------------------
+        self._icon_item = QGraphicsSvgItem(self)
+        if icon_filename is not None:
+            self.setIcon(icon_filename)
+
+    @classmethod
+    def severity(cls):
+        &#34;&#34;&#34;Message severity: how important is this message. Lower is more important.&#34;&#34;&#34;
+        return 0
+
+    def setText(self, text):
+        self._text_item.setText(text)
+
+    def setIcon(self, icon_filename):
+        &#34;&#34;&#34;Set the icon from an SVG file.&#34;&#34;&#34;
+        renderer: QSvgRenderer = self.svg_renderers[icon_filename]
+        self._icon_item.setSharedRenderer(renderer)
+
+        scale = px(self.icon_size) / renderer.defaultSize().width()
+        self._icon_item.setScale(scale)
+
+    def text(self):
+        return self._text_item.text()
+
+    def boundingRect(self) -&gt; QRectF:
+        return QRectF()
+
+    def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+        pass
+
+    def serialize(self) -&gt; dict:
+        return {
+            &#34;text&#34;: self.text()
+        }
+
+    def deserialize(self, data: dict):
+        self.setText(data[&#34;text&#34;])</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
+<li>PySide2.QtWidgets.QGraphicsItem</li>
+<li>Shiboken.Object</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="nfb_studio.widgets.scheme.message.ErrorMessage" href="#nfb_studio.widgets.scheme.message.ErrorMessage">ErrorMessage</a></li>
+<li><a title="nfb_studio.widgets.scheme.message.InfoMessage" href="#nfb_studio.widgets.scheme.message.InfoMessage">InfoMessage</a></li>
+<li><a title="nfb_studio.widgets.scheme.message.WarningMessage" href="#nfb_studio.widgets.scheme.message.WarningMessage">WarningMessage</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.message.Message.icon_size"><code class="name">var <span class="ident">icon_size</span></code></dt>
+<dd>
+<section class="desc"><p>Size of the icon (width and height). The icon is expected to be square.</p></section>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.icon_text_margin"><code class="name">var <span class="ident">icon_text_margin</span></code></dt>
+<dd>
+<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.max_text_length"><code class="name">var <span class="ident">max_text_length</span></code></dt>
+<dd>
+<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.svg_renderers"><code class="name">var <span class="ident">svg_renderers</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.text_font_name"><code class="name">var <span class="ident">text_font_name</span></code></dt>
+<dd>
+<section class="desc"><p>str(object='') -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.<strong>str</strong>() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p></section>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.text_font_size"><code class="name">var <span class="ident">text_font_size</span></code></dt>
+<dd>
+<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.message.Message.severity"><code class="name flex">
+<span>def <span class="ident">severity</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Message severity: how important is this message. Lower is more important.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def severity(cls):
+    &#34;&#34;&#34;Message severity: how important is this message. Lower is more important.&#34;&#34;&#34;
+    return 0</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.message.Message.boundingRect"><code class="name flex">
+<span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>boundingRect(self) -&gt; PySide2.QtCore.QRectF</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def boundingRect(self) -&gt; QRectF:
+    return QRectF()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize(self, data: dict):
+    self.setText(data[&#34;text&#34;])</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.paint"><code class="name flex">
+<span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget=Ellipsis)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>paint(self, painter: PySide2.QtGui.QPainter, option: PySide2.QtWidgets.QStyleOptionGraphicsItem, widget: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+    pass</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    return {
+        &#34;text&#34;: self.text()
+    }</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.setIcon"><code class="name flex">
+<span>def <span class="ident">setIcon</span></span>(<span>self, icon_filename)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Set the icon from an SVG file.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setIcon(self, icon_filename):
+    &#34;&#34;&#34;Set the icon from an SVG file.&#34;&#34;&#34;
+    renderer: QSvgRenderer = self.svg_renderers[icon_filename]
+    self._icon_item.setSharedRenderer(renderer)
+
+    scale = px(self.icon_size) / renderer.defaultSize().width()
+    self._icon_item.setScale(scale)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.setText"><code class="name flex">
+<span>def <span class="ident">setText</span></span>(<span>self, text)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setText(self, text):
+    self._text_item.setText(text)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.Message.text"><code class="name flex">
+<span>def <span class="ident">text</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def text(self):
+    return self._text_item.text()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></b></code>:
+<ul class="hlist">
+<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.position" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="nfb_studio.widgets.scheme.message.WarningMessage"><code class="flex name class">
+<span>class <span class="ident">WarningMessage</span></span>
+<span>(</span><span>text=None, parent=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
+<p>A warning message that is displayed to the user.
+This message reports a problem that does not pose a critical risk to the user's work.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class WarningMessage(Message):
+    def __init__(self, text=None, parent=None):
+        &#34;&#34;&#34;A warning message that is displayed to the user.
+        This message reports a problem that does not pose a critical risk to the user&#39;s work.
+        &#34;&#34;&#34;
+        super(WarningMessage, self).__init__(
+            text=text or &#34;Warning message&#34;,
+            icon_filename=icons_dir+&#34;/icons/warning.svg&#34;,
+            parent=parent
+        )
+
+    @classmethod
+    def severity(cls):
+        &#34;&#34;&#34;Message severity: how important is this message. Lower is more important.&#34;&#34;&#34;
+        return 2</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="nfb_studio.widgets.scheme.message.Message" href="#nfb_studio.widgets.scheme.message.Message">Message</a></li>
+<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
+<li>PySide2.QtWidgets.QGraphicsItem</li>
+<li>Shiboken.Object</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="nfb_studio.widgets.scheme.message.Message" href="#nfb_studio.widgets.scheme.message.Message">Message</a></b></code>:
+<ul class="hlist">
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.boundingRect" href="#nfb_studio.widgets.scheme.message.Message.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.icon_size" href="#nfb_studio.widgets.scheme.message.Message.icon_size">icon_size</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.icon_text_margin" href="#nfb_studio.widgets.scheme.message.Message.icon_text_margin">icon_text_margin</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.max_text_length" href="#nfb_studio.widgets.scheme.message.Message.max_text_length">max_text_length</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.paint" href="#nfb_studio.widgets.scheme.message.Message.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.position" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.setIcon" href="#nfb_studio.widgets.scheme.message.Message.setIcon">setIcon</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.severity" href="#nfb_studio.widgets.scheme.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_name" href="#nfb_studio.widgets.scheme.message.Message.text_font_name">text_font_name</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_size" href="#nfb_studio.widgets.scheme.message.Message.text_font_size">text_font_size</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nfb_studio.widgets.scheme" href="index.html">nfb_studio.widgets.scheme</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="nfb_studio.widgets.scheme.message.ErrorMessage" href="#nfb_studio.widgets.scheme.message.ErrorMessage">ErrorMessage</a></code></h4>
+</li>
+<li>
+<h4><code><a title="nfb_studio.widgets.scheme.message.InfoMessage" href="#nfb_studio.widgets.scheme.message.InfoMessage">InfoMessage</a></code></h4>
+</li>
+<li>
+<h4><code><a title="nfb_studio.widgets.scheme.message.Message" href="#nfb_studio.widgets.scheme.message.Message">Message</a></code></h4>
+<ul class="two-column">
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.boundingRect" href="#nfb_studio.widgets.scheme.message.Message.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.deserialize" href="#nfb_studio.widgets.scheme.message.Message.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.icon_size" href="#nfb_studio.widgets.scheme.message.Message.icon_size">icon_size</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.icon_text_margin" href="#nfb_studio.widgets.scheme.message.Message.icon_text_margin">icon_text_margin</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.max_text_length" href="#nfb_studio.widgets.scheme.message.Message.max_text_length">max_text_length</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.paint" href="#nfb_studio.widgets.scheme.message.Message.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.serialize" href="#nfb_studio.widgets.scheme.message.Message.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.setIcon" href="#nfb_studio.widgets.scheme.message.Message.setIcon">setIcon</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.setText" href="#nfb_studio.widgets.scheme.message.Message.setText">setText</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.severity" href="#nfb_studio.widgets.scheme.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.svg_renderers" href="#nfb_studio.widgets.scheme.message.Message.svg_renderers">svg_renderers</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.text" href="#nfb_studio.widgets.scheme.message.Message.text">text</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_name" href="#nfb_studio.widgets.scheme.message.Message.text_font_name">text_font_name</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_size" href="#nfb_studio.widgets.scheme.message.Message.text_font_size">text_font_size</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="nfb_studio.widgets.scheme.message.WarningMessage" href="#nfb_studio.widgets.scheme.message.WarningMessage">WarningMessage</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

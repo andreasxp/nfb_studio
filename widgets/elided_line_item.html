@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.7.4" />
+<title>nfb_studio.widgets.elided_line_item API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nfb_studio.widgets.elided_line_item</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from Qt.QtCore import Qt, QRectF
+from Qt.QtGui import QFont, QFontMetricsF, QBrush, QPainter
+from Qt.QtWidgets import QGraphicsItem, QAbstractGraphicsShapeItem, QGraphicsRectItem
+
+from nfb_studio.gui import inches_to_pixels as px
+
+from .real_size_item import RealSizeItem
+
+
+class ElidedLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
+    metrics_correction = 0.03
+    &#34;&#34;&#34;Adjustment compensating for QFontMetricsF imprecise boundingRect() calculation.&#34;&#34;&#34;
+
+    def __init__(self, text=None, parent=None):
+        &#34;&#34;&#34;A one-line text item that is confined to a certain width, elided as needed to fit.
+        Default origin point is at the left side of the baseline. This can change if setAlignMode is called.
+        ElidedLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
+        Text must not contain newline characters.
+        &#34;&#34;&#34;
+        super(ElidedLineItem, self).__init__(parent)
+
+        self._text = text or &#34;&#34;
+        self._elided_text = text or &#34;&#34;
+        self._elide_mode = Qt.ElideRight
+        self._align_mode = Qt.AlignLeft
+        self._max_width = None
+        self._font = QFont()
+        self._px_bounding_rect = QRectF()
+        &#34;&#34;&#34;Bounding and drawing rectangle (in pixels). Determined automatically.&#34;&#34;&#34;
+
+        self.background = QGraphicsRectItem(self)
+        self.background.setPen(Qt.NoPen)
+        self.background.setFlag(QGraphicsItem.ItemStacksBehindParent)
+
+        self.adjust()
+
+    def setText(self, text: str) -&gt; None:
+        if &#39;\n&#39; in text:
+            raise ValueError(&#34;text must not contain newline characters&#34;)
+
+        self.prepareGeometryChange()
+        self._text = text
+        self.adjust()
+
+    def setElideMode(self, mode: int) -&gt; None:
+        &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided.
+        Default value is Qt.ElideRight.
+        &#34;&#34;&#34;
+        self.prepareGeometryChange()
+        self._elide_mode = mode
+        self.adjust()
+
+    def setAlignMode(self, mode: int) -&gt; None:
+        &#34;&#34;&#34;Align mode specifies text alignment.
+        Text alignment changes the origin point x position:
+        - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
+        - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
+        - If mode is Qt.AlignRight, the origin point is on the right of the baseline.
+        Vertical alignment has no meaning for one line of text and should not be set.
+        Default value is Qt.AlignLeft.
+        &#34;&#34;&#34;
+        self.prepareGeometryChange()
+        self._align_mode = mode
+        self.adjust()
+
+    def setMaximumWidth(self, width):
+        &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). None represents unlimited width.
+        &#34;&#34;&#34;
+        self.prepareGeometryChange()
+        self._max_width = width
+        self.adjust()
+
+    def setFont(self, font: QFont) -&gt; None:
+        self.prepareGeometryChange()
+        self._font = font
+        self.adjust()
+
+    def setBackgroundBrush(self, brush: QBrush):
+        self.background.setBrush(brush)
+
+    def text(self) -&gt; str:
+        return self._text
+
+    def elidedText(self) -&gt; str:
+        return self._elided_text
+
+    def elideMode(self) -&gt; int:
+        return self._elide_mode
+
+    def alignMode(self) -&gt; int:
+        return self._align_mode
+
+    def maximumWidth(self):
+        &#34;&#34;&#34;Maximum width the text is allowed to be (in inches).
+        None represents unlimited width.
+        &#34;&#34;&#34;
+        return self._max_width
+
+    def font(self) -&gt; QFont:
+        return self._font
+
+    def backgroundBrush(self):
+        return self.background.brush()
+
+    def adjust(self):
+        &#34;&#34;&#34;Adjust the item&#39;s geometry in response to changes.&#34;&#34;&#34;
+        metrics = QFontMetricsF(self.font())
+
+        # Get bounding rectangle for full text
+        self._px_bounding_rect = metrics.boundingRect(self.text())
+
+        # Constrain by maximum width
+        if self.maximumWidth() is not None:
+            self._px_bounding_rect.setWidth(px(self.maximumWidth()))
+
+        # Compute elided text
+        self._elided_text = metrics.elidedText(self.text(), self.elideMode(), self.boundingRect().width())
+
+        # Get bounding rectangle for elided text
+        self._px_bounding_rect = metrics.boundingRect(self.elidedText())
+        # It seems that for small characters like &#34;...&#34; the bounding rect returned is too small. Adjust it by a small
+        # value.
+        self._px_bounding_rect.adjust(0, 0, px(self.metrics_correction), 0)
+
+        # Move origin point according to the alignment
+        if self.alignMode() &amp; Qt.AlignLeft:
+            self._px_bounding_rect.moveLeft(0)
+        elif self.alignMode() &amp; Qt.AlignRight:
+            self._px_bounding_rect.moveRight(0)
+        else:
+            self._px_bounding_rect.moveLeft(-self._px_bounding_rect.width()/2)
+
+        # Set background rect
+        self.background.setRect(self.boundingRect())
+
+    def boundingRect(self) -&gt; QRectF:
+        return self._px_bounding_rect
+
+    def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+        painter.setBrush(self.brush())
+        painter.setPen(self.pen())
+        painter.setFont(self.font())
+
+        painter.drawText(self.boundingRect(), self.alignMode(), self.elidedText())</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem"><code class="flex name class">
+<span>class <span class="ident">ElidedLineItem</span></span>
+<span>(</span><span>text=None, parent=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>QAbstractGraphicsShapeItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
+<p>A one-line text item that is confined to a certain width, elided as needed to fit.
+Default origin point is at the left side of the baseline. This can change if setAlignMode is called.
+ElidedLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
+Text must not contain newline characters.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ElidedLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
+    metrics_correction = 0.03
+    &#34;&#34;&#34;Adjustment compensating for QFontMetricsF imprecise boundingRect() calculation.&#34;&#34;&#34;
+
+    def __init__(self, text=None, parent=None):
+        &#34;&#34;&#34;A one-line text item that is confined to a certain width, elided as needed to fit.
+        Default origin point is at the left side of the baseline. This can change if setAlignMode is called.
+        ElidedLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
+        Text must not contain newline characters.
+        &#34;&#34;&#34;
+        super(ElidedLineItem, self).__init__(parent)
+
+        self._text = text or &#34;&#34;
+        self._elided_text = text or &#34;&#34;
+        self._elide_mode = Qt.ElideRight
+        self._align_mode = Qt.AlignLeft
+        self._max_width = None
+        self._font = QFont()
+        self._px_bounding_rect = QRectF()
+        &#34;&#34;&#34;Bounding and drawing rectangle (in pixels). Determined automatically.&#34;&#34;&#34;
+
+        self.background = QGraphicsRectItem(self)
+        self.background.setPen(Qt.NoPen)
+        self.background.setFlag(QGraphicsItem.ItemStacksBehindParent)
+
+        self.adjust()
+
+    def setText(self, text: str) -&gt; None:
+        if &#39;\n&#39; in text:
+            raise ValueError(&#34;text must not contain newline characters&#34;)
+
+        self.prepareGeometryChange()
+        self._text = text
+        self.adjust()
+
+    def setElideMode(self, mode: int) -&gt; None:
+        &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided.
+        Default value is Qt.ElideRight.
+        &#34;&#34;&#34;
+        self.prepareGeometryChange()
+        self._elide_mode = mode
+        self.adjust()
+
+    def setAlignMode(self, mode: int) -&gt; None:
+        &#34;&#34;&#34;Align mode specifies text alignment.
+        Text alignment changes the origin point x position:
+        - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
+        - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
+        - If mode is Qt.AlignRight, the origin point is on the right of the baseline.
+        Vertical alignment has no meaning for one line of text and should not be set.
+        Default value is Qt.AlignLeft.
+        &#34;&#34;&#34;
+        self.prepareGeometryChange()
+        self._align_mode = mode
+        self.adjust()
+
+    def setMaximumWidth(self, width):
+        &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). None represents unlimited width.
+        &#34;&#34;&#34;
+        self.prepareGeometryChange()
+        self._max_width = width
+        self.adjust()
+
+    def setFont(self, font: QFont) -&gt; None:
+        self.prepareGeometryChange()
+        self._font = font
+        self.adjust()
+
+    def setBackgroundBrush(self, brush: QBrush):
+        self.background.setBrush(brush)
+
+    def text(self) -&gt; str:
+        return self._text
+
+    def elidedText(self) -&gt; str:
+        return self._elided_text
+
+    def elideMode(self) -&gt; int:
+        return self._elide_mode
+
+    def alignMode(self) -&gt; int:
+        return self._align_mode
+
+    def maximumWidth(self):
+        &#34;&#34;&#34;Maximum width the text is allowed to be (in inches).
+        None represents unlimited width.
+        &#34;&#34;&#34;
+        return self._max_width
+
+    def font(self) -&gt; QFont:
+        return self._font
+
+    def backgroundBrush(self):
+        return self.background.brush()
+
+    def adjust(self):
+        &#34;&#34;&#34;Adjust the item&#39;s geometry in response to changes.&#34;&#34;&#34;
+        metrics = QFontMetricsF(self.font())
+
+        # Get bounding rectangle for full text
+        self._px_bounding_rect = metrics.boundingRect(self.text())
+
+        # Constrain by maximum width
+        if self.maximumWidth() is not None:
+            self._px_bounding_rect.setWidth(px(self.maximumWidth()))
+
+        # Compute elided text
+        self._elided_text = metrics.elidedText(self.text(), self.elideMode(), self.boundingRect().width())
+
+        # Get bounding rectangle for elided text
+        self._px_bounding_rect = metrics.boundingRect(self.elidedText())
+        # It seems that for small characters like &#34;...&#34; the bounding rect returned is too small. Adjust it by a small
+        # value.
+        self._px_bounding_rect.adjust(0, 0, px(self.metrics_correction), 0)
+
+        # Move origin point according to the alignment
+        if self.alignMode() &amp; Qt.AlignLeft:
+            self._px_bounding_rect.moveLeft(0)
+        elif self.alignMode() &amp; Qt.AlignRight:
+            self._px_bounding_rect.moveRight(0)
+        else:
+            self._px_bounding_rect.moveLeft(-self._px_bounding_rect.width()/2)
+
+        # Set background rect
+        self.background.setRect(self.boundingRect())
+
+    def boundingRect(self) -&gt; QRectF:
+        return self._px_bounding_rect
+
+    def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+        painter.setBrush(self.brush())
+        painter.setPen(self.pen())
+        painter.setFont(self.font())
+
+        painter.drawText(self.boundingRect(), self.alignMode(), self.elidedText())</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PySide2.QtWidgets.QAbstractGraphicsShapeItem</li>
+<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
+<li>PySide2.QtWidgets.QGraphicsItem</li>
+<li>Shiboken.Object</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.metrics_correction"><code class="name">var <span class="ident">metrics_correction</span></code></dt>
+<dd>
+<section class="desc"><p>Adjustment compensating for QFontMetricsF imprecise boundingRect() calculation.</p></section>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.adjust"><code class="name flex">
+<span>def <span class="ident">adjust</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Adjust the item's geometry in response to changes.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjust(self):
+    &#34;&#34;&#34;Adjust the item&#39;s geometry in response to changes.&#34;&#34;&#34;
+    metrics = QFontMetricsF(self.font())
+
+    # Get bounding rectangle for full text
+    self._px_bounding_rect = metrics.boundingRect(self.text())
+
+    # Constrain by maximum width
+    if self.maximumWidth() is not None:
+        self._px_bounding_rect.setWidth(px(self.maximumWidth()))
+
+    # Compute elided text
+    self._elided_text = metrics.elidedText(self.text(), self.elideMode(), self.boundingRect().width())
+
+    # Get bounding rectangle for elided text
+    self._px_bounding_rect = metrics.boundingRect(self.elidedText())
+    # It seems that for small characters like &#34;...&#34; the bounding rect returned is too small. Adjust it by a small
+    # value.
+    self._px_bounding_rect.adjust(0, 0, px(self.metrics_correction), 0)
+
+    # Move origin point according to the alignment
+    if self.alignMode() &amp; Qt.AlignLeft:
+        self._px_bounding_rect.moveLeft(0)
+    elif self.alignMode() &amp; Qt.AlignRight:
+        self._px_bounding_rect.moveRight(0)
+    else:
+        self._px_bounding_rect.moveLeft(-self._px_bounding_rect.width()/2)
+
+    # Set background rect
+    self.background.setRect(self.boundingRect())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.alignMode"><code class="name flex">
+<span>def <span class="ident">alignMode</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def alignMode(self) -&gt; int:
+    return self._align_mode</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.backgroundBrush"><code class="name flex">
+<span>def <span class="ident">backgroundBrush</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def backgroundBrush(self):
+    return self.background.brush()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.boundingRect"><code class="name flex">
+<span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>boundingRect(self) -&gt; PySide2.QtCore.QRectF</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def boundingRect(self) -&gt; QRectF:
+    return self._px_bounding_rect</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.elideMode"><code class="name flex">
+<span>def <span class="ident">elideMode</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def elideMode(self) -&gt; int:
+    return self._elide_mode</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.elidedText"><code class="name flex">
+<span>def <span class="ident">elidedText</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def elidedText(self) -&gt; str:
+    return self._elided_text</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.font"><code class="name flex">
+<span>def <span class="ident">font</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def font(self) -&gt; QFont:
+    return self._font</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.maximumWidth"><code class="name flex">
+<span>def <span class="ident">maximumWidth</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Maximum width the text is allowed to be (in inches).
+None represents unlimited width.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def maximumWidth(self):
+    &#34;&#34;&#34;Maximum width the text is allowed to be (in inches).
+    None represents unlimited width.
+    &#34;&#34;&#34;
+    return self._max_width</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.paint"><code class="name flex">
+<span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget=Ellipsis)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>paint(self, painter: PySide2.QtGui.QPainter, option: PySide2.QtWidgets.QStyleOptionGraphicsItem, widget: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+    painter.setBrush(self.brush())
+    painter.setPen(self.pen())
+    painter.setFont(self.font())
+
+    painter.drawText(self.boundingRect(), self.alignMode(), self.elidedText())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setAlignMode"><code class="name flex">
+<span>def <span class="ident">setAlignMode</span></span>(<span>self, mode)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Align mode specifies text alignment.
+Text alignment changes the origin point x position:
+- If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
+- If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
+- If mode is Qt.AlignRight, the origin point is on the right of the baseline.
+Vertical alignment has no meaning for one line of text and should not be set.
+Default value is Qt.AlignLeft.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setAlignMode(self, mode: int) -&gt; None:
+    &#34;&#34;&#34;Align mode specifies text alignment.
+    Text alignment changes the origin point x position:
+    - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
+    - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
+    - If mode is Qt.AlignRight, the origin point is on the right of the baseline.
+    Vertical alignment has no meaning for one line of text and should not be set.
+    Default value is Qt.AlignLeft.
+    &#34;&#34;&#34;
+    self.prepareGeometryChange()
+    self._align_mode = mode
+    self.adjust()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setBackgroundBrush"><code class="name flex">
+<span>def <span class="ident">setBackgroundBrush</span></span>(<span>self, brush)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setBackgroundBrush(self, brush: QBrush):
+    self.background.setBrush(brush)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setElideMode"><code class="name flex">
+<span>def <span class="ident">setElideMode</span></span>(<span>self, mode)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Elide mode specifies where the ellipsis should be located when the text is elided.
+Default value is Qt.ElideRight.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setElideMode(self, mode: int) -&gt; None:
+    &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided.
+    Default value is Qt.ElideRight.
+    &#34;&#34;&#34;
+    self.prepareGeometryChange()
+    self._elide_mode = mode
+    self.adjust()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setFont"><code class="name flex">
+<span>def <span class="ident">setFont</span></span>(<span>self, font)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setFont(self, font: QFont) -&gt; None:
+    self.prepareGeometryChange()
+    self._font = font
+    self.adjust()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setMaximumWidth"><code class="name flex">
+<span>def <span class="ident">setMaximumWidth</span></span>(<span>self, width)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Set the maximum width the text is allowed to be (in inches). None represents unlimited width.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setMaximumWidth(self, width):
+    &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). None represents unlimited width.
+    &#34;&#34;&#34;
+    self.prepareGeometryChange()
+    self._max_width = width
+    self.adjust()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setText"><code class="name flex">
+<span>def <span class="ident">setText</span></span>(<span>self, text)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setText(self, text: str) -&gt; None:
+    if &#39;\n&#39; in text:
+        raise ValueError(&#34;text must not contain newline characters&#34;)
+
+    self.prepareGeometryChange()
+    self._text = text
+    self.adjust()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.text"><code class="name flex">
+<span>def <span class="ident">text</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def text(self) -&gt; str:
+    return self._text</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></b></code>:
+<ul class="hlist">
+<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.position" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.setPosition" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nfb_studio.widgets" href="index.html">nfb_studio.widgets</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem">ElidedLineItem</a></code></h4>
+<ul class="two-column">
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.adjust" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.adjust">adjust</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.alignMode" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.alignMode">alignMode</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.backgroundBrush" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.backgroundBrush">backgroundBrush</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.boundingRect" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.elideMode" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.elideMode">elideMode</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.elidedText" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.elidedText">elidedText</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.font" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.font">font</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.maximumWidth" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.maximumWidth">maximumWidth</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.metrics_correction" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.metrics_correction">metrics_correction</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.paint" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setAlignMode" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setAlignMode">setAlignMode</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setBackgroundBrush" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setBackgroundBrush">setBackgroundBrush</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setElideMode" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setElideMode">setElideMode</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setFont" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setFont">setFont</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setMaximumWidth" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setMaximumWidth">setMaximumWidth</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setText" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setText">setText</a></code></li>
+<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.text" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.text">text</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
