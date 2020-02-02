@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
 <title>nfb_studio.serialize API documentation</title>
-<meta name="description" content="A module that implements nfb_studio&#39;s custom serialization engine.
-This module extends the default JSON encoder and decoder with simpler ways to …" />
+<meta name="description" content="A module that implements nfb_studio&#39;s custom serialization engine …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -21,8 +20,8 @@ This module extends the default JSON encoder and decoder with simpler ways to �
 <h1 class="title">Module <code>nfb_studio.serialize</code></h1>
 </header>
 <section id="section-intro">
-<p>A module that implements nfb_studio's custom serialization engine.
-This module extends the default JSON encoder and decoder with simpler ways to serialize objects.
+<p>A module that implements nfb_studio's custom serialization engine.</p>
+<p>This module extends the default JSON encoder and decoder with simpler ways to serialize objects.
 - If a class you want serialized is in your control, you can define these two member functions:</p>
 <pre><code class="python">def serialize(self) -&gt; dict:
 def deserialize(self, data: dict):
@@ -97,6 +96,7 @@ overwritten.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;A module that implements nfb_studio&#39;s custom serialization engine.
+
 This module extends the default JSON encoder and decoder with simpler ways to serialize objects.
 - If a class you want serialized is in your control, you can define these two member functions:
 ```python
