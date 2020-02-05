@@ -32,6 +32,7 @@ from warnings import warn
 
 def _write_metadata(obj, data: dict) -&gt; dict:
     &#34;&#34;&#34;Write metadata that is required to reassemble the object, encoded by ObjectEncoder.
+
     An internal function that adds the `__class__` metadata field to the serialized data.
 
     Returns
@@ -57,6 +58,7 @@ def _write_metadata(obj, data: dict) -&gt; dict:
 
 class ObjectEncoder(JSONEncoder):
     &#34;&#34;&#34;JSON encoder that provides tools to serialize custom objects.
+
     You can add support for serializing your class in two ways:
     - By adding a member function to your class: `def serialize(self) -&gt; dict`;
     - By adding an external function `def serialize(obj) -&gt; dict` and passing it in a dict as the `object_hooks`
@@ -112,8 +114,8 @@ class ObjectEncoder(JSONEncoder):
 <span>(</span><span>*, object_hooks=None, skipkeys=False, ensure_ascii=False, check_circular=True, allow_nan=True, sort_keys=False, indent=None, separators=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>JSON encoder that provides tools to serialize custom objects.
-You can add support for serializing your class in two ways:
+<section class="desc"><p>JSON encoder that provides tools to serialize custom objects.</p>
+<p>You can add support for serializing your class in two ways:
 - By adding a member function to your class: <code>def serialize(self) -&gt; dict</code>;
 - By adding an external function <code>def serialize(obj) -&gt; dict</code> and passing it in a dict as the <code>object_hooks</code>
 parameter. (<code>object_hooks</code> is a dict that matches a class to a serialization function.)</p>
@@ -172,6 +174,7 @@ It should return a JSON encodable</code>
 </summary>
 <pre><code class="python">class ObjectEncoder(JSONEncoder):
     &#34;&#34;&#34;JSON encoder that provides tools to serialize custom objects.
+
     You can add support for serializing your class in two ways:
     - By adding a member function to your class: `def serialize(self) -&gt; dict`;
     - By adding an external function `def serialize(obj) -&gt; dict` and passing it in a dict as the `object_hooks`
