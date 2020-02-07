@@ -55,12 +55,13 @@ class Node(RealSizeItem):
     description_font_name = &#34;Segoe UI&#34;
     description_font_size = 10.5
 
-    def __init__(self):
-        &#34;&#34;&#34;Node is the main component of the graph scene.
-        It represents a single vertex of the graph, with its associated information and inputs/outputs.
+    def __init__(self, parent=None):
+        &#34;&#34;&#34;The main component of the graph scene.
+
+        A node represents a single vertex of the graph, with its associated information and inputs/outputs.
         All sizes and positions are measured in inches.
         &#34;&#34;&#34;
-        super(Node, self).__init__()
+        super().__init__()
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 
@@ -288,11 +289,12 @@ class Node(RealSizeItem):
 <dl>
 <dt id="nfb_studio.widgets.scheme.node.Node"><code class="flex name class">
 <span>class <span class="ident">Node</span></span>
+<span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>Node is the main component of the graph scene.
-It represents a single vertex of the graph, with its associated information and inputs/outputs.
+<p>The main component of the graph scene.</p>
+<p>A node represents a single vertex of the graph, with its associated information and inputs/outputs.
 All sizes and positions are measured in inches.</p></section>
 <details class="source">
 <summary>
@@ -316,12 +318,13 @@ All sizes and positions are measured in inches.</p></section>
     description_font_name = &#34;Segoe UI&#34;
     description_font_size = 10.5
 
-    def __init__(self):
-        &#34;&#34;&#34;Node is the main component of the graph scene.
-        It represents a single vertex of the graph, with its associated information and inputs/outputs.
+    def __init__(self, parent=None):
+        &#34;&#34;&#34;The main component of the graph scene.
+
+        A node represents a single vertex of the graph, with its associated information and inputs/outputs.
         All sizes and positions are measured in inches.
         &#34;&#34;&#34;
-        super(Node, self).__init__()
+        super().__init__()
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 

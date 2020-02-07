@@ -80,6 +80,11 @@ class Scheme(QGraphicsScene):
         if isinstance(item, Node):
             self.nodes.remove(item)
 
+            # If a node is removed, all edges incoming and outgoing are removed too
+            for edge in self.edges:
+                if edge.source_node() == item or edge.target_node() == item:
+                    self.removeItem(edge)
+
         if isinstance(item, Edge):
             self.edges.remove(item)
 
@@ -125,8 +130,12 @@ class Scheme(QGraphicsScene):
         data[&#34;edges&#34;] = []
 
         for edge in self.edges:
-            source_node = edge.source().parentItem()
-            target_node = edge.target().parentItem()
+            source_node = edge.source_node()
+            target_node = edge.target_node()
+
+            if source_node is None or target_node is None:
+                # Not serializing dangling nodes
+                continue
 
             edge_data = {
                 &#34;source&#34;: {
@@ -144,19 +153,24 @@ class Scheme(QGraphicsScene):
         return data
 
     def deserialize(self, data: dict):
+        # Clear --------------------------------------------------------------------------------------------------------
+        for node in self.nodes:
+            self.removeItem(node)
+
         # Deserialize nodes --------------------------------------------------------------------------------------------
-        nodes = data[&#34;nodes&#34;]
-        self.nodes = set(nodes)
+        for node in data[&#34;nodes&#34;]:
+            self.addItem(node)
+            print(node.outputs)
 
         # Deserialize edges --------------------------------------------------------------------------------------------
         for edge_data in data[&#34;edges&#34;]:
-            source_node = nodes[edge_data[&#34;source&#34;][&#34;node_index&#34;]]
-            target_node = nodes[edge_data[&#34;target&#34;][&#34;node_index&#34;]]
+            source_node = data[&#34;nodes&#34;][edge_data[&#34;source&#34;][&#34;node_index&#34;]]
+            target_node = data[&#34;nodes&#34;][edge_data[&#34;target&#34;][&#34;node_index&#34;]]
 
             source = source_node.outputs[edge_data[&#34;source&#34;][&#34;connection_index&#34;]]
             target = target_node.inputs[edge_data[&#34;target&#34;][&#34;connection_index&#34;]]
 
-            self.connect(source, target)</code></pre>
+            self.connect_nodes(source, target)</code></pre>
 </details>
 </section>
 <section>
@@ -233,6 +247,11 @@ Intended to use inside the scheme.</p>
         if isinstance(item, Node):
             self.nodes.remove(item)
 
+            # If a node is removed, all edges incoming and outgoing are removed too
+            for edge in self.edges:
+                if edge.source_node() == item or edge.target_node() == item:
+                    self.removeItem(edge)
+
         if isinstance(item, Edge):
             self.edges.remove(item)
 
@@ -278,8 +297,12 @@ Intended to use inside the scheme.</p>
         data[&#34;edges&#34;] = []
 
         for edge in self.edges:
-            source_node = edge.source().parentItem()
-            target_node = edge.target().parentItem()
+            source_node = edge.source_node()
+            target_node = edge.target_node()
+
+            if source_node is None or target_node is None:
+                # Not serializing dangling nodes
+                continue
 
             edge_data = {
                 &#34;source&#34;: {
@@ -297,19 +320,24 @@ Intended to use inside the scheme.</p>
         return data
 
     def deserialize(self, data: dict):
+        # Clear --------------------------------------------------------------------------------------------------------
+        for node in self.nodes:
+            self.removeItem(node)
+
         # Deserialize nodes --------------------------------------------------------------------------------------------
-        nodes = data[&#34;nodes&#34;]
-        self.nodes = set(nodes)
+        for node in data[&#34;nodes&#34;]:
+            self.addItem(node)
+            print(node.outputs)
 
         # Deserialize edges --------------------------------------------------------------------------------------------
         for edge_data in data[&#34;edges&#34;]:
-            source_node = nodes[edge_data[&#34;source&#34;][&#34;node_index&#34;]]
-            target_node = nodes[edge_data[&#34;target&#34;][&#34;node_index&#34;]]
+            source_node = data[&#34;nodes&#34;][edge_data[&#34;source&#34;][&#34;node_index&#34;]]
+            target_node = data[&#34;nodes&#34;][edge_data[&#34;target&#34;][&#34;node_index&#34;]]
 
             source = source_node.outputs[edge_data[&#34;source&#34;][&#34;connection_index&#34;]]
             target = target_node.inputs[edge_data[&#34;target&#34;][&#34;connection_index&#34;]]
 
-            self.connect(source, target)</code></pre>
+            self.connect_nodes(source, target)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -389,19 +417,24 @@ Intended to use inside the scheme.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def deserialize(self, data: dict):
+    # Clear --------------------------------------------------------------------------------------------------------
+    for node in self.nodes:
+        self.removeItem(node)
+
     # Deserialize nodes --------------------------------------------------------------------------------------------
-    nodes = data[&#34;nodes&#34;]
-    self.nodes = set(nodes)
+    for node in data[&#34;nodes&#34;]:
+        self.addItem(node)
+        print(node.outputs)
 
     # Deserialize edges --------------------------------------------------------------------------------------------
     for edge_data in data[&#34;edges&#34;]:
-        source_node = nodes[edge_data[&#34;source&#34;][&#34;node_index&#34;]]
-        target_node = nodes[edge_data[&#34;target&#34;][&#34;node_index&#34;]]
+        source_node = data[&#34;nodes&#34;][edge_data[&#34;source&#34;][&#34;node_index&#34;]]
+        target_node = data[&#34;nodes&#34;][edge_data[&#34;target&#34;][&#34;node_index&#34;]]
 
         source = source_node.outputs[edge_data[&#34;source&#34;][&#34;connection_index&#34;]]
         target = target_node.inputs[edge_data[&#34;target&#34;][&#34;connection_index&#34;]]
 
-        self.connect(source, target)</code></pre>
+        self.connect_nodes(source, target)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes"><code class="name flex">
@@ -460,6 +493,11 @@ Intended to use inside the scheme.</p>
     if isinstance(item, Node):
         self.nodes.remove(item)
 
+        # If a node is removed, all edges incoming and outgoing are removed too
+        for edge in self.edges:
+            if edge.source_node() == item or edge.target_node() == item:
+                self.removeItem(edge)
+
     if isinstance(item, Edge):
         self.edges.remove(item)
 
@@ -487,8 +525,12 @@ Intended to use inside the scheme.</p>
     data[&#34;edges&#34;] = []
 
     for edge in self.edges:
-        source_node = edge.source().parentItem()
-        target_node = edge.target().parentItem()
+        source_node = edge.source_node()
+        target_node = edge.target_node()
+
+        if source_node is None or target_node is None:
+            # Not serializing dangling nodes
+            continue
 
         edge_data = {
             &#34;source&#34;: {
