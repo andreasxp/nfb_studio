@@ -30,7 +30,7 @@ from Qt.QtWidgets import QGraphicsItem, QGraphicsLineItem, QGraphicsPathItem
 from sortedcontainers import SortedList
 
 from nfb_studio.gui import FontF, inches_to_pixels as px, pixels_to_inches as inches
-from nfb_studio.widgets import RealSizeItem, ElidedLineItem, TextRectItem
+from nfb_studio.widgets import RealSizeItem, TextLineItem, TextRectItem
 from nfb_studio.math import clamp
 
 from .connection import Input, Output
@@ -79,7 +79,7 @@ class Node(RealSizeItem):
         #painter.fillPath(path, self.fill_color)
         self._body_item.setPath(path)
 
-        self._title_item = ElidedLineItem(&#34;Node&#34;, self)
+        self._title_item = TextLineItem(&#34;Node&#34;, self)
         self._title_item.setFont(FontF(self.title_font_name, self.title_font_size))
         title_font_metrics = QFontMetricsF(self._title_item.font())
         self._title_item.setPosition(self.internal_padding, self.internal_padding)
@@ -255,7 +255,9 @@ class Node(RealSizeItem):
             &#34;description&#34;: self.description(),
             &#34;inputs&#34;: self.inputs,
             &#34;outputs&#34;: self.outputs,
-            &#34;messages&#34;: list(self.messages)
+            &#34;messages&#34;: list(self.messages),
+            &#34;position&#34;: self.position(),
+            &#34;size&#34;: self.size()
         }
 
     def deserialize(self, data: dict):
@@ -269,7 +271,10 @@ class Node(RealSizeItem):
             self.addOutput(output)
 
         for message in data[&#34;messages&#34;]:
-            self.addMessage(message)</code></pre>
+            self.addMessage(message)
+
+        self.setPosition(data[&#34;position&#34;])
+        self.setSize(data[&#34;size&#34;])</code></pre>
 </details>
 </section>
 <section>
@@ -335,7 +340,7 @@ All sizes and positions are measured in inches.</p></section>
         #painter.fillPath(path, self.fill_color)
         self._body_item.setPath(path)
 
-        self._title_item = ElidedLineItem(&#34;Node&#34;, self)
+        self._title_item = TextLineItem(&#34;Node&#34;, self)
         self._title_item.setFont(FontF(self.title_font_name, self.title_font_size))
         title_font_metrics = QFontMetricsF(self._title_item.font())
         self._title_item.setPosition(self.internal_padding, self.internal_padding)
@@ -511,7 +516,9 @@ All sizes and positions are measured in inches.</p></section>
             &#34;description&#34;: self.description(),
             &#34;inputs&#34;: self.inputs,
             &#34;outputs&#34;: self.outputs,
-            &#34;messages&#34;: list(self.messages)
+            &#34;messages&#34;: list(self.messages),
+            &#34;position&#34;: self.position(),
+            &#34;size&#34;: self.size()
         }
 
     def deserialize(self, data: dict):
@@ -525,7 +532,10 @@ All sizes and positions are measured in inches.</p></section>
             self.addOutput(output)
 
         for message in data[&#34;messages&#34;]:
-            self.addMessage(message)</code></pre>
+            self.addMessage(message)
+
+        self.setPosition(data[&#34;position&#34;])
+        self.setSize(data[&#34;size&#34;])</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -701,7 +711,10 @@ errors defaults to 'strict'.</p></section>
         self.addOutput(output)
 
     for message in data[&#34;messages&#34;]:
-        self.addMessage(message)</code></pre>
+        self.addMessage(message)
+
+    self.setPosition(data[&#34;position&#34;])
+    self.setSize(data[&#34;size&#34;])</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.node.Node.insertInput"><code class="name flex">
@@ -852,7 +865,9 @@ errors defaults to 'strict'.</p></section>
         &#34;description&#34;: self.description(),
         &#34;inputs&#34;: self.inputs,
         &#34;outputs&#34;: self.outputs,
-        &#34;messages&#34;: list(self.messages)
+        &#34;messages&#34;: list(self.messages),
+        &#34;position&#34;: self.position(),
+        &#34;size&#34;: self.size()
     }</code></pre>
 </details>
 </dd>

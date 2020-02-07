@@ -32,6 +32,7 @@ from Qt.QtGui import QColor, QPainter, QPainterPath, QPen
 from nfb_studio.gui import inches_to_pixels as px
 from nfb_studio.widgets import RealSizeItem, ShadowSelectableItem
 
+from .node import Node
 from .connection import Input, Output
 
 
@@ -73,6 +74,24 @@ class Edge(RealSizeItem, ShadowSelectableItem):
         &#34;&#34;&#34;
 
         self._pen = QPen(self.outline_color, px(self.outline_thickness))
+
+    def source_node(self) -&gt; Union[Node, None]:
+        &#34;&#34;&#34;Return a node from which the edge originates, if it exists.
+
+        If the edge has no source connection, it consequently has no source node.
+        &#34;&#34;&#34;
+        if self.source():
+            return self.source().parentItem()
+        return None
+
+    def target_node(self) -&gt; Union[Node, None]:
+        &#34;&#34;&#34;Return a node to which the edge goes, if it exists.
+
+        If the edge has no target connection, it consequently has no target node.
+        &#34;&#34;&#34;
+        if self.target():
+            return self.target().parentItem()
+        return None
 
     def source(self) -&gt; Union[Output, None]:
         return self._source
@@ -220,10 +239,7 @@ class Edge(RealSizeItem, ShadowSelectableItem):
             self.setShadowSelected(False)
             return
 
-        source_node = self._source.parentItem()
-        target_node = self._target.parentItem()
-
-        if source_node.isSelected() and target_node.isSelected():
+        if self.source_node().isSelected() and self.target_node().isSelected():
             self.setShadowSelected(True)
             # Edge does not know which connection called this update. If source called it, target does not know it has
             # to be selected. So the edge explicitly selects both.
@@ -299,6 +315,24 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
         self._pen = QPen(self.outline_color, px(self.outline_thickness))
 
+    def source_node(self) -&gt; Union[Node, None]:
+        &#34;&#34;&#34;Return a node from which the edge originates, if it exists.
+
+        If the edge has no source connection, it consequently has no source node.
+        &#34;&#34;&#34;
+        if self.source():
+            return self.source().parentItem()
+        return None
+
+    def target_node(self) -&gt; Union[Node, None]:
+        &#34;&#34;&#34;Return a node to which the edge goes, if it exists.
+
+        If the edge has no target connection, it consequently has no target node.
+        &#34;&#34;&#34;
+        if self.target():
+            return self.target().parentItem()
+        return None
+
     def source(self) -&gt; Union[Output, None]:
         return self._source
 
@@ -445,10 +479,7 @@ class Edge(RealSizeItem, ShadowSelectableItem):
             self.setShadowSelected(False)
             return
 
-        source_node = self._source.parentItem()
-        target_node = self._target.parentItem()
-
-        if source_node.isSelected() and target_node.isSelected():
+        if self.source_node().isSelected() and self.target_node().isSelected():
             self.setShadowSelected(True)
             # Edge does not know which connection called this update. If source called it, target does not know it has
             # to be selected. So the edge explicitly selects both.
@@ -725,6 +756,26 @@ pos is in scene pixel coordinates.</p></section>
     return self._source</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.edge.Edge.source_node"><code class="name flex">
+<span>def <span class="ident">source_node</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return a node from which the edge originates, if it exists.</p>
+<p>If the edge has no source connection, it consequently has no source node.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def source_node(self) -&gt; Union[Node, None]:
+    &#34;&#34;&#34;Return a node from which the edge originates, if it exists.
+
+    If the edge has no source connection, it consequently has no source node.
+    &#34;&#34;&#34;
+    if self.source():
+        return self.source().parentItem()
+    return None</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.edge.Edge.target"><code class="name flex">
 <span>def <span class="ident">target</span></span>(<span>self)</span>
 </code></dt>
@@ -736,6 +787,26 @@ pos is in scene pixel coordinates.</p></section>
 </summary>
 <pre><code class="python">def target(self) -&gt; Union[Input, None]:
     return self._target</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.edge.Edge.target_node"><code class="name flex">
+<span>def <span class="ident">target_node</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return a node to which the edge goes, if it exists.</p>
+<p>If the edge has no target connection, it consequently has no target node.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def target_node(self) -&gt; Union[Node, None]:
+    &#34;&#34;&#34;Return a node to which the edge goes, if it exists.
+
+    If the edge has no target connection, it consequently has no target node.
+    &#34;&#34;&#34;
+    if self.target():
+        return self.target().parentItem()
+    return None</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.edge.Edge.updateSelectedStatus"><code class="name flex">
@@ -762,10 +833,7 @@ edges, not the other way around.</p></section>
         self.setShadowSelected(False)
         return
 
-    source_node = self._source.parentItem()
-    target_node = self._target.parentItem()
-
-    if source_node.isSelected() and target_node.isSelected():
+    if self.source_node().isSelected() and self.target_node().isSelected():
         self.setShadowSelected(True)
         # Edge does not know which connection called this update. If source called it, target does not know it has
         # to be selected. So the edge explicitly selects both.
@@ -839,7 +907,9 @@ edges, not the other way around.</p></section>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.setTarget" href="#nfb_studio.widgets.scheme.edge.Edge.setTarget">setTarget</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.setTargetPos" href="#nfb_studio.widgets.scheme.edge.Edge.setTargetPos">setTargetPos</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.source" href="#nfb_studio.widgets.scheme.edge.Edge.source">source</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.source_node" href="#nfb_studio.widgets.scheme.edge.Edge.source_node">source_node</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.target" href="#nfb_studio.widgets.scheme.edge.Edge.target">target</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.target_node" href="#nfb_studio.widgets.scheme.edge.Edge.target_node">target_node</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.updateSelectedStatus" href="#nfb_studio.widgets.scheme.edge.Edge.updateSelectedStatus">updateSelectedStatus</a></code></li>
 </ul>
 </li>

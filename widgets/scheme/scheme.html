@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
-<title>nfb_studio.widgets.scheme.graph API documentation</title>
+<title>nfb_studio.widgets.scheme.scheme API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,21 +17,26 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.scheme.graph</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.scheme</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from .node import Node
+<pre><code class="python">from Qt.QtCore import Qt
+from Qt.QtGui import QPainter
+from Qt.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsItem
+
+from .node import Node
 from .edge import Edge
 from .connection import Input, Output
 
 
-class Graph:
-    def __init__(self):
-        &#34;&#34;&#34;A collection of nodes and edges connecting them.
+class Scheme(QGraphicsScene):
+    def __init__(self, parent=None):
+        &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
+
         This graph holds two sets: a set of nodes and a set of edges.
         Intended to use inside the scheme.
 
@@ -40,18 +45,48 @@ class Graph:
         Node
         Edge
         &#34;&#34;&#34;
+        super().__init__(parent)
+
         self.nodes = set()
         self.edges = set()
 
-    def addNode(self, node: Node):
-        &#34;&#34;&#34;Add a node to the graph.&#34;&#34;&#34;
-        self.nodes.add(node)
+    def addItem(self, item: QGraphicsItem):
+        &#34;&#34;&#34;Add an item to the scene.
 
-    def removeNode(self, node: Node):
-        &#34;&#34;&#34;Remove a node from the graph.&#34;&#34;&#34;
-        self.nodes.remove(node)
+        An override of QGraphicsScene.addItem method that detects when a node or edge was added.
+        &#34;&#34;&#34;
+        super().addItem(item)
 
-    def connect(self, source: Output, target: Input):
+        if isinstance(item, Node):
+            self.nodes.add(item)
+
+        if isinstance(item, Edge):
+            # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
+            if (item.source_node() is None or item.source_node() in self.nodes) and \
+               (item.target_node() is None or item.target_node() in self.nodes):
+                # Ensure that the connections know about this edge
+                item.source().edges.add(item)
+                item.target().edges.add(item)
+
+                self.edges.add(item)
+
+    def removeItem(self, item):
+        &#34;&#34;&#34;Add an item to the scene.
+
+        An override of QGraphicsScene.removeItem method that detects when a node or edge was removed.
+        &#34;&#34;&#34;
+        super().removeItem(item)
+
+        if isinstance(item, Node):
+            self.nodes.remove(item)
+
+        if isinstance(item, Edge):
+            self.edges.remove(item)
+
+            item.source().edges.remove(item)
+            item.target().edges.remove(item)
+
+    def connect_nodes(self, source: Output, target: Input):
         edge = Edge()
 
         edge.setSource(source)
@@ -60,17 +95,24 @@ class Graph:
         source.edges.add(edge)
         target.edges.add(edge)
 
-        self.edges.add(edge)
+        self.addItem(edge)
+        return edge
 
-    def disconnect(self, source: Output, target: Input):
+    def disconnect_nodes(self, source: Output, target: Input):
         for edge in self.edges:
             if edge.source() == source and edge.target() == target:
-                self.edges.remove(edge)
-
-                source.edges.remove(edge)
-                target.edges.remove(edge)
-
+                self.removeItem(edge)
                 break
+
+    def getView(self) -&gt; QGraphicsView:
+        &#34;&#34;&#34;Generate and return a new QGraphicsView, configured for optimal viewing.&#34;&#34;&#34;
+        v = QGraphicsView(self)
+        v.setDragMode(QGraphicsView.RubberBandDrag)
+        v.setRubberBandSelectionMode(Qt.ContainsItemShape)
+        v.setRenderHint(QPainter.Antialiasing)
+        v.setRenderHint(QPainter.SmoothPixmapTransform)
+
+        return v
 
     def serialize(self) -&gt; dict:
         data = {}
@@ -126,12 +168,16 @@ class Graph:
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.scheme.graph.Graph"><code class="flex name class">
-<span>class <span class="ident">Graph</span></span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme"><code class="flex name class">
+<span>class <span class="ident">Scheme</span></span>
+<span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>A collection of nodes and edges connecting them.
-This graph holds two sets: a set of nodes and a set of edges.
+<section class="desc"><p>QGraphicsScene(self, parent: typing.Union[PySide2.QtCore.QObject, NoneType] = None)
+QGraphicsScene(self, sceneRect: PySide2.QtCore.QRectF, parent: typing.Union[PySide2.QtCore.QObject, NoneType] = None)
+QGraphicsScene(self, x: float, y: float, width: float, height: float, parent: typing.Union[PySide2.QtCore.QObject, NoneType] = None)</p>
+<p>A data model for the nfb experiment's system of signals and their components.</p>
+<p>This graph holds two sets: a set of nodes and a set of edges.
 Intended to use inside the scheme.</p>
 <h2 id="see-also">See Also</h2>
 <p><code>Node</code>
@@ -140,9 +186,10 @@ Intended to use inside the scheme.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Graph:
-    def __init__(self):
-        &#34;&#34;&#34;A collection of nodes and edges connecting them.
+<pre><code class="python">class Scheme(QGraphicsScene):
+    def __init__(self, parent=None):
+        &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
+
         This graph holds two sets: a set of nodes and a set of edges.
         Intended to use inside the scheme.
 
@@ -151,18 +198,48 @@ Intended to use inside the scheme.</p>
         Node
         Edge
         &#34;&#34;&#34;
+        super().__init__(parent)
+
         self.nodes = set()
         self.edges = set()
 
-    def addNode(self, node: Node):
-        &#34;&#34;&#34;Add a node to the graph.&#34;&#34;&#34;
-        self.nodes.add(node)
+    def addItem(self, item: QGraphicsItem):
+        &#34;&#34;&#34;Add an item to the scene.
 
-    def removeNode(self, node: Node):
-        &#34;&#34;&#34;Remove a node from the graph.&#34;&#34;&#34;
-        self.nodes.remove(node)
+        An override of QGraphicsScene.addItem method that detects when a node or edge was added.
+        &#34;&#34;&#34;
+        super().addItem(item)
 
-    def connect(self, source: Output, target: Input):
+        if isinstance(item, Node):
+            self.nodes.add(item)
+
+        if isinstance(item, Edge):
+            # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
+            if (item.source_node() is None or item.source_node() in self.nodes) and \
+               (item.target_node() is None or item.target_node() in self.nodes):
+                # Ensure that the connections know about this edge
+                item.source().edges.add(item)
+                item.target().edges.add(item)
+
+                self.edges.add(item)
+
+    def removeItem(self, item):
+        &#34;&#34;&#34;Add an item to the scene.
+
+        An override of QGraphicsScene.removeItem method that detects when a node or edge was removed.
+        &#34;&#34;&#34;
+        super().removeItem(item)
+
+        if isinstance(item, Node):
+            self.nodes.remove(item)
+
+        if isinstance(item, Edge):
+            self.edges.remove(item)
+
+            item.source().edges.remove(item)
+            item.target().edges.remove(item)
+
+    def connect_nodes(self, source: Output, target: Input):
         edge = Edge()
 
         edge.setSource(source)
@@ -171,17 +248,24 @@ Intended to use inside the scheme.</p>
         source.edges.add(edge)
         target.edges.add(edge)
 
-        self.edges.add(edge)
+        self.addItem(edge)
+        return edge
 
-    def disconnect(self, source: Output, target: Input):
+    def disconnect_nodes(self, source: Output, target: Input):
         for edge in self.edges:
             if edge.source() == source and edge.target() == target:
-                self.edges.remove(edge)
-
-                source.edges.remove(edge)
-                target.edges.remove(edge)
-
+                self.removeItem(edge)
                 break
+
+    def getView(self) -&gt; QGraphicsView:
+        &#34;&#34;&#34;Generate and return a new QGraphicsView, configured for optimal viewing.&#34;&#34;&#34;
+        v = QGraphicsView(self)
+        v.setDragMode(QGraphicsView.RubberBandDrag)
+        v.setRubberBandSelectionMode(Qt.ContainsItemShape)
+        v.setRenderHint(QPainter.Antialiasing)
+        v.setRenderHint(QPainter.SmoothPixmapTransform)
+
+        return v
 
     def serialize(self) -&gt; dict:
         data = {}
@@ -227,24 +311,54 @@ Intended to use inside the scheme.</p>
 
             self.connect(source, target)</code></pre>
 </details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PySide2.QtWidgets.QGraphicsScene</li>
+<li>PySide2.QtCore.QObject</li>
+<li>Shiboken.Object</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.scheme.graph.Graph.addNode"><code class="name flex">
-<span>def <span class="ident">addNode</span></span>(<span>self, node)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.addItem"><code class="name flex">
+<span>def <span class="ident">addItem</span></span>(<span>self, item)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Add a node to the graph.</p></section>
+<section class="desc"><p>Add an item to the scene.</p>
+<p>An override of QGraphicsScene.addItem method that detects when a node or edge was added.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def addNode(self, node: Node):
-    &#34;&#34;&#34;Add a node to the graph.&#34;&#34;&#34;
-    self.nodes.add(node)</code></pre>
+<pre><code class="python">def addItem(self, item: QGraphicsItem):
+    &#34;&#34;&#34;Add an item to the scene.
+
+    An override of QGraphicsScene.addItem method that detects when a node or edge was added.
+    &#34;&#34;&#34;
+    super().addItem(item)
+
+    if isinstance(item, Node):
+        self.nodes.add(item)
+
+    if isinstance(item, Edge):
+        # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
+        if (item.source_node() is None or item.source_node() in self.nodes) and \
+           (item.target_node() is None or item.target_node() in self.nodes):
+            # Ensure that the connections know about this edge
+            item.source().edges.add(item)
+            item.target().edges.add(item)
+
+            self.edges.add(item)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.graph.Graph.connect"><code class="name flex">
-<span>def <span class="ident">connect</span></span>(<span>self, source, target)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes"><code class="name flex">
+<span>def <span class="ident">connect_nodes</span></span>(<span>self, source, target)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -252,7 +366,7 @@ Intended to use inside the scheme.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def connect(self, source: Output, target: Input):
+<pre><code class="python">def connect_nodes(self, source: Output, target: Input):
     edge = Edge()
 
     edge.setSource(source)
@@ -261,10 +375,11 @@ Intended to use inside the scheme.</p>
     source.edges.add(edge)
     target.edges.add(edge)
 
-    self.edges.add(edge)</code></pre>
+    self.addItem(edge)
+    return edge</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.graph.Graph.deserialize"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.deserialize"><code class="name flex">
 <span>def <span class="ident">deserialize</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
@@ -289,8 +404,8 @@ Intended to use inside the scheme.</p>
         self.connect(source, target)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.graph.Graph.disconnect"><code class="name flex">
-<span>def <span class="ident">disconnect</span></span>(<span>self, source, target)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes"><code class="name flex">
+<span>def <span class="ident">disconnect_nodes</span></span>(<span>self, source, target)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -298,32 +413,61 @@ Intended to use inside the scheme.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def disconnect(self, source: Output, target: Input):
+<pre><code class="python">def disconnect_nodes(self, source: Output, target: Input):
     for edge in self.edges:
         if edge.source() == source and edge.target() == target:
-            self.edges.remove(edge)
-
-            source.edges.remove(edge)
-            target.edges.remove(edge)
-
+            self.removeItem(edge)
             break</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.graph.Graph.removeNode"><code class="name flex">
-<span>def <span class="ident">removeNode</span></span>(<span>self, node)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.getView"><code class="name flex">
+<span>def <span class="ident">getView</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Remove a node from the graph.</p></section>
+<section class="desc"><p>Generate and return a new QGraphicsView, configured for optimal viewing.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def removeNode(self, node: Node):
-    &#34;&#34;&#34;Remove a node from the graph.&#34;&#34;&#34;
-    self.nodes.remove(node)</code></pre>
+<pre><code class="python">def getView(self) -&gt; QGraphicsView:
+    &#34;&#34;&#34;Generate and return a new QGraphicsView, configured for optimal viewing.&#34;&#34;&#34;
+    v = QGraphicsView(self)
+    v.setDragMode(QGraphicsView.RubberBandDrag)
+    v.setRubberBandSelectionMode(Qt.ContainsItemShape)
+    v.setRenderHint(QPainter.Antialiasing)
+    v.setRenderHint(QPainter.SmoothPixmapTransform)
+
+    return v</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.graph.Graph.serialize"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.removeItem"><code class="name flex">
+<span>def <span class="ident">removeItem</span></span>(<span>self, item)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Add an item to the scene.</p>
+<p>An override of QGraphicsScene.removeItem method that detects when a node or edge was removed.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def removeItem(self, item):
+    &#34;&#34;&#34;Add an item to the scene.
+
+    An override of QGraphicsScene.removeItem method that detects when a node or edge was removed.
+    &#34;&#34;&#34;
+    super().removeItem(item)
+
+    if isinstance(item, Node):
+        self.nodes.remove(item)
+
+    if isinstance(item, Edge):
+        self.edges.remove(item)
+
+        item.source().edges.remove(item)
+        item.target().edges.remove(item)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -381,14 +525,16 @@ Intended to use inside the scheme.</p>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.scheme.graph.Graph" href="#nfb_studio.widgets.scheme.graph.Graph">Graph</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.scheme.scheme.Scheme" href="#nfb_studio.widgets.scheme.scheme.Scheme">Scheme</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.addNode" href="#nfb_studio.widgets.scheme.graph.Graph.addNode">addNode</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.connect" href="#nfb_studio.widgets.scheme.graph.Graph.connect">connect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.deserialize" href="#nfb_studio.widgets.scheme.graph.Graph.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.disconnect" href="#nfb_studio.widgets.scheme.graph.Graph.disconnect">disconnect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.removeNode" href="#nfb_studio.widgets.scheme.graph.Graph.removeNode">removeNode</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.serialize" href="#nfb_studio.widgets.scheme.graph.Graph.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.addItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.addItem">addItem</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes">connect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deserialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes">disconnect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.getView" href="#nfb_studio.widgets.scheme.scheme.Scheme.getView">getView</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.removeItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.removeItem">removeItem</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.serialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject" href="#nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
 </li>
 </ul>

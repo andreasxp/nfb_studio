@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
-<title>nfb_studio.widgets.real_size_item API documentation</title>
+<title>nfb_studio.serialize.qt_hooks API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,37 +17,49 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.real_size_item</code></h1>
+<h1 class="title">Module <code>nfb_studio.serialize.qt_hooks</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from Qt.QtCore import QPointF
-from Qt.QtWidgets import QGraphicsItem
-
-from nfb_studio.gui import inches_to_pixels, pixels_to_inches
+<pre><code class="python">from Qt.QtCore import QPointF, QSizeF
 
 
-class RealSizeItem(QGraphicsItem):
-    def __init__(self, parent=None):
-        &#34;&#34;&#34;An item that supports measurements in inches.&#34;&#34;&#34;
-        super(RealSizeItem, self).__init__(parent)
+def serialize_QPointF(obj: QPointF) -&gt; dict:
+    return {
+        &#34;x&#34;: obj.x(),
+        &#34;y&#34;: obj.y()
+    }
 
-    def setPosition(self, *args, **kwargs):
-        &#34;&#34;&#34;Set node&#39;s position in inches.
-        Does the same thing as setPos, except the arguments must be passed in inches.
-        &#34;&#34;&#34;
-        point = QPointF(*args, **kwargs)
 
-        self.setPos(inches_to_pixels(point))
+def serialize_QSizeF(obj: QSizeF) -&gt; dict:
+    return {
+        &#34;width&#34;: obj.width(),
+        &#34;height&#34;: obj.height()
+    }
 
-    def position(self):
-        &#34;&#34;&#34;Returns node&#39;s position in inches.
-        Does the same thing as setPos, except the return value is converted to inches.
-        &#34;&#34;&#34;
-        return pixels_to_inches(self.pos())</code></pre>
+
+def deserialize_QPointF(obj: QPointF, data: dict):
+    obj.setX(data[&#34;x&#34;])
+    obj.setY(data[&#34;y&#34;])
+
+
+def deserialize_QSizeF(obj: QSizeF, data: dict):
+    obj.setWidth(data[&#34;width&#34;])
+    obj.setHeight(data[&#34;height&#34;])
+
+
+serialize_qt = {
+    QPointF: serialize_QPointF,
+    QSizeF: serialize_QSizeF
+}
+
+deserialize_qt = {
+    QPointF: deserialize_QPointF,
+    QSizeF: deserialize_QSizeF
+}</code></pre>
 </details>
 </section>
 <section>
@@ -55,95 +67,71 @@ class RealSizeItem(QGraphicsItem):
 <section>
 </section>
 <section>
-</section>
-<section>
-<h2 class="section-title" id="header-classes">Classes</h2>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="nfb_studio.widgets.real_size_item.RealSizeItem"><code class="flex name class">
-<span>class <span class="ident">RealSizeItem</span></span>
-<span>(</span><span>parent=None)</span>
+<dt id="nfb_studio.serialize.qt_hooks.deserialize_QPointF"><code class="name flex">
+<span>def <span class="ident">deserialize_QPointF</span></span>(<span>obj, data)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>An item that supports measurements in inches.</p></section>
+<section class="desc"></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class RealSizeItem(QGraphicsItem):
-    def __init__(self, parent=None):
-        &#34;&#34;&#34;An item that supports measurements in inches.&#34;&#34;&#34;
-        super(RealSizeItem, self).__init__(parent)
-
-    def setPosition(self, *args, **kwargs):
-        &#34;&#34;&#34;Set node&#39;s position in inches.
-        Does the same thing as setPos, except the arguments must be passed in inches.
-        &#34;&#34;&#34;
-        point = QPointF(*args, **kwargs)
-
-        self.setPos(inches_to_pixels(point))
-
-    def position(self):
-        &#34;&#34;&#34;Returns node&#39;s position in inches.
-        Does the same thing as setPos, except the return value is converted to inches.
-        &#34;&#34;&#34;
-        return pixels_to_inches(self.pos())</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>PySide2.QtWidgets.QGraphicsItem</li>
-<li>Shiboken.Object</li>
-</ul>
-<h3>Subclasses</h3>
-<ul class="hlist">
-<li><a title="nfb_studio.widgets.scheme.connection.Connection" href="scheme/connection.html#nfb_studio.widgets.scheme.connection.Connection">Connection</a></li>
-<li><a title="nfb_studio.widgets.scheme.edge.Edge" href="scheme/edge.html#nfb_studio.widgets.scheme.edge.Edge">Edge</a></li>
-<li><a title="nfb_studio.widgets.scheme.message.Message" href="scheme/message.html#nfb_studio.widgets.scheme.message.Message">Message</a></li>
-<li><a title="nfb_studio.widgets.scheme.node.Node" href="scheme/node.html#nfb_studio.widgets.scheme.node.Node">Node</a></li>
-<li><a title="nfb_studio.widgets.text_line_item.TextLineItem" href="text_line_item.html#nfb_studio.widgets.text_line_item.TextLineItem">TextLineItem</a></li>
-<li><a title="nfb_studio.widgets.text_rect_item.TextRectItem" href="text_rect_item.html#nfb_studio.widgets.text_rect_item.TextRectItem">TextRectItem</a></li>
-</ul>
-<h3>Methods</h3>
-<dl>
-<dt id="nfb_studio.widgets.real_size_item.RealSizeItem.position"><code class="name flex">
-<span>def <span class="ident">position</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Returns node's position in inches.
-Does the same thing as setPos, except the return value is converted to inches.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def position(self):
-    &#34;&#34;&#34;Returns node&#39;s position in inches.
-    Does the same thing as setPos, except the return value is converted to inches.
-    &#34;&#34;&#34;
-    return pixels_to_inches(self.pos())</code></pre>
+<pre><code class="python">def deserialize_QPointF(obj: QPointF, data: dict):
+    obj.setX(data[&#34;x&#34;])
+    obj.setY(data[&#34;y&#34;])</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.real_size_item.RealSizeItem.setPosition"><code class="name flex">
-<span>def <span class="ident">setPosition</span></span>(<span>self, *args, **kwargs)</span>
+<dt id="nfb_studio.serialize.qt_hooks.deserialize_QSizeF"><code class="name flex">
+<span>def <span class="ident">deserialize_QSizeF</span></span>(<span>obj, data)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set node's position in inches.
-Does the same thing as setPos, except the arguments must be passed in inches.</p></section>
+<section class="desc"></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setPosition(self, *args, **kwargs):
-    &#34;&#34;&#34;Set node&#39;s position in inches.
-    Does the same thing as setPos, except the arguments must be passed in inches.
-    &#34;&#34;&#34;
-    point = QPointF(*args, **kwargs)
-
-    self.setPos(inches_to_pixels(point))</code></pre>
+<pre><code class="python">def deserialize_QSizeF(obj: QSizeF, data: dict):
+    obj.setWidth(data[&#34;width&#34;])
+    obj.setHeight(data[&#34;height&#34;])</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serialize.qt_hooks.serialize_QPointF"><code class="name flex">
+<span>def <span class="ident">serialize_QPointF</span></span>(<span>obj)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize_QPointF(obj: QPointF) -&gt; dict:
+    return {
+        &#34;x&#34;: obj.x(),
+        &#34;y&#34;: obj.y()
+    }</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serialize.qt_hooks.serialize_QSizeF"><code class="name flex">
+<span>def <span class="ident">serialize_QSizeF</span></span>(<span>obj)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize_QSizeF(obj: QSizeF) -&gt; dict:
+    return {
+        &#34;width&#34;: obj.width(),
+        &#34;height&#34;: obj.height()
+    }</code></pre>
 </details>
 </dd>
 </dl>
-</dd>
-</dl>
+</section>
+<section>
 </section>
 </article>
 <nav id="sidebar">
@@ -154,18 +142,15 @@ Does the same thing as setPos, except the arguments must be passed in inches.</p
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets" href="index.html">nfb_studio.widgets</a></code></li>
+<li><code><a title="nfb_studio.serialize" href="index.html">nfb_studio.serialize</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-classes">Classes</a></h3>
-<ul>
-<li>
-<h4><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></code></h4>
+<li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.position" href="#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.setPosition" href="#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
-</ul>
-</li>
+<li><code><a title="nfb_studio.serialize.qt_hooks.deserialize_QPointF" href="#nfb_studio.serialize.qt_hooks.deserialize_QPointF">deserialize_QPointF</a></code></li>
+<li><code><a title="nfb_studio.serialize.qt_hooks.deserialize_QSizeF" href="#nfb_studio.serialize.qt_hooks.deserialize_QSizeF">deserialize_QSizeF</a></code></li>
+<li><code><a title="nfb_studio.serialize.qt_hooks.serialize_QPointF" href="#nfb_studio.serialize.qt_hooks.serialize_QPointF">serialize_QPointF</a></code></li>
+<li><code><a title="nfb_studio.serialize.qt_hooks.serialize_QSizeF" href="#nfb_studio.serialize.qt_hooks.serialize_QSizeF">serialize_QSizeF</a></code></li>
 </ul>
 </li>
 </ul>

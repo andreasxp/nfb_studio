@@ -29,7 +29,7 @@ from Qt.QtGui import QPainter, QFontMetricsF, QPen, QBrush, QColor
 from Qt.QtWidgets import QGraphicsItem, QGraphicsLineItem
 
 from nfb_studio.gui import FontF, inches_to_pixels as px
-from nfb_studio.widgets import RealSizeItem, ShadowSelectableItem, ElidedLineItem
+from nfb_studio.widgets import RealSizeItem, ShadowSelectableItem, TextLineItem
 
 from .data_type import DataType, Unknown
 
@@ -55,7 +55,7 @@ class Connection(RealSizeItem, ShadowSelectableItem):
         self.edges = set()  # Edges related to this connection
 
         # Connection text ----------------------------------------------------------------------------------------------
-        self._text_item = ElidedLineItem(text or &#34;Connection&#34;, self)
+        self._text_item = TextLineItem(text or &#34;Connection&#34;, self)
         self._text_item.setFont(FontF(self.text_font_name, self.text_font_size))
         self._text_item.setMaximumWidth(self.max_text_length)
 
@@ -232,7 +232,7 @@ class Output(Connection):
         self.edges = set()  # Edges related to this connection
 
         # Connection text ----------------------------------------------------------------------------------------------
-        self._text_item = ElidedLineItem(text or &#34;Connection&#34;, self)
+        self._text_item = TextLineItem(text or &#34;Connection&#34;, self)
         self._text_item.setFont(FontF(self.text_font_name, self.text_font_size))
         self._text_item.setMaximumWidth(self.max_text_length)
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
-<title>nfb_studio.widgets.elided_line_item API documentation</title>
+<title>nfb_studio.widgets.text_line_item API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.elided_line_item</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.text_line_item</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -33,17 +33,15 @@ from nfb_studio.gui import inches_to_pixels as px
 from .real_size_item import RealSizeItem
 
 
-class ElidedLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
-    metrics_correction = 0.03
-    &#34;&#34;&#34;Adjustment compensating for QFontMetricsF imprecise boundingRect() calculation.&#34;&#34;&#34;
-
+class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
     def __init__(self, text=None, parent=None):
-        &#34;&#34;&#34;A one-line text item that is confined to a certain width, elided as needed to fit.
+        &#34;&#34;&#34;A one-line text item.
+
         Default origin point is at the left side of the baseline. This can change if setAlignMode is called.
-        ElidedLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
+        TextLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
         Text must not contain newline characters.
         &#34;&#34;&#34;
-        super(ElidedLineItem, self).__init__(parent)
+        super().__init__(parent)
 
         self._text = text or &#34;&#34;
         self._elided_text = text or &#34;&#34;
@@ -78,6 +76,7 @@ class ElidedLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
 
     def setAlignMode(self, mode: int) -&gt; None:
         &#34;&#34;&#34;Align mode specifies text alignment.
+
         Text alignment changes the origin point x position:
         - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
         - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
@@ -146,7 +145,8 @@ class ElidedLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
         self._px_bounding_rect = metrics.boundingRect(self.elidedText())
         # It seems that for small characters like &#34;...&#34; the bounding rect returned is too small. Adjust it by a small
         # value.
-        self._px_bounding_rect.adjust(0, 0, px(self.metrics_correction), 0)
+        metrics_correction = 1/72
+        self._px_bounding_rect.adjust(-px(metrics_correction), 0, px(metrics_correction), 0)
 
         # Move origin point according to the alignment
         if self.alignMode() &amp; Qt.AlignLeft:
@@ -179,31 +179,29 @@ class ElidedLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem"><code class="flex name class">
-<span>class <span class="ident">ElidedLineItem</span></span>
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem"><code class="flex name class">
+<span>class <span class="ident">TextLineItem</span></span>
 <span>(</span><span>text=None, parent=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>QAbstractGraphicsShapeItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>A one-line text item that is confined to a certain width, elided as needed to fit.
-Default origin point is at the left side of the baseline. This can change if setAlignMode is called.
-ElidedLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
+<p>A one-line text item.</p>
+<p>Default origin point is at the left side of the baseline. This can change if setAlignMode is called.
+TextLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
 Text must not contain newline characters.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class ElidedLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
-    metrics_correction = 0.03
-    &#34;&#34;&#34;Adjustment compensating for QFontMetricsF imprecise boundingRect() calculation.&#34;&#34;&#34;
-
+<pre><code class="python">class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
     def __init__(self, text=None, parent=None):
-        &#34;&#34;&#34;A one-line text item that is confined to a certain width, elided as needed to fit.
+        &#34;&#34;&#34;A one-line text item.
+
         Default origin point is at the left side of the baseline. This can change if setAlignMode is called.
-        ElidedLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
+        TextLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
         Text must not contain newline characters.
         &#34;&#34;&#34;
-        super(ElidedLineItem, self).__init__(parent)
+        super().__init__(parent)
 
         self._text = text or &#34;&#34;
         self._elided_text = text or &#34;&#34;
@@ -238,6 +236,7 @@ Text must not contain newline characters.</p></section>
 
     def setAlignMode(self, mode: int) -&gt; None:
         &#34;&#34;&#34;Align mode specifies text alignment.
+
         Text alignment changes the origin point x position:
         - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
         - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
@@ -306,7 +305,8 @@ Text must not contain newline characters.</p></section>
         self._px_bounding_rect = metrics.boundingRect(self.elidedText())
         # It seems that for small characters like &#34;...&#34; the bounding rect returned is too small. Adjust it by a small
         # value.
-        self._px_bounding_rect.adjust(0, 0, px(self.metrics_correction), 0)
+        metrics_correction = 1/72
+        self._px_bounding_rect.adjust(-px(metrics_correction), 0, px(metrics_correction), 0)
 
         # Move origin point according to the alignment
         if self.alignMode() &amp; Qt.AlignLeft:
@@ -336,16 +336,9 @@ Text must not contain newline characters.</p></section>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.metrics_correction"><code class="name">var <span class="ident">metrics_correction</span></code></dt>
-<dd>
-<section class="desc"><p>Adjustment compensating for QFontMetricsF imprecise boundingRect() calculation.</p></section>
-</dd>
-</dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.adjust"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.adjust"><code class="name flex">
 <span>def <span class="ident">adjust</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -372,7 +365,8 @@ Text must not contain newline characters.</p></section>
     self._px_bounding_rect = metrics.boundingRect(self.elidedText())
     # It seems that for small characters like &#34;...&#34; the bounding rect returned is too small. Adjust it by a small
     # value.
-    self._px_bounding_rect.adjust(0, 0, px(self.metrics_correction), 0)
+    metrics_correction = 1/72
+    self._px_bounding_rect.adjust(-px(metrics_correction), 0, px(metrics_correction), 0)
 
     # Move origin point according to the alignment
     if self.alignMode() &amp; Qt.AlignLeft:
@@ -386,7 +380,7 @@ Text must not contain newline characters.</p></section>
     self.background.setRect(self.boundingRect())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.alignMode"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.alignMode"><code class="name flex">
 <span>def <span class="ident">alignMode</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -399,7 +393,7 @@ Text must not contain newline characters.</p></section>
     return self._align_mode</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.backgroundBrush"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.backgroundBrush"><code class="name flex">
 <span>def <span class="ident">backgroundBrush</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -412,7 +406,7 @@ Text must not contain newline characters.</p></section>
     return self.background.brush()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.boundingRect"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.boundingRect"><code class="name flex">
 <span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -425,7 +419,7 @@ Text must not contain newline characters.</p></section>
     return self._px_bounding_rect</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.elideMode"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.elideMode"><code class="name flex">
 <span>def <span class="ident">elideMode</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -438,7 +432,7 @@ Text must not contain newline characters.</p></section>
     return self._elide_mode</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.elidedText"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.elidedText"><code class="name flex">
 <span>def <span class="ident">elidedText</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -451,7 +445,7 @@ Text must not contain newline characters.</p></section>
     return self._elided_text</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.font"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.font"><code class="name flex">
 <span>def <span class="ident">font</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -464,7 +458,7 @@ Text must not contain newline characters.</p></section>
     return self._font</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.maximumWidth"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.maximumWidth"><code class="name flex">
 <span>def <span class="ident">maximumWidth</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -481,7 +475,7 @@ None represents unlimited width.</p></section>
     return self._max_width</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.paint"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.paint"><code class="name flex">
 <span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget=Ellipsis)</span>
 </code></dt>
 <dd>
@@ -498,12 +492,12 @@ None represents unlimited width.</p></section>
     painter.drawText(self.boundingRect(), self.alignMode(), self.elidedText())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setAlignMode"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setAlignMode"><code class="name flex">
 <span>def <span class="ident">setAlignMode</span></span>(<span>self, mode)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Align mode specifies text alignment.
-Text alignment changes the origin point x position:
+<section class="desc"><p>Align mode specifies text alignment.</p>
+<p>Text alignment changes the origin point x position:
 - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
 - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
 - If mode is Qt.AlignRight, the origin point is on the right of the baseline.
@@ -515,6 +509,7 @@ Default value is Qt.AlignLeft.</p></section>
 </summary>
 <pre><code class="python">def setAlignMode(self, mode: int) -&gt; None:
     &#34;&#34;&#34;Align mode specifies text alignment.
+
     Text alignment changes the origin point x position:
     - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
     - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
@@ -527,7 +522,7 @@ Default value is Qt.AlignLeft.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setBackgroundBrush"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setBackgroundBrush"><code class="name flex">
 <span>def <span class="ident">setBackgroundBrush</span></span>(<span>self, brush)</span>
 </code></dt>
 <dd>
@@ -540,7 +535,7 @@ Default value is Qt.AlignLeft.</p></section>
     self.background.setBrush(brush)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setElideMode"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setElideMode"><code class="name flex">
 <span>def <span class="ident">setElideMode</span></span>(<span>self, mode)</span>
 </code></dt>
 <dd>
@@ -559,7 +554,7 @@ Default value is Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setFont"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setFont"><code class="name flex">
 <span>def <span class="ident">setFont</span></span>(<span>self, font)</span>
 </code></dt>
 <dd>
@@ -574,7 +569,7 @@ Default value is Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setMaximumWidth"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setMaximumWidth"><code class="name flex">
 <span>def <span class="ident">setMaximumWidth</span></span>(<span>self, width)</span>
 </code></dt>
 <dd>
@@ -591,7 +586,7 @@ Default value is Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.setText"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setText"><code class="name flex">
 <span>def <span class="ident">setText</span></span>(<span>self, text)</span>
 </code></dt>
 <dd>
@@ -609,7 +604,7 @@ Default value is Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.elided_line_item.ElidedLineItem.text"><code class="name flex">
+<dt id="nfb_studio.widgets.text_line_item.TextLineItem.text"><code class="name flex">
 <span>def <span class="ident">text</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -650,25 +645,24 @@ Default value is Qt.ElideRight.</p></section>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem">ElidedLineItem</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.text_line_item.TextLineItem" href="#nfb_studio.widgets.text_line_item.TextLineItem">TextLineItem</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.adjust" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.adjust">adjust</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.alignMode" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.alignMode">alignMode</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.backgroundBrush" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.backgroundBrush">backgroundBrush</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.boundingRect" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.elideMode" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.elideMode">elideMode</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.elidedText" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.elidedText">elidedText</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.font" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.font">font</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.maximumWidth" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.maximumWidth">maximumWidth</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.metrics_correction" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.metrics_correction">metrics_correction</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.paint" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setAlignMode" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setAlignMode">setAlignMode</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setBackgroundBrush" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setBackgroundBrush">setBackgroundBrush</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setElideMode" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setElideMode">setElideMode</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setFont" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setFont">setFont</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setMaximumWidth" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setMaximumWidth">setMaximumWidth</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.setText" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.setText">setText</a></code></li>
-<li><code><a title="nfb_studio.widgets.elided_line_item.ElidedLineItem.text" href="#nfb_studio.widgets.elided_line_item.ElidedLineItem.text">text</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.adjust" href="#nfb_studio.widgets.text_line_item.TextLineItem.adjust">adjust</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.alignMode" href="#nfb_studio.widgets.text_line_item.TextLineItem.alignMode">alignMode</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.backgroundBrush" href="#nfb_studio.widgets.text_line_item.TextLineItem.backgroundBrush">backgroundBrush</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.boundingRect" href="#nfb_studio.widgets.text_line_item.TextLineItem.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.elideMode" href="#nfb_studio.widgets.text_line_item.TextLineItem.elideMode">elideMode</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.elidedText" href="#nfb_studio.widgets.text_line_item.TextLineItem.elidedText">elidedText</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.font" href="#nfb_studio.widgets.text_line_item.TextLineItem.font">font</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.maximumWidth" href="#nfb_studio.widgets.text_line_item.TextLineItem.maximumWidth">maximumWidth</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.paint" href="#nfb_studio.widgets.text_line_item.TextLineItem.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setAlignMode" href="#nfb_studio.widgets.text_line_item.TextLineItem.setAlignMode">setAlignMode</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setBackgroundBrush" href="#nfb_studio.widgets.text_line_item.TextLineItem.setBackgroundBrush">setBackgroundBrush</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setElideMode" href="#nfb_studio.widgets.text_line_item.TextLineItem.setElideMode">setElideMode</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setFont" href="#nfb_studio.widgets.text_line_item.TextLineItem.setFont">setFont</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setMaximumWidth" href="#nfb_studio.widgets.text_line_item.TextLineItem.setMaximumWidth">setMaximumWidth</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setText" href="#nfb_studio.widgets.text_line_item.TextLineItem.setText">setText</a></code></li>
+<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.text" href="#nfb_studio.widgets.text_line_item.TextLineItem.text">text</a></code></li>
 </ul>
 </li>
 </ul>
