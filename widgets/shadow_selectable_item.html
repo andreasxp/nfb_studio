@@ -28,13 +28,15 @@
 
 
 class ShadowSelectableItem(QGraphicsItem):
+    &#34;&#34;&#34;A special property inherited by some scheme items.
+
+    Shadow selection occurs independently from normal selection. It is not enabled by rubber-band selection. Shadow
+    selection is meant for items that derive their selection status from other factors. This class is intended for
+    inheritance. When shadow selected, it will send an itemChange event with `change =
+    ShadowSelectable.ItemShadowSelectedChange`, as well as `ShadowSelectable.ItemShadowSelectedHasChanged`.
+    &#34;&#34;&#34;
+
     def __init__(self, parent=None):
-        &#34;&#34;&#34;A special property inherited by some scheme items.
-        Shadow selection occurs independently from normal selection. It is not enabled by rubber-band selection.
-        Shadow selection is meant for items that derive their selection status from other factors.
-        This class is intended for inheritance. When shadow selected, it will send an itemChange event with
-        change = ShadowSelectable.ItemShadowSelectedChange, as well as ShadowSelectable.ItemShadowSelectedHasChanged.
-        &#34;&#34;&#34;
         super().__init__(parent)
         self._is_shadow_selected = False
 
@@ -48,12 +50,14 @@ class ShadowSelectableItem(QGraphicsItem):
 
     def itemShadowSelectedChangeEvent(self, value: bool):
         &#34;&#34;&#34;Replacement for itemChange() function.
+        
         This function is called when item&#39;s shadow selection status changes.
         &#34;&#34;&#34;
         pass
 
     def itemShadowSelectedHasChangedEvent(self, value: bool):
         &#34;&#34;&#34;Replacement for itemChange() function.
+
         This function is called when item&#39;s shadow selection status has changed.
         &#34;&#34;&#34;</code></pre>
 </details>
@@ -72,24 +76,25 @@ class ShadowSelectableItem(QGraphicsItem):
 <span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>A special property inherited by some scheme items.
-Shadow selection occurs independently from normal selection. It is not enabled by rubber-band selection.
-Shadow selection is meant for items that derive their selection status from other factors.
-This class is intended for inheritance. When shadow selected, it will send an itemChange event with
-change = ShadowSelectable.ItemShadowSelectedChange, as well as ShadowSelectable.ItemShadowSelectedHasChanged.</p></section>
+<section class="desc"><p>A special property inherited by some scheme items.</p>
+<p>Shadow selection occurs independently from normal selection. It is not enabled by rubber-band selection. Shadow
+selection is meant for items that derive their selection status from other factors. This class is intended for
+inheritance. When shadow selected, it will send an itemChange event with <code>change =
+ShadowSelectable.ItemShadowSelectedChange</code>, as well as <code>ShadowSelectable.ItemShadowSelectedHasChanged</code>.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class ShadowSelectableItem(QGraphicsItem):
+    &#34;&#34;&#34;A special property inherited by some scheme items.
+
+    Shadow selection occurs independently from normal selection. It is not enabled by rubber-band selection. Shadow
+    selection is meant for items that derive their selection status from other factors. This class is intended for
+    inheritance. When shadow selected, it will send an itemChange event with `change =
+    ShadowSelectable.ItemShadowSelectedChange`, as well as `ShadowSelectable.ItemShadowSelectedHasChanged`.
+    &#34;&#34;&#34;
+
     def __init__(self, parent=None):
-        &#34;&#34;&#34;A special property inherited by some scheme items.
-        Shadow selection occurs independently from normal selection. It is not enabled by rubber-band selection.
-        Shadow selection is meant for items that derive their selection status from other factors.
-        This class is intended for inheritance. When shadow selected, it will send an itemChange event with
-        change = ShadowSelectable.ItemShadowSelectedChange, as well as ShadowSelectable.ItemShadowSelectedHasChanged.
-        &#34;&#34;&#34;
         super().__init__(parent)
         self._is_shadow_selected = False
 
@@ -103,12 +108,14 @@ change = ShadowSelectable.ItemShadowSelectedChange, as well as ShadowSelectable.
 
     def itemShadowSelectedChangeEvent(self, value: bool):
         &#34;&#34;&#34;Replacement for itemChange() function.
+        
         This function is called when item&#39;s shadow selection status changes.
         &#34;&#34;&#34;
         pass
 
     def itemShadowSelectedHasChangedEvent(self, value: bool):
         &#34;&#34;&#34;Replacement for itemChange() function.
+
         This function is called when item&#39;s shadow selection status has changed.
         &#34;&#34;&#34;</code></pre>
 </details>
@@ -141,14 +148,15 @@ change = ShadowSelectable.ItemShadowSelectedChange, as well as ShadowSelectable.
 <span>def <span class="ident">itemShadowSelectedChangeEvent</span></span>(<span>self, value)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Replacement for itemChange() function.
-This function is called when item's shadow selection status changes.</p></section>
+<section class="desc"><p>Replacement for itemChange() function.</p>
+<p>This function is called when item's shadow selection status changes.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def itemShadowSelectedChangeEvent(self, value: bool):
     &#34;&#34;&#34;Replacement for itemChange() function.
+    
     This function is called when item&#39;s shadow selection status changes.
     &#34;&#34;&#34;
     pass</code></pre>
@@ -158,14 +166,15 @@ This function is called when item's shadow selection status changes.</p></sectio
 <span>def <span class="ident">itemShadowSelectedHasChangedEvent</span></span>(<span>self, value)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Replacement for itemChange() function.
-This function is called when item's shadow selection status has changed.</p></section>
+<section class="desc"><p>Replacement for itemChange() function.</p>
+<p>This function is called when item's shadow selection status has changed.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def itemShadowSelectedHasChangedEvent(self, value: bool):
     &#34;&#34;&#34;Replacement for itemChange() function.
+
     This function is called when item&#39;s shadow selection status has changed.
     &#34;&#34;&#34;</code></pre>
 </details>

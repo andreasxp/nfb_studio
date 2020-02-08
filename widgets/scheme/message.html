@@ -39,6 +39,12 @@ icons_dir = os.path.dirname(__file__)
 
 
 class Message(RealSizeItem):
+    &#34;&#34;&#34;A message that is displayed to the user.
+    
+    Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
+    ErrorMessage.
+    &#34;&#34;&#34;
+    
     icon_size = 0.16
     &#34;&#34;&#34;Size of the icon (width and height). The icon is expected to be square.&#34;&#34;&#34;
     max_text_length = 2.5
@@ -50,10 +56,6 @@ class Message(RealSizeItem):
     svg_renderers = FileDict(create_item=QSvgRenderer)
 
     def __init__(self, text=None, icon_filename=None, parent=None):
-        &#34;&#34;&#34;A message that is displayed to the user.
-        Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
-        ErrorMessage.
-        &#34;&#34;&#34;
         super(Message, self).__init__(parent)
         self.setFlag(QGraphicsItem.ItemHasNoContents)
 
@@ -176,7 +178,9 @@ class ErrorMessage(Message):
 <span>(</span><span>text=None, parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
+<section class="desc"><p>A message that is displayed to the user.</p>
+<p>Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
+ErrorMessage.</p>
 <p>An error message that is displayed to the user.
 This message reports a serious problem that poses a critical risk to the user's work.</p></section>
 <details class="source">
@@ -230,7 +234,9 @@ This message reports a serious problem that poses a critical risk to the user's 
 <span>(</span><span>text=None, parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
+<section class="desc"><p>A message that is displayed to the user.</p>
+<p>Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
+ErrorMessage.</p>
 <p>An informational message that is displayed to the user.
 This message reports normal events. If these events are unexpected, they do not impact the user's work in a
 problematic way.</p></section>
@@ -286,15 +292,20 @@ problematic way.</p></section>
 <span>(</span><span>text=None, icon_filename=None, parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>A message that is displayed to the user.
-Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
+<section class="desc"><p>A message that is displayed to the user.</p>
+<p>Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
 ErrorMessage.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Message(RealSizeItem):
+    &#34;&#34;&#34;A message that is displayed to the user.
+    
+    Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
+    ErrorMessage.
+    &#34;&#34;&#34;
+    
     icon_size = 0.16
     &#34;&#34;&#34;Size of the icon (width and height). The icon is expected to be square.&#34;&#34;&#34;
     max_text_length = 2.5
@@ -306,10 +317,6 @@ ErrorMessage.</p></section>
     svg_renderers = FileDict(create_item=QSvgRenderer)
 
     def __init__(self, text=None, icon_filename=None, parent=None):
-        &#34;&#34;&#34;A message that is displayed to the user.
-        Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
-        ErrorMessage.
-        &#34;&#34;&#34;
         super(Message, self).__init__(parent)
         self.setFlag(QGraphicsItem.ItemHasNoContents)
 
@@ -546,7 +553,9 @@ def severity(cls):
 <span>(</span><span>text=None, parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
+<section class="desc"><p>A message that is displayed to the user.</p>
+<p>Messages can be of different severity. This base class is inherited by InfoMessage, WarningMessage and
+ErrorMessage.</p>
 <p>A warning message that is displayed to the user.
 This message reports a problem that does not pose a critical risk to the user's work.</p></section>
 <details class="source">

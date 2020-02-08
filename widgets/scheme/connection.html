@@ -35,6 +35,8 @@ from .data_type import DataType, Unknown
 
 
 class Connection(RealSizeItem, ShadowSelectableItem):
+    &#34;&#34;&#34;Connection is an input or output from a Node.&#34;&#34;&#34;
+
     stem_length = 0.2  # Length of the line going out of the
     max_text_length = 1.5  # Horizontal length of the box in which the text is drawn
     stem_text_margin = 0.05  # Space between stem and title
@@ -46,8 +48,8 @@ class Connection(RealSizeItem, ShadowSelectableItem):
     text_font_size = 10.5
 
     def __init__(self, text=None, data_type: DataType = None):
-        &#34;&#34;&#34;Connection is an input or output from a Node.&#34;&#34;&#34;
-        super(Connection, self).__init__()
+        super().__init__()
+
         self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)  # To enable edge adjusting
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setFlag(QGraphicsItem.ItemHasNoContents)  # Drawing occurs using child items
@@ -148,9 +150,10 @@ class Connection(RealSizeItem, ShadowSelectableItem):
 
 
 class Input(Connection):
+    &#34;&#34;&#34;A data input into a node.&#34;&#34;&#34;
+
     def __init__(self, text=None, data_type: DataType = None):
-        &#34;&#34;&#34;A data input into a node.&#34;&#34;&#34;
-        super(Input, self).__init__(text or &#34;Input&#34;, data_type)
+        super().__init__(text or &#34;Input&#34;, data_type)
 
         # Connection text ----------------------------------------------------------------------------------------------
         metrics = QFontMetricsF(self._text_item.font())
@@ -170,9 +173,10 @@ class Input(Connection):
 
 
 class Output(Connection):
+    &#34;&#34;&#34;A data input into a node.&#34;&#34;&#34;
+    
     def __init__(self, text=None, data_type: DataType = None):
-        &#34;&#34;&#34;A data input into a node.&#34;&#34;&#34;
-        super(Output, self).__init__(text or &#34;Output&#34;, data_type)
+        super().__init__(text or &#34;Output&#34;, data_type)
 
         # Connection text ----------------------------------------------------------------------------------------------
         metrics = QFontMetricsF(self._text_item.font())
@@ -205,13 +209,14 @@ class Output(Connection):
 <span>(</span><span>text=None, data_type=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>Connection is an input or output from a Node.</p></section>
+<section class="desc"><p>Connection is an input or output from a Node.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Connection(RealSizeItem, ShadowSelectableItem):
+    &#34;&#34;&#34;Connection is an input or output from a Node.&#34;&#34;&#34;
+
     stem_length = 0.2  # Length of the line going out of the
     max_text_length = 1.5  # Horizontal length of the box in which the text is drawn
     stem_text_margin = 0.05  # Space between stem and title
@@ -223,8 +228,8 @@ class Output(Connection):
     text_font_size = 10.5
 
     def __init__(self, text=None, data_type: DataType = None):
-        &#34;&#34;&#34;Connection is an input or output from a Node.&#34;&#34;&#34;
-        super(Connection, self).__init__()
+        super().__init__()
+
         self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)  # To enable edge adjusting
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setFlag(QGraphicsItem.ItemHasNoContents)  # Drawing occurs using child items
@@ -594,16 +599,16 @@ The connection is responsible to propagate this call to edges.</p></section>
 <span>(</span><span>text=None, data_type=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>A data input into a node.</p></section>
+<section class="desc"><p>A data input into a node.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Input(Connection):
+    &#34;&#34;&#34;A data input into a node.&#34;&#34;&#34;
+
     def __init__(self, text=None, data_type: DataType = None):
-        &#34;&#34;&#34;A data input into a node.&#34;&#34;&#34;
-        super(Input, self).__init__(text or &#34;Input&#34;, data_type)
+        super().__init__(text or &#34;Input&#34;, data_type)
 
         # Connection text ----------------------------------------------------------------------------------------------
         metrics = QFontMetricsF(self._text_item.font())
@@ -658,16 +663,16 @@ The connection is responsible to propagate this call to edges.</p></section>
 <span>(</span><span>text=None, data_type=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>A data input into a node.</p></section>
+<section class="desc"><p>A data input into a node.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Output(Connection):
+    &#34;&#34;&#34;A data input into a node.&#34;&#34;&#34;
+    
     def __init__(self, text=None, data_type: DataType = None):
-        &#34;&#34;&#34;A data input into a node.&#34;&#34;&#34;
-        super(Output, self).__init__(text or &#34;Output&#34;, data_type)
+        super().__init__(text or &#34;Output&#34;, data_type)
 
         # Connection text ----------------------------------------------------------------------------------------------
         metrics = QFontMetricsF(self._text_item.font())

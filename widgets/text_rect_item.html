@@ -36,16 +36,17 @@ from .real_size_item import RealSizeItem
 
 
 class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
+    &#34;&#34;&#34;A block of text.
+    
+    Text can be confined to a certain rectangular frame. Parts of text that do not fit will be cut off.
+    &#34;&#34;&#34;
     def __init__(self, *args, **kwargs):
-        &#34;&#34;&#34;A text item that is confined to a certain rectangular frame.
-        Parts of text that do not fit will be cut off.
-        &#34;&#34;&#34;
-        super(TextRectItem, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._frame: Union[QRectF, None] = None
         self._alignment = Qt.AlignLeft
 
-    def setFrame(self, frame: Union[QRectF, None]) -&gt; None:
+    def setFrame(self, frame: Union[QRectF, None]):
         &#34;&#34;&#34;Set the frame to which the text must be confined. Frame measurements are in inches.
         If frame is None, text will be displayed with no limitations.
         &#34;&#34;&#34;
@@ -62,9 +63,9 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
     def alignment(self):
         return self._alignment
 
-    def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+    def paint(self, painter: QPainter, option, widget=...):
         if self.frame() is None:
-            super(TextRectItem, self).paint(painter, option, widget)
+            super().paint(painter, option, widget)
         else:
             painter.setFont(self.font())
             painter.setBrush(self.brush())
@@ -85,25 +86,24 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
 <span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsSimpleTextItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)
-QGraphicsSimpleTextItem(self, text: str, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>A text item that is confined to a certain rectangular frame.
-Parts of text that do not fit will be cut off.</p></section>
+<section class="desc"><p>A block of text.</p>
+<p>Text can be confined to a certain rectangular frame. Parts of text that do not fit will be cut off.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
+    &#34;&#34;&#34;A block of text.
+    
+    Text can be confined to a certain rectangular frame. Parts of text that do not fit will be cut off.
+    &#34;&#34;&#34;
     def __init__(self, *args, **kwargs):
-        &#34;&#34;&#34;A text item that is confined to a certain rectangular frame.
-        Parts of text that do not fit will be cut off.
-        &#34;&#34;&#34;
-        super(TextRectItem, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._frame: Union[QRectF, None] = None
         self._alignment = Qt.AlignLeft
 
-    def setFrame(self, frame: Union[QRectF, None]) -&gt; None:
+    def setFrame(self, frame: Union[QRectF, None]):
         &#34;&#34;&#34;Set the frame to which the text must be confined. Frame measurements are in inches.
         If frame is None, text will be displayed with no limitations.
         &#34;&#34;&#34;
@@ -120,9 +120,9 @@ Parts of text that do not fit will be cut off.</p></section>
     def alignment(self):
         return self._alignment
 
-    def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+    def paint(self, painter: QPainter, option, widget=...):
         if self.frame() is None:
-            super(TextRectItem, self).paint(painter, option, widget)
+            super().paint(painter, option, widget)
         else:
             painter.setFont(self.font())
             painter.setBrush(self.brush())
@@ -174,9 +174,9 @@ Parts of text that do not fit will be cut off.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+<pre><code class="python">def paint(self, painter: QPainter, option, widget=...):
     if self.frame() is None:
-        super(TextRectItem, self).paint(painter, option, widget)
+        super().paint(painter, option, widget)
     else:
         painter.setFont(self.font())
         painter.setBrush(self.brush())
@@ -207,7 +207,7 @@ If frame is None, text will be displayed with no limitations.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setFrame(self, frame: Union[QRectF, None]) -&gt; None:
+<pre><code class="python">def setFrame(self, frame: Union[QRectF, None]):
     &#34;&#34;&#34;Set the frame to which the text must be confined. Frame measurements are in inches.
     If frame is None, text will be displayed with no limitations.
     &#34;&#34;&#34;

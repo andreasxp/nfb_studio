@@ -82,7 +82,13 @@ class ObjectEncoder(JSONEncoder):
 
     def __init__(self, *, object_hooks: dict = None, skipkeys=False, ensure_ascii=False, check_circular=True,
                  allow_nan=True, sort_keys=False, indent=None, separators=None):
-        &#34;&#34;&#34;&#34;&#34;&#34;
+        &#34;&#34;&#34;Constructs the ObjectEncoder object.
+        
+        Constructs the object from the following arguments:  
+        - object_hooks - a dict, mapping types to functions that can be used to serialize them in the format
+          `def foo(obj) -&gt; dict`;
+        - other arguments inherited from JSONEncoder, except for `default`, which is not inherited.
+        &#34;&#34;&#34;
         super().__init__(skipkeys=skipkeys, ensure_ascii=ensure_ascii, check_circular=check_circular,
                          allow_nan=allow_nan, sort_keys=sort_keys, indent=indent, separators=separators)
         self.object_hooks = object_hooks or {}
@@ -138,7 +144,12 @@ Do not write anything in this field yourself - it will be overwritten.</p>
 <dl>
 <dt><a title="nfb_studio.serialize.decoder.ObjectDecoder" href="decoder.html#nfb_studio.serialize.decoder.ObjectDecoder"><code>ObjectDecoder</code></a></dt>
 <dd>An object-aware JSON decoder.</dd>
-</dl></section>
+</dl>
+<p><code>Constructs the ObjectEncoder object.</code></p>
+<p>Constructs the object from the following arguments:<br>
+- object_hooks - a dict, mapping types to functions that can be used to serialize them in the format
+<code>def foo(obj) -&gt; dict</code>;
+- other arguments inherited from JSONEncoder, except for <code>default</code>, which is not inherited.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -169,7 +180,13 @@ Do not write anything in this field yourself - it will be overwritten.</p>
 
     def __init__(self, *, object_hooks: dict = None, skipkeys=False, ensure_ascii=False, check_circular=True,
                  allow_nan=True, sort_keys=False, indent=None, separators=None):
-        &#34;&#34;&#34;&#34;&#34;&#34;
+        &#34;&#34;&#34;Constructs the ObjectEncoder object.
+        
+        Constructs the object from the following arguments:  
+        - object_hooks - a dict, mapping types to functions that can be used to serialize them in the format
+          `def foo(obj) -&gt; dict`;
+        - other arguments inherited from JSONEncoder, except for `default`, which is not inherited.
+        &#34;&#34;&#34;
         super().__init__(skipkeys=skipkeys, ensure_ascii=ensure_ascii, check_circular=check_circular,
                          allow_nan=allow_nan, sort_keys=sort_keys, indent=indent, separators=separators)
         self.object_hooks = object_hooks or {}

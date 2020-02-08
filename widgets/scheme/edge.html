@@ -37,39 +37,43 @@ from .connection import Input, Output
 
 
 class Edge(RealSizeItem, ShadowSelectableItem):
+    &#34;&#34;&#34;An graphics item representing a bezier curve, connecting one node&#39;s output to another&#39;s input.&#34;&#34;&#34;
     # Static graphics properties (in inches)
     outline_thickness = 0.02
     outline_color = Qt.black
     outline_selection_color = QColor.fromRgb(0, 0, 200)
 
     bezier_max_point_offset = 0.8
-    &#34;&#34;&#34;Horizontal offset of control points on a bezier curve compared to its endpoints&#34;&#34;&#34;
+    &#34;&#34;&#34;Horizontal offset of control points on a bezier curve compared to its endpoints.&#34;&#34;&#34;
     bezier_close_distance = 1.5
-    &#34;&#34;&#34;Distance that&#39;s considered &#34;too close&#34; by the algorithm
+    &#34;&#34;&#34;Distance that&#39;s considered &#34;too close&#34; by the algorithm.
+
     If distance between source and target is less that this variable, move control points closer together.
     &#34;&#34;&#34;
 
     def __init__(self):
-        &#34;&#34;&#34;An graphics item representing a bezier curve, connecting one node&#39;s output to another&#39;s input.
-        &#34;&#34;&#34;
         super(Edge, self).__init__()
         self.setZValue(-1)  # Draw edges behind nodes
 
         self._source: Union[Output, None] = None
         &#34;&#34;&#34;An edge is drawn from its source to its target. Node&#39;s output is edge&#39;s source.
+        
         This variable represents current source as a variable of type Output.
         &#34;&#34;&#34;
         self._target: Union[Input, None] = None
         &#34;&#34;&#34;An edge is drawn from its source to its target. Node&#39;s input is edge&#39;s target.
+
         This variable represents current target as a variable of type Input.
         &#34;&#34;&#34;
 
         self._source_pos: Union[QPointF, None] = None
         &#34;&#34;&#34;An edge is drawn from its source to its target. Node&#39;s output is edge&#39;s source.
+
         This variable represents current source coordinates in scene pixels.
         &#34;&#34;&#34;
         self._target_pos: Union[QPointF, None] = None
         &#34;&#34;&#34;An edge is drawn from its source to its target. Node&#39;s input is edge&#39;s target.
+
         This variable represents current target coordinates in scene pixels.
         &#34;&#34;&#34;
 
@@ -101,6 +105,7 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
     def setTarget(self, target: Union[Input, None]):
         &#34;&#34;&#34;Set (or unset) the target of this edge.
+
         Unsetting the target sets the target position to None, which causes the edge to not be drawn, until another
         target (or target position) is supplied.
         &#34;&#34;&#34;
@@ -114,7 +119,8 @@ class Edge(RealSizeItem, ShadowSelectableItem):
             self.adjust()
 
     def setSource(self, source: Union[Output, None]):
-        &#34;&#34;&#34;Set (or unset) the target of this edge.
+        &#34;&#34;&#34;Set (or unset) the source of this edge.
+
         Unsetting the source sets the source position to None, which causes the edge to not be drawn, until another
         source (or source position) is supplied.
         &#34;&#34;&#34;
@@ -129,6 +135,7 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
     def setTargetPos(self, pos: QPointF):
         &#34;&#34;&#34;Set target position not from a target connection, but to some static coordinates.
+
         Useful when drawing an edge to the tip of the mouse. This function sets edge&#39;s target to None.
         pos is in scene pixel coordinates.
         &#34;&#34;&#34;
@@ -139,6 +146,7 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
     def setSourcePos(self, pos: QPointF):
         &#34;&#34;&#34;Set source position not from a source connection, but to some static coordinates.
+
         Useful when drawing an edge to the tip of the mouse. This function sets edge&#39;s source to None.
         pos is in scene pixel coordinates.
         &#34;&#34;&#34;
@@ -155,6 +163,7 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
     def adjust(self):
         &#34;&#34;&#34;Adjust the edge&#39;s coordinates to match those of the input and output of nodes.
+
         Call this function if the node moved or source/target was changed.
         &#34;&#34;&#34;
         if self._source is None or self._target is None:
@@ -230,10 +239,10 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
     def updateSelectedStatus(self):
         &#34;&#34;&#34;Checks if both connections at the ends are selected. If so, set this edge to &#34;selected&#34;.
-        Edges are not selectable - this function only recolors the edge.
-        Opposite also applies - if at least one of the nodes is not selected, deselect this edge.
-        This edge queries nodes - not connections - for selected status. Connections derive their selected status from
-        edges, not the other way around.
+
+        Edges are not selectable - this function only recolors the edge. Opposite also applies - if at least one of the
+        nodes is not selected, deselect this edge. This edge queries nodes - not connections - for selected status.
+        Connections derive their selected status from edges, not the other way around.
         &#34;&#34;&#34;
         if self._source is None or self._target is None:
             self.setShadowSelected(False)
@@ -270,46 +279,49 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 <span>class <span class="ident">Edge</span></span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>An graphics item representing a bezier curve, connecting one node's output to another's input.</p></section>
+<section class="desc"><p>An graphics item representing a bezier curve, connecting one node's output to another's input.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Edge(RealSizeItem, ShadowSelectableItem):
+    &#34;&#34;&#34;An graphics item representing a bezier curve, connecting one node&#39;s output to another&#39;s input.&#34;&#34;&#34;
     # Static graphics properties (in inches)
     outline_thickness = 0.02
     outline_color = Qt.black
     outline_selection_color = QColor.fromRgb(0, 0, 200)
 
     bezier_max_point_offset = 0.8
-    &#34;&#34;&#34;Horizontal offset of control points on a bezier curve compared to its endpoints&#34;&#34;&#34;
+    &#34;&#34;&#34;Horizontal offset of control points on a bezier curve compared to its endpoints.&#34;&#34;&#34;
     bezier_close_distance = 1.5
-    &#34;&#34;&#34;Distance that&#39;s considered &#34;too close&#34; by the algorithm
+    &#34;&#34;&#34;Distance that&#39;s considered &#34;too close&#34; by the algorithm.
+
     If distance between source and target is less that this variable, move control points closer together.
     &#34;&#34;&#34;
 
     def __init__(self):
-        &#34;&#34;&#34;An graphics item representing a bezier curve, connecting one node&#39;s output to another&#39;s input.
-        &#34;&#34;&#34;
         super(Edge, self).__init__()
         self.setZValue(-1)  # Draw edges behind nodes
 
         self._source: Union[Output, None] = None
         &#34;&#34;&#34;An edge is drawn from its source to its target. Node&#39;s output is edge&#39;s source.
+        
         This variable represents current source as a variable of type Output.
         &#34;&#34;&#34;
         self._target: Union[Input, None] = None
         &#34;&#34;&#34;An edge is drawn from its source to its target. Node&#39;s input is edge&#39;s target.
+
         This variable represents current target as a variable of type Input.
         &#34;&#34;&#34;
 
         self._source_pos: Union[QPointF, None] = None
         &#34;&#34;&#34;An edge is drawn from its source to its target. Node&#39;s output is edge&#39;s source.
+
         This variable represents current source coordinates in scene pixels.
         &#34;&#34;&#34;
         self._target_pos: Union[QPointF, None] = None
         &#34;&#34;&#34;An edge is drawn from its source to its target. Node&#39;s input is edge&#39;s target.
+
         This variable represents current target coordinates in scene pixels.
         &#34;&#34;&#34;
 
@@ -341,6 +353,7 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
     def setTarget(self, target: Union[Input, None]):
         &#34;&#34;&#34;Set (or unset) the target of this edge.
+
         Unsetting the target sets the target position to None, which causes the edge to not be drawn, until another
         target (or target position) is supplied.
         &#34;&#34;&#34;
@@ -354,7 +367,8 @@ class Edge(RealSizeItem, ShadowSelectableItem):
             self.adjust()
 
     def setSource(self, source: Union[Output, None]):
-        &#34;&#34;&#34;Set (or unset) the target of this edge.
+        &#34;&#34;&#34;Set (or unset) the source of this edge.
+
         Unsetting the source sets the source position to None, which causes the edge to not be drawn, until another
         source (or source position) is supplied.
         &#34;&#34;&#34;
@@ -369,6 +383,7 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
     def setTargetPos(self, pos: QPointF):
         &#34;&#34;&#34;Set target position not from a target connection, but to some static coordinates.
+
         Useful when drawing an edge to the tip of the mouse. This function sets edge&#39;s target to None.
         pos is in scene pixel coordinates.
         &#34;&#34;&#34;
@@ -379,6 +394,7 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
     def setSourcePos(self, pos: QPointF):
         &#34;&#34;&#34;Set source position not from a source connection, but to some static coordinates.
+
         Useful when drawing an edge to the tip of the mouse. This function sets edge&#39;s source to None.
         pos is in scene pixel coordinates.
         &#34;&#34;&#34;
@@ -395,6 +411,7 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
     def adjust(self):
         &#34;&#34;&#34;Adjust the edge&#39;s coordinates to match those of the input and output of nodes.
+
         Call this function if the node moved or source/target was changed.
         &#34;&#34;&#34;
         if self._source is None or self._target is None:
@@ -470,10 +487,10 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 
     def updateSelectedStatus(self):
         &#34;&#34;&#34;Checks if both connections at the ends are selected. If so, set this edge to &#34;selected&#34;.
-        Edges are not selectable - this function only recolors the edge.
-        Opposite also applies - if at least one of the nodes is not selected, deselect this edge.
-        This edge queries nodes - not connections - for selected status. Connections derive their selected status from
-        edges, not the other way around.
+
+        Edges are not selectable - this function only recolors the edge. Opposite also applies - if at least one of the
+        nodes is not selected, deselect this edge. This edge queries nodes - not connections - for selected status.
+        Connections derive their selected status from edges, not the other way around.
         &#34;&#34;&#34;
         if self._source is None or self._target is None:
             self.setShadowSelected(False)
@@ -507,12 +524,12 @@ class Edge(RealSizeItem, ShadowSelectableItem):
 <dl>
 <dt id="nfb_studio.widgets.scheme.edge.Edge.bezier_close_distance"><code class="name">var <span class="ident">bezier_close_distance</span></code></dt>
 <dd>
-<section class="desc"><p>Distance that's considered "too close" by the algorithm
-If distance between source and target is less that this variable, move control points closer together.</p></section>
+<section class="desc"><p>Distance that's considered "too close" by the algorithm.</p>
+<p>If distance between source and target is less that this variable, move control points closer together.</p></section>
 </dd>
 <dt id="nfb_studio.widgets.scheme.edge.Edge.bezier_max_point_offset"><code class="name">var <span class="ident">bezier_max_point_offset</span></code></dt>
 <dd>
-<section class="desc"><p>Horizontal offset of control points on a bezier curve compared to its endpoints</p></section>
+<section class="desc"><p>Horizontal offset of control points on a bezier curve compared to its endpoints.</p></section>
 </dd>
 <dt id="nfb_studio.widgets.scheme.edge.Edge.outline_color"><code class="name">var <span class="ident">outline_color</span></code></dt>
 <dd>
@@ -533,14 +550,15 @@ If distance between source and target is less that this variable, move control p
 <span>def <span class="ident">adjust</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Adjust the edge's coordinates to match those of the input and output of nodes.
-Call this function if the node moved or source/target was changed.</p></section>
+<section class="desc"><p>Adjust the edge's coordinates to match those of the input and output of nodes.</p>
+<p>Call this function if the node moved or source/target was changed.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def adjust(self):
     &#34;&#34;&#34;Adjust the edge&#39;s coordinates to match those of the input and output of nodes.
+
     Call this function if the node moved or source/target was changed.
     &#34;&#34;&#34;
     if self._source is None or self._target is None:
@@ -651,15 +669,16 @@ Call this function if the node moved or source/target was changed.</p></section>
 <span>def <span class="ident">setSource</span></span>(<span>self, source)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set (or unset) the target of this edge.
-Unsetting the source sets the source position to None, which causes the edge to not be drawn, until another
+<section class="desc"><p>Set (or unset) the source of this edge.</p>
+<p>Unsetting the source sets the source position to None, which causes the edge to not be drawn, until another
 source (or source position) is supplied.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def setSource(self, source: Union[Output, None]):
-    &#34;&#34;&#34;Set (or unset) the target of this edge.
+    &#34;&#34;&#34;Set (or unset) the source of this edge.
+
     Unsetting the source sets the source position to None, which causes the edge to not be drawn, until another
     source (or source position) is supplied.
     &#34;&#34;&#34;
@@ -677,8 +696,8 @@ source (or source position) is supplied.</p></section>
 <span>def <span class="ident">setSourcePos</span></span>(<span>self, pos)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set source position not from a source connection, but to some static coordinates.
-Useful when drawing an edge to the tip of the mouse. This function sets edge's source to None.
+<section class="desc"><p>Set source position not from a source connection, but to some static coordinates.</p>
+<p>Useful when drawing an edge to the tip of the mouse. This function sets edge's source to None.
 pos is in scene pixel coordinates.</p></section>
 <details class="source">
 <summary>
@@ -686,6 +705,7 @@ pos is in scene pixel coordinates.</p></section>
 </summary>
 <pre><code class="python">def setSourcePos(self, pos: QPointF):
     &#34;&#34;&#34;Set source position not from a source connection, but to some static coordinates.
+
     Useful when drawing an edge to the tip of the mouse. This function sets edge&#39;s source to None.
     pos is in scene pixel coordinates.
     &#34;&#34;&#34;
@@ -699,8 +719,8 @@ pos is in scene pixel coordinates.</p></section>
 <span>def <span class="ident">setTarget</span></span>(<span>self, target)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set (or unset) the target of this edge.
-Unsetting the target sets the target position to None, which causes the edge to not be drawn, until another
+<section class="desc"><p>Set (or unset) the target of this edge.</p>
+<p>Unsetting the target sets the target position to None, which causes the edge to not be drawn, until another
 target (or target position) is supplied.</p></section>
 <details class="source">
 <summary>
@@ -708,6 +728,7 @@ target (or target position) is supplied.</p></section>
 </summary>
 <pre><code class="python">def setTarget(self, target: Union[Input, None]):
     &#34;&#34;&#34;Set (or unset) the target of this edge.
+
     Unsetting the target sets the target position to None, which causes the edge to not be drawn, until another
     target (or target position) is supplied.
     &#34;&#34;&#34;
@@ -725,8 +746,8 @@ target (or target position) is supplied.</p></section>
 <span>def <span class="ident">setTargetPos</span></span>(<span>self, pos)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set target position not from a target connection, but to some static coordinates.
-Useful when drawing an edge to the tip of the mouse. This function sets edge's target to None.
+<section class="desc"><p>Set target position not from a target connection, but to some static coordinates.</p>
+<p>Useful when drawing an edge to the tip of the mouse. This function sets edge's target to None.
 pos is in scene pixel coordinates.</p></section>
 <details class="source">
 <summary>
@@ -734,6 +755,7 @@ pos is in scene pixel coordinates.</p></section>
 </summary>
 <pre><code class="python">def setTargetPos(self, pos: QPointF):
     &#34;&#34;&#34;Set target position not from a target connection, but to some static coordinates.
+
     Useful when drawing an edge to the tip of the mouse. This function sets edge&#39;s target to None.
     pos is in scene pixel coordinates.
     &#34;&#34;&#34;
@@ -813,21 +835,20 @@ pos is in scene pixel coordinates.</p></section>
 <span>def <span class="ident">updateSelectedStatus</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Checks if both connections at the ends are selected. If so, set this edge to "selected".
-Edges are not selectable - this function only recolors the edge.
-Opposite also applies - if at least one of the nodes is not selected, deselect this edge.
-This edge queries nodes - not connections - for selected status. Connections derive their selected status from
-edges, not the other way around.</p></section>
+<section class="desc"><p>Checks if both connections at the ends are selected. If so, set this edge to "selected".</p>
+<p>Edges are not selectable - this function only recolors the edge. Opposite also applies - if at least one of the
+nodes is not selected, deselect this edge. This edge queries nodes - not connections - for selected status.
+Connections derive their selected status from edges, not the other way around.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def updateSelectedStatus(self):
     &#34;&#34;&#34;Checks if both connections at the ends are selected. If so, set this edge to &#34;selected&#34;.
-    Edges are not selectable - this function only recolors the edge.
-    Opposite also applies - if at least one of the nodes is not selected, deselect this edge.
-    This edge queries nodes - not connections - for selected status. Connections derive their selected status from
-    edges, not the other way around.
+
+    Edges are not selectable - this function only recolors the edge. Opposite also applies - if at least one of the
+    nodes is not selected, deselect this edge. This edge queries nodes - not connections - for selected status.
+    Connections derive their selected status from edges, not the other way around.
     &#34;&#34;&#34;
     if self._source is None or self._target is None:
         self.setShadowSelected(False)

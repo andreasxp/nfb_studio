@@ -38,6 +38,11 @@ from .message import Message
 
 
 class Node(RealSizeItem):
+    &#34;&#34;&#34;The main component of the graph scene.
+
+    A node represents a single vertex of the graph, with its associated information and inputs/outputs. All sizes and
+    positions are measured in inches.
+    &#34;&#34;&#34;
     # Static graphics properties (in inches)
     corner_radius = 0.1  # Rounded rectangle corner radius
     internal_padding = 0.1  # Padding for text inside the body
@@ -56,11 +61,6 @@ class Node(RealSizeItem):
     description_font_size = 10.5
 
     def __init__(self, parent=None):
-        &#34;&#34;&#34;The main component of the graph scene.
-
-        A node represents a single vertex of the graph, with its associated information and inputs/outputs.
-        All sizes and positions are measured in inches.
-        &#34;&#34;&#34;
         super().__init__()
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
@@ -292,15 +292,19 @@ class Node(RealSizeItem):
 <span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>The main component of the graph scene.</p>
-<p>A node represents a single vertex of the graph, with its associated information and inputs/outputs.
-All sizes and positions are measured in inches.</p></section>
+<section class="desc"><p>The main component of the graph scene.</p>
+<p>A node represents a single vertex of the graph, with its associated information and inputs/outputs. All sizes and
+positions are measured in inches.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Node(RealSizeItem):
+    &#34;&#34;&#34;The main component of the graph scene.
+
+    A node represents a single vertex of the graph, with its associated information and inputs/outputs. All sizes and
+    positions are measured in inches.
+    &#34;&#34;&#34;
     # Static graphics properties (in inches)
     corner_radius = 0.1  # Rounded rectangle corner radius
     internal_padding = 0.1  # Padding for text inside the body
@@ -319,11 +323,6 @@ All sizes and positions are measured in inches.</p></section>
     description_font_size = 10.5
 
     def __init__(self, parent=None):
-        &#34;&#34;&#34;The main component of the graph scene.
-
-        A node represents a single vertex of the graph, with its associated information and inputs/outputs.
-        All sizes and positions are measured in inches.
-        &#34;&#34;&#34;
         super().__init__()
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)

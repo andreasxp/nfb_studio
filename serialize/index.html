@@ -116,8 +116,8 @@ These functions return/accept a dictionary containing the data that is necessary
 object during deserialization.
 
 - If a class is out of your control, such as a class from another module, both ObjectEncoder and ObjectDecoder accept an
-optional object_hooks parameter. This parameter is a dictionary that maps a class to a method that needs to be used to
-serialize that class. All you need to do is to create these two external methods:
+  optional object_hooks parameter. This parameter is a dictionary that maps a class to a method that needs to be used to
+  serialize that class. All you need to do is to create these two external methods:
 ```python
 # Names here do not matter (these functions can even be lambdas).
 def serialize(obj) -&gt; dict:

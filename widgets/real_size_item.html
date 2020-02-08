@@ -31,12 +31,14 @@ from nfb_studio.gui import inches_to_pixels, pixels_to_inches
 
 
 class RealSizeItem(QGraphicsItem):
+    &#34;&#34;&#34;An item that supports measurements in inches.&#34;&#34;&#34;
+
     def __init__(self, parent=None):
-        &#34;&#34;&#34;An item that supports measurements in inches.&#34;&#34;&#34;
         super(RealSizeItem, self).__init__(parent)
 
     def setPosition(self, *args, **kwargs):
         &#34;&#34;&#34;Set node&#39;s position in inches.
+
         Does the same thing as setPos, except the arguments must be passed in inches.
         &#34;&#34;&#34;
         point = QPointF(*args, **kwargs)
@@ -45,6 +47,7 @@ class RealSizeItem(QGraphicsItem):
 
     def position(self):
         &#34;&#34;&#34;Returns node&#39;s position in inches.
+        
         Does the same thing as setPos, except the return value is converted to inches.
         &#34;&#34;&#34;
         return pixels_to_inches(self.pos())</code></pre>
@@ -64,19 +67,20 @@ class RealSizeItem(QGraphicsItem):
 <span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>An item that supports measurements in inches.</p></section>
+<section class="desc"><p>An item that supports measurements in inches.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class RealSizeItem(QGraphicsItem):
+    &#34;&#34;&#34;An item that supports measurements in inches.&#34;&#34;&#34;
+
     def __init__(self, parent=None):
-        &#34;&#34;&#34;An item that supports measurements in inches.&#34;&#34;&#34;
         super(RealSizeItem, self).__init__(parent)
 
     def setPosition(self, *args, **kwargs):
         &#34;&#34;&#34;Set node&#39;s position in inches.
+
         Does the same thing as setPos, except the arguments must be passed in inches.
         &#34;&#34;&#34;
         point = QPointF(*args, **kwargs)
@@ -85,6 +89,7 @@ class RealSizeItem(QGraphicsItem):
 
     def position(self):
         &#34;&#34;&#34;Returns node&#39;s position in inches.
+        
         Does the same thing as setPos, except the return value is converted to inches.
         &#34;&#34;&#34;
         return pixels_to_inches(self.pos())</code></pre>
@@ -109,14 +114,15 @@ class RealSizeItem(QGraphicsItem):
 <span>def <span class="ident">position</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Returns node's position in inches.
-Does the same thing as setPos, except the return value is converted to inches.</p></section>
+<section class="desc"><p>Returns node's position in inches.</p>
+<p>Does the same thing as setPos, except the return value is converted to inches.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def position(self):
     &#34;&#34;&#34;Returns node&#39;s position in inches.
+    
     Does the same thing as setPos, except the return value is converted to inches.
     &#34;&#34;&#34;
     return pixels_to_inches(self.pos())</code></pre>
@@ -126,14 +132,15 @@ Does the same thing as setPos, except the return value is converted to inches.</
 <span>def <span class="ident">setPosition</span></span>(<span>self, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set node's position in inches.
-Does the same thing as setPos, except the arguments must be passed in inches.</p></section>
+<section class="desc"><p>Set node's position in inches.</p>
+<p>Does the same thing as setPos, except the arguments must be passed in inches.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def setPosition(self, *args, **kwargs):
     &#34;&#34;&#34;Set node&#39;s position in inches.
+
     Does the same thing as setPos, except the arguments must be passed in inches.
     &#34;&#34;&#34;
     point = QPointF(*args, **kwargs)

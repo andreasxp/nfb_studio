@@ -24,13 +24,19 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from .node import Node
+<pre><code class="python">from typing import Union
+
+from .node import Node
 from .edge import Edge
 from .connection import Input, Output
 
 
 class AbstractGraphBase:
-    &#34;&#34;&#34;An abstract (not supposed to be created) base class for Graph and GraphSnapshot.&#34;&#34;&#34;
+    &#34;&#34;&#34;An abstract (not supposed to be created) base class for Graph and GraphSnapshot.
+    
+    Both Graph and GraphSnapshot contain two members - `self.nodes` and `self.edges`. In Graph those are sets, in
+    GraphSnapshot - frozensets.
+    &#34;&#34;&#34;
     def __init__(self):
         self.nodes = None  # Defined in implementations
         self.edges = None  # Defined in implementations
@@ -70,6 +76,8 @@ class AbstractGraphBase:
 
 
 class Graph(AbstractGraphBase):
+    &#34;&#34;&#34;A collection of nodes and edges connecting them.&#34;&#34;&#34;
+
     def __init__(self):
         super().__init__()
 
@@ -77,9 +85,15 @@ class Graph(AbstractGraphBase):
         self.edges = set()
 
     def addNode(self, node: Node):
+        &#34;&#34;&#34;Add a new node to this graph.&#34;&#34;&#34;
         self.nodes.add(node)
 
     def addEdge(self, edge: Edge):
+        &#34;&#34;&#34;Add a new edge to this graph.
+        
+        The both source and target nodes of this edge must already be present in the graph. Otherwise, ValueError is
+        raised.
+        &#34;&#34;&#34;
         # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
         if (edge.source_node() is None or edge.source_node() in self.nodes) and \
            (edge.target_node() is None or edge.target_node() in self.nodes):
@@ -92,20 +106,28 @@ class Graph(AbstractGraphBase):
             raise ValueError(&#34;one of edge&#39;s connections is not in this graph&#34;)
 
     def removeNode(self, node: Node):
+        &#34;&#34;&#34;Remove a node from this graph.
+        
+        If a node is removed, all edges to or from that node are also removed.
+        &#34;&#34;&#34;
         self.nodes.remove(node)
 
-        # If a node is removed, all edges incoming and outgoing are removed too
         for edge in self.edges:
             if edge.source_node() == node or edge.target_node() == node:
                 self.removeEdge(edge)
 
     def removeEdge(self, edge: Edge):
+        &#34;&#34;&#34;Remove an edge from this graph.&#34;&#34;&#34;
         self.edges.remove(edge)
 
         edge.source().edges.remove(edge)
         edge.target().edges.remove(edge)
 
-    def connect_nodes(self, source: Output, target: Input):
+    def connect_nodes(self, source: Output, target: Input) -&gt; Edge:
+        &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
+        
+        Returns the newly created edge.
+        &#34;&#34;&#34;
         edge = Edge()
 
         edge.setSource(source)
@@ -117,14 +139,26 @@ class Graph(AbstractGraphBase):
         self.addEdge(edge)
         return edge
 
-    def disconnect_nodes(self, source: Output, target: Input):
+    def disconnect_nodes(self, source: Output, target: Input) -&gt; Union[Edge, None]:
+        &#34;&#34;&#34;Remove a connection between a node output and an input.
+        
+        If output and input are connected more than once, only one edge is removed.
+        Returns the edge that was removed, or None if no such edge was found.
+        &#34;&#34;&#34;
         for edge in self.edges:
             if edge.source() == source and edge.target() == target:
                 self.removeEdge(edge)
                 return edge
         return None
 
+    # def serialize(self) -&gt; dict  # Inherited from AbstractGraphBase
+
     def deserialize(self, data: dict):
+        &#34;&#34;&#34;Deserialize this object from a dict of data.
+        
+        Edges are not serialized as objects. Instead, only their connections are remembered and reconstructed during the
+        deserialization.
+        &#34;&#34;&#34;
         # Clear --------------------------------------------------------------------------------------------------------
         for node in self.nodes:
             self.removeNode(node)
@@ -145,18 +179,23 @@ class Graph(AbstractGraphBase):
 
 
 class GraphSnapshot(AbstractGraphBase):
-    def __init__(self, nodes=None, edges=None):
-        &#34;&#34;&#34;A static reference to a part of a graph. Contains a frozenset of nodes and a frozenset of edges.
+    &#34;&#34;&#34;A static reference to a part of a graph. Contains a frozenset of nodes and a frozenset of edges.
 
-        A snapshot is not meant to be edited.
-        &#34;&#34;&#34;
+    A snapshot is not meant to be edited.
+    &#34;&#34;&#34;
+    def __init__(self, nodes=None, edges=None):
         super().__init__()
 
         self.nodes = nodes or frozenset()
         self.edges = edges or frozenset()
 
+    # def serialize(self) -&gt; dict  # Inherited from AbstractGraphBase
+
     def deserialize(self, data: dict):
-        # Temporarily deserialize to a mutable Graph, then freeze the data
+        &#34;&#34;&#34;Deserialize this object from a dict of data.
+        
+        This functions deserializes by loading data into a mutable Graph, then freezing it in a frozenset.
+        &#34;&#34;&#34;
         g = Graph()
         g.deserialize(data)
 
@@ -177,13 +216,19 @@ class GraphSnapshot(AbstractGraphBase):
 <span>class <span class="ident">AbstractGraphBase</span></span>
 </code></dt>
 <dd>
-<section class="desc"><p>An abstract (not supposed to be created) base class for Graph and GraphSnapshot.</p></section>
+<section class="desc"><p>An abstract (not supposed to be created) base class for Graph and GraphSnapshot.</p>
+<p>Both Graph and GraphSnapshot contain two members - <code>self.nodes</code> and <code>self.edges</code>. In Graph those are sets, in
+GraphSnapshot - frozensets.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class AbstractGraphBase:
-    &#34;&#34;&#34;An abstract (not supposed to be created) base class for Graph and GraphSnapshot.&#34;&#34;&#34;
+    &#34;&#34;&#34;An abstract (not supposed to be created) base class for Graph and GraphSnapshot.
+    
+    Both Graph and GraphSnapshot contain two members - `self.nodes` and `self.edges`. In Graph those are sets, in
+    GraphSnapshot - frozensets.
+    &#34;&#34;&#34;
     def __init__(self):
         self.nodes = None  # Defined in implementations
         self.edges = None  # Defined in implementations
@@ -277,12 +322,14 @@ class GraphSnapshot(AbstractGraphBase):
 <span>class <span class="ident">Graph</span></span>
 </code></dt>
 <dd>
-<section class="desc"><p>An abstract (not supposed to be created) base class for Graph and GraphSnapshot.</p></section>
+<section class="desc"><p>A collection of nodes and edges connecting them.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Graph(AbstractGraphBase):
+    &#34;&#34;&#34;A collection of nodes and edges connecting them.&#34;&#34;&#34;
+
     def __init__(self):
         super().__init__()
 
@@ -290,9 +337,15 @@ class GraphSnapshot(AbstractGraphBase):
         self.edges = set()
 
     def addNode(self, node: Node):
+        &#34;&#34;&#34;Add a new node to this graph.&#34;&#34;&#34;
         self.nodes.add(node)
 
     def addEdge(self, edge: Edge):
+        &#34;&#34;&#34;Add a new edge to this graph.
+        
+        The both source and target nodes of this edge must already be present in the graph. Otherwise, ValueError is
+        raised.
+        &#34;&#34;&#34;
         # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
         if (edge.source_node() is None or edge.source_node() in self.nodes) and \
            (edge.target_node() is None or edge.target_node() in self.nodes):
@@ -305,20 +358,28 @@ class GraphSnapshot(AbstractGraphBase):
             raise ValueError(&#34;one of edge&#39;s connections is not in this graph&#34;)
 
     def removeNode(self, node: Node):
+        &#34;&#34;&#34;Remove a node from this graph.
+        
+        If a node is removed, all edges to or from that node are also removed.
+        &#34;&#34;&#34;
         self.nodes.remove(node)
 
-        # If a node is removed, all edges incoming and outgoing are removed too
         for edge in self.edges:
             if edge.source_node() == node or edge.target_node() == node:
                 self.removeEdge(edge)
 
     def removeEdge(self, edge: Edge):
+        &#34;&#34;&#34;Remove an edge from this graph.&#34;&#34;&#34;
         self.edges.remove(edge)
 
         edge.source().edges.remove(edge)
         edge.target().edges.remove(edge)
 
-    def connect_nodes(self, source: Output, target: Input):
+    def connect_nodes(self, source: Output, target: Input) -&gt; Edge:
+        &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
+        
+        Returns the newly created edge.
+        &#34;&#34;&#34;
         edge = Edge()
 
         edge.setSource(source)
@@ -330,14 +391,26 @@ class GraphSnapshot(AbstractGraphBase):
         self.addEdge(edge)
         return edge
 
-    def disconnect_nodes(self, source: Output, target: Input):
+    def disconnect_nodes(self, source: Output, target: Input) -&gt; Union[Edge, None]:
+        &#34;&#34;&#34;Remove a connection between a node output and an input.
+        
+        If output and input are connected more than once, only one edge is removed.
+        Returns the edge that was removed, or None if no such edge was found.
+        &#34;&#34;&#34;
         for edge in self.edges:
             if edge.source() == source and edge.target() == target:
                 self.removeEdge(edge)
                 return edge
         return None
 
+    # def serialize(self) -&gt; dict  # Inherited from AbstractGraphBase
+
     def deserialize(self, data: dict):
+        &#34;&#34;&#34;Deserialize this object from a dict of data.
+        
+        Edges are not serialized as objects. Instead, only their connections are remembered and reconstructed during the
+        deserialization.
+        &#34;&#34;&#34;
         # Clear --------------------------------------------------------------------------------------------------------
         for node in self.nodes:
             self.removeNode(node)
@@ -370,12 +443,19 @@ class GraphSnapshot(AbstractGraphBase):
 <span>def <span class="ident">addEdge</span></span>(<span>self, edge)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Add a new edge to this graph.</p>
+<p>The both source and target nodes of this edge must already be present in the graph. Otherwise, ValueError is
+raised.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def addEdge(self, edge: Edge):
+    &#34;&#34;&#34;Add a new edge to this graph.
+    
+    The both source and target nodes of this edge must already be present in the graph. Otherwise, ValueError is
+    raised.
+    &#34;&#34;&#34;
     # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
     if (edge.source_node() is None or edge.source_node() in self.nodes) and \
        (edge.target_node() is None or edge.target_node() in self.nodes):
@@ -392,12 +472,13 @@ class GraphSnapshot(AbstractGraphBase):
 <span>def <span class="ident">addNode</span></span>(<span>self, node)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Add a new node to this graph.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def addNode(self, node: Node):
+    &#34;&#34;&#34;Add a new node to this graph.&#34;&#34;&#34;
     self.nodes.add(node)</code></pre>
 </details>
 </dd>
@@ -405,12 +486,17 @@ class GraphSnapshot(AbstractGraphBase):
 <span>def <span class="ident">connect_nodes</span></span>(<span>self, source, target)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Connect an Output connection to an Input connection with an edge.</p>
+<p>Returns the newly created edge.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def connect_nodes(self, source: Output, target: Input):
+<pre><code class="python">def connect_nodes(self, source: Output, target: Input) -&gt; Edge:
+    &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
+    
+    Returns the newly created edge.
+    &#34;&#34;&#34;
     edge = Edge()
 
     edge.setSource(source)
@@ -427,12 +513,19 @@ class GraphSnapshot(AbstractGraphBase):
 <span>def <span class="ident">deserialize</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Deserialize this object from a dict of data.</p>
+<p>Edges are not serialized as objects. Instead, only their connections are remembered and reconstructed during the
+deserialization.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def deserialize(self, data: dict):
+    &#34;&#34;&#34;Deserialize this object from a dict of data.
+    
+    Edges are not serialized as objects. Instead, only their connections are remembered and reconstructed during the
+    deserialization.
+    &#34;&#34;&#34;
     # Clear --------------------------------------------------------------------------------------------------------
     for node in self.nodes:
         self.removeNode(node)
@@ -456,12 +549,19 @@ class GraphSnapshot(AbstractGraphBase):
 <span>def <span class="ident">disconnect_nodes</span></span>(<span>self, source, target)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Remove a connection between a node output and an input.</p>
+<p>If output and input are connected more than once, only one edge is removed.
+Returns the edge that was removed, or None if no such edge was found.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def disconnect_nodes(self, source: Output, target: Input):
+<pre><code class="python">def disconnect_nodes(self, source: Output, target: Input) -&gt; Union[Edge, None]:
+    &#34;&#34;&#34;Remove a connection between a node output and an input.
+    
+    If output and input are connected more than once, only one edge is removed.
+    Returns the edge that was removed, or None if no such edge was found.
+    &#34;&#34;&#34;
     for edge in self.edges:
         if edge.source() == source and edge.target() == target:
             self.removeEdge(edge)
@@ -473,12 +573,13 @@ class GraphSnapshot(AbstractGraphBase):
 <span>def <span class="ident">removeEdge</span></span>(<span>self, edge)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Remove an edge from this graph.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def removeEdge(self, edge: Edge):
+    &#34;&#34;&#34;Remove an edge from this graph.&#34;&#34;&#34;
     self.edges.remove(edge)
 
     edge.source().edges.remove(edge)
@@ -489,15 +590,19 @@ class GraphSnapshot(AbstractGraphBase):
 <span>def <span class="ident">removeNode</span></span>(<span>self, node)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Remove a node from this graph.</p>
+<p>If a node is removed, all edges to or from that node are also removed.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def removeNode(self, node: Node):
+    &#34;&#34;&#34;Remove a node from this graph.
+    
+    If a node is removed, all edges to or from that node are also removed.
+    &#34;&#34;&#34;
     self.nodes.remove(node)
 
-    # If a node is removed, all edges incoming and outgoing are removed too
     for edge in self.edges:
         if edge.source_node() == node or edge.target_node() == node:
             self.removeEdge(edge)</code></pre>
@@ -510,26 +615,30 @@ class GraphSnapshot(AbstractGraphBase):
 <span>(</span><span>nodes=None, edges=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>An abstract (not supposed to be created) base class for Graph and GraphSnapshot.</p>
-<p>A static reference to a part of a graph. Contains a frozenset of nodes and a frozenset of edges.</p>
+<section class="desc"><p>A static reference to a part of a graph. Contains a frozenset of nodes and a frozenset of edges.</p>
 <p>A snapshot is not meant to be edited.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class GraphSnapshot(AbstractGraphBase):
-    def __init__(self, nodes=None, edges=None):
-        &#34;&#34;&#34;A static reference to a part of a graph. Contains a frozenset of nodes and a frozenset of edges.
+    &#34;&#34;&#34;A static reference to a part of a graph. Contains a frozenset of nodes and a frozenset of edges.
 
-        A snapshot is not meant to be edited.
-        &#34;&#34;&#34;
+    A snapshot is not meant to be edited.
+    &#34;&#34;&#34;
+    def __init__(self, nodes=None, edges=None):
         super().__init__()
 
         self.nodes = nodes or frozenset()
         self.edges = edges or frozenset()
 
+    # def serialize(self) -&gt; dict  # Inherited from AbstractGraphBase
+
     def deserialize(self, data: dict):
-        # Temporarily deserialize to a mutable Graph, then freeze the data
+        &#34;&#34;&#34;Deserialize this object from a dict of data.
+        
+        This functions deserializes by loading data into a mutable Graph, then freezing it in a frozenset.
+        &#34;&#34;&#34;
         g = Graph()
         g.deserialize(data)
 
@@ -546,13 +655,17 @@ class GraphSnapshot(AbstractGraphBase):
 <span>def <span class="ident">deserialize</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Deserialize this object from a dict of data.</p>
+<p>This functions deserializes by loading data into a mutable Graph, then freezing it in a frozenset.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def deserialize(self, data: dict):
-    # Temporarily deserialize to a mutable Graph, then freeze the data
+    &#34;&#34;&#34;Deserialize this object from a dict of data.
+    
+    This functions deserializes by loading data into a mutable Graph, then freezing it in a frozenset.
+    &#34;&#34;&#34;
     g = Graph()
     g.deserialize(data)
 

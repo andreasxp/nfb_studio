@@ -34,13 +34,13 @@ from .real_size_item import RealSizeItem
 
 
 class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
-    def __init__(self, text=None, parent=None):
-        &#34;&#34;&#34;A one-line text item.
+    &#34;&#34;&#34;A one-line text item.
 
-        Default origin point is at the left side of the baseline. This can change if setAlignMode is called.
-        TextLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
-        Text must not contain newline characters.
-        &#34;&#34;&#34;
+    Default origin point is at the left side of the baseline. This can change if setAlignMode is called. TextLineItem
+    also supports drawing text background. Its brush can be set using setBackgroundBrush(). Text must not contain
+    newline characters.
+    &#34;&#34;&#34;
+    def __init__(self, text=None, parent=None):
         super().__init__(parent)
 
         self._text = text or &#34;&#34;
@@ -67,8 +67,8 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
         self.adjust()
 
     def setElideMode(self, mode: int) -&gt; None:
-        &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided.
-        Default value is Qt.ElideRight.
+        &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided. Default value is 
+        Qt.ElideRight.
         &#34;&#34;&#34;
         self.prepareGeometryChange()
         self._elide_mode = mode
@@ -77,20 +77,19 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
     def setAlignMode(self, mode: int) -&gt; None:
         &#34;&#34;&#34;Align mode specifies text alignment.
 
-        Text alignment changes the origin point x position:
+        Text alignment changes the origin point x position:  
         - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
         - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
         - If mode is Qt.AlignRight, the origin point is on the right of the baseline.
-        Vertical alignment has no meaning for one line of text and should not be set.
-        Default value is Qt.AlignLeft.
+
+        Vertical alignment has no meaning for one line of text and should not be set. Default value is Qt.AlignLeft.
         &#34;&#34;&#34;
         self.prepareGeometryChange()
         self._align_mode = mode
         self.adjust()
 
     def setMaximumWidth(self, width):
-        &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). None represents unlimited width.
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
         self.prepareGeometryChange()
         self._max_width = width
         self.adjust()
@@ -116,9 +115,7 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
         return self._align_mode
 
     def maximumWidth(self):
-        &#34;&#34;&#34;Maximum width the text is allowed to be (in inches).
-        None represents unlimited width.
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
         return self._max_width
 
     def font(self) -&gt; QFont:
@@ -184,23 +181,22 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
 <span>(</span><span>text=None, parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QAbstractGraphicsShapeItem(self, parent: typing.Union[PySide2.QtWidgets.QGraphicsItem, NoneType] = None)</p>
-<p>A one-line text item.</p>
-<p>Default origin point is at the left side of the baseline. This can change if setAlignMode is called.
-TextLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
-Text must not contain newline characters.</p></section>
+<section class="desc"><p>A one-line text item.</p>
+<p>Default origin point is at the left side of the baseline. This can change if setAlignMode is called. TextLineItem
+also supports drawing text background. Its brush can be set using setBackgroundBrush(). Text must not contain
+newline characters.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
-    def __init__(self, text=None, parent=None):
-        &#34;&#34;&#34;A one-line text item.
+    &#34;&#34;&#34;A one-line text item.
 
-        Default origin point is at the left side of the baseline. This can change if setAlignMode is called.
-        TextLineItem also supports drawing text background. Its brush can be set using setBackgroundBrush().
-        Text must not contain newline characters.
-        &#34;&#34;&#34;
+    Default origin point is at the left side of the baseline. This can change if setAlignMode is called. TextLineItem
+    also supports drawing text background. Its brush can be set using setBackgroundBrush(). Text must not contain
+    newline characters.
+    &#34;&#34;&#34;
+    def __init__(self, text=None, parent=None):
         super().__init__(parent)
 
         self._text = text or &#34;&#34;
@@ -227,8 +223,8 @@ Text must not contain newline characters.</p></section>
         self.adjust()
 
     def setElideMode(self, mode: int) -&gt; None:
-        &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided.
-        Default value is Qt.ElideRight.
+        &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided. Default value is 
+        Qt.ElideRight.
         &#34;&#34;&#34;
         self.prepareGeometryChange()
         self._elide_mode = mode
@@ -237,20 +233,19 @@ Text must not contain newline characters.</p></section>
     def setAlignMode(self, mode: int) -&gt; None:
         &#34;&#34;&#34;Align mode specifies text alignment.
 
-        Text alignment changes the origin point x position:
+        Text alignment changes the origin point x position:  
         - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
         - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
         - If mode is Qt.AlignRight, the origin point is on the right of the baseline.
-        Vertical alignment has no meaning for one line of text and should not be set.
-        Default value is Qt.AlignLeft.
+
+        Vertical alignment has no meaning for one line of text and should not be set. Default value is Qt.AlignLeft.
         &#34;&#34;&#34;
         self.prepareGeometryChange()
         self._align_mode = mode
         self.adjust()
 
     def setMaximumWidth(self, width):
-        &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). None represents unlimited width.
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
         self.prepareGeometryChange()
         self._max_width = width
         self.adjust()
@@ -276,9 +271,7 @@ Text must not contain newline characters.</p></section>
         return self._align_mode
 
     def maximumWidth(self):
-        &#34;&#34;&#34;Maximum width the text is allowed to be (in inches).
-        None represents unlimited width.
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
         return self._max_width
 
     def font(self) -&gt; QFont:
@@ -462,16 +455,13 @@ Text must not contain newline characters.</p></section>
 <span>def <span class="ident">maximumWidth</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Maximum width the text is allowed to be (in inches).
-None represents unlimited width.</p></section>
+<section class="desc"><p>Maximum width the text is allowed to be (in inches). <code>None</code> represents unlimited width.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def maximumWidth(self):
-    &#34;&#34;&#34;Maximum width the text is allowed to be (in inches).
-    None represents unlimited width.
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
     return self._max_width</code></pre>
 </details>
 </dd>
@@ -497,12 +487,11 @@ None represents unlimited width.</p></section>
 </code></dt>
 <dd>
 <section class="desc"><p>Align mode specifies text alignment.</p>
-<p>Text alignment changes the origin point x position:
+<p>Text alignment changes the origin point x position:<br>
 - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
 - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
-- If mode is Qt.AlignRight, the origin point is on the right of the baseline.
-Vertical alignment has no meaning for one line of text and should not be set.
-Default value is Qt.AlignLeft.</p></section>
+- If mode is Qt.AlignRight, the origin point is on the right of the baseline.</p>
+<p>Vertical alignment has no meaning for one line of text and should not be set. Default value is Qt.AlignLeft.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -510,12 +499,12 @@ Default value is Qt.AlignLeft.</p></section>
 <pre><code class="python">def setAlignMode(self, mode: int) -&gt; None:
     &#34;&#34;&#34;Align mode specifies text alignment.
 
-    Text alignment changes the origin point x position:
+    Text alignment changes the origin point x position:  
     - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
     - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
     - If mode is Qt.AlignRight, the origin point is on the right of the baseline.
-    Vertical alignment has no meaning for one line of text and should not be set.
-    Default value is Qt.AlignLeft.
+
+    Vertical alignment has no meaning for one line of text and should not be set. Default value is Qt.AlignLeft.
     &#34;&#34;&#34;
     self.prepareGeometryChange()
     self._align_mode = mode
@@ -539,15 +528,15 @@ Default value is Qt.AlignLeft.</p></section>
 <span>def <span class="ident">setElideMode</span></span>(<span>self, mode)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Elide mode specifies where the ellipsis should be located when the text is elided.
-Default value is Qt.ElideRight.</p></section>
+<section class="desc"><p>Elide mode specifies where the ellipsis should be located when the text is elided. Default value is
+Qt.ElideRight.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def setElideMode(self, mode: int) -&gt; None:
-    &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided.
-    Default value is Qt.ElideRight.
+    &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided. Default value is 
+    Qt.ElideRight.
     &#34;&#34;&#34;
     self.prepareGeometryChange()
     self._elide_mode = mode
@@ -573,14 +562,13 @@ Default value is Qt.ElideRight.</p></section>
 <span>def <span class="ident">setMaximumWidth</span></span>(<span>self, width)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set the maximum width the text is allowed to be (in inches). None represents unlimited width.</p></section>
+<section class="desc"><p>Set the maximum width the text is allowed to be (in inches). <code>None</code> represents unlimited width.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def setMaximumWidth(self, width):
-    &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). None represents unlimited width.
-    &#34;&#34;&#34;
+    &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
     self.prepareGeometryChange()
     self._max_width = width
     self.adjust()</code></pre>

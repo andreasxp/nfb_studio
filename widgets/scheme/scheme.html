@@ -37,17 +37,20 @@ from .connection import Input, Output
 
 
 class Scheme(Graph, QGraphicsScene):
+    &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
+
+    This class is a combination of nfb_studio.widgets.scheme.Graph and a QGraphicsScene, which represents the node graph
+    in a graphical scene that is then displayed by a QGraphicsView. To get a QGraphicsView that is pre-configured to
+    display the contents correcly and has all the necessary shortcuts attached, use the `getView` method.        
+
+    See Also
+    --------
+    nfb_studio.widgets.scheme.Node : Graph node.
+    nfb_studio.widgets.scheme.Edge : Graph edge.
+    nfb_studio.widgets.scheme.Graph : A collection of nodes and edges.
+    &#34;&#34;&#34;
     def __init__(self, parent=None):
-        &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
-
-        This graph holds two sets: a set of nodes and a set of edges.
-        Intended to use inside the scheme.
-
-        See Also
-        --------
-        Node
-        Edge
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the QGraphicsScene.&#34;&#34;&#34;
         Graph.__init__(self)
         QGraphicsScene.__init__(self, parent)
 
@@ -78,15 +81,25 @@ class Scheme(Graph, QGraphicsScene):
             Graph.removeEdge(self, item)
 
     def connect_nodes(self, source: Output, target: Input):
+        &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
+        
+        Returns the newly created edge.
+        &#34;&#34;&#34;
         edge = Graph.connect_nodes(self, source, target)
         QGraphicsScene.addItem(self, edge)
 
         return edge
 
     def disconnect_nodes(self, source: Output, target: Input):
+        &#34;&#34;&#34;Remove a connection between a node output and an input.
+        
+        If output and input are connected more than once, only one edge is removed.
+        Returns the edge that was removed, or None if no such edge was found.
+        &#34;&#34;&#34;
         edge = Graph.disconnect_nodes(self, source, target)
         if edge is not None:
             QGraphicsScene.removeItem(self, edge)
+        return edge
 
     def selectedGraph(self) -&gt; GraphSnapshot:
         &#34;&#34;&#34;Return the selected part of the dataflow graph as a GraphSnapshot.&#34;&#34;&#34;
@@ -157,6 +170,7 @@ class Scheme(Graph, QGraphicsScene):
     # def serialize(self) -&gt; dict: Inherited from Graph
 
     def deserialize(self, data: dict):
+        &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
         # Clear --------------------------------------------------------------------------------------------------------
         for node in self.nodes:
             self.removeItem(node)
@@ -186,29 +200,40 @@ class Scheme(Graph, QGraphicsScene):
 <span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>An abstract (not supposed to be created) base class for Graph and GraphSnapshot.</p>
-<p>A data model for the nfb experiment's system of signals and their components.</p>
-<p>This graph holds two sets: a set of nodes and a set of edges.
-Intended to use inside the scheme.</p>
+<section class="desc"><p>A data model for the nfb experiment's system of signals and their components.</p>
+<p>This class is a combination of nfb_studio.widgets.scheme.Graph and a QGraphicsScene, which represents the node graph
+in a graphical scene that is then displayed by a QGraphicsView. To get a QGraphicsView that is pre-configured to
+display the contents correcly and has all the necessary shortcuts attached, use the <code>getView</code> method.
+</p>
 <h2 id="see-also">See Also</h2>
-<p><code>Node</code>
-<code>Edge</code></p></section>
+<dl>
+<dt><code>nfb_studio.widgets.scheme.Node</code></dt>
+<dd>Graph node.</dd>
+<dt><code>nfb_studio.widgets.scheme.Edge</code></dt>
+<dd>Graph edge.</dd>
+<dt><code>nfb_studio.widgets.scheme.Graph</code></dt>
+<dd>A collection of nodes and edges.</dd>
+</dl>
+<p><code>Constructs a Scheme with an optional</code>parent<code>parameter that is passed to the QGraphicsScene.</code></p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Scheme(Graph, QGraphicsScene):
+    &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
+
+    This class is a combination of nfb_studio.widgets.scheme.Graph and a QGraphicsScene, which represents the node graph
+    in a graphical scene that is then displayed by a QGraphicsView. To get a QGraphicsView that is pre-configured to
+    display the contents correcly and has all the necessary shortcuts attached, use the `getView` method.        
+
+    See Also
+    --------
+    nfb_studio.widgets.scheme.Node : Graph node.
+    nfb_studio.widgets.scheme.Edge : Graph edge.
+    nfb_studio.widgets.scheme.Graph : A collection of nodes and edges.
+    &#34;&#34;&#34;
     def __init__(self, parent=None):
-        &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
-
-        This graph holds two sets: a set of nodes and a set of edges.
-        Intended to use inside the scheme.
-
-        See Also
-        --------
-        Node
-        Edge
-        &#34;&#34;&#34;
+        &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the QGraphicsScene.&#34;&#34;&#34;
         Graph.__init__(self)
         QGraphicsScene.__init__(self, parent)
 
@@ -239,15 +264,25 @@ Intended to use inside the scheme.</p>
             Graph.removeEdge(self, item)
 
     def connect_nodes(self, source: Output, target: Input):
+        &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
+        
+        Returns the newly created edge.
+        &#34;&#34;&#34;
         edge = Graph.connect_nodes(self, source, target)
         QGraphicsScene.addItem(self, edge)
 
         return edge
 
     def disconnect_nodes(self, source: Output, target: Input):
+        &#34;&#34;&#34;Remove a connection between a node output and an input.
+        
+        If output and input are connected more than once, only one edge is removed.
+        Returns the edge that was removed, or None if no such edge was found.
+        &#34;&#34;&#34;
         edge = Graph.disconnect_nodes(self, source, target)
         if edge is not None:
             QGraphicsScene.removeItem(self, edge)
+        return edge
 
     def selectedGraph(self) -&gt; GraphSnapshot:
         &#34;&#34;&#34;Return the selected part of the dataflow graph as a GraphSnapshot.&#34;&#34;&#34;
@@ -318,6 +353,7 @@ Intended to use inside the scheme.</p>
     # def serialize(self) -&gt; dict: Inherited from Graph
 
     def deserialize(self, data: dict):
+        &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
         # Clear --------------------------------------------------------------------------------------------------------
         for node in self.nodes:
             self.removeItem(node)
@@ -373,22 +409,6 @@ Intended to use inside the scheme.</p>
     QGraphicsScene.addItem(self, item)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes"><code class="name flex">
-<span>def <span class="ident">connect_nodes</span></span>(<span>self, source, target)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def connect_nodes(self, source: Output, target: Input):
-    edge = Graph.connect_nodes(self, source, target)
-    QGraphicsScene.addItem(self, edge)
-
-    return edge</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.copySelectedGraph"><code class="name flex">
 <span>def <span class="ident">copySelectedGraph</span></span>(<span>self)</span>
 </code></dt>
@@ -424,12 +444,13 @@ Intended to use inside the scheme.</p>
 <span>def <span class="ident">deserialize</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Deserialize this object from a dict of data.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def deserialize(self, data: dict):
+    &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
     # Clear --------------------------------------------------------------------------------------------------------
     for node in self.nodes:
         self.removeItem(node)
@@ -443,21 +464,6 @@ Intended to use inside the scheme.</p>
 
     for edge in self.edges:
         QGraphicsScene.addItem(self, edge)</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes"><code class="name flex">
-<span>def <span class="ident">disconnect_nodes</span></span>(<span>self, source, target)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def disconnect_nodes(self, source: Output, target: Input):
-    edge = Graph.disconnect_nodes(self, source, target)
-    if edge is not None:
-        QGraphicsScene.removeItem(self, edge)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.getView"><code class="name flex">
@@ -560,6 +566,19 @@ Intended to use inside the scheme.</p>
 </details>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="nfb_studio.widgets.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.scheme.graph.Graph">Graph</a></b></code>:
+<ul class="hlist">
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.addEdge" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.addEdge">addEdge</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.addNode" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.addNode">addNode</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.connect_nodes" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.connect_nodes">connect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.disconnect_nodes" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.disconnect_nodes">disconnect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.removeEdge" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.removeEdge">removeEdge</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.removeNode" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.removeNode">removeNode</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -581,10 +600,8 @@ Intended to use inside the scheme.</p>
 <h4><code><a title="nfb_studio.widgets.scheme.scheme.Scheme" href="#nfb_studio.widgets.scheme.scheme.Scheme">Scheme</a></code></h4>
 <ul class="two-column">
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.addItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.addItem">addItem</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes">connect_nodes</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.copySelectedGraph" href="#nfb_studio.widgets.scheme.scheme.Scheme.copySelectedGraph">copySelectedGraph</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deserialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes">disconnect_nodes</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.getView" href="#nfb_studio.widgets.scheme.scheme.Scheme.getView">getView</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.paste" href="#nfb_studio.widgets.scheme.scheme.Scheme.paste">paste</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.removeItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.removeItem">removeItem</a></code></li>
