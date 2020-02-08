@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
 <title>nfb_studio.serialize.qt_hooks API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="A collection of object_hooks for serializing and deserializing some common Qt objects." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,11 +20,13 @@
 <h1 class="title">Module <code>nfb_studio.serialize.qt_hooks</code></h1>
 </header>
 <section id="section-intro">
+<p>A collection of object_hooks for serializing and deserializing some common Qt objects.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from Qt.QtCore import QPointF, QSizeF
+<pre><code class="python">&#34;&#34;&#34;A collection of object_hooks for serializing and deserializing some common Qt objects.&#34;&#34;&#34;
+from Qt.QtCore import QPointF, QSizeF
 
 
 def serialize_QPointF(obj: QPointF) -&gt; dict:
@@ -55,16 +57,29 @@ serialize_qt = {
     QPointF: serialize_QPointF,
     QSizeF: serialize_QSizeF
 }
+&#34;&#34;&#34;An `object_hooks` Qt dict for the `nfb_studio.serialize.encoder.ObjectEncoder`.&#34;&#34;&#34;
 
 deserialize_qt = {
     QPointF: deserialize_QPointF,
     QSizeF: deserialize_QSizeF
-}</code></pre>
+}
+&#34;&#34;&#34;An `object_hooks` Qt dict for the `nfb_studio.serialize.decoder.ObjectDecoder`.&#34;&#34;&#34;</code></pre>
 </details>
 </section>
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="nfb_studio.serialize.qt_hooks.deserialize_qt"><code class="name">var <span class="ident">deserialize_qt</span></code></dt>
+<dd>
+<section class="desc"><p>An <code>object_hooks</code> Qt dict for the <a title="nfb_studio.serialize.decoder.ObjectDecoder" href="decoder.html#nfb_studio.serialize.decoder.ObjectDecoder"><code>ObjectDecoder</code></a>.</p></section>
+</dd>
+<dt id="nfb_studio.serialize.qt_hooks.serialize_qt"><code class="name">var <span class="ident">serialize_qt</span></code></dt>
+<dd>
+<section class="desc"><p>An <code>object_hooks</code> Qt dict for the <a title="nfb_studio.serialize.encoder.ObjectEncoder" href="encoder.html#nfb_studio.serialize.encoder.ObjectEncoder"><code>ObjectEncoder</code></a>.</p></section>
+</dd>
+</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
@@ -143,6 +158,12 @@ deserialize_qt = {
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="nfb_studio.serialize" href="index.html">nfb_studio.serialize</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="nfb_studio.serialize.qt_hooks.deserialize_qt" href="#nfb_studio.serialize.qt_hooks.deserialize_qt">deserialize_qt</a></code></li>
+<li><code><a title="nfb_studio.serialize.qt_hooks.serialize_qt" href="#nfb_studio.serialize.qt_hooks.serialize_qt">serialize_qt</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>

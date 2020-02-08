@@ -60,6 +60,7 @@ class ObjectEncoder(JSONEncoder):
     &#34;&#34;&#34;JSON encoder that provides tools to serialize custom objects.
 
     You can add support for serializing your class in two ways:
+
     - By adding a member function to your class: `def serialize(self) -&gt; dict`;
     - By adding an external function `def serialize(obj) -&gt; dict` and passing it in a dict as the `object_hooks`
     parameter. (`object_hooks` is a dict that matches a class to a serialization function.)
@@ -69,23 +70,25 @@ class ObjectEncoder(JSONEncoder):
     that object&#39;s place in json.
     Functions in the `object_hooks` parameter take precedence over member functions.
 
-    Warnings
-    --------
-    ObjectEncoder adds a field to the dict, produced from the object, called `__class__`. This field is used in the
-    ObjectDecoder to create an instance of the class, where json data is then deserialized.
-    Do not write anything in this field yourself - it will be overwritten.
+    .. warning::
+        ObjectEncoder adds a field to the dict, produced from the object, called `__class__`. This field is used in the
+        ObjectDecoder to create an instance of the class, where json data is then deserialized.
+        Do not write anything in this field yourself - it will be overwritten.
 
     See Also
     --------
-    ObjectDecoder : An object-aware JSON decoder.
+    nfb_studio.serialize.decoder.ObjectDecoder : An object-aware JSON decoder.
     &#34;&#34;&#34;
+
     def __init__(self, *, object_hooks: dict = None, skipkeys=False, ensure_ascii=False, check_circular=True,
                  allow_nan=True, sort_keys=False, indent=None, separators=None):
+        &#34;&#34;&#34;&#34;&#34;&#34;
         super().__init__(skipkeys=skipkeys, ensure_ascii=ensure_ascii, check_circular=check_circular,
                          allow_nan=allow_nan, sort_keys=sort_keys, indent=indent, separators=separators)
         self.object_hooks = object_hooks or {}
 
     def default(self, obj):
+        &#34;&#34;&#34;Implementation of `JSONEncoder`&#39;s `default` method that enables the serialization logic.&#34;&#34;&#34;
         if type(obj) in self.object_hooks:
             data = self.object_hooks[type(obj)](obj)
             _write_metadata(obj, data)
@@ -115,59 +118,27 @@ class ObjectEncoder(JSONEncoder):
 </code></dt>
 <dd>
 <section class="desc"><p>JSON encoder that provides tools to serialize custom objects.</p>
-<p>You can add support for serializing your class in two ways:
-- By adding a member function to your class: <code>def serialize(self) -&gt; dict</code>;
-- By adding an external function <code>def serialize(obj) -&gt; dict</code> and passing it in a dict as the <code>object_hooks</code>
-parameter. (<code>object_hooks</code> is a dict that matches a class to a serialization function.)</p>
+<p>You can add support for serializing your class in two ways:</p>
+<ul>
+<li>By adding a member function to your class: <code>def serialize(self) -&gt; dict</code>;</li>
+<li>By adding an external function <code>def serialize(obj) -&gt; dict</code> and passing it in a dict as the <code>object_hooks</code>
+parameter. (<code>object_hooks</code> is a dict that matches a class to a serialization function.)</li>
+</ul>
 <p>When serializing an object, this encoder checks if that object's class has a function in <code>object_hooks</code> or has a
 callable serialize() attribute. If that is the case, the resulting dict from calling the function will be used in
 that object's place in json.
 Functions in the <code>object_hooks</code> parameter take precedence over member functions.</p>
-<h2 id="warnings">Warnings</h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
 <p>ObjectEncoder adds a field to the dict, produced from the object, called <code>__class__</code>. This field is used in the
 ObjectDecoder to create an instance of the class, where json data is then deserialized.
 Do not write anything in this field yourself - it will be overwritten.</p>
+</div>
 <h2 id="see-also">See Also</h2>
 <dl>
-<dt><code>ObjectDecoder</code></dt>
+<dt><a title="nfb_studio.serialize.decoder.ObjectDecoder" href="decoder.html#nfb_studio.serialize.decoder.ObjectDecoder"><code>ObjectDecoder</code></a></dt>
 <dd>An object-aware JSON decoder.</dd>
-</dl>
-<p><code>Constructor for JSONEncoder</code>, <code>with sensible defaults.</code></p>
-<p><code>If skipkeys is false</code>, <code>then it is a TypeError to attempt</code>
-<code>encoding of keys that are not str</code>, <code>int</code>, <code>float or None.
-If</code>
-<code>skipkeys is True</code>, <code>such items are simply skipped.</code></p>
-<p><code>If ensure_ascii is true</code>, <code>the output is guaranteed to be str</code>
-<code>objects with all incoming non-ASCII characters escaped.
-If</code>
-<code>ensure_ascii is false</code>, <code>the output can contain non-ASCII characters.</code></p>
-<p><code>If check_circular is true</code>, <code>then lists</code>, <code>dicts</code>, <code>and custom encoded</code>
-<code>objects will be checked for circular references during encoding to</code>
-<code>prevent an infinite recursion (which would cause an OverflowError).</code>
-<code>Otherwise</code>, <code>no such check takes place.</code></p>
-<p><code>If allow_nan is true</code>, <code>then NaN</code>, <code>Infinity</code>, <code>and -Infinity will be</code>
-<code>encoded as such.
-This behavior is not JSON specification compliant,</code>
-<code>but is consistent with most JavaScript based encoders and decoders.</code>
-<code>Otherwise</code>, <code>it will be a ValueError to encode such floats.</code></p>
-<p><code>If sort_keys is true</code>, <code>then the output of dictionaries will be</code>
-<code>sorted by key; this is useful for regression tests to ensure</code>
-<code>that JSON serializations can be compared on a day-to-day basis.</code></p>
-<p><code>If indent is a non-negative integer</code>, <code>then JSON array</code>
-<code>elements and object members will be pretty-printed with that</code>
-<code>indent level.
-An indent level of 0 will only insert newlines.</code>
-<code>None is the most compact representation.</code></p>
-<p><code>If specified</code>, <code>separators should be an (item_separator</code>, <code>key_separator)</code>
-<code>tuple.
-The default is ('</code>, <code>'</code>, <code>': ') if *indent* is ``None`` and</code>
-<code>(','</code>, <code>': ') otherwise.
-To get the most compact JSON representation,</code>
-<code>you should specify (','</code>, <code>':') to eliminate whitespace.</code></p>
-<p><code>If specified</code>, <code>default is a function that gets called for objects</code>
-<code>that can't otherwise be serialized.
-It should return a JSON encodable</code>
-<code>version of the object or raise a ``TypeError``.</code></p></section>
+</dl></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -176,6 +147,7 @@ It should return a JSON encodable</code>
     &#34;&#34;&#34;JSON encoder that provides tools to serialize custom objects.
 
     You can add support for serializing your class in two ways:
+
     - By adding a member function to your class: `def serialize(self) -&gt; dict`;
     - By adding an external function `def serialize(obj) -&gt; dict` and passing it in a dict as the `object_hooks`
     parameter. (`object_hooks` is a dict that matches a class to a serialization function.)
@@ -185,23 +157,25 @@ It should return a JSON encodable</code>
     that object&#39;s place in json.
     Functions in the `object_hooks` parameter take precedence over member functions.
 
-    Warnings
-    --------
-    ObjectEncoder adds a field to the dict, produced from the object, called `__class__`. This field is used in the
-    ObjectDecoder to create an instance of the class, where json data is then deserialized.
-    Do not write anything in this field yourself - it will be overwritten.
+    .. warning::
+        ObjectEncoder adds a field to the dict, produced from the object, called `__class__`. This field is used in the
+        ObjectDecoder to create an instance of the class, where json data is then deserialized.
+        Do not write anything in this field yourself - it will be overwritten.
 
     See Also
     --------
-    ObjectDecoder : An object-aware JSON decoder.
+    nfb_studio.serialize.decoder.ObjectDecoder : An object-aware JSON decoder.
     &#34;&#34;&#34;
+
     def __init__(self, *, object_hooks: dict = None, skipkeys=False, ensure_ascii=False, check_circular=True,
                  allow_nan=True, sort_keys=False, indent=None, separators=None):
+        &#34;&#34;&#34;&#34;&#34;&#34;
         super().__init__(skipkeys=skipkeys, ensure_ascii=ensure_ascii, check_circular=check_circular,
                          allow_nan=allow_nan, sort_keys=sort_keys, indent=indent, separators=separators)
         self.object_hooks = object_hooks or {}
 
     def default(self, obj):
+        &#34;&#34;&#34;Implementation of `JSONEncoder`&#39;s `default` method that enables the serialization logic.&#34;&#34;&#34;
         if type(obj) in self.object_hooks:
             data = self.object_hooks[type(obj)](obj)
             _write_metadata(obj, data)
@@ -225,26 +199,13 @@ It should return a JSON encodable</code>
 <span>def <span class="ident">default</span></span>(<span>self, obj)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Implement this method in a subclass such that it returns
-a serializable object for <code>o</code>, or calls the base implementation
-(to raise a <code>TypeError</code>).</p>
-<p>For example, to support arbitrary iterators, you could
-implement default like this::</p>
-<pre><code>def default(self, o):
-    try:
-        iterable = iter(o)
-    except TypeError:
-        pass
-    else:
-        return list(iterable)
-    # Let the base class default method raise the TypeError
-    return JSONEncoder.default(self, o)
-</code></pre></section>
+<section class="desc"><p>Implementation of <code>JSONEncoder</code>'s <code>default</code> method that enables the serialization logic.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def default(self, obj):
+    &#34;&#34;&#34;Implementation of `JSONEncoder`&#39;s `default` method that enables the serialization logic.&#34;&#34;&#34;
     if type(obj) in self.object_hooks:
         data = self.object_hooks[type(obj)](obj)
         _write_metadata(obj, data)

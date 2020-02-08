@@ -24,16 +24,19 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from Qt.QtCore import Qt
-from Qt.QtGui import QPainter
-from Qt.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsItem
+<pre><code class="python">from Qt.QtCore import Qt, QPointF, QMimeData
+from Qt.QtGui import QPainter, QKeySequence
+from Qt.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsItem, QShortcut, QApplication
 
+from nfb_studio import bytestr_encoder as encoder, standard_decoder as decoder
+
+from .graph import Graph, GraphSnapshot
 from .node import Node
 from .edge import Edge
 from .connection import Input, Output
 
 
-class Scheme(QGraphicsScene):
+class Scheme(Graph, QGraphicsScene):
     def __init__(self, parent=None):
         &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
 
@@ -45,69 +48,95 @@ class Scheme(QGraphicsScene):
         Node
         Edge
         &#34;&#34;&#34;
-        super().__init__(parent)
-
-        self.nodes = set()
-        self.edges = set()
+        Graph.__init__(self)
+        QGraphicsScene.__init__(self, parent)
 
     def addItem(self, item: QGraphicsItem):
         &#34;&#34;&#34;Add an item to the scene.
 
         An override of QGraphicsScene.addItem method that detects when a node or edge was added.
         &#34;&#34;&#34;
-        super().addItem(item)
-
         if isinstance(item, Node):
-            self.nodes.add(item)
+            Graph.addNode(self, item)
 
         if isinstance(item, Edge):
-            # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
-            if (item.source_node() is None or item.source_node() in self.nodes) and \
-               (item.target_node() is None or item.target_node() in self.nodes):
-                # Ensure that the connections know about this edge
-                item.source().edges.add(item)
-                item.target().edges.add(item)
+            Graph.addEdge(self, item)
 
-                self.edges.add(item)
+        QGraphicsScene.addItem(self, item)
 
     def removeItem(self, item):
         &#34;&#34;&#34;Add an item to the scene.
 
         An override of QGraphicsScene.removeItem method that detects when a node or edge was removed.
         &#34;&#34;&#34;
-        super().removeItem(item)
+        QGraphicsScene.removeItem(self, item)
 
         if isinstance(item, Node):
-            self.nodes.remove(item)
-
-            # If a node is removed, all edges incoming and outgoing are removed too
-            for edge in self.edges:
-                if edge.source_node() == item or edge.target_node() == item:
-                    self.removeItem(edge)
+            Graph.removeNode(self, item)
 
         if isinstance(item, Edge):
-            self.edges.remove(item)
-
-            item.source().edges.remove(item)
-            item.target().edges.remove(item)
+            Graph.removeEdge(self, item)
 
     def connect_nodes(self, source: Output, target: Input):
-        edge = Edge()
+        edge = Graph.connect_nodes(self, source, target)
+        QGraphicsScene.addItem(self, edge)
 
-        edge.setSource(source)
-        edge.setTarget(target)
-
-        source.edges.add(edge)
-        target.edges.add(edge)
-
-        self.addItem(edge)
         return edge
 
     def disconnect_nodes(self, source: Output, target: Input):
-        for edge in self.edges:
-            if edge.source() == source and edge.target() == target:
-                self.removeItem(edge)
-                break
+        edge = Graph.disconnect_nodes(self, source, target)
+        if edge is not None:
+            QGraphicsScene.removeItem(self, edge)
+
+    def selectedGraph(self) -&gt; GraphSnapshot:
+        &#34;&#34;&#34;Return the selected part of the dataflow graph as a GraphSnapshot.&#34;&#34;&#34;
+        result = GraphSnapshot()
+
+        selected_nodes = [node for node in self.nodes if node.isSelected()]
+        selected_edges = [edge for edge in self.edges if edge.isShadowSelected()]
+
+        result.nodes = frozenset(selected_nodes)
+        result.edges = frozenset(selected_edges)
+
+        return result
+
+    def copySelectedGraph(self):
+        &#34;&#34;&#34;Copies the selected graph and places it in the clipboard.&#34;&#34;&#34;
+        snapshot = self.selectedGraph()
+
+        package = QMimeData()
+        package.setText(encoder.encode(snapshot))
+
+        clipboard = QApplication.clipboard()
+        clipboard.setMimeData(package)
+
+        &#39;&#39;&#39;
+        snapshot = self.selectedGraph()
+        bstr = QByteArray(bytes(encoder.encode(snapshot), &#34;ascii&#34;))
+
+        package = QMimeData()
+        package.setData(&#34;application/x-nfb_graph+json&#34;, bstr)
+
+        clipboard = QApplication.clipboard()
+        clipboard.setMimeData(package)
+        &#39;&#39;&#39;
+
+    def paste(self):
+        &#34;&#34;&#34;Retrieves the data from a clipboard and pastes it.&#34;&#34;&#34;
+        clipboard = QApplication.clipboard()
+        package = clipboard.mimeData()
+
+        if package.hasText():
+            self.clearSelection()
+
+            data = package.text()
+            snapshot: GraphSnapshot = decoder.decode(data)
+
+            for node in snapshot.nodes:
+                node.setPosition(node.position() + QPointF(0.5, 0.5))
+                self.addItem(node)
+            for edge in snapshot.edges:
+                self.addItem(edge)
 
     def getView(self) -&gt; QGraphicsView:
         &#34;&#34;&#34;Generate and return a new QGraphicsView, configured for optimal viewing.&#34;&#34;&#34;
@@ -117,60 +146,30 @@ class Scheme(QGraphicsScene):
         v.setRenderHint(QPainter.Antialiasing)
         v.setRenderHint(QPainter.SmoothPixmapTransform)
 
+        copy_shortcut = QShortcut(QKeySequence.Copy, v)
+        copy_shortcut.activated.connect(self.copySelectedGraph)
+
+        paste_shortcut = QShortcut(QKeySequence.Paste, v)
+        paste_shortcut.activated.connect(self.paste)
+
         return v
 
-    def serialize(self) -&gt; dict:
-        data = {}
-
-        # Serialize nodes ----------------------------------------------------------------------------------------------
-        nodes = list(self.nodes)
-        data[&#34;nodes&#34;] = nodes
-
-        # Serialize edges ----------------------------------------------------------------------------------------------
-        data[&#34;edges&#34;] = []
-
-        for edge in self.edges:
-            source_node = edge.source_node()
-            target_node = edge.target_node()
-
-            if source_node is None or target_node is None:
-                # Not serializing dangling nodes
-                continue
-
-            edge_data = {
-                &#34;source&#34;: {
-                    &#34;node_index&#34;: nodes.index(source_node),
-                    &#34;connection_index&#34;: source_node.outputs.index(edge.source())
-                },
-                &#34;target&#34;: {
-                    &#34;node_index&#34;: nodes.index(target_node),
-                    &#34;connection_index&#34;: target_node.inputs.index(edge.target())
-                }
-            }
-
-            data[&#34;edges&#34;].append(edge_data)
-
-        return data
+    # def serialize(self) -&gt; dict: Inherited from Graph
 
     def deserialize(self, data: dict):
         # Clear --------------------------------------------------------------------------------------------------------
         for node in self.nodes:
             self.removeItem(node)
 
-        # Deserialize nodes --------------------------------------------------------------------------------------------
-        for node in data[&#34;nodes&#34;]:
-            self.addItem(node)
-            print(node.outputs)
+        # Deserialize as graph -----------------------------------------------------------------------------------------
+        Graph.deserialize(self, data)
 
-        # Deserialize edges --------------------------------------------------------------------------------------------
-        for edge_data in data[&#34;edges&#34;]:
-            source_node = data[&#34;nodes&#34;][edge_data[&#34;source&#34;][&#34;node_index&#34;]]
-            target_node = data[&#34;nodes&#34;][edge_data[&#34;target&#34;][&#34;node_index&#34;]]
+        # Bring the scene up to speed ----------------------------------------------------------------------------------
+        for node in self.nodes:
+            QGraphicsScene.addItem(self, node)
 
-            source = source_node.outputs[edge_data[&#34;source&#34;][&#34;connection_index&#34;]]
-            target = target_node.inputs[edge_data[&#34;target&#34;][&#34;connection_index&#34;]]
-
-            self.connect_nodes(source, target)</code></pre>
+        for edge in self.edges:
+            QGraphicsScene.addItem(self, edge)</code></pre>
 </details>
 </section>
 <section>
@@ -187,9 +186,7 @@ class Scheme(QGraphicsScene):
 <span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QGraphicsScene(self, parent: typing.Union[PySide2.QtCore.QObject, NoneType] = None)
-QGraphicsScene(self, sceneRect: PySide2.QtCore.QRectF, parent: typing.Union[PySide2.QtCore.QObject, NoneType] = None)
-QGraphicsScene(self, x: float, y: float, width: float, height: float, parent: typing.Union[PySide2.QtCore.QObject, NoneType] = None)</p>
+<section class="desc"><p>An abstract (not supposed to be created) base class for Graph and GraphSnapshot.</p>
 <p>A data model for the nfb experiment's system of signals and their components.</p>
 <p>This graph holds two sets: a set of nodes and a set of edges.
 Intended to use inside the scheme.</p>
@@ -200,7 +197,7 @@ Intended to use inside the scheme.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Scheme(QGraphicsScene):
+<pre><code class="python">class Scheme(Graph, QGraphicsScene):
     def __init__(self, parent=None):
         &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
 
@@ -212,69 +209,95 @@ Intended to use inside the scheme.</p>
         Node
         Edge
         &#34;&#34;&#34;
-        super().__init__(parent)
-
-        self.nodes = set()
-        self.edges = set()
+        Graph.__init__(self)
+        QGraphicsScene.__init__(self, parent)
 
     def addItem(self, item: QGraphicsItem):
         &#34;&#34;&#34;Add an item to the scene.
 
         An override of QGraphicsScene.addItem method that detects when a node or edge was added.
         &#34;&#34;&#34;
-        super().addItem(item)
-
         if isinstance(item, Node):
-            self.nodes.add(item)
+            Graph.addNode(self, item)
 
         if isinstance(item, Edge):
-            # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
-            if (item.source_node() is None or item.source_node() in self.nodes) and \
-               (item.target_node() is None or item.target_node() in self.nodes):
-                # Ensure that the connections know about this edge
-                item.source().edges.add(item)
-                item.target().edges.add(item)
+            Graph.addEdge(self, item)
 
-                self.edges.add(item)
+        QGraphicsScene.addItem(self, item)
 
     def removeItem(self, item):
         &#34;&#34;&#34;Add an item to the scene.
 
         An override of QGraphicsScene.removeItem method that detects when a node or edge was removed.
         &#34;&#34;&#34;
-        super().removeItem(item)
+        QGraphicsScene.removeItem(self, item)
 
         if isinstance(item, Node):
-            self.nodes.remove(item)
-
-            # If a node is removed, all edges incoming and outgoing are removed too
-            for edge in self.edges:
-                if edge.source_node() == item or edge.target_node() == item:
-                    self.removeItem(edge)
+            Graph.removeNode(self, item)
 
         if isinstance(item, Edge):
-            self.edges.remove(item)
-
-            item.source().edges.remove(item)
-            item.target().edges.remove(item)
+            Graph.removeEdge(self, item)
 
     def connect_nodes(self, source: Output, target: Input):
-        edge = Edge()
+        edge = Graph.connect_nodes(self, source, target)
+        QGraphicsScene.addItem(self, edge)
 
-        edge.setSource(source)
-        edge.setTarget(target)
-
-        source.edges.add(edge)
-        target.edges.add(edge)
-
-        self.addItem(edge)
         return edge
 
     def disconnect_nodes(self, source: Output, target: Input):
-        for edge in self.edges:
-            if edge.source() == source and edge.target() == target:
-                self.removeItem(edge)
-                break
+        edge = Graph.disconnect_nodes(self, source, target)
+        if edge is not None:
+            QGraphicsScene.removeItem(self, edge)
+
+    def selectedGraph(self) -&gt; GraphSnapshot:
+        &#34;&#34;&#34;Return the selected part of the dataflow graph as a GraphSnapshot.&#34;&#34;&#34;
+        result = GraphSnapshot()
+
+        selected_nodes = [node for node in self.nodes if node.isSelected()]
+        selected_edges = [edge for edge in self.edges if edge.isShadowSelected()]
+
+        result.nodes = frozenset(selected_nodes)
+        result.edges = frozenset(selected_edges)
+
+        return result
+
+    def copySelectedGraph(self):
+        &#34;&#34;&#34;Copies the selected graph and places it in the clipboard.&#34;&#34;&#34;
+        snapshot = self.selectedGraph()
+
+        package = QMimeData()
+        package.setText(encoder.encode(snapshot))
+
+        clipboard = QApplication.clipboard()
+        clipboard.setMimeData(package)
+
+        &#39;&#39;&#39;
+        snapshot = self.selectedGraph()
+        bstr = QByteArray(bytes(encoder.encode(snapshot), &#34;ascii&#34;))
+
+        package = QMimeData()
+        package.setData(&#34;application/x-nfb_graph+json&#34;, bstr)
+
+        clipboard = QApplication.clipboard()
+        clipboard.setMimeData(package)
+        &#39;&#39;&#39;
+
+    def paste(self):
+        &#34;&#34;&#34;Retrieves the data from a clipboard and pastes it.&#34;&#34;&#34;
+        clipboard = QApplication.clipboard()
+        package = clipboard.mimeData()
+
+        if package.hasText():
+            self.clearSelection()
+
+            data = package.text()
+            snapshot: GraphSnapshot = decoder.decode(data)
+
+            for node in snapshot.nodes:
+                node.setPosition(node.position() + QPointF(0.5, 0.5))
+                self.addItem(node)
+            for edge in snapshot.edges:
+                self.addItem(edge)
 
     def getView(self) -&gt; QGraphicsView:
         &#34;&#34;&#34;Generate and return a new QGraphicsView, configured for optimal viewing.&#34;&#34;&#34;
@@ -284,63 +307,35 @@ Intended to use inside the scheme.</p>
         v.setRenderHint(QPainter.Antialiasing)
         v.setRenderHint(QPainter.SmoothPixmapTransform)
 
+        copy_shortcut = QShortcut(QKeySequence.Copy, v)
+        copy_shortcut.activated.connect(self.copySelectedGraph)
+
+        paste_shortcut = QShortcut(QKeySequence.Paste, v)
+        paste_shortcut.activated.connect(self.paste)
+
         return v
 
-    def serialize(self) -&gt; dict:
-        data = {}
-
-        # Serialize nodes ----------------------------------------------------------------------------------------------
-        nodes = list(self.nodes)
-        data[&#34;nodes&#34;] = nodes
-
-        # Serialize edges ----------------------------------------------------------------------------------------------
-        data[&#34;edges&#34;] = []
-
-        for edge in self.edges:
-            source_node = edge.source_node()
-            target_node = edge.target_node()
-
-            if source_node is None or target_node is None:
-                # Not serializing dangling nodes
-                continue
-
-            edge_data = {
-                &#34;source&#34;: {
-                    &#34;node_index&#34;: nodes.index(source_node),
-                    &#34;connection_index&#34;: source_node.outputs.index(edge.source())
-                },
-                &#34;target&#34;: {
-                    &#34;node_index&#34;: nodes.index(target_node),
-                    &#34;connection_index&#34;: target_node.inputs.index(edge.target())
-                }
-            }
-
-            data[&#34;edges&#34;].append(edge_data)
-
-        return data
+    # def serialize(self) -&gt; dict: Inherited from Graph
 
     def deserialize(self, data: dict):
         # Clear --------------------------------------------------------------------------------------------------------
         for node in self.nodes:
             self.removeItem(node)
 
-        # Deserialize nodes --------------------------------------------------------------------------------------------
-        for node in data[&#34;nodes&#34;]:
-            self.addItem(node)
-            print(node.outputs)
+        # Deserialize as graph -----------------------------------------------------------------------------------------
+        Graph.deserialize(self, data)
 
-        # Deserialize edges --------------------------------------------------------------------------------------------
-        for edge_data in data[&#34;edges&#34;]:
-            source_node = data[&#34;nodes&#34;][edge_data[&#34;source&#34;][&#34;node_index&#34;]]
-            target_node = data[&#34;nodes&#34;][edge_data[&#34;target&#34;][&#34;node_index&#34;]]
+        # Bring the scene up to speed ----------------------------------------------------------------------------------
+        for node in self.nodes:
+            QGraphicsScene.addItem(self, node)
 
-            source = source_node.outputs[edge_data[&#34;source&#34;][&#34;connection_index&#34;]]
-            target = target_node.inputs[edge_data[&#34;target&#34;][&#34;connection_index&#34;]]
-
-            self.connect_nodes(source, target)</code></pre>
+        for edge in self.edges:
+            QGraphicsScene.addItem(self, edge)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li><a title="nfb_studio.widgets.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.scheme.graph.Graph">Graph</a></li>
+<li><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase" href="graph.html#nfb_studio.widgets.scheme.graph.AbstractGraphBase">AbstractGraphBase</a></li>
 <li>PySide2.QtWidgets.QGraphicsScene</li>
 <li>PySide2.QtCore.QObject</li>
 <li>Shiboken.Object</li>
@@ -369,20 +364,13 @@ Intended to use inside the scheme.</p>
 
     An override of QGraphicsScene.addItem method that detects when a node or edge was added.
     &#34;&#34;&#34;
-    super().addItem(item)
-
     if isinstance(item, Node):
-        self.nodes.add(item)
+        Graph.addNode(self, item)
 
     if isinstance(item, Edge):
-        # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
-        if (item.source_node() is None or item.source_node() in self.nodes) and \
-           (item.target_node() is None or item.target_node() in self.nodes):
-            # Ensure that the connections know about this edge
-            item.source().edges.add(item)
-            item.target().edges.add(item)
+        Graph.addEdge(self, item)
 
-            self.edges.add(item)</code></pre>
+    QGraphicsScene.addItem(self, item)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes"><code class="name flex">
@@ -395,16 +383,41 @@ Intended to use inside the scheme.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def connect_nodes(self, source: Output, target: Input):
-    edge = Edge()
+    edge = Graph.connect_nodes(self, source, target)
+    QGraphicsScene.addItem(self, edge)
 
-    edge.setSource(source)
-    edge.setTarget(target)
-
-    source.edges.add(edge)
-    target.edges.add(edge)
-
-    self.addItem(edge)
     return edge</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.copySelectedGraph"><code class="name flex">
+<span>def <span class="ident">copySelectedGraph</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Copies the selected graph and places it in the clipboard.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copySelectedGraph(self):
+    &#34;&#34;&#34;Copies the selected graph and places it in the clipboard.&#34;&#34;&#34;
+    snapshot = self.selectedGraph()
+
+    package = QMimeData()
+    package.setText(encoder.encode(snapshot))
+
+    clipboard = QApplication.clipboard()
+    clipboard.setMimeData(package)
+
+    &#39;&#39;&#39;
+    snapshot = self.selectedGraph()
+    bstr = QByteArray(bytes(encoder.encode(snapshot), &#34;ascii&#34;))
+
+    package = QMimeData()
+    package.setData(&#34;application/x-nfb_graph+json&#34;, bstr)
+
+    clipboard = QApplication.clipboard()
+    clipboard.setMimeData(package)
+    &#39;&#39;&#39;</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.deserialize"><code class="name flex">
@@ -421,20 +434,15 @@ Intended to use inside the scheme.</p>
     for node in self.nodes:
         self.removeItem(node)
 
-    # Deserialize nodes --------------------------------------------------------------------------------------------
-    for node in data[&#34;nodes&#34;]:
-        self.addItem(node)
-        print(node.outputs)
+    # Deserialize as graph -----------------------------------------------------------------------------------------
+    Graph.deserialize(self, data)
 
-    # Deserialize edges --------------------------------------------------------------------------------------------
-    for edge_data in data[&#34;edges&#34;]:
-        source_node = data[&#34;nodes&#34;][edge_data[&#34;source&#34;][&#34;node_index&#34;]]
-        target_node = data[&#34;nodes&#34;][edge_data[&#34;target&#34;][&#34;node_index&#34;]]
+    # Bring the scene up to speed ----------------------------------------------------------------------------------
+    for node in self.nodes:
+        QGraphicsScene.addItem(self, node)
 
-        source = source_node.outputs[edge_data[&#34;source&#34;][&#34;connection_index&#34;]]
-        target = target_node.inputs[edge_data[&#34;target&#34;][&#34;connection_index&#34;]]
-
-        self.connect_nodes(source, target)</code></pre>
+    for edge in self.edges:
+        QGraphicsScene.addItem(self, edge)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes"><code class="name flex">
@@ -447,10 +455,9 @@ Intended to use inside the scheme.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def disconnect_nodes(self, source: Output, target: Input):
-    for edge in self.edges:
-        if edge.source() == source and edge.target() == target:
-            self.removeItem(edge)
-            break</code></pre>
+    edge = Graph.disconnect_nodes(self, source, target)
+    if edge is not None:
+        QGraphicsScene.removeItem(self, edge)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.getView"><code class="name flex">
@@ -470,7 +477,40 @@ Intended to use inside the scheme.</p>
     v.setRenderHint(QPainter.Antialiasing)
     v.setRenderHint(QPainter.SmoothPixmapTransform)
 
+    copy_shortcut = QShortcut(QKeySequence.Copy, v)
+    copy_shortcut.activated.connect(self.copySelectedGraph)
+
+    paste_shortcut = QShortcut(QKeySequence.Paste, v)
+    paste_shortcut.activated.connect(self.paste)
+
     return v</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.paste"><code class="name flex">
+<span>def <span class="ident">paste</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Retrieves the data from a clipboard and pastes it.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paste(self):
+    &#34;&#34;&#34;Retrieves the data from a clipboard and pastes it.&#34;&#34;&#34;
+    clipboard = QApplication.clipboard()
+    package = clipboard.mimeData()
+
+    if package.hasText():
+        self.clearSelection()
+
+        data = package.text()
+        snapshot: GraphSnapshot = decoder.decode(data)
+
+        for node in snapshot.nodes:
+            node.setPosition(node.position() + QPointF(0.5, 0.5))
+            self.addItem(node)
+        for edge in snapshot.edges:
+            self.addItem(edge)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.removeItem"><code class="name flex">
@@ -488,64 +528,35 @@ Intended to use inside the scheme.</p>
 
     An override of QGraphicsScene.removeItem method that detects when a node or edge was removed.
     &#34;&#34;&#34;
-    super().removeItem(item)
+    QGraphicsScene.removeItem(self, item)
 
     if isinstance(item, Node):
-        self.nodes.remove(item)
-
-        # If a node is removed, all edges incoming and outgoing are removed too
-        for edge in self.edges:
-            if edge.source_node() == item or edge.target_node() == item:
-                self.removeItem(edge)
+        Graph.removeNode(self, item)
 
     if isinstance(item, Edge):
-        self.edges.remove(item)
-
-        item.source().edges.remove(item)
-        item.target().edges.remove(item)</code></pre>
+        Graph.removeEdge(self, item)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.serialize"><code class="name flex">
-<span>def <span class="ident">serialize</span></span>(<span>self)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.selectedGraph"><code class="name flex">
+<span>def <span class="ident">selectedGraph</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>Return the selected part of the dataflow graph as a GraphSnapshot.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def serialize(self) -&gt; dict:
-    data = {}
+<pre><code class="python">def selectedGraph(self) -&gt; GraphSnapshot:
+    &#34;&#34;&#34;Return the selected part of the dataflow graph as a GraphSnapshot.&#34;&#34;&#34;
+    result = GraphSnapshot()
 
-    # Serialize nodes ----------------------------------------------------------------------------------------------
-    nodes = list(self.nodes)
-    data[&#34;nodes&#34;] = nodes
+    selected_nodes = [node for node in self.nodes if node.isSelected()]
+    selected_edges = [edge for edge in self.edges if edge.isShadowSelected()]
 
-    # Serialize edges ----------------------------------------------------------------------------------------------
-    data[&#34;edges&#34;] = []
+    result.nodes = frozenset(selected_nodes)
+    result.edges = frozenset(selected_edges)
 
-    for edge in self.edges:
-        source_node = edge.source_node()
-        target_node = edge.target_node()
-
-        if source_node is None or target_node is None:
-            # Not serializing dangling nodes
-            continue
-
-        edge_data = {
-            &#34;source&#34;: {
-                &#34;node_index&#34;: nodes.index(source_node),
-                &#34;connection_index&#34;: source_node.outputs.index(edge.source())
-            },
-            &#34;target&#34;: {
-                &#34;node_index&#34;: nodes.index(target_node),
-                &#34;connection_index&#34;: target_node.inputs.index(edge.target())
-            }
-        }
-
-        data[&#34;edges&#34;].append(edge_data)
-
-    return data</code></pre>
+    return result</code></pre>
 </details>
 </dd>
 </dl>
@@ -571,11 +582,13 @@ Intended to use inside the scheme.</p>
 <ul class="two-column">
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.addItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.addItem">addItem</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes">connect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.copySelectedGraph" href="#nfb_studio.widgets.scheme.scheme.Scheme.copySelectedGraph">copySelectedGraph</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deserialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes">disconnect_nodes</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.getView" href="#nfb_studio.widgets.scheme.scheme.Scheme.getView">getView</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.paste" href="#nfb_studio.widgets.scheme.scheme.Scheme.paste">paste</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.removeItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.removeItem">removeItem</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.serialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.selectedGraph" href="#nfb_studio.widgets.scheme.scheme.Scheme.selectedGraph">selectedGraph</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject" href="#nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
 </li>

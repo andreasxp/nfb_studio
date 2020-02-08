@@ -25,7 +25,12 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;NFB experiment designer.&#34;&#34;&#34;</code></pre>
+<pre><code class="python">&#34;&#34;&#34;NFB experiment designer.&#34;&#34;&#34;
+from .serialize import ObjectEncoder, ObjectDecoder, serialize_qt, deserialize_qt
+
+standard_encoder = ObjectEncoder(object_hooks=serialize_qt, indent=&#39;\t&#39;)
+bytestr_encoder = ObjectEncoder(object_hooks=serialize_qt, ensure_ascii=True)
+standard_decoder = ObjectDecoder(object_hooks=deserialize_qt)</code></pre>
 </details>
 </section>
 <section>
