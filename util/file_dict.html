@@ -28,55 +28,59 @@
 
 
 class FileDict(dict):
-    def __init__(self, create_item):
-        &#34;&#34;&#34;A dict of some items, whose keys are absolute filenames.
+    &#34;&#34;&#34;A dict of some items, whose keys are absolute filenames.
 
-        When an item is requested, a create_item function is called with an path argument. The result of this function
-        is written as the value to that key. If the item existed before, it is returned.
+    When an item is requested, a `create_item` function is called with an path argument. The result of this function is
+    written as the value to that key. If the item existed before, it is returned.
+    &#34;&#34;&#34;
+
+    def __init__(self, create_item):
+        &#34;&#34;&#34;Constructs a `FileDict` with a `create_item` parameter - a function to call each time a new filename is 
+        supplied.
         &#34;&#34;&#34;
-        super(FileDict, self).__init__()
+        super().__init__()
         self.create_item = create_item
 
     def __setitem__(self, key, value):
         &#34;&#34;&#34;Override a written value with something else. Key is still converted to full path.&#34;&#34;&#34;
         path = Path(key).resolve()
 
-        super(FileDict, self).__setitem__(path, value)
+        super().__setitem__(path, value)
 
     def __getitem__(self, key):
         &#34;&#34;&#34;Returns an item with some path.
 
-        This item is automatically created using create_item() if it does not exist.
+        This item is automatically created by calling create_item() if it does not exist.
         &#34;&#34;&#34;
         path = Path(key).resolve()
 
         if path not in self:
-            super(FileDict, self).__setitem__(path, self.create_item(str(path)))
+            super().__setitem__(path, self.create_item(str(path)))
 
-        return super(FileDict, self).__getitem__(path)
+        return super().__getitem__(path)
 
     def __contains__(self, key):
         &#34;&#34;&#34;True if the dictionary has the specified key, else False.&#34;&#34;&#34;
         path = Path(key).resolve()
-        return super(FileDict, self).__contains__(path)
+        return super().__contains__(path)
 
     def get(self, key, default=None):
-        &#34;&#34;&#34;Return the value for key if key is in the dictionary, else default.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return the value for key if key is in the dictionary, else `default`.&#34;&#34;&#34;
         path = Path(key).resolve()
-        return super(FileDict, self).get(path)
+        return super().get(path)
 
     def pop(self, key, default=None):
         &#34;&#34;&#34;Remove specified key and return the corresponding value.
 
-        If key is not found, d is returned if given, otherwise KeyError is raised.
+        If key is not found, `default` is returned if given, otherwise `KeyError` is raised.
         &#34;&#34;&#34;
         path = Path(key).resolve()
-        return super(FileDict, self).pop(path, default)
+        return super().pop(path, default)
 
     def __delitem__(self, key):
         &#34;&#34;&#34;Delete self[key].&#34;&#34;&#34;
         path = Path(key).resolve()
-        super(FileDict, self).__delitem__(path)</code></pre>
+        super().__delitem__(path)</code></pre>
 </details>
 </section>
 <section>
@@ -93,74 +97,69 @@ class FileDict(dict):
 <span>(</span><span>create_item)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>dict() -&gt; new empty dictionary
-dict(mapping) -&gt; new dictionary initialized from a mapping object's
-(key, value) pairs
-dict(iterable) -&gt; new dictionary initialized as if via:
-d = {}
-for k, v in iterable:
-d[k] = v
-dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
-in the keyword argument list.
-For example:
-dict(one=1, two=2)</p>
-<p>A dict of some items, whose keys are absolute filenames.</p>
-<p>When an item is requested, a create_item function is called with an path argument. The result of this function
-is written as the value to that key. If the item existed before, it is returned.</p></section>
+<section class="desc"><p>A dict of some items, whose keys are absolute filenames.</p>
+<p>When an item is requested, a <code>create_item</code> function is called with an path argument. The result of this function is
+written as the value to that key. If the item existed before, it is returned.</p>
+<p>Constructs a <a title="nfb_studio.util.file_dict.FileDict" href="#nfb_studio.util.file_dict.FileDict"><code>FileDict</code></a> with a <code>create_item</code> parameter - a function to call each time a new filename is
+supplied.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FileDict(dict):
-    def __init__(self, create_item):
-        &#34;&#34;&#34;A dict of some items, whose keys are absolute filenames.
+    &#34;&#34;&#34;A dict of some items, whose keys are absolute filenames.
 
-        When an item is requested, a create_item function is called with an path argument. The result of this function
-        is written as the value to that key. If the item existed before, it is returned.
+    When an item is requested, a `create_item` function is called with an path argument. The result of this function is
+    written as the value to that key. If the item existed before, it is returned.
+    &#34;&#34;&#34;
+
+    def __init__(self, create_item):
+        &#34;&#34;&#34;Constructs a `FileDict` with a `create_item` parameter - a function to call each time a new filename is 
+        supplied.
         &#34;&#34;&#34;
-        super(FileDict, self).__init__()
+        super().__init__()
         self.create_item = create_item
 
     def __setitem__(self, key, value):
         &#34;&#34;&#34;Override a written value with something else. Key is still converted to full path.&#34;&#34;&#34;
         path = Path(key).resolve()
 
-        super(FileDict, self).__setitem__(path, value)
+        super().__setitem__(path, value)
 
     def __getitem__(self, key):
         &#34;&#34;&#34;Returns an item with some path.
 
-        This item is automatically created using create_item() if it does not exist.
+        This item is automatically created by calling create_item() if it does not exist.
         &#34;&#34;&#34;
         path = Path(key).resolve()
 
         if path not in self:
-            super(FileDict, self).__setitem__(path, self.create_item(str(path)))
+            super().__setitem__(path, self.create_item(str(path)))
 
-        return super(FileDict, self).__getitem__(path)
+        return super().__getitem__(path)
 
     def __contains__(self, key):
         &#34;&#34;&#34;True if the dictionary has the specified key, else False.&#34;&#34;&#34;
         path = Path(key).resolve()
-        return super(FileDict, self).__contains__(path)
+        return super().__contains__(path)
 
     def get(self, key, default=None):
-        &#34;&#34;&#34;Return the value for key if key is in the dictionary, else default.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return the value for key if key is in the dictionary, else `default`.&#34;&#34;&#34;
         path = Path(key).resolve()
-        return super(FileDict, self).get(path)
+        return super().get(path)
 
     def pop(self, key, default=None):
         &#34;&#34;&#34;Remove specified key and return the corresponding value.
 
-        If key is not found, d is returned if given, otherwise KeyError is raised.
+        If key is not found, `default` is returned if given, otherwise `KeyError` is raised.
         &#34;&#34;&#34;
         path = Path(key).resolve()
-        return super(FileDict, self).pop(path, default)
+        return super().pop(path, default)
 
     def __delitem__(self, key):
         &#34;&#34;&#34;Delete self[key].&#34;&#34;&#34;
         path = Path(key).resolve()
-        super(FileDict, self).__delitem__(path)</code></pre>
+        super().__delitem__(path)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -172,15 +171,15 @@ is written as the value to that key. If the item existed before, it is returned.
 <span>def <span class="ident">get</span></span>(<span>self, key, default=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Return the value for key if key is in the dictionary, else default.</p></section>
+<section class="desc"><p>Return the value for key if key is in the dictionary, else <code>default</code>.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get(self, key, default=None):
-    &#34;&#34;&#34;Return the value for key if key is in the dictionary, else default.&#34;&#34;&#34;
+    &#34;&#34;&#34;Return the value for key if key is in the dictionary, else `default`.&#34;&#34;&#34;
     path = Path(key).resolve()
-    return super(FileDict, self).get(path)</code></pre>
+    return super().get(path)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.util.file_dict.FileDict.pop"><code class="name flex">
@@ -188,7 +187,7 @@ is written as the value to that key. If the item existed before, it is returned.
 </code></dt>
 <dd>
 <section class="desc"><p>Remove specified key and return the corresponding value.</p>
-<p>If key is not found, d is returned if given, otherwise KeyError is raised.</p></section>
+<p>If key is not found, <code>default</code> is returned if given, otherwise <code>KeyError</code> is raised.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -196,10 +195,10 @@ is written as the value to that key. If the item existed before, it is returned.
 <pre><code class="python">def pop(self, key, default=None):
     &#34;&#34;&#34;Remove specified key and return the corresponding value.
 
-    If key is not found, d is returned if given, otherwise KeyError is raised.
+    If key is not found, `default` is returned if given, otherwise `KeyError` is raised.
     &#34;&#34;&#34;
     path = Path(key).resolve()
-    return super(FileDict, self).pop(path, default)</code></pre>
+    return super().pop(path, default)</code></pre>
 </details>
 </dd>
 </dl>

@@ -223,6 +223,7 @@ This message reports a serious problem that poses a critical risk to the user's 
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.setIcon" href="#nfb_studio.widgets.scheme.message.Message.setIcon">setIcon</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.severity" href="#nfb_studio.widgets.scheme.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.svg_renderers" href="#nfb_studio.widgets.scheme.message.Message.svg_renderers">svg_renderers</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_name" href="#nfb_studio.widgets.scheme.message.Message.text_font_name">text_font_name</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_size" href="#nfb_studio.widgets.scheme.message.Message.text_font_size">text_font_size</a></code></li>
 </ul>
@@ -281,6 +282,7 @@ problematic way.</p></section>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.setIcon" href="#nfb_studio.widgets.scheme.message.Message.setIcon">setIcon</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.severity" href="#nfb_studio.widgets.scheme.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.svg_renderers" href="#nfb_studio.widgets.scheme.message.Message.svg_renderers">svg_renderers</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_name" href="#nfb_studio.widgets.scheme.message.Message.text_font_name">text_font_name</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_size" href="#nfb_studio.widgets.scheme.message.Message.text_font_size">text_font_size</a></code></li>
 </ul>
@@ -400,7 +402,9 @@ ErrorMessage.</p></section>
 </dd>
 <dt id="nfb_studio.widgets.scheme.message.Message.svg_renderers"><code class="name">var <span class="ident">svg_renderers</span></code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>A dict of some items, whose keys are absolute filenames.</p>
+<p>When an item is requested, a <code>create_item</code> function is called with an path argument. The result of this function is
+written as the value to that key. If the item existed before, it is returned.</p></section>
 </dd>
 <dt id="nfb_studio.widgets.scheme.message.Message.text_font_name"><code class="name">var <span class="ident">text_font_name</span></code></dt>
 <dd>
@@ -598,6 +602,7 @@ This message reports a problem that does not pose a critical risk to the user's 
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.setIcon" href="#nfb_studio.widgets.scheme.message.Message.setIcon">setIcon</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.severity" href="#nfb_studio.widgets.scheme.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.message.Message.svg_renderers" href="#nfb_studio.widgets.scheme.message.Message.svg_renderers">svg_renderers</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_name" href="#nfb_studio.widgets.scheme.message.Message.text_font_name">text_font_name</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.message.Message.text_font_size" href="#nfb_studio.widgets.scheme.message.Message.text_font_size">text_font_size</a></code></li>
 </ul>
