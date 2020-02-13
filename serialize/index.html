@@ -21,7 +21,13 @@
 </header>
 <section id="section-intro">
 <p>A module that implements nfb_studio's custom serialization engine.</p>
-<p>This module extends the default JSON encoder and decoder with simpler ways to serialize objects.</p>
+<p>This module extends the default JSON encoder and decoder with simpler ways to serialize objects.
+- <a title="nfb_studio.serialize.encoder.JSONEncoder" href="encoder.html#nfb_studio.serialize.encoder.JSONEncoder"><code>JSONEncoder</code></a>: An encoder that inherits
+<a href="https://docs.python.org/3/library/json.html#json.JSONEncoder"><code>JSONEncoder</code></a> from python standard library;
+- decoder.JSONDecoder : A decoder that inherits
+<a href="https://docs.python.org/3/library/json.html#json.JSONDecoder"><code>JSONDecoder</code></a> from python standard library.</p>
+<p>These classes recognise the serialization interface of classes, as well as accept an <code>object_hooks</code> dictionary.
+JSONEncoder needs a dictionary with serializing functions, JSONDecoder - with deserializing functions.</p>
 <ul>
 <li>If a class you want serialized is in your control, you can define these two member functions:</li>
 </ul>
@@ -31,7 +37,7 @@ def deserialize(self, data: dict):
 <p>These functions return/accept a dictionary containing the data that is necessary to save and required to recreate the
 object during deserialization.</p>
 <ul>
-<li>If a class is out of your control, such as a class from another module, both ObjectEncoder and ObjectDecoder accept an
+<li>If a class is out of your control, such as a class from another module, both JSONEncoder and JSONDecoder accept an
 optional object_hooks parameter. This parameter is a dictionary that maps a class to a method that needs to be used to
 serialize that class. All you need to do is to create these two external methods:</li>
 </ul>
@@ -76,8 +82,8 @@ def qrect_deserialize(obj: QRect, data: dict):
     obj.setWidth(data[&quot;width&quot;])
     obj.setHeight(data[&quot;height&quot;])
 
-encoder = ObjectEncoder(object_hooks={QRect: qrect_serialize})
-decoder = ObjectDecoder(object_hooks={QRect: qrect_deserialize})
+encoder = JSONEncoder(object_hooks={QRect: qrect_serialize})
+decoder = JSONDecoder(object_hooks={QRect: qrect_deserialize})
 </code></pre>
 <p>In this example, the encoder and decoder will be able to serialize both <code>MyClass</code> and <code>QRect</code>.</p>
 <div class="admonition tip">
@@ -94,9 +100,9 @@ overwritten.</p>
 </div>
 <h2 id="see-also">See Also</h2>
 <dl>
-<dt><a title="nfb_studio.serialize.encoder.ObjectEncoder" href="encoder.html#nfb_studio.serialize.encoder.ObjectEncoder"><code>ObjectEncoder</code></a></dt>
+<dt><a title="nfb_studio.serialize.encoder.JSONEncoder" href="encoder.html#nfb_studio.serialize.encoder.JSONEncoder"><code>JSONEncoder</code></a></dt>
 <dd>An object-aware JSON encoder.</dd>
-<dt><a title="nfb_studio.serialize.decoder.ObjectDecoder" href="decoder.html#nfb_studio.serialize.decoder.ObjectDecoder"><code>ObjectDecoder</code></a></dt>
+<dt><a title="nfb_studio.serialize.decoder.JSONDecoder" href="decoder.html#nfb_studio.serialize.decoder.JSONDecoder"><code>JSONDecoder</code></a></dt>
 <dd>An object-aware JSON decoder.</dd>
 </dl>
 <details class="source">
@@ -106,6 +112,13 @@ overwritten.</p>
 <pre><code class="python">&#34;&#34;&#34;A module that implements nfb_studio&#39;s custom serialization engine.
 
 This module extends the default JSON encoder and decoder with simpler ways to serialize objects.
+- `encoder.JSONEncoder`: An encoder that inherits
+  [`JSONEncoder`](https://docs.python.org/3/library/json.html#json.JSONEncoder) from python standard library;
+- decoder.JSONDecoder : A decoder that inherits
+  [`JSONDecoder`](https://docs.python.org/3/library/json.html#json.JSONDecoder) from python standard library.
+
+These classes recognise the serialization interface of classes, as well as accept an `object_hooks` dictionary.
+JSONEncoder needs a dictionary with serializing functions, JSONDecoder - with deserializing functions.
 
 - If a class you want serialized is in your control, you can define these two member functions:
 ```python
@@ -115,7 +128,7 @@ def deserialize(self, data: dict):
 These functions return/accept a dictionary containing the data that is necessary to save and required to recreate the
 object during deserialization.
 
-- If a class is out of your control, such as a class from another module, both ObjectEncoder and ObjectDecoder accept an
+- If a class is out of your control, such as a class from another module, both JSONEncoder and JSONDecoder accept an
   optional object_hooks parameter. This parameter is a dictionary that maps a class to a method that needs to be used to
   serialize that class. All you need to do is to create these two external methods:
 ```python
@@ -163,8 +176,8 @@ def qrect_deserialize(obj: QRect, data: dict):
     obj.setWidth(data[&#34;width&#34;])
     obj.setHeight(data[&#34;height&#34;])
 
-encoder = ObjectEncoder(object_hooks={QRect: qrect_serialize})
-decoder = ObjectDecoder(object_hooks={QRect: qrect_deserialize})
+encoder = JSONEncoder(object_hooks={QRect: qrect_serialize})
+decoder = JSONDecoder(object_hooks={QRect: qrect_deserialize})
 ```
 In this example, the encoder and decoder will be able to serialize both `MyClass` and `QRect`.
 
@@ -180,11 +193,15 @@ In this example, the encoder and decoder will be able to serialize both `MyClass
 
 See Also
 --------
-encoder.ObjectEncoder : An object-aware JSON encoder.
-decoder.ObjectDecoder : An object-aware JSON decoder.
+encoder.JSONEncoder : An object-aware JSON encoder.
+decoder.JSONDecoder : An object-aware JSON decoder.
 &#34;&#34;&#34;
-from .encoder import ObjectEncoder
-from .decoder import ObjectDecoder
+from json import load, loads, dump, dumps
+
+from .encoder import JSONEncoder
+from .decoder import JSONDecoder
+
+from .mime_data import MimeData
 
 from .qt_hooks import serialize_qt, deserialize_qt</code></pre>
 </details>
@@ -199,6 +216,10 @@ from .qt_hooks import serialize_qt, deserialize_qt</code></pre>
 <dt><code class="name"><a title="nfb_studio.serialize.encoder" href="encoder.html">nfb_studio.serialize.encoder</a></code></dt>
 <dd>
 <section class="desc"><p>An object-aware JSON encoder.</p></section>
+</dd>
+<dt><code class="name"><a title="nfb_studio.serialize.mime_data" href="mime_data.html">nfb_studio.serialize.mime_data</a></code></dt>
+<dd>
+<section class="desc"><p>Object-aware implementation of QMimeData.</p></section>
 </dd>
 <dt><code class="name"><a title="nfb_studio.serialize.qt_hooks" href="qt_hooks.html">nfb_studio.serialize.qt_hooks</a></code></dt>
 <dd>
@@ -231,6 +252,7 @@ from .qt_hooks import serialize_qt, deserialize_qt</code></pre>
 <ul>
 <li><code><a title="nfb_studio.serialize.decoder" href="decoder.html">nfb_studio.serialize.decoder</a></code></li>
 <li><code><a title="nfb_studio.serialize.encoder" href="encoder.html">nfb_studio.serialize.encoder</a></code></li>
+<li><code><a title="nfb_studio.serialize.mime_data" href="mime_data.html">nfb_studio.serialize.mime_data</a></code></li>
 <li><code><a title="nfb_studio.serialize.qt_hooks" href="qt_hooks.html">nfb_studio.serialize.qt_hooks</a></code></li>
 </ul>
 </li>

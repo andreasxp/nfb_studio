@@ -26,27 +26,26 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;An object-aware JSON decoder.&#34;&#34;&#34;
-from json import JSONDecoder
+import json
 from importlib import import_module
 from inspect import isclass
 
 
-class ObjectDecoder(JSONDecoder):
+class JSONDecoder(json.JSONDecoder):
     &#34;&#34;&#34;JSON decoder that provides tools to deserialize custom objects.
 
-    You can add support for deserializing your class in two ways:
-
+    You can add support for deserializing your class in two ways:  
     - By adding a member function to your class: `def deserialize(self, data: dict)`;
     - By adding an external function `def deserialize(obj, data: dict)` and passing it in a dict as the `object_hooks`
       parameter. (`object_hooks` is a dict that matches a class to a deserialization function.)
 
-    When deserializing an object, this decoder first looks up the metadata field left by the ObjectEncoder. If that
+    When deserializing an object, this decoder first looks up the metadata field left by the JSONEncoder. If that
     field exists, the decoder default-constructs an instance of a class that was encoded. It then checks if the class
     instance has a function in `object_hooks` or has a callable `deserialize()` attribute. If that is the case, the dict
     read from json is passed to that function to allow the class instance to load the contents into itself. Functions in
     the `object_hooks` parameter take precedence over member functions.
 
-    ObjectDecoder does not accept an `object_hook` or `object_pairs_hook` parameter from JSONDecoder.
+    JSONDecoder does not accept an `object_hook` or `object_pairs_hook` parameter from JSONDecoder.
 
     .. note::
         If the metadata `__class__` field does not exist, the decoder leaves the dictionary as-is. If the field exists
@@ -54,11 +53,11 @@ class ObjectDecoder(JSONDecoder):
 
     See Also
     --------
-    nfb_studio.serialize.encoder.ObjectEncoder : An object-aware JSON encoder.
+    nfb_studio.serialize.encoder.JSONEncoder : An object-aware JSON encoder.
     &#34;&#34;&#34;
     def __init__(self, *, object_hooks: dict = None, parse_float=None, parse_int=None, parse_constant=None,
-                 strict=True):
-        &#34;&#34;&#34;Constructs the ObjectDecoder object.
+                 strict=True, **kw):
+        &#34;&#34;&#34;Constructs the JSONDecoder object.
         
         Constructs the object from the following arguments:  
         - object_hooks - a dict, mapping types to functions that can be used to deserialize them from a dict in the
@@ -70,9 +69,9 @@ class ObjectDecoder(JSONDecoder):
 
         # Object hook used to handle custom deserialization
         def object_hook(data: dict):
-            &#34;&#34;&#34;An object hook for the ObjectDecoder.
+            &#34;&#34;&#34;An object hook for the JSONDecoder.
 
-            An internal function. This method is used as an object_hook to initialize ObjectDecoder. It looks for a meta
+            An internal function. This method is used as an object_hook to initialize JSONDecoder. It looks for a meta
             field called `__class__` as a marker that the json field should be deserialized as an object. It attempts to
             default-construct an instance of the specified class and call either a method from the object_hooks dict or
             instance&#39;s own `deserialize(data: dict)` method to load the json contents into it.
@@ -138,24 +137,22 @@ class ObjectDecoder(JSONDecoder):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.serialize.decoder.ObjectDecoder"><code class="flex name class">
-<span>class <span class="ident">ObjectDecoder</span></span>
-<span>(</span><span>*, object_hooks=None, parse_float=None, parse_int=None, parse_constant=None, strict=True)</span>
+<dt id="nfb_studio.serialize.decoder.JSONDecoder"><code class="flex name class">
+<span>class <span class="ident">JSONDecoder</span></span>
+<span>(</span><span>*, object_hooks=None, parse_float=None, parse_int=None, parse_constant=None, strict=True, **kw)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>JSON decoder that provides tools to deserialize custom objects.</p>
-<p>You can add support for deserializing your class in two ways:</p>
-<ul>
-<li>By adding a member function to your class: <code>def deserialize(self, data: dict)</code>;</li>
-<li>By adding an external function <code>def deserialize(obj, data: dict)</code> and passing it in a dict as the <code>object_hooks</code>
-parameter. (<code>object_hooks</code> is a dict that matches a class to a deserialization function.)</li>
-</ul>
-<p>When deserializing an object, this decoder first looks up the metadata field left by the ObjectEncoder. If that
+<p>You can add support for deserializing your class in two ways:<br>
+- By adding a member function to your class: <code>def deserialize(self, data: dict)</code>;
+- By adding an external function <code>def deserialize(obj, data: dict)</code> and passing it in a dict as the <code>object_hooks</code>
+parameter. (<code>object_hooks</code> is a dict that matches a class to a deserialization function.)</p>
+<p>When deserializing an object, this decoder first looks up the metadata field left by the JSONEncoder. If that
 field exists, the decoder default-constructs an instance of a class that was encoded. It then checks if the class
 instance has a function in <code>object_hooks</code> or has a callable <code>deserialize()</code> attribute. If that is the case, the dict
 read from json is passed to that function to allow the class instance to load the contents into itself. Functions in
 the <code>object_hooks</code> parameter take precedence over member functions.</p>
-<p>ObjectDecoder does not accept an <code>object_hook</code> or <code>object_pairs_hook</code> parameter from JSONDecoder.</p>
+<p>JSONDecoder does not accept an <code>object_hook</code> or <code>object_pairs_hook</code> parameter from JSONDecoder.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If the metadata <code>__class__</code> field does not exist, the decoder leaves the dictionary as-is. If the field exists
@@ -163,10 +160,10 @@ but was corrupted in some way, an exception will be raised.</p>
 </div>
 <h2 id="see-also">See Also</h2>
 <dl>
-<dt><a title="nfb_studio.serialize.encoder.ObjectEncoder" href="encoder.html#nfb_studio.serialize.encoder.ObjectEncoder"><code>ObjectEncoder</code></a></dt>
+<dt><a title="nfb_studio.serialize.encoder.JSONEncoder" href="encoder.html#nfb_studio.serialize.encoder.JSONEncoder"><code>JSONEncoder</code></a></dt>
 <dd>An object-aware JSON encoder.</dd>
 </dl>
-<p><code>Constructs the ObjectDecoder object.</code></p>
+<p><code>Constructs the JSONDecoder object.</code></p>
 <p>Constructs the object from the following arguments:<br>
 - object_hooks - a dict, mapping types to functions that can be used to deserialize them from a dict in the
 format <code>def foo(obj, data: dict)</code>;
@@ -176,22 +173,21 @@ inherited.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class ObjectDecoder(JSONDecoder):
+<pre><code class="python">class JSONDecoder(json.JSONDecoder):
     &#34;&#34;&#34;JSON decoder that provides tools to deserialize custom objects.
 
-    You can add support for deserializing your class in two ways:
-
+    You can add support for deserializing your class in two ways:  
     - By adding a member function to your class: `def deserialize(self, data: dict)`;
     - By adding an external function `def deserialize(obj, data: dict)` and passing it in a dict as the `object_hooks`
       parameter. (`object_hooks` is a dict that matches a class to a deserialization function.)
 
-    When deserializing an object, this decoder first looks up the metadata field left by the ObjectEncoder. If that
+    When deserializing an object, this decoder first looks up the metadata field left by the JSONEncoder. If that
     field exists, the decoder default-constructs an instance of a class that was encoded. It then checks if the class
     instance has a function in `object_hooks` or has a callable `deserialize()` attribute. If that is the case, the dict
     read from json is passed to that function to allow the class instance to load the contents into itself. Functions in
     the `object_hooks` parameter take precedence over member functions.
 
-    ObjectDecoder does not accept an `object_hook` or `object_pairs_hook` parameter from JSONDecoder.
+    JSONDecoder does not accept an `object_hook` or `object_pairs_hook` parameter from JSONDecoder.
 
     .. note::
         If the metadata `__class__` field does not exist, the decoder leaves the dictionary as-is. If the field exists
@@ -199,11 +195,11 @@ inherited.</p></section>
 
     See Also
     --------
-    nfb_studio.serialize.encoder.ObjectEncoder : An object-aware JSON encoder.
+    nfb_studio.serialize.encoder.JSONEncoder : An object-aware JSON encoder.
     &#34;&#34;&#34;
     def __init__(self, *, object_hooks: dict = None, parse_float=None, parse_int=None, parse_constant=None,
-                 strict=True):
-        &#34;&#34;&#34;Constructs the ObjectDecoder object.
+                 strict=True, **kw):
+        &#34;&#34;&#34;Constructs the JSONDecoder object.
         
         Constructs the object from the following arguments:  
         - object_hooks - a dict, mapping types to functions that can be used to deserialize them from a dict in the
@@ -215,9 +211,9 @@ inherited.</p></section>
 
         # Object hook used to handle custom deserialization
         def object_hook(data: dict):
-            &#34;&#34;&#34;An object hook for the ObjectDecoder.
+            &#34;&#34;&#34;An object hook for the JSONDecoder.
 
-            An internal function. This method is used as an object_hook to initialize ObjectDecoder. It looks for a meta
+            An internal function. This method is used as an object_hook to initialize JSONDecoder. It looks for a meta
             field called `__class__` as a marker that the json field should be deserialized as an object. It attempts to
             default-construct an instance of the specified class and call either a method from the object_hooks dict or
             instance&#39;s own `deserialize(data: dict)` method to load the json contents into it.
@@ -295,7 +291,7 @@ inherited.</p></section>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.serialize.decoder.ObjectDecoder" href="#nfb_studio.serialize.decoder.ObjectDecoder">ObjectDecoder</a></code></h4>
+<h4><code><a title="nfb_studio.serialize.decoder.JSONDecoder" href="#nfb_studio.serialize.decoder.JSONDecoder">JSONDecoder</a></code></h4>
 </li>
 </ul>
 </li>

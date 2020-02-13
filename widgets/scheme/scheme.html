@@ -24,11 +24,11 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from PySide2.QtCore import Qt, QPointF, QMimeData
+<pre><code class="python">from PySide2.QtCore import Qt, QPointF
 from PySide2.QtGui import QPainter, QKeySequence
 from PySide2.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsItem, QShortcut, QApplication
 
-from nfb_studio import bytestr_encoder as encoder, standard_decoder as decoder
+from nfb_studio import StdMimeData
 
 from .graph import Graph, GraphSnapshot
 from .node import Node
@@ -117,33 +117,21 @@ class Scheme(Graph, QGraphicsScene):
         &#34;&#34;&#34;Copies the selected graph and places it in the clipboard.&#34;&#34;&#34;
         snapshot = self.selectedGraph()
 
-        package = QMimeData()
-        package.setText(encoder.encode(snapshot))
+        package = StdMimeData()
+        package.setObject(snapshot)
 
         clipboard = QApplication.clipboard()
         clipboard.setMimeData(package)
-
-        &#39;&#39;&#39;
-        snapshot = self.selectedGraph()
-        bstr = QByteArray(bytes(encoder.encode(snapshot), &#34;ascii&#34;))
-
-        package = QMimeData()
-        package.setData(&#34;application/x-nfb_graph+json&#34;, bstr)
-
-        clipboard = QApplication.clipboard()
-        clipboard.setMimeData(package)
-        &#39;&#39;&#39;
 
     def paste(self):
         &#34;&#34;&#34;Retrieves the data from a clipboard and pastes it.&#34;&#34;&#34;
         clipboard = QApplication.clipboard()
         package = clipboard.mimeData()
 
-        if package.hasText():
+        if package.hasObject(GraphSnapshot):
             self.clearSelection()
 
-            data = package.text()
-            snapshot: GraphSnapshot = decoder.decode(data)
+            snapshot = package.objectData(GraphSnapshot)
 
             for node in snapshot.nodes:
                 node.setPosition(node.position() + QPointF(0.5, 0.5))
@@ -300,33 +288,21 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         &#34;&#34;&#34;Copies the selected graph and places it in the clipboard.&#34;&#34;&#34;
         snapshot = self.selectedGraph()
 
-        package = QMimeData()
-        package.setText(encoder.encode(snapshot))
+        package = StdMimeData()
+        package.setObject(snapshot)
 
         clipboard = QApplication.clipboard()
         clipboard.setMimeData(package)
-
-        &#39;&#39;&#39;
-        snapshot = self.selectedGraph()
-        bstr = QByteArray(bytes(encoder.encode(snapshot), &#34;ascii&#34;))
-
-        package = QMimeData()
-        package.setData(&#34;application/x-nfb_graph+json&#34;, bstr)
-
-        clipboard = QApplication.clipboard()
-        clipboard.setMimeData(package)
-        &#39;&#39;&#39;
 
     def paste(self):
         &#34;&#34;&#34;Retrieves the data from a clipboard and pastes it.&#34;&#34;&#34;
         clipboard = QApplication.clipboard()
         package = clipboard.mimeData()
 
-        if package.hasText():
+        if package.hasObject(GraphSnapshot):
             self.clearSelection()
 
-            data = package.text()
-            snapshot: GraphSnapshot = decoder.decode(data)
+            snapshot = package.objectData(GraphSnapshot)
 
             for node in snapshot.nodes:
                 node.setPosition(node.position() + QPointF(0.5, 0.5))
@@ -422,22 +398,11 @@ display the contents correcly and has all the necessary shortcuts attached, use 
     &#34;&#34;&#34;Copies the selected graph and places it in the clipboard.&#34;&#34;&#34;
     snapshot = self.selectedGraph()
 
-    package = QMimeData()
-    package.setText(encoder.encode(snapshot))
+    package = StdMimeData()
+    package.setObject(snapshot)
 
     clipboard = QApplication.clipboard()
-    clipboard.setMimeData(package)
-
-    &#39;&#39;&#39;
-    snapshot = self.selectedGraph()
-    bstr = QByteArray(bytes(encoder.encode(snapshot), &#34;ascii&#34;))
-
-    package = QMimeData()
-    package.setData(&#34;application/x-nfb_graph+json&#34;, bstr)
-
-    clipboard = QApplication.clipboard()
-    clipboard.setMimeData(package)
-    &#39;&#39;&#39;</code></pre>
+    clipboard.setMimeData(package)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.deserialize"><code class="name flex">
@@ -506,11 +471,10 @@ display the contents correcly and has all the necessary shortcuts attached, use 
     clipboard = QApplication.clipboard()
     package = clipboard.mimeData()
 
-    if package.hasText():
+    if package.hasObject(GraphSnapshot):
         self.clearSelection()
 
-        data = package.text()
-        snapshot: GraphSnapshot = decoder.decode(data)
+        snapshot = package.objectData(GraphSnapshot)
 
         for node in snapshot.nodes:
             node.setPosition(node.position() + QPointF(0.5, 0.5))
