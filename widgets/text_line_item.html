@@ -30,10 +30,8 @@ from PySide2.QtWidgets import QGraphicsItem, QAbstractGraphicsShapeItem, QGraphi
 
 from nfb_studio.gui import inches_to_pixels as px
 
-from .real_size_item import RealSizeItem
 
-
-class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
+class TextLineItem(QAbstractGraphicsShapeItem):
     &#34;&#34;&#34;A one-line text item.
 
     Default origin point is at the left side of the baseline. This can change if setAlignMode is called. TextLineItem
@@ -49,8 +47,8 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
         self._align_mode = Qt.AlignLeft
         self._max_width = None
         self._font = QFont()
-        self._px_bounding_rect = QRectF()
-        &#34;&#34;&#34;Bounding and drawing rectangle (in pixels). Determined automatically.&#34;&#34;&#34;
+        self._bounding_rect = QRectF()
+        &#34;&#34;&#34;Bounding and drawing rectangle. Determined automatically.&#34;&#34;&#34;
 
         self.background = QGraphicsRectItem(self)
         self.background.setPen(Qt.NoPen)
@@ -58,7 +56,7 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
 
         self.adjust()
 
-    def setText(self, text: str) -&gt; None:
+    def setText(self, text: str, /) -&gt; None:
         if &#39;\n&#39; in text:
             raise ValueError(&#34;text must not contain newline characters&#34;)
 
@@ -66,7 +64,7 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
         self._text = text
         self.adjust()
 
-    def setElideMode(self, mode: int) -&gt; None:
+    def setElideMode(self, mode: int, /) -&gt; None:
         &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided. Default value is 
         Qt.ElideRight.
         &#34;&#34;&#34;
@@ -74,7 +72,7 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
         self._elide_mode = mode
         self.adjust()
 
-    def setAlignMode(self, mode: int) -&gt; None:
+    def setAlignMode(self, mode: int, /) -&gt; None:
         &#34;&#34;&#34;Align mode specifies text alignment.
 
         Text alignment changes the origin point x position:  
@@ -88,18 +86,18 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
         self._align_mode = mode
         self.adjust()
 
-    def setMaximumWidth(self, width):
-        &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
+    def setMaximumWidth(self, width, /):
+        &#34;&#34;&#34;Set the maximum width the text is allowed to be. `None` represents unlimited width.&#34;&#34;&#34;
         self.prepareGeometryChange()
         self._max_width = width
         self.adjust()
 
-    def setFont(self, font: QFont) -&gt; None:
+    def setFont(self, font: QFont, /) -&gt; None:
         self.prepareGeometryChange()
         self._font = font
         self.adjust()
 
-    def setBackgroundBrush(self, brush: QBrush):
+    def setBackgroundBrush(self, brush: QBrush, /):
         self.background.setBrush(brush)
 
     def text(self) -&gt; str:
@@ -115,7 +113,7 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
         return self._align_mode
 
     def maximumWidth(self):
-        &#34;&#34;&#34;Maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
+        &#34;&#34;&#34;Maximum width the text is allowed to be. `None` represents unlimited width.&#34;&#34;&#34;
         return self._max_width
 
     def font(self) -&gt; QFont:
@@ -129,35 +127,35 @@ class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
         metrics = QFontMetricsF(self.font())
 
         # Get bounding rectangle for full text
-        self._px_bounding_rect = metrics.boundingRect(self.text())
+        self._bounding_rect = metrics.boundingRect(self.text())
 
         # Constrain by maximum width
         if self.maximumWidth() is not None:
-            self._px_bounding_rect.setWidth(px(self.maximumWidth()))
+            self._bounding_rect.setWidth(self.maximumWidth())
 
         # Compute elided text
         self._elided_text = metrics.elidedText(self.text(), self.elideMode(), self.boundingRect().width())
 
         # Get bounding rectangle for elided text
-        self._px_bounding_rect = metrics.boundingRect(self.elidedText())
+        self._bounding_rect = metrics.boundingRect(self.elidedText())
         # It seems that for small characters like &#34;...&#34; the bounding rect returned is too small. Adjust it by a small
         # value.
-        metrics_correction = 1/72
-        self._px_bounding_rect.adjust(-px(metrics_correction), 0, px(metrics_correction), 0)
+        metrics_correction = px(1/72)
+        self._bounding_rect.adjust(-metrics_correction, 0, metrics_correction, 0)
 
         # Move origin point according to the alignment
         if self.alignMode() &amp; Qt.AlignLeft:
-            self._px_bounding_rect.moveLeft(0)
+            self._bounding_rect.moveLeft(0)
         elif self.alignMode() &amp; Qt.AlignRight:
-            self._px_bounding_rect.moveRight(0)
+            self._bounding_rect.moveRight(0)
         else:
-            self._px_bounding_rect.moveLeft(-self._px_bounding_rect.width()/2)
+            self._bounding_rect.moveLeft(-self._bounding_rect.width()/2)
 
         # Set background rect
         self.background.setRect(self.boundingRect())
 
     def boundingRect(self) -&gt; QRectF:
-        return self._px_bounding_rect
+        return self._bounding_rect
 
     def paint(self, painter: QPainter, option, widget=...) -&gt; None:
         painter.setBrush(self.brush())
@@ -189,7 +187,7 @@ newline characters.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class TextLineItem(QAbstractGraphicsShapeItem, RealSizeItem):
+<pre><code class="python">class TextLineItem(QAbstractGraphicsShapeItem):
     &#34;&#34;&#34;A one-line text item.
 
     Default origin point is at the left side of the baseline. This can change if setAlignMode is called. TextLineItem
@@ -205,8 +203,8 @@ newline characters.</p></section>
         self._align_mode = Qt.AlignLeft
         self._max_width = None
         self._font = QFont()
-        self._px_bounding_rect = QRectF()
-        &#34;&#34;&#34;Bounding and drawing rectangle (in pixels). Determined automatically.&#34;&#34;&#34;
+        self._bounding_rect = QRectF()
+        &#34;&#34;&#34;Bounding and drawing rectangle. Determined automatically.&#34;&#34;&#34;
 
         self.background = QGraphicsRectItem(self)
         self.background.setPen(Qt.NoPen)
@@ -214,7 +212,7 @@ newline characters.</p></section>
 
         self.adjust()
 
-    def setText(self, text: str) -&gt; None:
+    def setText(self, text: str, /) -&gt; None:
         if &#39;\n&#39; in text:
             raise ValueError(&#34;text must not contain newline characters&#34;)
 
@@ -222,7 +220,7 @@ newline characters.</p></section>
         self._text = text
         self.adjust()
 
-    def setElideMode(self, mode: int) -&gt; None:
+    def setElideMode(self, mode: int, /) -&gt; None:
         &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided. Default value is 
         Qt.ElideRight.
         &#34;&#34;&#34;
@@ -230,7 +228,7 @@ newline characters.</p></section>
         self._elide_mode = mode
         self.adjust()
 
-    def setAlignMode(self, mode: int) -&gt; None:
+    def setAlignMode(self, mode: int, /) -&gt; None:
         &#34;&#34;&#34;Align mode specifies text alignment.
 
         Text alignment changes the origin point x position:  
@@ -244,18 +242,18 @@ newline characters.</p></section>
         self._align_mode = mode
         self.adjust()
 
-    def setMaximumWidth(self, width):
-        &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
+    def setMaximumWidth(self, width, /):
+        &#34;&#34;&#34;Set the maximum width the text is allowed to be. `None` represents unlimited width.&#34;&#34;&#34;
         self.prepareGeometryChange()
         self._max_width = width
         self.adjust()
 
-    def setFont(self, font: QFont) -&gt; None:
+    def setFont(self, font: QFont, /) -&gt; None:
         self.prepareGeometryChange()
         self._font = font
         self.adjust()
 
-    def setBackgroundBrush(self, brush: QBrush):
+    def setBackgroundBrush(self, brush: QBrush, /):
         self.background.setBrush(brush)
 
     def text(self) -&gt; str:
@@ -271,7 +269,7 @@ newline characters.</p></section>
         return self._align_mode
 
     def maximumWidth(self):
-        &#34;&#34;&#34;Maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
+        &#34;&#34;&#34;Maximum width the text is allowed to be. `None` represents unlimited width.&#34;&#34;&#34;
         return self._max_width
 
     def font(self) -&gt; QFont:
@@ -285,35 +283,35 @@ newline characters.</p></section>
         metrics = QFontMetricsF(self.font())
 
         # Get bounding rectangle for full text
-        self._px_bounding_rect = metrics.boundingRect(self.text())
+        self._bounding_rect = metrics.boundingRect(self.text())
 
         # Constrain by maximum width
         if self.maximumWidth() is not None:
-            self._px_bounding_rect.setWidth(px(self.maximumWidth()))
+            self._bounding_rect.setWidth(self.maximumWidth())
 
         # Compute elided text
         self._elided_text = metrics.elidedText(self.text(), self.elideMode(), self.boundingRect().width())
 
         # Get bounding rectangle for elided text
-        self._px_bounding_rect = metrics.boundingRect(self.elidedText())
+        self._bounding_rect = metrics.boundingRect(self.elidedText())
         # It seems that for small characters like &#34;...&#34; the bounding rect returned is too small. Adjust it by a small
         # value.
-        metrics_correction = 1/72
-        self._px_bounding_rect.adjust(-px(metrics_correction), 0, px(metrics_correction), 0)
+        metrics_correction = px(1/72)
+        self._bounding_rect.adjust(-metrics_correction, 0, metrics_correction, 0)
 
         # Move origin point according to the alignment
         if self.alignMode() &amp; Qt.AlignLeft:
-            self._px_bounding_rect.moveLeft(0)
+            self._bounding_rect.moveLeft(0)
         elif self.alignMode() &amp; Qt.AlignRight:
-            self._px_bounding_rect.moveRight(0)
+            self._bounding_rect.moveRight(0)
         else:
-            self._px_bounding_rect.moveLeft(-self._px_bounding_rect.width()/2)
+            self._bounding_rect.moveLeft(-self._bounding_rect.width()/2)
 
         # Set background rect
         self.background.setRect(self.boundingRect())
 
     def boundingRect(self) -&gt; QRectF:
-        return self._px_bounding_rect
+        return self._bounding_rect
 
     def paint(self, painter: QPainter, option, widget=...) -&gt; None:
         painter.setBrush(self.brush())
@@ -325,7 +323,6 @@ newline characters.</p></section>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>PySide2.QtWidgets.QAbstractGraphicsShapeItem</li>
-<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
@@ -345,29 +342,29 @@ newline characters.</p></section>
     metrics = QFontMetricsF(self.font())
 
     # Get bounding rectangle for full text
-    self._px_bounding_rect = metrics.boundingRect(self.text())
+    self._bounding_rect = metrics.boundingRect(self.text())
 
     # Constrain by maximum width
     if self.maximumWidth() is not None:
-        self._px_bounding_rect.setWidth(px(self.maximumWidth()))
+        self._bounding_rect.setWidth(self.maximumWidth())
 
     # Compute elided text
     self._elided_text = metrics.elidedText(self.text(), self.elideMode(), self.boundingRect().width())
 
     # Get bounding rectangle for elided text
-    self._px_bounding_rect = metrics.boundingRect(self.elidedText())
+    self._bounding_rect = metrics.boundingRect(self.elidedText())
     # It seems that for small characters like &#34;...&#34; the bounding rect returned is too small. Adjust it by a small
     # value.
-    metrics_correction = 1/72
-    self._px_bounding_rect.adjust(-px(metrics_correction), 0, px(metrics_correction), 0)
+    metrics_correction = px(1/72)
+    self._bounding_rect.adjust(-metrics_correction, 0, metrics_correction, 0)
 
     # Move origin point according to the alignment
     if self.alignMode() &amp; Qt.AlignLeft:
-        self._px_bounding_rect.moveLeft(0)
+        self._bounding_rect.moveLeft(0)
     elif self.alignMode() &amp; Qt.AlignRight:
-        self._px_bounding_rect.moveRight(0)
+        self._bounding_rect.moveRight(0)
     else:
-        self._px_bounding_rect.moveLeft(-self._px_bounding_rect.width()/2)
+        self._bounding_rect.moveLeft(-self._bounding_rect.width()/2)
 
     # Set background rect
     self.background.setRect(self.boundingRect())</code></pre>
@@ -409,7 +406,7 @@ newline characters.</p></section>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def boundingRect(self) -&gt; QRectF:
-    return self._px_bounding_rect</code></pre>
+    return self._bounding_rect</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.text_line_item.TextLineItem.elideMode"><code class="name flex">
@@ -455,13 +452,13 @@ newline characters.</p></section>
 <span>def <span class="ident">maximumWidth</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Maximum width the text is allowed to be (in inches). <code>None</code> represents unlimited width.</p></section>
+<section class="desc"><p>Maximum width the text is allowed to be. <code>None</code> represents unlimited width.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def maximumWidth(self):
-    &#34;&#34;&#34;Maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
+    &#34;&#34;&#34;Maximum width the text is allowed to be. `None` represents unlimited width.&#34;&#34;&#34;
     return self._max_width</code></pre>
 </details>
 </dd>
@@ -496,7 +493,7 @@ newline characters.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setAlignMode(self, mode: int) -&gt; None:
+<pre><code class="python">def setAlignMode(self, mode: int, /) -&gt; None:
     &#34;&#34;&#34;Align mode specifies text alignment.
 
     Text alignment changes the origin point x position:  
@@ -520,7 +517,7 @@ newline characters.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setBackgroundBrush(self, brush: QBrush):
+<pre><code class="python">def setBackgroundBrush(self, brush: QBrush, /):
     self.background.setBrush(brush)</code></pre>
 </details>
 </dd>
@@ -534,7 +531,7 @@ Qt.ElideRight.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setElideMode(self, mode: int) -&gt; None:
+<pre><code class="python">def setElideMode(self, mode: int, /) -&gt; None:
     &#34;&#34;&#34;Elide mode specifies where the ellipsis should be located when the text is elided. Default value is 
     Qt.ElideRight.
     &#34;&#34;&#34;
@@ -552,7 +549,7 @@ Qt.ElideRight.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setFont(self, font: QFont) -&gt; None:
+<pre><code class="python">def setFont(self, font: QFont, /) -&gt; None:
     self.prepareGeometryChange()
     self._font = font
     self.adjust()</code></pre>
@@ -562,13 +559,13 @@ Qt.ElideRight.</p></section>
 <span>def <span class="ident">setMaximumWidth</span></span>(<span>self, width)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set the maximum width the text is allowed to be (in inches). <code>None</code> represents unlimited width.</p></section>
+<section class="desc"><p>Set the maximum width the text is allowed to be. <code>None</code> represents unlimited width.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setMaximumWidth(self, width):
-    &#34;&#34;&#34;Set the maximum width the text is allowed to be (in inches). `None` represents unlimited width.&#34;&#34;&#34;
+<pre><code class="python">def setMaximumWidth(self, width, /):
+    &#34;&#34;&#34;Set the maximum width the text is allowed to be. `None` represents unlimited width.&#34;&#34;&#34;
     self.prepareGeometryChange()
     self._max_width = width
     self.adjust()</code></pre>
@@ -583,7 +580,7 @@ Qt.ElideRight.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setText(self, text: str) -&gt; None:
+<pre><code class="python">def setText(self, text: str, /) -&gt; None:
     if &#39;\n&#39; in text:
         raise ValueError(&#34;text must not contain newline characters&#34;)
 
@@ -606,15 +603,6 @@ Qt.ElideRight.</p></section>
 </details>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></b></code>:
-<ul class="hlist">
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.position" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.setPosition" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 </dl>
 </section>

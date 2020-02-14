@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
 <title>nfb_studio.widgets.scheme.scheme API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="A data model for the nfb experiment&#39;s system of signals and their components." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,11 +20,13 @@
 <h1 class="title">Module <code>nfb_studio.widgets.scheme.scheme</code></h1>
 </header>
 <section id="section-intro">
+<p>A data model for the nfb experiment's system of signals and their components.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from PySide2.QtCore import Qt, QPointF
+<pre><code class="python">&#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.&#34;&#34;&#34;
+from PySide2.QtCore import Qt, QPointF
 from PySide2.QtGui import QPainter, QKeySequence
 from PySide2.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsItem, QShortcut, QApplication
 
@@ -54,6 +56,7 @@ class Scheme(Graph, QGraphicsScene):
         Graph.__init__(self)
         QGraphicsScene.__init__(self, parent)
 
+    # Element manipulation ---------------------------------------------------------------------------------------------
     def addItem(self, item: QGraphicsItem):
         &#34;&#34;&#34;Add an item to the scene.
 
@@ -61,8 +64,7 @@ class Scheme(Graph, QGraphicsScene):
         &#34;&#34;&#34;
         if isinstance(item, Node):
             Graph.addNode(self, item)
-
-        if isinstance(item, Edge):
+        elif isinstance(item, Edge):
             Graph.addEdge(self, item)
 
         QGraphicsScene.addItem(self, item)
@@ -101,6 +103,22 @@ class Scheme(Graph, QGraphicsScene):
             QGraphicsScene.removeItem(self, edge)
         return edge
 
+    def merge(self, *others):
+        &#34;&#34;&#34;Update the scheme, adding elements other schemes.&#34;&#34;&#34;
+        Graph.merge(*others)
+
+        for other in others:
+            for node in other.nodes:
+                QGraphicsScene.addItem(self, node)
+            for edge in other.edges:
+                QGraphicsScene.addItem(self, edge)
+
+    def clear(self):
+        &#34;&#34;&#34;Clear the scheme.&#34;&#34;&#34;
+        QGraphicsScene.clear(self)
+        Graph.clear(self)
+
+    # Selection and clipboard ------------------------------------------------------------------------------------------
     def selectedGraph(self) -&gt; GraphSnapshot:
         &#34;&#34;&#34;Return the selected part of the dataflow graph as a GraphSnapshot.&#34;&#34;&#34;
         result = GraphSnapshot()
@@ -129,16 +147,16 @@ class Scheme(Graph, QGraphicsScene):
         package = clipboard.mimeData()
 
         if package.hasObject(GraphSnapshot):
-            self.clearSelection()
-
             snapshot = package.objectData(GraphSnapshot)
 
+            self.clearSelection()
             for node in snapshot.nodes:
+                node.setSelected(True)
                 node.setPosition(node.position() + QPointF(0.5, 0.5))
-                self.addItem(node)
-            for edge in snapshot.edges:
-                self.addItem(edge)
+            
+            self.merge(snapshot)
 
+    # Widgets ----------------------------------------------------------------------------------------------------------
     def getView(self) -&gt; QGraphicsView:
         &#34;&#34;&#34;Generate and return a new QGraphicsView, configured for optimal viewing.&#34;&#34;&#34;
         v = QGraphicsView(self)
@@ -155,6 +173,7 @@ class Scheme(Graph, QGraphicsScene):
 
         return v
 
+    # Serialization ----------------------------------------------------------------------------------------------------
     # def serialize(self) -&gt; dict: Inherited from Graph
 
     def deserialize(self, data: dict):
@@ -225,6 +244,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         Graph.__init__(self)
         QGraphicsScene.__init__(self, parent)
 
+    # Element manipulation ---------------------------------------------------------------------------------------------
     def addItem(self, item: QGraphicsItem):
         &#34;&#34;&#34;Add an item to the scene.
 
@@ -232,8 +252,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         &#34;&#34;&#34;
         if isinstance(item, Node):
             Graph.addNode(self, item)
-
-        if isinstance(item, Edge):
+        elif isinstance(item, Edge):
             Graph.addEdge(self, item)
 
         QGraphicsScene.addItem(self, item)
@@ -272,6 +291,22 @@ display the contents correcly and has all the necessary shortcuts attached, use 
             QGraphicsScene.removeItem(self, edge)
         return edge
 
+    def merge(self, *others):
+        &#34;&#34;&#34;Update the scheme, adding elements other schemes.&#34;&#34;&#34;
+        Graph.merge(*others)
+
+        for other in others:
+            for node in other.nodes:
+                QGraphicsScene.addItem(self, node)
+            for edge in other.edges:
+                QGraphicsScene.addItem(self, edge)
+
+    def clear(self):
+        &#34;&#34;&#34;Clear the scheme.&#34;&#34;&#34;
+        QGraphicsScene.clear(self)
+        Graph.clear(self)
+
+    # Selection and clipboard ------------------------------------------------------------------------------------------
     def selectedGraph(self) -&gt; GraphSnapshot:
         &#34;&#34;&#34;Return the selected part of the dataflow graph as a GraphSnapshot.&#34;&#34;&#34;
         result = GraphSnapshot()
@@ -300,16 +335,16 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         package = clipboard.mimeData()
 
         if package.hasObject(GraphSnapshot):
-            self.clearSelection()
-
             snapshot = package.objectData(GraphSnapshot)
 
+            self.clearSelection()
             for node in snapshot.nodes:
+                node.setSelected(True)
                 node.setPosition(node.position() + QPointF(0.5, 0.5))
-                self.addItem(node)
-            for edge in snapshot.edges:
-                self.addItem(edge)
+            
+            self.merge(snapshot)
 
+    # Widgets ----------------------------------------------------------------------------------------------------------
     def getView(self) -&gt; QGraphicsView:
         &#34;&#34;&#34;Generate and return a new QGraphicsView, configured for optimal viewing.&#34;&#34;&#34;
         v = QGraphicsView(self)
@@ -326,6 +361,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
 
         return v
 
+    # Serialization ----------------------------------------------------------------------------------------------------
     # def serialize(self) -&gt; dict: Inherited from Graph
 
     def deserialize(self, data: dict):
@@ -378,11 +414,25 @@ display the contents correcly and has all the necessary shortcuts attached, use 
     &#34;&#34;&#34;
     if isinstance(item, Node):
         Graph.addNode(self, item)
-
-    if isinstance(item, Edge):
+    elif isinstance(item, Edge):
         Graph.addEdge(self, item)
 
     QGraphicsScene.addItem(self, item)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.clear"><code class="name flex">
+<span>def <span class="ident">clear</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Clear the scheme.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear(self):
+    &#34;&#34;&#34;Clear the scheme.&#34;&#34;&#34;
+    QGraphicsScene.clear(self)
+    Graph.clear(self)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.copySelectedGraph"><code class="name flex">
@@ -457,6 +507,26 @@ display the contents correcly and has all the necessary shortcuts attached, use 
     return v</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.merge"><code class="name flex">
+<span>def <span class="ident">merge</span></span>(<span>self, *others)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Update the scheme, adding elements other schemes.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def merge(self, *others):
+    &#34;&#34;&#34;Update the scheme, adding elements other schemes.&#34;&#34;&#34;
+    Graph.merge(*others)
+
+    for other in others:
+        for node in other.nodes:
+            QGraphicsScene.addItem(self, node)
+        for edge in other.edges:
+            QGraphicsScene.addItem(self, edge)</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.paste"><code class="name flex">
 <span>def <span class="ident">paste</span></span>(<span>self)</span>
 </code></dt>
@@ -472,15 +542,14 @@ display the contents correcly and has all the necessary shortcuts attached, use 
     package = clipboard.mimeData()
 
     if package.hasObject(GraphSnapshot):
-        self.clearSelection()
-
         snapshot = package.objectData(GraphSnapshot)
 
+        self.clearSelection()
         for node in snapshot.nodes:
+            node.setSelected(True)
             node.setPosition(node.position() + QPointF(0.5, 0.5))
-            self.addItem(node)
-        for edge in snapshot.edges:
-            self.addItem(edge)</code></pre>
+        
+        self.merge(snapshot)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.removeItem"><code class="name flex">
@@ -538,6 +607,9 @@ display the contents correcly and has all the necessary shortcuts attached, use 
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.addNode" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.addNode">addNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.connect_nodes" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.connect_nodes">connect_nodes</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.disconnect_nodes" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.disconnect_nodes">disconnect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.isdisjoint" href="graph.html#nfb_studio.widgets.scheme.graph.AbstractGraphBase.isdisjoint">isdisjoint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.issubset" href="graph.html#nfb_studio.widgets.scheme.graph.AbstractGraphBase.issubset">issubset</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.issuperset" href="graph.html#nfb_studio.widgets.scheme.graph.AbstractGraphBase.issuperset">issuperset</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.removeEdge" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.removeEdge">removeEdge</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.removeNode" href="graph.html#nfb_studio.widgets.scheme.graph.Graph.removeNode">removeNode</a></code></li>
 </ul>
@@ -564,9 +636,11 @@ display the contents correcly and has all the necessary shortcuts attached, use 
 <h4><code><a title="nfb_studio.widgets.scheme.scheme.Scheme" href="#nfb_studio.widgets.scheme.scheme.Scheme">Scheme</a></code></h4>
 <ul class="two-column">
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.addItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.addItem">addItem</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.clear" href="#nfb_studio.widgets.scheme.scheme.Scheme.clear">clear</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.copySelectedGraph" href="#nfb_studio.widgets.scheme.scheme.Scheme.copySelectedGraph">copySelectedGraph</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deserialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.getView" href="#nfb_studio.widgets.scheme.scheme.Scheme.getView">getView</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.merge" href="#nfb_studio.widgets.scheme.scheme.Scheme.merge">merge</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.paste" href="#nfb_studio.widgets.scheme.scheme.Scheme.paste">paste</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.removeItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.removeItem">removeItem</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.selectedGraph" href="#nfb_studio.widgets.scheme.scheme.Scheme.selectedGraph">selectedGraph</a></code></li>

@@ -25,30 +25,22 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">from PySide2.QtCore import Qt, QPointF, QRectF, QLineF
-from PySide2.QtGui import QPainter, QFontMetricsF, QPen, QBrush, QColor
+from PySide2.QtGui import QPainter, QFontMetricsF
 from PySide2.QtWidgets import QGraphicsItem, QGraphicsLineItem
 
-from nfb_studio.gui import FontF, inches_to_pixels as px
-from nfb_studio.widgets import RealSizeItem, ShadowSelectableItem, TextLineItem
+from nfb_studio.widgets import ShadowSelectableItem, TextLineItem
 
+from .style import Style
+from .palette import Palette
+from .scheme_item import SchemeItem
 from .data_type import DataType, Unknown
 
 
-class Connection(RealSizeItem, ShadowSelectableItem):
+class Connection(SchemeItem, ShadowSelectableItem):
     &#34;&#34;&#34;Connection is an input or output from a Node.&#34;&#34;&#34;
 
-    stem_length = 0.2  # Length of the line going out of the
-    max_text_length = 1.5  # Horizontal length of the box in which the text is drawn
-    stem_text_margin = 0.05  # Space between stem and title
-    outline_thickness = 0.02
-    outline_color = Qt.black
-    outline_selection_color = QColor.fromRgb(0, 0, 200)
-
-    text_font_name = &#34;Segoe UI&#34;
-    text_font_size = 10.5
-
-    def __init__(self, text=None, data_type: DataType = None):
-        super().__init__()
+    def __init__(self, text=None, data_type: DataType = None, parent: QGraphicsItem = None):
+        super().__init__(parent)
 
         self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)  # To enable edge adjusting
         self.setFlag(QGraphicsItem.ItemIsSelectable)
@@ -56,25 +48,13 @@ class Connection(RealSizeItem, ShadowSelectableItem):
 
         self.edges = set()  # Edges related to this connection
 
-        # Connection text ----------------------------------------------------------------------------------------------
         self._text_item = TextLineItem(text or &#34;Connection&#34;, self)
-        self._text_item.setFont(FontF(self.text_font_name, self.text_font_size))
-        self._text_item.setMaximumWidth(self.max_text_length)
-
-        # Position is controlled by subclasses Input and Output
-
-        # Background color
-        self._text_item.setBackgroundBrush(QBrush(QColor(255, 255, 255, 196)))
-
-        # Connection stem ----------------------------------------------------------------------------------------------
         self._stem_item = QGraphicsLineItem(self)
-        self._stem_item.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-
-        # Position is controlled by subclasses Input and Output
-
-        # --------------------------------------------------------------------------------------------------------------
 
         self._data_type = data_type or Unknown
+
+        self.styleChange()
+        self.paletteChange()
 
     def text(self):
         return self._text_item.text()
@@ -99,6 +79,25 @@ class Connection(RealSizeItem, ShadowSelectableItem):
     def stemTip(self):
         &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local inches.&#34;&#34;&#34;
         raise NotImplementedError()
+    
+    def styleChange(self):
+        super().styleChange()
+        style = self.style()
+
+        self._text_item.setFont(style.font(Style.ConnectionTextFont))
+        self._text_item.setMaximumWidth(style.pixelMetric(Style.ConnectionTextLength))
+
+        self._stem_item.setPen(style.edgePen(self.palette()))
+
+    def paletteChange(self):
+        super().paletteChange()
+        text_bg = self.palette().background().color()
+        text_bg.setAlpha(196)
+
+        self._text_item.setBackgroundBrush(text_bg)
+        self._text_item.setBrush(self.palette().text())
+
+        self._stem_item.setPen(self.style().edgePen(self.palette()))
 
     def itemChange(self, change, value):
         &#34;&#34;&#34;A function that runs every time some change happens to the connection.
@@ -110,12 +109,15 @@ class Connection(RealSizeItem, ShadowSelectableItem):
 
         return super().itemChange(change, value)
 
-    def itemShadowSelectedHasChangedEvent(self, value: bool):
+    def itemShadowSelectedHasChangedEvent(self, value):
+        pal = self.palette()
+
         if value == True:
-            self._stem_item.setPen(QPen(self.outline_selection_color, px(self.outline_thickness)))
+            pal.setCurrentColorGroup(Palette.Selected)
         else:
-            self._stem_item.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-        self.update()
+            pal.setCurrentColorGroup(Palette.Active)
+        
+        self.paletteChange()
 
     def boundingRect(self):
         return QRectF()
@@ -138,6 +140,7 @@ class Connection(RealSizeItem, ShadowSelectableItem):
         else:
             self.setShadowSelected(False)
 
+    # Serialization ====================================================================================================
     def serialize(self) -&gt; dict:
         return {
             &#34;text&#34;: self.text(),
@@ -155,44 +158,62 @@ class Input(Connection):
     def __init__(self, text=None, data_type: DataType = None):
         super().__init__(text or &#34;Input&#34;, data_type)
 
-        # Connection text ----------------------------------------------------------------------------------------------
-        metrics = QFontMetricsF(self._text_item.font())
         self._text_item.setAlignMode(Qt.AlignRight)
-        self._text_item.setPos(px(self.stemTip().x() - self.stem_text_margin), metrics.capHeight() / 2)
 
-        # Connection stem ----------------------------------------------------------------------------------------------
-        self._stem_item.setLine(QLineF(px(self.stemRoot()), px(self.stemTip())))
+        self.styleChange()
+
+    def styleChange(self):
+        super().styleChange()
+        self.prepareGeometryChange()
+        style = self.style()
+
+        margin = style.pixelMetric(Style.ConnectionStemTextMargin)
+        metrics = QFontMetricsF(self._text_item.font())
+
+        self._stem_item.setLine(QLineF(self.stemRoot(), self.stemTip()))
+        self._text_item.setPos(self.stemTip().x() - margin, metrics.capHeight() / 2)
 
     def stemRoot(self):
-        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local inches.&#34;&#34;&#34;
-        return QPointF(0, 0)
+        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local coordinates.&#34;&#34;&#34;
+        return QPointF(0, 0)  # Stem root is located exactly at the origin
 
     def stemTip(self):
-        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local inches.&#34;&#34;&#34;
-        return self.stemRoot() - QPointF(self.stem_length, 0)
+        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local coordinates.&#34;&#34;&#34;
+        stem_length = self.style().pixelMetric(Style.ConnectionStemLength)
+
+        return self.stemRoot() - QPointF(stem_length, 0)
 
 
 class Output(Connection):
-    &#34;&#34;&#34;A data input into a node.&#34;&#34;&#34;
+    &#34;&#34;&#34;A data output from a node.&#34;&#34;&#34;
     
     def __init__(self, text=None, data_type: DataType = None):
         super().__init__(text or &#34;Output&#34;, data_type)
 
-        # Connection text ----------------------------------------------------------------------------------------------
-        metrics = QFontMetricsF(self._text_item.font())
         self._text_item.setAlignMode(Qt.AlignLeft)
-        self._text_item.setPos(px(self.stemTip().x() + self.stem_text_margin), metrics.capHeight() / 2)
+        
+        self.styleChange()
 
-        # Connection stem ----------------------------------------------------------------------------------------------
-        self._stem_item.setLine(QLineF(px(self.stemRoot()), px(self.stemTip())))
+    def styleChange(self):
+        super().styleChange()
+        self.prepareGeometryChange()
+        style = self.style()
+
+        margin = style.pixelMetric(Style.ConnectionStemTextMargin)
+        metrics = QFontMetricsF(self._text_item.font())
+
+        self._stem_item.setLine(QLineF(self.stemRoot(), self.stemTip()))
+        self._text_item.setPos(self.stemTip().x() + margin, metrics.capHeight() / 2)
 
     def stemRoot(self):
-        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local inches.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local coordinates.&#34;&#34;&#34;
         return QPointF(0, 0)  # Stem root is located exactly at the origin
 
     def stemTip(self):
-        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local inches.&#34;&#34;&#34;
-        return self.stemRoot() + QPointF(self.stem_length, 0)</code></pre>
+        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local coordinates.&#34;&#34;&#34;
+        stem_length = self.style().pixelMetric(Style.ConnectionStemLength)
+
+        return self.stemRoot() + QPointF(stem_length, 0)</code></pre>
 </details>
 </section>
 <section>
@@ -206,7 +227,7 @@ class Output(Connection):
 <dl>
 <dt id="nfb_studio.widgets.scheme.connection.Connection"><code class="flex name class">
 <span>class <span class="ident">Connection</span></span>
-<span>(</span><span>text=None, data_type=None)</span>
+<span>(</span><span>text=None, data_type=None, parent=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Connection is an input or output from a Node.</p></section>
@@ -214,21 +235,11 @@ class Output(Connection):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Connection(RealSizeItem, ShadowSelectableItem):
+<pre><code class="python">class Connection(SchemeItem, ShadowSelectableItem):
     &#34;&#34;&#34;Connection is an input or output from a Node.&#34;&#34;&#34;
 
-    stem_length = 0.2  # Length of the line going out of the
-    max_text_length = 1.5  # Horizontal length of the box in which the text is drawn
-    stem_text_margin = 0.05  # Space between stem and title
-    outline_thickness = 0.02
-    outline_color = Qt.black
-    outline_selection_color = QColor.fromRgb(0, 0, 200)
-
-    text_font_name = &#34;Segoe UI&#34;
-    text_font_size = 10.5
-
-    def __init__(self, text=None, data_type: DataType = None):
-        super().__init__()
+    def __init__(self, text=None, data_type: DataType = None, parent: QGraphicsItem = None):
+        super().__init__(parent)
 
         self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)  # To enable edge adjusting
         self.setFlag(QGraphicsItem.ItemIsSelectable)
@@ -236,25 +247,13 @@ class Output(Connection):
 
         self.edges = set()  # Edges related to this connection
 
-        # Connection text ----------------------------------------------------------------------------------------------
         self._text_item = TextLineItem(text or &#34;Connection&#34;, self)
-        self._text_item.setFont(FontF(self.text_font_name, self.text_font_size))
-        self._text_item.setMaximumWidth(self.max_text_length)
-
-        # Position is controlled by subclasses Input and Output
-
-        # Background color
-        self._text_item.setBackgroundBrush(QBrush(QColor(255, 255, 255, 196)))
-
-        # Connection stem ----------------------------------------------------------------------------------------------
         self._stem_item = QGraphicsLineItem(self)
-        self._stem_item.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-
-        # Position is controlled by subclasses Input and Output
-
-        # --------------------------------------------------------------------------------------------------------------
 
         self._data_type = data_type or Unknown
+
+        self.styleChange()
+        self.paletteChange()
 
     def text(self):
         return self._text_item.text()
@@ -279,6 +278,25 @@ class Output(Connection):
     def stemTip(self):
         &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local inches.&#34;&#34;&#34;
         raise NotImplementedError()
+    
+    def styleChange(self):
+        super().styleChange()
+        style = self.style()
+
+        self._text_item.setFont(style.font(Style.ConnectionTextFont))
+        self._text_item.setMaximumWidth(style.pixelMetric(Style.ConnectionTextLength))
+
+        self._stem_item.setPen(style.edgePen(self.palette()))
+
+    def paletteChange(self):
+        super().paletteChange()
+        text_bg = self.palette().background().color()
+        text_bg.setAlpha(196)
+
+        self._text_item.setBackgroundBrush(text_bg)
+        self._text_item.setBrush(self.palette().text())
+
+        self._stem_item.setPen(self.style().edgePen(self.palette()))
 
     def itemChange(self, change, value):
         &#34;&#34;&#34;A function that runs every time some change happens to the connection.
@@ -290,12 +308,15 @@ class Output(Connection):
 
         return super().itemChange(change, value)
 
-    def itemShadowSelectedHasChangedEvent(self, value: bool):
+    def itemShadowSelectedHasChangedEvent(self, value):
+        pal = self.palette()
+
         if value == True:
-            self._stem_item.setPen(QPen(self.outline_selection_color, px(self.outline_thickness)))
+            pal.setCurrentColorGroup(Palette.Selected)
         else:
-            self._stem_item.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-        self.update()
+            pal.setCurrentColorGroup(Palette.Active)
+        
+        self.paletteChange()
 
     def boundingRect(self):
         return QRectF()
@@ -318,6 +339,7 @@ class Output(Connection):
         else:
             self.setShadowSelected(False)
 
+    # Serialization ====================================================================================================
     def serialize(self) -&gt; dict:
         return {
             &#34;text&#34;: self.text(),
@@ -330,7 +352,7 @@ class Output(Connection):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem">ShadowSelectableItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
@@ -340,49 +362,6 @@ class Output(Connection):
 <li><a title="nfb_studio.widgets.scheme.connection.Input" href="#nfb_studio.widgets.scheme.connection.Input">Input</a></li>
 <li><a title="nfb_studio.widgets.scheme.connection.Output" href="#nfb_studio.widgets.scheme.connection.Output">Output</a></li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="nfb_studio.widgets.scheme.connection.Connection.max_text_length"><code class="name">var <span class="ident">max_text_length</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.connection.Connection.outline_color"><code class="name">var <span class="ident">outline_color</span></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.connection.Connection.outline_selection_color"><code class="name">var <span class="ident">outline_selection_color</span></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.connection.Connection.outline_thickness"><code class="name">var <span class="ident">outline_thickness</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.connection.Connection.stem_length"><code class="name">var <span class="ident">stem_length</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.connection.Connection.stem_text_margin"><code class="name">var <span class="ident">stem_text_margin</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.connection.Connection.text_font_name"><code class="name">var <span class="ident">text_font_name</span></code></dt>
-<dd>
-<section class="desc"><p>str(object='') -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.<strong>str</strong>() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to 'strict'.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.connection.Connection.text_font_size"><code class="name">var <span class="ident">text_font_size</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.scheme.connection.Connection.boundingRect"><code class="name flex">
@@ -459,6 +438,26 @@ This processes position changes by adjusting all the edges and forwards the argu
     pass</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.connection.Connection.paletteChange"><code class="name flex">
+<span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paletteChange(self):
+    super().paletteChange()
+    text_bg = self.palette().background().color()
+    text_bg.setAlpha(196)
+
+    self._text_item.setBackgroundBrush(text_bg)
+    self._text_item.setBrush(self.palette().text())
+
+    self._stem_item.setPen(self.style().edgePen(self.palette()))</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.connection.Connection.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self)</span>
 </code></dt>
@@ -533,6 +532,25 @@ This processes position changes by adjusting all the edges and forwards the argu
     raise NotImplementedError()</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.connection.Connection.styleChange"><code class="name flex">
+<span>def <span class="ident">styleChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def styleChange(self):
+    super().styleChange()
+    style = self.style()
+
+    self._text_item.setFont(style.font(Style.ConnectionTextFont))
+    self._text_item.setMaximumWidth(style.pixelMetric(Style.ConnectionTextLength))
+
+    self._stem_item.setPen(style.edgePen(self.palette()))</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.connection.Connection.text"><code class="name flex">
 <span>def <span class="ident">text</span></span>(<span>self)</span>
 </code></dt>
@@ -576,10 +594,10 @@ The connection is responsible to propagate this call to edges.</p></section>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.position" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
 </ul>
 </li>
 <li><code><b><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem">ShadowSelectableItem</a></b></code>:
@@ -610,30 +628,93 @@ The connection is responsible to propagate this call to edges.</p></section>
     def __init__(self, text=None, data_type: DataType = None):
         super().__init__(text or &#34;Input&#34;, data_type)
 
-        # Connection text ----------------------------------------------------------------------------------------------
-        metrics = QFontMetricsF(self._text_item.font())
         self._text_item.setAlignMode(Qt.AlignRight)
-        self._text_item.setPos(px(self.stemTip().x() - self.stem_text_margin), metrics.capHeight() / 2)
 
-        # Connection stem ----------------------------------------------------------------------------------------------
-        self._stem_item.setLine(QLineF(px(self.stemRoot()), px(self.stemTip())))
+        self.styleChange()
+
+    def styleChange(self):
+        super().styleChange()
+        self.prepareGeometryChange()
+        style = self.style()
+
+        margin = style.pixelMetric(Style.ConnectionStemTextMargin)
+        metrics = QFontMetricsF(self._text_item.font())
+
+        self._stem_item.setLine(QLineF(self.stemRoot(), self.stemTip()))
+        self._text_item.setPos(self.stemTip().x() - margin, metrics.capHeight() / 2)
 
     def stemRoot(self):
-        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local inches.&#34;&#34;&#34;
-        return QPointF(0, 0)
+        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local coordinates.&#34;&#34;&#34;
+        return QPointF(0, 0)  # Stem root is located exactly at the origin
 
     def stemTip(self):
-        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local inches.&#34;&#34;&#34;
-        return self.stemRoot() - QPointF(self.stem_length, 0)</code></pre>
+        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local coordinates.&#34;&#34;&#34;
+        stem_length = self.style().pixelMetric(Style.ConnectionStemLength)
+
+        return self.stemRoot() - QPointF(stem_length, 0)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="nfb_studio.widgets.scheme.connection.Connection" href="#nfb_studio.widgets.scheme.connection.Connection">Connection</a></li>
-<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem">ShadowSelectableItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
+<h3>Methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.connection.Input.stemRoot"><code class="name flex">
+<span>def <span class="ident">stemRoot</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return position of stem's root (where the stem connects to the node) in local coordinates.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stemRoot(self):
+    &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local coordinates.&#34;&#34;&#34;
+    return QPointF(0, 0)  # Stem root is located exactly at the origin</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.Input.stemTip"><code class="name flex">
+<span>def <span class="ident">stemTip</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return position of stem's root (where the stem connects to the edge) in local coordinates.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stemTip(self):
+    &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local coordinates.&#34;&#34;&#34;
+    stem_length = self.style().pixelMetric(Style.ConnectionStemLength)
+
+    return self.stemRoot() - QPointF(stem_length, 0)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.Input.styleChange"><code class="name flex">
+<span>def <span class="ident">styleChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def styleChange(self):
+    super().styleChange()
+    self.prepareGeometryChange()
+    style = self.style()
+
+    margin = style.pixelMetric(Style.ConnectionStemTextMargin)
+    metrics = QFontMetricsF(self._text_item.font())
+
+    self._stem_item.setLine(QLineF(self.stemRoot(), self.stemTip()))
+    self._text_item.setPos(self.stemTip().x() - margin, metrics.capHeight() / 2)</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="nfb_studio.widgets.scheme.connection.Connection" href="#nfb_studio.widgets.scheme.connection.Connection">Connection</a></b></code>:
@@ -642,17 +723,9 @@ The connection is responsible to propagate this call to edges.</p></section>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.itemChange" href="#nfb_studio.widgets.scheme.connection.Connection.itemChange">itemChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.itemShadowSelectedChangeEvent" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedChangeEvent">itemShadowSelectedChangeEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.itemShadowSelectedHasChangedEvent" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedHasChangedEvent">itemShadowSelectedHasChangedEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.max_text_length" href="#nfb_studio.widgets.scheme.connection.Connection.max_text_length">max_text_length</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.outline_thickness" href="#nfb_studio.widgets.scheme.connection.Connection.outline_thickness">outline_thickness</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.paint" href="#nfb_studio.widgets.scheme.connection.Connection.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.position" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stemRoot" href="#nfb_studio.widgets.scheme.connection.Connection.stemRoot">stemRoot</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stemTip" href="#nfb_studio.widgets.scheme.connection.Connection.stemTip">stemTip</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stem_length" href="#nfb_studio.widgets.scheme.connection.Connection.stem_length">stem_length</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stem_text_margin" href="#nfb_studio.widgets.scheme.connection.Connection.stem_text_margin">stem_text_margin</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.text_font_name" href="#nfb_studio.widgets.scheme.connection.Connection.text_font_name">text_font_name</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.text_font_size" href="#nfb_studio.widgets.scheme.connection.Connection.text_font_size">text_font_size</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.position" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.setPosition" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.updateSelectedStatus" href="#nfb_studio.widgets.scheme.connection.Connection.updateSelectedStatus">updateSelectedStatus</a></code></li>
 </ul>
 </li>
@@ -663,41 +736,104 @@ The connection is responsible to propagate this call to edges.</p></section>
 <span>(</span><span>text=None, data_type=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>A data input into a node.</p></section>
+<section class="desc"><p>A data output from a node.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Output(Connection):
-    &#34;&#34;&#34;A data input into a node.&#34;&#34;&#34;
+    &#34;&#34;&#34;A data output from a node.&#34;&#34;&#34;
     
     def __init__(self, text=None, data_type: DataType = None):
         super().__init__(text or &#34;Output&#34;, data_type)
 
-        # Connection text ----------------------------------------------------------------------------------------------
-        metrics = QFontMetricsF(self._text_item.font())
         self._text_item.setAlignMode(Qt.AlignLeft)
-        self._text_item.setPos(px(self.stemTip().x() + self.stem_text_margin), metrics.capHeight() / 2)
+        
+        self.styleChange()
 
-        # Connection stem ----------------------------------------------------------------------------------------------
-        self._stem_item.setLine(QLineF(px(self.stemRoot()), px(self.stemTip())))
+    def styleChange(self):
+        super().styleChange()
+        self.prepareGeometryChange()
+        style = self.style()
+
+        margin = style.pixelMetric(Style.ConnectionStemTextMargin)
+        metrics = QFontMetricsF(self._text_item.font())
+
+        self._stem_item.setLine(QLineF(self.stemRoot(), self.stemTip()))
+        self._text_item.setPos(self.stemTip().x() + margin, metrics.capHeight() / 2)
 
     def stemRoot(self):
-        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local inches.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local coordinates.&#34;&#34;&#34;
         return QPointF(0, 0)  # Stem root is located exactly at the origin
 
     def stemTip(self):
-        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local inches.&#34;&#34;&#34;
-        return self.stemRoot() + QPointF(self.stem_length, 0)</code></pre>
+        &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local coordinates.&#34;&#34;&#34;
+        stem_length = self.style().pixelMetric(Style.ConnectionStemLength)
+
+        return self.stemRoot() + QPointF(stem_length, 0)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="nfb_studio.widgets.scheme.connection.Connection" href="#nfb_studio.widgets.scheme.connection.Connection">Connection</a></li>
-<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem">ShadowSelectableItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
+<h3>Methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.connection.Output.stemRoot"><code class="name flex">
+<span>def <span class="ident">stemRoot</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return position of stem's root (where the stem connects to the node) in local coordinates.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stemRoot(self):
+    &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local coordinates.&#34;&#34;&#34;
+    return QPointF(0, 0)  # Stem root is located exactly at the origin</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.Output.stemTip"><code class="name flex">
+<span>def <span class="ident">stemTip</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return position of stem's root (where the stem connects to the edge) in local coordinates.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stemTip(self):
+    &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local coordinates.&#34;&#34;&#34;
+    stem_length = self.style().pixelMetric(Style.ConnectionStemLength)
+
+    return self.stemRoot() + QPointF(stem_length, 0)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.Output.styleChange"><code class="name flex">
+<span>def <span class="ident">styleChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def styleChange(self):
+    super().styleChange()
+    self.prepareGeometryChange()
+    style = self.style()
+
+    margin = style.pixelMetric(Style.ConnectionStemTextMargin)
+    metrics = QFontMetricsF(self._text_item.font())
+
+    self._stem_item.setLine(QLineF(self.stemRoot(), self.stemTip()))
+    self._text_item.setPos(self.stemTip().x() + margin, metrics.capHeight() / 2)</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
 <li><code><b><a title="nfb_studio.widgets.scheme.connection.Connection" href="#nfb_studio.widgets.scheme.connection.Connection">Connection</a></b></code>:
@@ -706,17 +842,9 @@ The connection is responsible to propagate this call to edges.</p></section>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.itemChange" href="#nfb_studio.widgets.scheme.connection.Connection.itemChange">itemChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.itemShadowSelectedChangeEvent" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedChangeEvent">itemShadowSelectedChangeEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.itemShadowSelectedHasChangedEvent" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedHasChangedEvent">itemShadowSelectedHasChangedEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.max_text_length" href="#nfb_studio.widgets.scheme.connection.Connection.max_text_length">max_text_length</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.outline_thickness" href="#nfb_studio.widgets.scheme.connection.Connection.outline_thickness">outline_thickness</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.paint" href="#nfb_studio.widgets.scheme.connection.Connection.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.position" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stemRoot" href="#nfb_studio.widgets.scheme.connection.Connection.stemRoot">stemRoot</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stemTip" href="#nfb_studio.widgets.scheme.connection.Connection.stemTip">stemTip</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stem_length" href="#nfb_studio.widgets.scheme.connection.Connection.stem_length">stem_length</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stem_text_margin" href="#nfb_studio.widgets.scheme.connection.Connection.stem_text_margin">stem_text_margin</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.text_font_name" href="#nfb_studio.widgets.scheme.connection.Connection.text_font_name">text_font_name</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.text_font_size" href="#nfb_studio.widgets.scheme.connection.Connection.text_font_size">text_font_size</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.position" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.setPosition" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.updateSelectedStatus" href="#nfb_studio.widgets.scheme.connection.Connection.updateSelectedStatus">updateSelectedStatus</a></code></li>
 </ul>
 </li>
@@ -745,29 +873,33 @@ The connection is responsible to propagate this call to edges.</p></section>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.dataType" href="#nfb_studio.widgets.scheme.connection.Connection.dataType">dataType</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.deserialize" href="#nfb_studio.widgets.scheme.connection.Connection.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.itemChange" href="#nfb_studio.widgets.scheme.connection.Connection.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.max_text_length" href="#nfb_studio.widgets.scheme.connection.Connection.max_text_length">max_text_length</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.outline_color" href="#nfb_studio.widgets.scheme.connection.Connection.outline_color">outline_color</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.outline_selection_color" href="#nfb_studio.widgets.scheme.connection.Connection.outline_selection_color">outline_selection_color</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.outline_thickness" href="#nfb_studio.widgets.scheme.connection.Connection.outline_thickness">outline_thickness</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.paint" href="#nfb_studio.widgets.scheme.connection.Connection.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.paletteChange" href="#nfb_studio.widgets.scheme.connection.Connection.paletteChange">paletteChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.serialize" href="#nfb_studio.widgets.scheme.connection.Connection.serialize">serialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.setDataType" href="#nfb_studio.widgets.scheme.connection.Connection.setDataType">setDataType</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.setText" href="#nfb_studio.widgets.scheme.connection.Connection.setText">setText</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stemRoot" href="#nfb_studio.widgets.scheme.connection.Connection.stemRoot">stemRoot</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stemTip" href="#nfb_studio.widgets.scheme.connection.Connection.stemTip">stemTip</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stem_length" href="#nfb_studio.widgets.scheme.connection.Connection.stem_length">stem_length</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.stem_text_margin" href="#nfb_studio.widgets.scheme.connection.Connection.stem_text_margin">stem_text_margin</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.styleChange" href="#nfb_studio.widgets.scheme.connection.Connection.styleChange">styleChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.text" href="#nfb_studio.widgets.scheme.connection.Connection.text">text</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.text_font_name" href="#nfb_studio.widgets.scheme.connection.Connection.text_font_name">text_font_name</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.Connection.text_font_size" href="#nfb_studio.widgets.scheme.connection.Connection.text_font_size">text_font_size</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.Connection.updateSelectedStatus" href="#nfb_studio.widgets.scheme.connection.Connection.updateSelectedStatus">updateSelectedStatus</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.connection.Input" href="#nfb_studio.widgets.scheme.connection.Input">Input</a></code></h4>
+<ul class="">
+<li><code><a title="nfb_studio.widgets.scheme.connection.Input.stemRoot" href="#nfb_studio.widgets.scheme.connection.Input.stemRoot">stemRoot</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.Input.stemTip" href="#nfb_studio.widgets.scheme.connection.Input.stemTip">stemTip</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.Input.styleChange" href="#nfb_studio.widgets.scheme.connection.Input.styleChange">styleChange</a></code></li>
+</ul>
 </li>
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.connection.Output" href="#nfb_studio.widgets.scheme.connection.Output">Output</a></code></h4>
+<ul class="">
+<li><code><a title="nfb_studio.widgets.scheme.connection.Output.stemRoot" href="#nfb_studio.widgets.scheme.connection.Output.stemRoot">stemRoot</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.Output.stemTip" href="#nfb_studio.widgets.scheme.connection.Output.stemTip">stemTip</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.Output.styleChange" href="#nfb_studio.widgets.scheme.connection.Output.styleChange">styleChange</a></code></li>
+</ul>
 </li>
 </ul>
 </li>

@@ -30,12 +30,8 @@ from PySide2.QtCore import Qt, QRectF
 from PySide2.QtGui import QPainter
 from PySide2.QtWidgets import QGraphicsSimpleTextItem
 
-from nfb_studio.gui import inches_to_pixels as px
 
-from .real_size_item import RealSizeItem
-
-
-class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
+class TextRectItem(QGraphicsSimpleTextItem):
     &#34;&#34;&#34;A block of text.
     
     Text can be confined to a certain rectangular frame. Parts of text that do not fit will be cut off.
@@ -47,7 +43,7 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
         self._alignment = Qt.AlignLeft
 
     def setFrame(self, frame: Union[QRectF, None]):
-        &#34;&#34;&#34;Set the frame to which the text must be confined. Frame measurements are in inches.
+        &#34;&#34;&#34;Set the frame to which the text must be confined.
         If frame is None, text will be displayed with no limitations.
         &#34;&#34;&#34;
         self._frame = frame
@@ -57,7 +53,7 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
         self._alignment = flag
 
     def frame(self) -&gt; Union[QRectF, None]:
-        &#34;&#34;&#34;Frame to which the text must be confined. Frame measurements are in inches.&#34;&#34;&#34;
+        &#34;&#34;&#34;Frame to which the text must be confined.&#34;&#34;&#34;
         return self._frame
 
     def alignment(self):
@@ -69,7 +65,7 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
         else:
             painter.setFont(self.font())
             painter.setBrush(self.brush())
-            painter.drawText(px(self.frame()), self.alignment(), self.text())</code></pre>
+            painter.drawText(self.frame(), self.alignment(), self.text())</code></pre>
 </details>
 </section>
 <section>
@@ -92,7 +88,7 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
+<pre><code class="python">class TextRectItem(QGraphicsSimpleTextItem):
     &#34;&#34;&#34;A block of text.
     
     Text can be confined to a certain rectangular frame. Parts of text that do not fit will be cut off.
@@ -104,7 +100,7 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
         self._alignment = Qt.AlignLeft
 
     def setFrame(self, frame: Union[QRectF, None]):
-        &#34;&#34;&#34;Set the frame to which the text must be confined. Frame measurements are in inches.
+        &#34;&#34;&#34;Set the frame to which the text must be confined.
         If frame is None, text will be displayed with no limitations.
         &#34;&#34;&#34;
         self._frame = frame
@@ -114,7 +110,7 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
         self._alignment = flag
 
     def frame(self) -&gt; Union[QRectF, None]:
-        &#34;&#34;&#34;Frame to which the text must be confined. Frame measurements are in inches.&#34;&#34;&#34;
+        &#34;&#34;&#34;Frame to which the text must be confined.&#34;&#34;&#34;
         return self._frame
 
     def alignment(self):
@@ -126,13 +122,12 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
         else:
             painter.setFont(self.font())
             painter.setBrush(self.brush())
-            painter.drawText(px(self.frame()), self.alignment(), self.text())</code></pre>
+            painter.drawText(self.frame(), self.alignment(), self.text())</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>PySide2.QtWidgets.QGraphicsSimpleTextItem</li>
 <li>PySide2.QtWidgets.QAbstractGraphicsShapeItem</li>
-<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
@@ -155,13 +150,13 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
 <span>def <span class="ident">frame</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Frame to which the text must be confined. Frame measurements are in inches.</p></section>
+<section class="desc"><p>Frame to which the text must be confined.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def frame(self) -&gt; Union[QRectF, None]:
-    &#34;&#34;&#34;Frame to which the text must be confined. Frame measurements are in inches.&#34;&#34;&#34;
+    &#34;&#34;&#34;Frame to which the text must be confined.&#34;&#34;&#34;
     return self._frame</code></pre>
 </details>
 </dd>
@@ -180,7 +175,7 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
     else:
         painter.setFont(self.font())
         painter.setBrush(self.brush())
-        painter.drawText(px(self.frame()), self.alignment(), self.text())</code></pre>
+        painter.drawText(self.frame(), self.alignment(), self.text())</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.text_rect_item.TextRectItem.setAlignment"><code class="name flex">
@@ -201,29 +196,20 @@ class TextRectItem(QGraphicsSimpleTextItem, RealSizeItem):
 <span>def <span class="ident">setFrame</span></span>(<span>self, frame)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set the frame to which the text must be confined. Frame measurements are in inches.
+<section class="desc"><p>Set the frame to which the text must be confined.
 If frame is None, text will be displayed with no limitations.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def setFrame(self, frame: Union[QRectF, None]):
-    &#34;&#34;&#34;Set the frame to which the text must be confined. Frame measurements are in inches.
+    &#34;&#34;&#34;Set the frame to which the text must be confined.
     If frame is None, text will be displayed with no limitations.
     &#34;&#34;&#34;
     self._frame = frame</code></pre>
 </details>
 </dd>
 </dl>
-<h3>Inherited members</h3>
-<ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></b></code>:
-<ul class="hlist">
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.position" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.setPosition" href="real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
-</ul>
-</li>
-</ul>
 </dd>
 </dl>
 </section>

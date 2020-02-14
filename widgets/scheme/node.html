@@ -24,95 +24,48 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from PySide2.QtCore import Qt, QPointF, QSizeF, QRectF
-from PySide2.QtGui import QPainter, QPainterPath, QColor, QPen, QFontMetricsF
+<pre><code class="python">from PySide2.QtCore import QPointF, QSizeF, QRectF
+from PySide2.QtGui import QPainter, QPainterPath, QFontMetricsF
 from PySide2.QtWidgets import QGraphicsItem, QGraphicsLineItem, QGraphicsPathItem
 from sortedcontainers import SortedList
 
-from nfb_studio.gui import FontF, inches_to_pixels as px, pixels_to_inches as inches
-from nfb_studio.widgets import RealSizeItem, TextLineItem, TextRectItem
+from nfb_studio.gui import inches_to_pixels as px
 from nfb_studio.math import clamp
 
+from ..text_line_item import TextLineItem
+from ..text_rect_item import TextRectItem
+from .scheme_item import SchemeItem
 from .connection import Input, Output
 from .message import Message
+from .style import Style
 
 
-class Node(RealSizeItem):
+class Node(SchemeItem):
     &#34;&#34;&#34;The main component of the graph scene.
 
-    A node represents a single vertex of the graph, with its associated information and inputs/outputs. All sizes and
-    positions are measured in inches.
+    A node represents a single vertex of the graph, with its associated information and inputs/outputs.
     &#34;&#34;&#34;
-    # Static graphics properties (in inches)
-    corner_radius = 0.1  # Rounded rectangle corner radius
-    internal_padding = 0.1  # Padding for text inside the body
-    divider_padding = 0.05  # Padding between text and the title/description divider
-    external_padding = 0.05  # Padding between errors, between error icon and text
-    connection_padding = 0.15  # Padding between connections
-    outline_thickness = 0.02
-    outline_color = Qt.black
-    outline_selection_color = QColor.fromRgb(0, 0, 200)
-    fill_color = QColor.fromRgb(240, 240, 240)
-    fill_selection_color = QColor.fromRgb(247, 247, 255)
-
-    title_font_name = &#34;Segoe UI Semibold&#34;
-    title_font_size = 10.5
-    description_font_name = &#34;Segoe UI&#34;
-    description_font_size = 10.5
-
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 
         # Default size and text
-        self._size = QSizeF(2, 1.2)
+        self._size = QSizeF(0, 115)
 
         self._body_item = QGraphicsPathItem(self)
-        self._body_item.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-        self._body_item.setBrush(self.fill_color)
-        path = QPainterPath()
-        path.addRoundedRect(
-            QRectF(QPointF(), px(self.size())),
-            px(self.corner_radius),
-            px(self.corner_radius)
-        )
-        #painter.fillPath(path, self.fill_color)
-        self._body_item.setPath(path)
-
         self._title_item = TextLineItem(&#34;Node&#34;, self)
-        self._title_item.setFont(FontF(self.title_font_name, self.title_font_size))
-        title_font_metrics = QFontMetricsF(self._title_item.font())
-        self._title_item.setPosition(self.internal_padding, self.internal_padding)
-        self._title_item.moveBy(0, title_font_metrics.capHeight())
-        self._title_item.setMaximumWidth(self.size().width() - self.internal_padding * 2)
-
-        # Vertical space between body top and the title/description divider
-        divider_offset = \
-            self.internal_padding + \
-            inches(title_font_metrics.capHeight() + title_font_metrics.descent()) + \
-            self.divider_padding
-        self._divider = QGraphicsLineItem(0, px(divider_offset), px(self.size().width()), px(divider_offset), self)
-        self._divider.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-
+        self._divider = QGraphicsLineItem(self)
         self._description_item = TextRectItem(&#34;No description&#34;, self)
-        self._description_item.setFont(FontF(self.description_font_name, self.description_font_size))
-        self._description_item.setPosition(self.internal_padding, divider_offset + self.divider_padding)
-        self._description_item.setFrame(
-            QRectF(
-                QPointF(),
-                QSizeF(
-                    self.size().width() - self.internal_padding * 2,
-                    (self.size().height() - self.internal_padding) -
-                    (divider_offset + self.divider_padding)
-                )
-            )
-        )
 
         # Inputs and outputs
         self.inputs = []
         self.outputs = []
         self.messages = SortedList(key=lambda item: item.severity())
+
+        # Set proper style and color for the item
+        self.styleChange()
+        self.paletteChange()
 
     # Input/output management ==========================================================================================
     def addInput(self, obj: Input):
@@ -169,9 +122,6 @@ class Node(RealSizeItem):
         return removed
 
     # Member variables =================================================================================================
-    def setSize(self, size):
-        self._size = size
-
     def setTitle(self, title):
         self._title_item.setText(title)
 
@@ -189,46 +139,112 @@ class Node(RealSizeItem):
 
     # Updating functions ===============================================================================================
     def _updateInputPositions(self):
+        padding = self.style().pixelMetric(Style.NodeConnectionPadding)
+
         i = 0
         for item in self.inputs:
-            item.setPosition(0, self.connection_padding * (2 * i + 1))
+            item.setPos(0, padding * (2 * i + 1))
             i += 1
 
     def _updateOutputPositions(self):
+        padding = self.style().pixelMetric(Style.NodeConnectionPadding)
+
         i = 0
         for item in self.outputs:
-            item.setPosition(self.size().width(), self.connection_padding * (2 * i + 1))
+            item.setPos(self.size().width(), padding * (2 * i + 1))
             i += 1
 
     def _updateMessagePositions(self):
+        padding = self.style().pixelMetric(Style.NodeMessagePadding)
+        icon_size = self.style().pixelMetric(Style.MessageIconSize)
+
         i = 0
         for msg in self.messages:
-            msg.setPosition(
+            msg.setPos(
                 0,
                 self.size().height() +
-                self.external_padding * (i + 1) +
-                Message.icon_size * i)
+                padding * (i + 1) +
+                icon_size * i)
             i += 1
 
     # Geometry and drawing =============================================================================================
     def boundingRect(self) -&gt; QRectF:
+        frame_width = self.style().pixelMetric(Style.NodeFrameWidth)
+
         return QRectF(
-            QPointF(-px(self.outline_thickness)/2, -px(self.outline_thickness)/2),
-            px(self.size()) + QSizeF(px(self.outline_thickness), px(self.outline_thickness))
+            QPointF(-frame_width/2, -frame_width/2),
+            self.size() + QSizeF(frame_width, frame_width)
         )
 
     def shape(self):
+        frame_corner_radius = self.style().pixelMetric(Style.NodeFrameCornerRadius)
+
         path = QPainterPath()
-        path.addRoundedRect(
-            QRectF(QPointF(0, 0), px(self.size())),
-            px(self.corner_radius),
-            px(self.corner_radius)
-        )
+        path.addRoundedRect(QRectF(QPointF(0, 0), self.size()), frame_corner_radius, frame_corner_radius)
 
         return path
 
     def paint(self, painter: QPainter, option, widget=...) -&gt; None:
         pass
+    
+    # Event handlers ===================================================================================================
+    def styleChange(self):
+        self.prepareGeometryChange()
+        style = self.style()
+
+        # Size and Frame
+        frame_width = style.pixelMetric(Style.NodeWidth)
+        self._size.setWidth(frame_width)
+        self._body_item.setPen(style.framePen(self.palette()))
+
+        path = QPainterPath()
+        path.addRoundedRect(
+            QRectF(QPointF(), self.size()),
+            style.pixelMetric(Style.NodeFrameCornerRadius),
+            style.pixelMetric(Style.NodeFrameCornerRadius)
+        )
+        self._body_item.setPath(path)
+        
+        # Title item
+        title_font = style.font(Style.NodeTitleFont)
+        title_metrics = QFontMetricsF(title_font)
+
+        padding = style.pixelMetric(Style.NodeFrameTextPadding)
+
+        self._title_item.setFont(title_font)
+        self._title_item.setPos(padding, padding)
+        self._title_item.moveBy(0, title_metrics.capHeight())
+        self._title_item.setMaximumWidth(frame_width - padding * 2)
+
+        # Divider item
+        div_margin = style.pixelMetric(Style.NodeDividerTextMargin)
+        div_voffset = padding + title_metrics.capHeight() + title_metrics.descent() + div_margin
+        
+        self._divider.setLine(0, div_voffset, frame_width, div_voffset)
+        self._divider.setPen(style.framePen(self.palette()))
+
+        # Description item
+        self._description_item.setFont(style.font(Style.NodeDescriptionFont))
+        self._description_item.setPos(padding, div_voffset + div_margin)
+        self._description_item.setFrame(
+            QRectF(
+                QPointF(0, 0),
+                QSizeF(
+                    px(frame_width) - padding * 2,
+                    (px(self.size().height()) - padding) -
+                    (div_voffset + padding)
+                )
+            )
+        )
+        
+    def paletteChange(self):
+        self._body_item.setPen(self.style().framePen(self.palette()))
+        self._body_item.setBrush(self.palette().base())
+        self._title_item.setBrush(self.palette().text())
+        self._description_item.setBrush(self.palette().text())
+        self._divider.setPen(self.style().framePen(self.palette()))
+
+        self.update(self.boundingRect())
 
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value):
         if change == QGraphicsItem.ItemSelectedHasChanged:
@@ -239,17 +255,9 @@ class Node(RealSizeItem):
             for output in self.outputs:
                 output.updateSelectedStatus()
 
-            # Change color
-            if value == True:
-                self._body_item.setPen(QPen(self.outline_selection_color, px(self.outline_thickness)))
-                self._body_item.setBrush(self.fill_selection_color)
-            else:
-                self._body_item.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-                self._body_item.setBrush(self.fill_color)
-            self.update()
-
         return super().itemChange(change, value)
 
+    # Serialization ====================================================================================================
     def serialize(self) -&gt; dict:
         return {
             &#34;title&#34;: self.title(),
@@ -293,88 +301,37 @@ class Node(RealSizeItem):
 </code></dt>
 <dd>
 <section class="desc"><p>The main component of the graph scene.</p>
-<p>A node represents a single vertex of the graph, with its associated information and inputs/outputs. All sizes and
-positions are measured in inches.</p></section>
+<p>A node represents a single vertex of the graph, with its associated information and inputs/outputs.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Node(RealSizeItem):
+<pre><code class="python">class Node(SchemeItem):
     &#34;&#34;&#34;The main component of the graph scene.
 
-    A node represents a single vertex of the graph, with its associated information and inputs/outputs. All sizes and
-    positions are measured in inches.
+    A node represents a single vertex of the graph, with its associated information and inputs/outputs.
     &#34;&#34;&#34;
-    # Static graphics properties (in inches)
-    corner_radius = 0.1  # Rounded rectangle corner radius
-    internal_padding = 0.1  # Padding for text inside the body
-    divider_padding = 0.05  # Padding between text and the title/description divider
-    external_padding = 0.05  # Padding between errors, between error icon and text
-    connection_padding = 0.15  # Padding between connections
-    outline_thickness = 0.02
-    outline_color = Qt.black
-    outline_selection_color = QColor.fromRgb(0, 0, 200)
-    fill_color = QColor.fromRgb(240, 240, 240)
-    fill_selection_color = QColor.fromRgb(247, 247, 255)
-
-    title_font_name = &#34;Segoe UI Semibold&#34;
-    title_font_size = 10.5
-    description_font_name = &#34;Segoe UI&#34;
-    description_font_size = 10.5
-
     def __init__(self, parent=None):
-        super().__init__()
+        super().__init__(parent)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 
         # Default size and text
-        self._size = QSizeF(2, 1.2)
+        self._size = QSizeF(0, 115)
 
         self._body_item = QGraphicsPathItem(self)
-        self._body_item.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-        self._body_item.setBrush(self.fill_color)
-        path = QPainterPath()
-        path.addRoundedRect(
-            QRectF(QPointF(), px(self.size())),
-            px(self.corner_radius),
-            px(self.corner_radius)
-        )
-        #painter.fillPath(path, self.fill_color)
-        self._body_item.setPath(path)
-
         self._title_item = TextLineItem(&#34;Node&#34;, self)
-        self._title_item.setFont(FontF(self.title_font_name, self.title_font_size))
-        title_font_metrics = QFontMetricsF(self._title_item.font())
-        self._title_item.setPosition(self.internal_padding, self.internal_padding)
-        self._title_item.moveBy(0, title_font_metrics.capHeight())
-        self._title_item.setMaximumWidth(self.size().width() - self.internal_padding * 2)
-
-        # Vertical space between body top and the title/description divider
-        divider_offset = \
-            self.internal_padding + \
-            inches(title_font_metrics.capHeight() + title_font_metrics.descent()) + \
-            self.divider_padding
-        self._divider = QGraphicsLineItem(0, px(divider_offset), px(self.size().width()), px(divider_offset), self)
-        self._divider.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-
+        self._divider = QGraphicsLineItem(self)
         self._description_item = TextRectItem(&#34;No description&#34;, self)
-        self._description_item.setFont(FontF(self.description_font_name, self.description_font_size))
-        self._description_item.setPosition(self.internal_padding, divider_offset + self.divider_padding)
-        self._description_item.setFrame(
-            QRectF(
-                QPointF(),
-                QSizeF(
-                    self.size().width() - self.internal_padding * 2,
-                    (self.size().height() - self.internal_padding) -
-                    (divider_offset + self.divider_padding)
-                )
-            )
-        )
 
         # Inputs and outputs
         self.inputs = []
         self.outputs = []
         self.messages = SortedList(key=lambda item: item.severity())
+
+        # Set proper style and color for the item
+        self.styleChange()
+        self.paletteChange()
 
     # Input/output management ==========================================================================================
     def addInput(self, obj: Input):
@@ -431,9 +388,6 @@ positions are measured in inches.</p></section>
         return removed
 
     # Member variables =================================================================================================
-    def setSize(self, size):
-        self._size = size
-
     def setTitle(self, title):
         self._title_item.setText(title)
 
@@ -451,46 +405,112 @@ positions are measured in inches.</p></section>
 
     # Updating functions ===============================================================================================
     def _updateInputPositions(self):
+        padding = self.style().pixelMetric(Style.NodeConnectionPadding)
+
         i = 0
         for item in self.inputs:
-            item.setPosition(0, self.connection_padding * (2 * i + 1))
+            item.setPos(0, padding * (2 * i + 1))
             i += 1
 
     def _updateOutputPositions(self):
+        padding = self.style().pixelMetric(Style.NodeConnectionPadding)
+
         i = 0
         for item in self.outputs:
-            item.setPosition(self.size().width(), self.connection_padding * (2 * i + 1))
+            item.setPos(self.size().width(), padding * (2 * i + 1))
             i += 1
 
     def _updateMessagePositions(self):
+        padding = self.style().pixelMetric(Style.NodeMessagePadding)
+        icon_size = self.style().pixelMetric(Style.MessageIconSize)
+
         i = 0
         for msg in self.messages:
-            msg.setPosition(
+            msg.setPos(
                 0,
                 self.size().height() +
-                self.external_padding * (i + 1) +
-                Message.icon_size * i)
+                padding * (i + 1) +
+                icon_size * i)
             i += 1
 
     # Geometry and drawing =============================================================================================
     def boundingRect(self) -&gt; QRectF:
+        frame_width = self.style().pixelMetric(Style.NodeFrameWidth)
+
         return QRectF(
-            QPointF(-px(self.outline_thickness)/2, -px(self.outline_thickness)/2),
-            px(self.size()) + QSizeF(px(self.outline_thickness), px(self.outline_thickness))
+            QPointF(-frame_width/2, -frame_width/2),
+            self.size() + QSizeF(frame_width, frame_width)
         )
 
     def shape(self):
+        frame_corner_radius = self.style().pixelMetric(Style.NodeFrameCornerRadius)
+
         path = QPainterPath()
-        path.addRoundedRect(
-            QRectF(QPointF(0, 0), px(self.size())),
-            px(self.corner_radius),
-            px(self.corner_radius)
-        )
+        path.addRoundedRect(QRectF(QPointF(0, 0), self.size()), frame_corner_radius, frame_corner_radius)
 
         return path
 
     def paint(self, painter: QPainter, option, widget=...) -&gt; None:
         pass
+    
+    # Event handlers ===================================================================================================
+    def styleChange(self):
+        self.prepareGeometryChange()
+        style = self.style()
+
+        # Size and Frame
+        frame_width = style.pixelMetric(Style.NodeWidth)
+        self._size.setWidth(frame_width)
+        self._body_item.setPen(style.framePen(self.palette()))
+
+        path = QPainterPath()
+        path.addRoundedRect(
+            QRectF(QPointF(), self.size()),
+            style.pixelMetric(Style.NodeFrameCornerRadius),
+            style.pixelMetric(Style.NodeFrameCornerRadius)
+        )
+        self._body_item.setPath(path)
+        
+        # Title item
+        title_font = style.font(Style.NodeTitleFont)
+        title_metrics = QFontMetricsF(title_font)
+
+        padding = style.pixelMetric(Style.NodeFrameTextPadding)
+
+        self._title_item.setFont(title_font)
+        self._title_item.setPos(padding, padding)
+        self._title_item.moveBy(0, title_metrics.capHeight())
+        self._title_item.setMaximumWidth(frame_width - padding * 2)
+
+        # Divider item
+        div_margin = style.pixelMetric(Style.NodeDividerTextMargin)
+        div_voffset = padding + title_metrics.capHeight() + title_metrics.descent() + div_margin
+        
+        self._divider.setLine(0, div_voffset, frame_width, div_voffset)
+        self._divider.setPen(style.framePen(self.palette()))
+
+        # Description item
+        self._description_item.setFont(style.font(Style.NodeDescriptionFont))
+        self._description_item.setPos(padding, div_voffset + div_margin)
+        self._description_item.setFrame(
+            QRectF(
+                QPointF(0, 0),
+                QSizeF(
+                    px(frame_width) - padding * 2,
+                    (px(self.size().height()) - padding) -
+                    (div_voffset + padding)
+                )
+            )
+        )
+        
+    def paletteChange(self):
+        self._body_item.setPen(self.style().framePen(self.palette()))
+        self._body_item.setBrush(self.palette().base())
+        self._title_item.setBrush(self.palette().text())
+        self._description_item.setBrush(self.palette().text())
+        self._divider.setPen(self.style().framePen(self.palette()))
+
+        self.update(self.boundingRect())
 
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value):
         if change == QGraphicsItem.ItemSelectedHasChanged:
@@ -501,17 +521,9 @@ positions are measured in inches.</p></section>
             for output in self.outputs:
                 output.updateSelectedStatus()
 
-            # Change color
-            if value == True:
-                self._body_item.setPen(QPen(self.outline_selection_color, px(self.outline_thickness)))
-                self._body_item.setBrush(self.fill_selection_color)
-            else:
-                self._body_item.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-                self._body_item.setBrush(self.fill_color)
-            self.update()
-
         return super().itemChange(change, value)
 
+    # Serialization ====================================================================================================
     def serialize(self) -&gt; dict:
         return {
             &#34;title&#34;: self.title(),
@@ -541,85 +553,10 @@ positions are measured in inches.</p></section>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="nfb_studio.widgets.scheme.node.Node.connection_padding"><code class="name">var <span class="ident">connection_padding</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.corner_radius"><code class="name">var <span class="ident">corner_radius</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.description_font_name"><code class="name">var <span class="ident">description_font_name</span></code></dt>
-<dd>
-<section class="desc"><p>str(object='') -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.<strong>str</strong>() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to 'strict'.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.description_font_size"><code class="name">var <span class="ident">description_font_size</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.divider_padding"><code class="name">var <span class="ident">divider_padding</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.external_padding"><code class="name">var <span class="ident">external_padding</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.fill_color"><code class="name">var <span class="ident">fill_color</span></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.fill_selection_color"><code class="name">var <span class="ident">fill_selection_color</span></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.internal_padding"><code class="name">var <span class="ident">internal_padding</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.outline_color"><code class="name">var <span class="ident">outline_color</span></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.outline_selection_color"><code class="name">var <span class="ident">outline_selection_color</span></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.outline_thickness"><code class="name">var <span class="ident">outline_thickness</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.title_font_name"><code class="name">var <span class="ident">title_font_name</span></code></dt>
-<dd>
-<section class="desc"><p>str(object='') -&gt; str
-str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
-<p>Create a new string object from the given object. If encoding or
-errors is specified, then the object must expose a data buffer
-that will be decoded using the given encoding and error handler.
-Otherwise, returns the result of object.<strong>str</strong>() (if defined)
-or repr(object).
-encoding defaults to sys.getdefaultencoding().
-errors defaults to 'strict'.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.title_font_size"><code class="name">var <span class="ident">title_font_size</span></code></dt>
-<dd>
-<section class="desc"><p>Convert a string or number to a floating point number, if possible.</p></section>
-</dd>
-</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.scheme.node.Node.addInput"><code class="name flex">
@@ -674,9 +611,11 @@ errors defaults to 'strict'.</p></section>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def boundingRect(self) -&gt; QRectF:
+    frame_width = self.style().pixelMetric(Style.NodeFrameWidth)
+
     return QRectF(
-        QPointF(-px(self.outline_thickness)/2, -px(self.outline_thickness)/2),
-        px(self.size()) + QSizeF(px(self.outline_thickness), px(self.outline_thickness))
+        QPointF(-frame_width/2, -frame_width/2),
+        self.size() + QSizeF(frame_width, frame_width)
     )</code></pre>
 </details>
 </dd>
@@ -755,36 +694,6 @@ errors defaults to 'strict'.</p></section>
     self._updateOutputPositions()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.itemChange"><code class="name flex">
-<span>def <span class="ident">itemChange</span></span>(<span>self, change, value)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>itemChange(self, change: PySide2.QtWidgets.QGraphicsItem.GraphicsItemChange, value: typing.Any) -&gt; typing.Any</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value):
-    if change == QGraphicsItem.ItemSelectedHasChanged:
-        # Update selection status for all connections
-        for input in self.inputs:
-            input.updateSelectedStatus()
-
-        for output in self.outputs:
-            output.updateSelectedStatus()
-
-        # Change color
-        if value == True:
-            self._body_item.setPen(QPen(self.outline_selection_color, px(self.outline_thickness)))
-            self._body_item.setBrush(self.fill_selection_color)
-        else:
-            self._body_item.setPen(QPen(self.outline_color, px(self.outline_thickness)))
-            self._body_item.setBrush(self.fill_color)
-        self.update()
-
-    return super().itemChange(change, value)</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.widgets.scheme.node.Node.paint"><code class="name flex">
 <span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget=Ellipsis)</span>
 </code></dt>
@@ -796,6 +705,25 @@ errors defaults to 'strict'.</p></section>
 </summary>
 <pre><code class="python">def paint(self, painter: QPainter, option, widget=...) -&gt; None:
     pass</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.node.Node.paletteChange"><code class="name flex">
+<span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paletteChange(self):
+    self._body_item.setPen(self.style().framePen(self.palette()))
+    self._body_item.setBrush(self.palette().base())
+    self._title_item.setBrush(self.palette().text())
+    self._description_item.setBrush(self.palette().text())
+    self._divider.setPen(self.style().framePen(self.palette()))
+
+    self.update(self.boundingRect())</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.node.Node.removeInput"><code class="name flex">
@@ -886,19 +814,6 @@ errors defaults to 'strict'.</p></section>
     self._description_item.setText(description)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.node.Node.setSize"><code class="name flex">
-<span>def <span class="ident">setSize</span></span>(<span>self, size)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def setSize(self, size):
-    self._size = size</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.widgets.scheme.node.Node.setTitle"><code class="name flex">
 <span>def <span class="ident">setTitle</span></span>(<span>self, title)</span>
 </code></dt>
@@ -922,12 +837,10 @@ errors defaults to 'strict'.</p></section>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def shape(self):
+    frame_corner_radius = self.style().pixelMetric(Style.NodeFrameCornerRadius)
+
     path = QPainterPath()
-    path.addRoundedRect(
-        QRectF(QPointF(0, 0), px(self.size())),
-        px(self.corner_radius),
-        px(self.corner_radius)
-    )
+    path.addRoundedRect(QRectF(QPointF(0, 0), self.size()), frame_corner_radius, frame_corner_radius)
 
     return path</code></pre>
 </details>
@@ -943,6 +856,65 @@ errors defaults to 'strict'.</p></section>
 </summary>
 <pre><code class="python">def size(self):
     return self._size</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.node.Node.styleChange"><code class="name flex">
+<span>def <span class="ident">styleChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def styleChange(self):
+    self.prepareGeometryChange()
+    style = self.style()
+
+    # Size and Frame
+    frame_width = style.pixelMetric(Style.NodeWidth)
+    self._size.setWidth(frame_width)
+    self._body_item.setPen(style.framePen(self.palette()))
+
+    path = QPainterPath()
+    path.addRoundedRect(
+        QRectF(QPointF(), self.size()),
+        style.pixelMetric(Style.NodeFrameCornerRadius),
+        style.pixelMetric(Style.NodeFrameCornerRadius)
+    )
+    self._body_item.setPath(path)
+    
+    # Title item
+    title_font = style.font(Style.NodeTitleFont)
+    title_metrics = QFontMetricsF(title_font)
+
+    padding = style.pixelMetric(Style.NodeFrameTextPadding)
+
+    self._title_item.setFont(title_font)
+    self._title_item.setPos(padding, padding)
+    self._title_item.moveBy(0, title_metrics.capHeight())
+    self._title_item.setMaximumWidth(frame_width - padding * 2)
+
+    # Divider item
+    div_margin = style.pixelMetric(Style.NodeDividerTextMargin)
+    div_voffset = padding + title_metrics.capHeight() + title_metrics.descent() + div_margin
+    
+    self._divider.setLine(0, div_voffset, frame_width, div_voffset)
+    self._divider.setPen(style.framePen(self.palette()))
+
+    # Description item
+    self._description_item.setFont(style.font(Style.NodeDescriptionFont))
+    self._description_item.setPos(padding, div_voffset + div_margin)
+    self._description_item.setFrame(
+        QRectF(
+            QPointF(0, 0),
+            QSizeF(
+                px(frame_width) - padding * 2,
+                (px(self.size().height()) - padding) -
+                (div_voffset + padding)
+            )
+        )
+    )</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.node.Node.title"><code class="name flex">
@@ -961,10 +933,11 @@ errors defaults to 'strict'.</p></section>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.position" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.setPosition" href="../real_size_item.html#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
 </ul>
 </li>
 </ul>
@@ -987,41 +960,27 @@ errors defaults to 'strict'.</p></section>
 <ul>
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.node.Node" href="#nfb_studio.widgets.scheme.node.Node">Node</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.addInput" href="#nfb_studio.widgets.scheme.node.Node.addInput">addInput</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.addMessage" href="#nfb_studio.widgets.scheme.node.Node.addMessage">addMessage</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.addOutput" href="#nfb_studio.widgets.scheme.node.Node.addOutput">addOutput</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.boundingRect" href="#nfb_studio.widgets.scheme.node.Node.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.connection_padding" href="#nfb_studio.widgets.scheme.node.Node.connection_padding">connection_padding</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.corner_radius" href="#nfb_studio.widgets.scheme.node.Node.corner_radius">corner_radius</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.description" href="#nfb_studio.widgets.scheme.node.Node.description">description</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.description_font_name" href="#nfb_studio.widgets.scheme.node.Node.description_font_name">description_font_name</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.description_font_size" href="#nfb_studio.widgets.scheme.node.Node.description_font_size">description_font_size</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.deserialize" href="#nfb_studio.widgets.scheme.node.Node.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.divider_padding" href="#nfb_studio.widgets.scheme.node.Node.divider_padding">divider_padding</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.external_padding" href="#nfb_studio.widgets.scheme.node.Node.external_padding">external_padding</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.fill_color" href="#nfb_studio.widgets.scheme.node.Node.fill_color">fill_color</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.fill_selection_color" href="#nfb_studio.widgets.scheme.node.Node.fill_selection_color">fill_selection_color</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.insertInput" href="#nfb_studio.widgets.scheme.node.Node.insertInput">insertInput</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.insertOutput" href="#nfb_studio.widgets.scheme.node.Node.insertOutput">insertOutput</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.internal_padding" href="#nfb_studio.widgets.scheme.node.Node.internal_padding">internal_padding</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.itemChange" href="#nfb_studio.widgets.scheme.node.Node.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.outline_color" href="#nfb_studio.widgets.scheme.node.Node.outline_color">outline_color</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.outline_selection_color" href="#nfb_studio.widgets.scheme.node.Node.outline_selection_color">outline_selection_color</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.outline_thickness" href="#nfb_studio.widgets.scheme.node.Node.outline_thickness">outline_thickness</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.paint" href="#nfb_studio.widgets.scheme.node.Node.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.Node.paletteChange" href="#nfb_studio.widgets.scheme.node.Node.paletteChange">paletteChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.removeInput" href="#nfb_studio.widgets.scheme.node.Node.removeInput">removeInput</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.removeMessage" href="#nfb_studio.widgets.scheme.node.Node.removeMessage">removeMessage</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.removeOutput" href="#nfb_studio.widgets.scheme.node.Node.removeOutput">removeOutput</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.serialize" href="#nfb_studio.widgets.scheme.node.Node.serialize">serialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.setDescription" href="#nfb_studio.widgets.scheme.node.Node.setDescription">setDescription</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.setSize" href="#nfb_studio.widgets.scheme.node.Node.setSize">setSize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.setTitle" href="#nfb_studio.widgets.scheme.node.Node.setTitle">setTitle</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.shape" href="#nfb_studio.widgets.scheme.node.Node.shape">shape</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.size" href="#nfb_studio.widgets.scheme.node.Node.size">size</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.Node.styleChange" href="#nfb_studio.widgets.scheme.node.Node.styleChange">styleChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.title" href="#nfb_studio.widgets.scheme.node.Node.title">title</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.title_font_name" href="#nfb_studio.widgets.scheme.node.Node.title_font_name">title_font_name</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.Node.title_font_size" href="#nfb_studio.widgets.scheme.node.Node.title_font_size">title_font_size</a></code></li>
 </ul>
 </li>
 </ul>

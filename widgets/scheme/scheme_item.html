@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.4" />
-<title>nfb_studio.widgets.real_size_item API documentation</title>
+<title>nfb_studio.widgets.scheme.scheme_item API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.real_size_item</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.scheme_item</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -29,12 +29,17 @@ from PySide2.QtWidgets import QGraphicsItem
 
 from nfb_studio.gui import inches_to_pixels, pixels_to_inches
 
+from .style import Style
+from .palette import Palette
 
-class RealSizeItem(QGraphicsItem):
+class SchemeItem(QGraphicsItem):
     &#34;&#34;&#34;An item that supports measurements in inches.&#34;&#34;&#34;
 
     def __init__(self, parent=None):
-        super(RealSizeItem, self).__init__(parent)
+        super().__init__(parent)
+
+        self._style = Style()
+        self._palette = Palette()
 
     def setPosition(self, *args, **kwargs):
         &#34;&#34;&#34;Set node&#39;s position in inches.
@@ -50,7 +55,37 @@ class RealSizeItem(QGraphicsItem):
         
         Does the same thing as setPos, except the return value is converted to inches.
         &#34;&#34;&#34;
-        return pixels_to_inches(self.pos())</code></pre>
+        return pixels_to_inches(self.pos())
+
+    def setStyle(self, style: Style):
+        self._style = style
+        self.styleChange()
+    
+    def style(self) -&gt; Style:
+        return self._style
+    
+    def setPalette(self, palette: Palette):
+        self._palette = palette
+        self.paletteChange()
+    
+    def palette(self) -&gt; Palette:
+        return self._palette
+    
+    def styleChange(self):
+        pass
+
+    def paletteChange(self):
+        pass
+
+    def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value):
+        if change == QGraphicsItem.ItemSelectedHasChanged:
+            if value == True:
+                self._palette.setCurrentColorGroup(Palette.Selected)
+            if value == False:
+                self._palette.setCurrentColorGroup(Palette.Active)
+            self.paletteChange()
+
+        return super().itemChange(change, value)</code></pre>
 </details>
 </section>
 <section>
@@ -62,8 +97,8 @@ class RealSizeItem(QGraphicsItem):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.real_size_item.RealSizeItem"><code class="flex name class">
-<span>class <span class="ident">RealSizeItem</span></span>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem"><code class="flex name class">
+<span>class <span class="ident">SchemeItem</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
@@ -72,11 +107,14 @@ class RealSizeItem(QGraphicsItem):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class RealSizeItem(QGraphicsItem):
+<pre><code class="python">class SchemeItem(QGraphicsItem):
     &#34;&#34;&#34;An item that supports measurements in inches.&#34;&#34;&#34;
 
     def __init__(self, parent=None):
-        super(RealSizeItem, self).__init__(parent)
+        super().__init__(parent)
+
+        self._style = Style()
+        self._palette = Palette()
 
     def setPosition(self, *args, **kwargs):
         &#34;&#34;&#34;Set node&#39;s position in inches.
@@ -92,7 +130,37 @@ class RealSizeItem(QGraphicsItem):
         
         Does the same thing as setPos, except the return value is converted to inches.
         &#34;&#34;&#34;
-        return pixels_to_inches(self.pos())</code></pre>
+        return pixels_to_inches(self.pos())
+
+    def setStyle(self, style: Style):
+        self._style = style
+        self.styleChange()
+    
+    def style(self) -&gt; Style:
+        return self._style
+    
+    def setPalette(self, palette: Palette):
+        self._palette = palette
+        self.paletteChange()
+    
+    def palette(self) -&gt; Palette:
+        return self._palette
+    
+    def styleChange(self):
+        pass
+
+    def paletteChange(self):
+        pass
+
+    def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value):
+        if change == QGraphicsItem.ItemSelectedHasChanged:
+            if value == True:
+                self._palette.setCurrentColorGroup(Palette.Selected)
+            if value == False:
+                self._palette.setCurrentColorGroup(Palette.Active)
+            self.paletteChange()
+
+        return super().itemChange(change, value)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -101,16 +169,60 @@ class RealSizeItem(QGraphicsItem):
 </ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.scheme.connection.Connection" href="scheme/connection.html#nfb_studio.widgets.scheme.connection.Connection">Connection</a></li>
-<li><a title="nfb_studio.widgets.scheme.edge.Edge" href="scheme/edge.html#nfb_studio.widgets.scheme.edge.Edge">Edge</a></li>
-<li><a title="nfb_studio.widgets.scheme.message.Message" href="scheme/message.html#nfb_studio.widgets.scheme.message.Message">Message</a></li>
-<li><a title="nfb_studio.widgets.scheme.node.Node" href="scheme/node.html#nfb_studio.widgets.scheme.node.Node">Node</a></li>
-<li><a title="nfb_studio.widgets.text_line_item.TextLineItem" href="text_line_item.html#nfb_studio.widgets.text_line_item.TextLineItem">TextLineItem</a></li>
-<li><a title="nfb_studio.widgets.text_rect_item.TextRectItem" href="text_rect_item.html#nfb_studio.widgets.text_rect_item.TextRectItem">TextRectItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.connection.Connection" href="connection.html#nfb_studio.widgets.scheme.connection.Connection">Connection</a></li>
+<li><a title="nfb_studio.widgets.scheme.edge.Edge" href="edge.html#nfb_studio.widgets.scheme.edge.Edge">Edge</a></li>
+<li><a title="nfb_studio.widgets.scheme.message.Message" href="message.html#nfb_studio.widgets.scheme.message.Message">Message</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.Node" href="node.html#nfb_studio.widgets.scheme.node.Node">Node</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.real_size_item.RealSizeItem.position"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange"><code class="name flex">
+<span>def <span class="ident">itemChange</span></span>(<span>self, change, value)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>itemChange(self, change: PySide2.QtWidgets.QGraphicsItem.GraphicsItemChange, value: typing.Any) -&gt; typing.Any</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value):
+    if change == QGraphicsItem.ItemSelectedHasChanged:
+        if value == True:
+            self._palette.setCurrentColorGroup(Palette.Selected)
+        if value == False:
+            self._palette.setCurrentColorGroup(Palette.Active)
+        self.paletteChange()
+
+    return super().itemChange(change, value)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.palette"><code class="name flex">
+<span>def <span class="ident">palette</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def palette(self) -&gt; Palette:
+    return self._palette</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.paletteChange"><code class="name flex">
+<span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paletteChange(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position"><code class="name flex">
 <span>def <span class="ident">position</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -128,7 +240,21 @@ class RealSizeItem(QGraphicsItem):
     return pixels_to_inches(self.pos())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.real_size_item.RealSizeItem.setPosition"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPalette"><code class="name flex">
+<span>def <span class="ident">setPalette</span></span>(<span>self, palette)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setPalette(self, palette: Palette):
+    self._palette = palette
+    self.paletteChange()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition"><code class="name flex">
 <span>def <span class="ident">setPosition</span></span>(<span>self, *args, **kwargs)</span>
 </code></dt>
 <dd>
@@ -148,6 +274,46 @@ class RealSizeItem(QGraphicsItem):
     self.setPos(inches_to_pixels(point))</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setStyle"><code class="name flex">
+<span>def <span class="ident">setStyle</span></span>(<span>self, style)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setStyle(self, style: Style):
+    self._style = style
+    self.styleChange()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.style"><code class="name flex">
+<span>def <span class="ident">style</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def style(self) -&gt; Style:
+    return self._style</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.styleChange"><code class="name flex">
+<span>def <span class="ident">styleChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def styleChange(self):
+    pass</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -161,16 +327,23 @@ class RealSizeItem(QGraphicsItem):
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets" href="index.html">nfb_studio.widgets</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme" href="index.html">nfb_studio.widgets.scheme</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem" href="#nfb_studio.widgets.real_size_item.RealSizeItem">RealSizeItem</a></code></h4>
-<ul class="">
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.position" href="#nfb_studio.widgets.real_size_item.RealSizeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.real_size_item.RealSizeItem.setPosition" href="#nfb_studio.widgets.real_size_item.RealSizeItem.setPosition">setPosition</a></code></li>
+<h4><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></code></h4>
+<ul class="two-column">
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.palette" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.palette">palette</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.paletteChange" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.paletteChange">paletteChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPalette" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPalette">setPalette</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setStyle" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setStyle">setStyle</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.style" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.style">style</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.styleChange" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.styleChange">styleChange</a></code></li>
 </ul>
 </li>
 </ul>
