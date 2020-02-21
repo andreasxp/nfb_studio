@@ -36,6 +36,8 @@ from .graph import AbstractGraph, Graph, GraphSnapshot
 from .node import Node
 from .edge import Edge
 from .connection import Input, Output
+from .style import Style
+from .palette import Palette
 
 
 class Scheme(QGraphicsScene):
@@ -55,6 +57,12 @@ class Scheme(QGraphicsScene):
         &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the super().&#34;&#34;&#34;
         super().__init__(parent)
         self._graph = Graph()
+
+        self._style = Style()
+        self._palette = Palette()
+
+        self.schemeStyleChange()
+        self.schemePaletteChange()
 
     # Element manipulation =============================================================================================
     def addItem(self, item: QGraphicsItem):
@@ -175,15 +183,41 @@ class Scheme(QGraphicsScene):
         if package.hasObject(GraphSnapshot):
             snapshot = package.objectData(GraphSnapshot)
 
-            self.clearSelection()
-            snapshot.selectAll()
-            snapshot.moveBy(50, 50) 
+            self.clearSelection()  # Clear old selection
+
+            snapshot.selectAll()  # Create new selection (pasted items)
+
+            offset = self.schemeStyle().pixelMetric(Style.PasteOffset)
+            snapshot.moveBy(offset, offset)  # Move all items by some offset 
+            
             self.merge(snapshot)
-            self.copyEvent()
+
+            self.copyEvent()  # Copy the selection again (nothing changes except for the item offset)
 
     def deleteEvent(self):
         &#34;&#34;&#34;Delete the selection.&#34;&#34;&#34;
         self.extract(self.selection())
+
+    # Style and palette ================================================================================================
+    def schemeStyleChange(self):
+        pass
+
+    def schemePaletteChange(self):
+        self.setBackgroundBrush(self.schemePalette().background())
+
+    def schemeStyle(self):
+        return self._style
+
+    def setSchemeStyle(self, style):
+        self._style = style
+        self.schemeStyleChange()
+
+    def schemePalette(self):
+        return self._palette
+    
+    def setSchemePalette(self, palette):
+        self._palette = palette
+        self.schemePaletteChange()
 
     # Widgets ==========================================================================================================
     def getView(self) -&gt; QGraphicsView:
@@ -279,6 +313,12 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         super().__init__(parent)
         self._graph = Graph()
 
+        self._style = Style()
+        self._palette = Palette()
+
+        self.schemeStyleChange()
+        self.schemePaletteChange()
+
     # Element manipulation =============================================================================================
     def addItem(self, item: QGraphicsItem):
         &#34;&#34;&#34;Add an item to the scene.
@@ -398,15 +438,41 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         if package.hasObject(GraphSnapshot):
             snapshot = package.objectData(GraphSnapshot)
 
-            self.clearSelection()
-            snapshot.selectAll()
-            snapshot.moveBy(50, 50) 
+            self.clearSelection()  # Clear old selection
+
+            snapshot.selectAll()  # Create new selection (pasted items)
+
+            offset = self.schemeStyle().pixelMetric(Style.PasteOffset)
+            snapshot.moveBy(offset, offset)  # Move all items by some offset 
+            
             self.merge(snapshot)
-            self.copyEvent()
+
+            self.copyEvent()  # Copy the selection again (nothing changes except for the item offset)
 
     def deleteEvent(self):
         &#34;&#34;&#34;Delete the selection.&#34;&#34;&#34;
         self.extract(self.selection())
+
+    # Style and palette ================================================================================================
+    def schemeStyleChange(self):
+        pass
+
+    def schemePaletteChange(self):
+        self.setBackgroundBrush(self.schemePalette().background())
+
+    def schemeStyle(self):
+        return self._style
+
+    def setSchemeStyle(self, style):
+        self._style = style
+        self.schemeStyleChange()
+
+    def schemePalette(self):
+        return self._palette
+    
+    def setSchemePalette(self, palette):
+        self._palette = palette
+        self.schemePaletteChange()
 
     # Widgets ==========================================================================================================
     def getView(self) -&gt; QGraphicsView:
@@ -711,11 +777,16 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
     if package.hasObject(GraphSnapshot):
         snapshot = package.objectData(GraphSnapshot)
 
-        self.clearSelection()
-        snapshot.selectAll()
-        snapshot.moveBy(50, 50) 
+        self.clearSelection()  # Clear old selection
+
+        snapshot.selectAll()  # Create new selection (pasted items)
+
+        offset = self.schemeStyle().pixelMetric(Style.PasteOffset)
+        snapshot.moveBy(offset, offset)  # Move all items by some offset 
+        
         self.merge(snapshot)
-        self.copyEvent()</code></pre>
+
+        self.copyEvent()  # Copy the selection again (nothing changes except for the item offset)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.removeItem"><code class="name flex">
@@ -756,6 +827,58 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
     super().removeItem(item)</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.schemePalette"><code class="name flex">
+<span>def <span class="ident">schemePalette</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def schemePalette(self):
+    return self._palette</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.schemePaletteChange"><code class="name flex">
+<span>def <span class="ident">schemePaletteChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def schemePaletteChange(self):
+    self.setBackgroundBrush(self.schemePalette().background())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle"><code class="name flex">
+<span>def <span class="ident">schemeStyle</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def schemeStyle(self):
+    return self._style</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyleChange"><code class="name flex">
+<span>def <span class="ident">schemeStyleChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def schemeStyleChange(self):
+    pass</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.selectAll"><code class="name flex">
 <span>def <span class="ident">selectAll</span></span>(<span>self)</span>
 </code></dt>
@@ -780,6 +903,34 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 </summary>
 <pre><code class="python">def selection(self) -&gt; GraphSnapshot:
     return self._graph.selection()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.setSchemePalette"><code class="name flex">
+<span>def <span class="ident">setSchemePalette</span></span>(<span>self, palette)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setSchemePalette(self, palette):
+    self._palette = palette
+    self.schemePaletteChange()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.setSchemeStyle"><code class="name flex">
+<span>def <span class="ident">setSchemeStyle</span></span>(<span>self, style)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setSchemeStyle(self, style):
+    self._style = style
+    self.schemeStyleChange()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.wideSelection"><code class="name flex">
@@ -829,8 +980,14 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.merge" href="#nfb_studio.widgets.scheme.scheme.Scheme.merge">merge</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent">pasteEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.removeItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.removeItem">removeItem</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemePalette" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemePalette">schemePalette</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemePaletteChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemePaletteChange">schemePaletteChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle">schemeStyle</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyleChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemeStyleChange">schemeStyleChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.selectAll" href="#nfb_studio.widgets.scheme.scheme.Scheme.selectAll">selectAll</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.selection" href="#nfb_studio.widgets.scheme.scheme.Scheme.selection">selection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.setSchemePalette" href="#nfb_studio.widgets.scheme.scheme.Scheme.setSchemePalette">setSchemePalette</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.setSchemeStyle" href="#nfb_studio.widgets.scheme.scheme.Scheme.setSchemeStyle">setSchemeStyle</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject" href="#nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject">staticMetaObject</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.wideSelection" href="#nfb_studio.widgets.scheme.scheme.Scheme.wideSelection">wideSelection</a></code></li>
 </ul>

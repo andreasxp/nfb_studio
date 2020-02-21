@@ -86,6 +86,9 @@ class Style:
         MessageIconTextMargin = auto()
         &#34;&#34;&#34;Margin between the icon and the message&#39;s text.&#34;&#34;&#34;
 
+        PasteOffset = 80
+        &#34;&#34;&#34;Amount by which the selection should be shifted when pasted from clipboard.&#34;&#34;&#34;
+
     class Font(Enum):
         &#34;&#34;&#34;Various fonts used in the scheme items.
         
@@ -128,7 +131,9 @@ class Style:
 
             SM.MessageIconSize: 0.16,
             SM.MessageTextLength: 2.5,
-            SM.MessageIconTextMargin: 0.05
+            SM.MessageIconTextMargin: 0.05,
+
+            SM.PasteOffset: 0.5
         }
 
         default_font = QFont(&#34;Segoe UI&#34;)
@@ -247,6 +252,9 @@ import_enum(Style, Style.Font, &#34;{name}{cls}&#34;)</code></pre>
         MessageIconTextMargin = auto()
         &#34;&#34;&#34;Margin between the icon and the message&#39;s text.&#34;&#34;&#34;
 
+        PasteOffset = 80
+        &#34;&#34;&#34;Amount by which the selection should be shifted when pasted from clipboard.&#34;&#34;&#34;
+
     class Font(Enum):
         &#34;&#34;&#34;Various fonts used in the scheme items.
         
@@ -289,7 +297,9 @@ import_enum(Style, Style.Font, &#34;{name}{cls}&#34;)</code></pre>
 
             SM.MessageIconSize: 0.16,
             SM.MessageTextLength: 2.5,
-            SM.MessageIconTextMargin: 0.05
+            SM.MessageIconTextMargin: 0.05,
+
+            SM.PasteOffset: 0.5
         }
 
         default_font = QFont(&#34;Segoe UI&#34;)
@@ -507,6 +517,13 @@ the corresponding values.</p></section>
 can be used as arguments in <a title="nfb_studio.widgets.scheme.style.Style.inchMetric" href="#nfb_studio.widgets.scheme.style.Style.inchMetric"><code>Style.inchMetric()</code></a> or <a title="nfb_studio.widgets.scheme.style.Style.pixelMetric" href="#nfb_studio.widgets.scheme.style.Style.pixelMetric"><code>Style.pixelMetric()</code></a> to get the corresponding
 values.</p></section>
 </dd>
+<dt id="nfb_studio.widgets.scheme.style.Style.PasteOffset"><code class="name">var <span class="ident">PasteOffset</span></code></dt>
+<dd>
+<section class="desc"><p>Various available size metrics.</p>
+<p>A size metric is a style dependent size represented by a single value. This enum contains a set of "keys", that
+can be used as arguments in <a title="nfb_studio.widgets.scheme.style.Style.inchMetric" href="#nfb_studio.widgets.scheme.style.Style.inchMetric"><code>Style.inchMetric()</code></a> or <a title="nfb_studio.widgets.scheme.style.Style.pixelMetric" href="#nfb_studio.widgets.scheme.style.Style.pixelMetric"><code>Style.pixelMetric()</code></a> to get the corresponding
+values.</p></section>
+</dd>
 <dt id="nfb_studio.widgets.scheme.style.Style.SizeMetric"><code class="name">var <span class="ident">SizeMetric</span></code></dt>
 <dd>
 <section class="desc"><p>Various available size metrics.</p>
@@ -561,7 +578,10 @@ values.</p></section>
     MessageTextLength = auto()
     &#34;&#34;&#34;Horizontal length of the box in which the text is drawn.&#34;&#34;&#34;
     MessageIconTextMargin = auto()
-    &#34;&#34;&#34;Margin between the icon and the message&#39;s text.&#34;&#34;&#34;</code></pre>
+    &#34;&#34;&#34;Margin between the icon and the message&#39;s text.&#34;&#34;&#34;
+
+    PasteOffset = 80
+    &#34;&#34;&#34;Amount by which the selection should be shifted when pasted from clipboard.&#34;&#34;&#34;</code></pre>
 </details>
 </dd>
 </dl>
@@ -681,6 +701,7 @@ values.</p></section>
 <li><code><a title="nfb_studio.widgets.scheme.style.Style.NodeMessagePadding" href="#nfb_studio.widgets.scheme.style.Style.NodeMessagePadding">NodeMessagePadding</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.style.Style.NodeTitleFont" href="#nfb_studio.widgets.scheme.style.Style.NodeTitleFont">NodeTitleFont</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.style.Style.NodeWidth" href="#nfb_studio.widgets.scheme.style.Style.NodeWidth">NodeWidth</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.style.Style.PasteOffset" href="#nfb_studio.widgets.scheme.style.Style.PasteOffset">PasteOffset</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.style.Style.SizeMetric" href="#nfb_studio.widgets.scheme.style.Style.SizeMetric">SizeMetric</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.style.Style.edgePen" href="#nfb_studio.widgets.scheme.style.Style.edgePen">edgePen</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.style.Style.font" href="#nfb_studio.widgets.scheme.style.Style.font">font</a></code></li>
