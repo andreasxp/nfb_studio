@@ -28,12 +28,14 @@
 <pre><code class="python">&#34;&#34;&#34;Classes representing the graph stucture in the signal scheme.&#34;&#34;&#34;
 from typing import Union
 
+from PySide2.QtCore import QRectF
+
 from .node import Node
 from .edge import Edge
 from .connection import Input, Output
 
 
-class AbstractGraphBase:
+class AbstractGraph:
     &#34;&#34;&#34;An abstract (not supposed to be created) base class for Graph and GraphSnapshot.
     
     Both Graph and GraphSnapshot contain two members - `self.nodes` and `self.edges`. In Graph those are sets, in
@@ -43,6 +45,97 @@ class AbstractGraphBase:
         self.nodes = None  # Defined in implementations
         self.edges = None  # Defined in implementations
 
+    # Selection ========================================================================================================
+    def selectAll(self):
+        &#34;&#34;&#34;Select the whole graph.&#34;&#34;&#34;
+        for node in self.nodes:
+            node.setSelected(True)
+
+    def selection(self):
+        &#34;&#34;&#34;Return a GraphSnapshot containing all selected nodes and edges.
+        
+        Edges count as selected if nodes on both ends are selected. This snapshot is equivalent to the data that ends up
+        in the clipboard when a selection is copied.
+        &#34;&#34;&#34;
+        result = GraphSnapshot()
+
+        selected_nodes = [node for node in self.nodes if node.isSelected()]
+        selected_edges = [edge for edge in self.edges if edge.isShadowSelected()]
+
+        result.nodes = frozenset(selected_nodes)
+        result.edges = frozenset(selected_edges)
+
+        return result
+    
+    def wideSelection(self):
+        &#34;&#34;&#34;Return a graph snapshot containing all selected nodes and all connected edges.
+        
+        Unlike `selection()`, this method also gets all edges where at least one end is a selected node.
+        This snapshot is equivalent to the items that are deleted when a selection is removed or cut.
+        &#34;&#34;&#34;
+        result = GraphSnapshot()
+
+        selected_nodes = [node for node in self.nodes if node.isSelected()]
+        
+        selected_edges = []
+        for edge in self.edges:
+            if ((edge.source_node() is not None and self.source_node().isSelected()) or 
+                (edge.target_node() is not None and self.target_node().isSelected())):
+                selected_edges.append(edge)  
+
+        result.nodes = frozenset(selected_nodes)
+        result.edges = frozenset(selected_edges)
+
+        return result
+
+    # Transformations ==================================================================================================
+    def boundingRect(self) -&gt; QRectF:
+        &#34;&#34;&#34;Return the combined bounding box of all the items in the graph.&#34;&#34;&#34;
+        result = QRectF()
+
+        for node in self.nodes:
+            result = result | node.boundingRect() | node.childrenBoundingRect()
+        for edge in self.edge:
+            result = result | edge.boundingRect() | edge.childrenBoundingRect()
+        
+        return result
+
+    def moveBy(self, dx, dy):
+        &#34;&#34;&#34;Move all nodes by some offset.&#34;&#34;&#34;
+        for node in self.nodes:
+            node.moveBy(dx, dy)
+
+    # Utility functions ================================================================================================
+    def __len__(self):
+        &#34;&#34;&#34;Size of the graph. Equal to len(self.nodes).&#34;&#34;&#34;
+        return len(self.nodes)
+    
+    def __contains__(self, obj, /):
+        &#34;&#34;&#34;Check if the graph contains a node or an edge.&#34;&#34;&#34;
+        if isinstance(obj, Node):
+            return obj in self.nodes
+        elif isinstance(obj, Edge):
+            return obj in self.edges
+        return False
+    
+    def isdisjoint(self, other):
+        &#34;&#34;&#34;Return True if the graph has no elements in common with other.
+        
+        Dangling nodes are not considered valid parts of a graph. They can only exist as temporary objects.
+        This means that if no nodes are shared, no edges can be shared. If nodes are shared, the graph is already not
+        disjoint. For this reason edges are not checked.
+        &#34;&#34;&#34;
+        return self.nodes.isdisjoint(other.nodes)
+
+    def issubset(self, other):
+        &#34;&#34;&#34;Test whether every element in the set is in other.&#34;&#34;&#34;
+        return self.nodes.issubset(other.nodes) and self.edges.issubset(other.edges)
+    
+    def issuperset(self, other):
+        &#34;&#34;&#34;Test whether every element in other is in the set.&#34;&#34;&#34;
+        return other.issubset(self)
+
+    # Serialization ====================================================================================================
     def serialize(self) -&gt; dict:
         data = {}
 
@@ -76,37 +169,8 @@ class AbstractGraphBase:
 
         return data
 
-    def __len__(self):
-        &#34;&#34;&#34;Size of the graph. Equal to len(self.nodes).&#34;&#34;&#34;
-        return len(self.nodes)
-    
-    def __contains__(self, obj, /):
-        &#34;&#34;&#34;Check if the graph contains a node or an edge.&#34;&#34;&#34;
-        if isinstance(obj, Node):
-            return obj in self.nodes
-        elif isinstance(obj, Edge):
-            return obj in self.edges
-        return False
-    
-    def isdisjoint(self, other):
-        &#34;&#34;&#34;Return True if the graph has no elements in common with other.
-        
-        Dangling nodes are not considered valid parts of a graph. They can only exist as temporary objects.
-        This means that if no nodes are shared, no edges can be shared. If nodes are shared, the graph is already not
-        disjoint. For this reason edges are not checked.
-        &#34;&#34;&#34;
-        return self.nodes.isdisjoint(other.nodes)
 
-    def issubset(self, other):
-        &#34;&#34;&#34;Test whether every element in the set is in other.&#34;&#34;&#34;
-        return self.nodes.issubset(other.nodes) and self.edges.issubset(other.edges)
-    
-    def issuperset(self, other):
-        &#34;&#34;&#34;Test whether every element in other is in the set.&#34;&#34;&#34;
-        return other.issubset(self)
-
-
-class Graph(AbstractGraphBase):
+class Graph(AbstractGraph):
     &#34;&#34;&#34;A collection of nodes and edges connecting them.&#34;&#34;&#34;
 
     def __init__(self):
@@ -141,11 +205,17 @@ class Graph(AbstractGraphBase):
         
         If a node is removed, all edges to or from that node are also removed.
         &#34;&#34;&#34;
-        self.nodes.remove(node)
-
+        # Remove connected edges
+        to_remove = []
         for edge in self.edges:
             if edge.source_node() == node or edge.target_node() == node:
-                self.removeEdge(edge)
+                to_remove.append(edge)
+        
+        for edge in to_remove:
+            self.removeEdge(edge)
+
+        # Remove the node
+        self.nodes.remove(node)
 
     def removeEdge(self, edge: Edge):
         &#34;&#34;&#34;Remove an edge from this graph.&#34;&#34;&#34;
@@ -182,7 +252,7 @@ class Graph(AbstractGraphBase):
                 return edge
         return None
 
-    # def serialize(self) -&gt; dict  # Inherited from AbstractGraphBase
+    # def serialize(self) -&gt; dict  # Inherited from AbstractGraph
 
     def deserialize(self, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.
@@ -206,18 +276,29 @@ class Graph(AbstractGraphBase):
 
             self.connect_nodes(source, target)
     
-    def merge(self, *others):
-        &#34;&#34;&#34;Merge other graphs into this graph.&#34;&#34;&#34;
-        for other in others:
-            self.nodes.update(other.nodes)
-            self.edges.update(other.edges)
+    def extract(self, other: AbstractGraph):
+        &#34;&#34;&#34;Extract other graph from this graph.
+        
+        After calling this function, self.isdisjoint(other) will return True. All edges that become dangling from node
+        removal are also removed.
+        &#34;&#34;&#34;
+        for node in other.nodes:
+            self.removeNode(node)
+
+    def merge(self, other: AbstractGraph):
+        &#34;&#34;&#34;Merge other graph into this graph.
+        
+        After calling this function, other.issubset(self) will return True.
+        &#34;&#34;&#34;
+        self.nodes.update(other.nodes)
+        self.edges.update(other.edges)
     
     def clear(self):
         for node in self.nodes:
             self.removeNode(node)
 
 
-class GraphSnapshot(AbstractGraphBase):
+class GraphSnapshot(AbstractGraph):
     &#34;&#34;&#34;A static reference to a part of a graph. Contains a frozenset of nodes and a frozenset of edges.
 
     A snapshot is not meant to be edited.
@@ -228,7 +309,7 @@ class GraphSnapshot(AbstractGraphBase):
         self.nodes = nodes or frozenset()
         self.edges = edges or frozenset()
 
-    # def serialize(self) -&gt; dict  # Inherited from AbstractGraphBase
+    # def serialize(self) -&gt; dict  # Inherited from AbstractGraph
 
     def deserialize(self, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.
@@ -251,8 +332,8 @@ class GraphSnapshot(AbstractGraphBase):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.scheme.graph.AbstractGraphBase"><code class="flex name class">
-<span>class <span class="ident">AbstractGraphBase</span></span>
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph"><code class="flex name class">
+<span>class <span class="ident">AbstractGraph</span></span>
 </code></dt>
 <dd>
 <section class="desc"><p>An abstract (not supposed to be created) base class for Graph and GraphSnapshot.</p>
@@ -262,7 +343,7 @@ GraphSnapshot - frozensets.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class AbstractGraphBase:
+<pre><code class="python">class AbstractGraph:
     &#34;&#34;&#34;An abstract (not supposed to be created) base class for Graph and GraphSnapshot.
     
     Both Graph and GraphSnapshot contain two members - `self.nodes` and `self.edges`. In Graph those are sets, in
@@ -272,6 +353,97 @@ GraphSnapshot - frozensets.</p></section>
         self.nodes = None  # Defined in implementations
         self.edges = None  # Defined in implementations
 
+    # Selection ========================================================================================================
+    def selectAll(self):
+        &#34;&#34;&#34;Select the whole graph.&#34;&#34;&#34;
+        for node in self.nodes:
+            node.setSelected(True)
+
+    def selection(self):
+        &#34;&#34;&#34;Return a GraphSnapshot containing all selected nodes and edges.
+        
+        Edges count as selected if nodes on both ends are selected. This snapshot is equivalent to the data that ends up
+        in the clipboard when a selection is copied.
+        &#34;&#34;&#34;
+        result = GraphSnapshot()
+
+        selected_nodes = [node for node in self.nodes if node.isSelected()]
+        selected_edges = [edge for edge in self.edges if edge.isShadowSelected()]
+
+        result.nodes = frozenset(selected_nodes)
+        result.edges = frozenset(selected_edges)
+
+        return result
+    
+    def wideSelection(self):
+        &#34;&#34;&#34;Return a graph snapshot containing all selected nodes and all connected edges.
+        
+        Unlike `selection()`, this method also gets all edges where at least one end is a selected node.
+        This snapshot is equivalent to the items that are deleted when a selection is removed or cut.
+        &#34;&#34;&#34;
+        result = GraphSnapshot()
+
+        selected_nodes = [node for node in self.nodes if node.isSelected()]
+        
+        selected_edges = []
+        for edge in self.edges:
+            if ((edge.source_node() is not None and self.source_node().isSelected()) or 
+                (edge.target_node() is not None and self.target_node().isSelected())):
+                selected_edges.append(edge)  
+
+        result.nodes = frozenset(selected_nodes)
+        result.edges = frozenset(selected_edges)
+
+        return result
+
+    # Transformations ==================================================================================================
+    def boundingRect(self) -&gt; QRectF:
+        &#34;&#34;&#34;Return the combined bounding box of all the items in the graph.&#34;&#34;&#34;
+        result = QRectF()
+
+        for node in self.nodes:
+            result = result | node.boundingRect() | node.childrenBoundingRect()
+        for edge in self.edge:
+            result = result | edge.boundingRect() | edge.childrenBoundingRect()
+        
+        return result
+
+    def moveBy(self, dx, dy):
+        &#34;&#34;&#34;Move all nodes by some offset.&#34;&#34;&#34;
+        for node in self.nodes:
+            node.moveBy(dx, dy)
+
+    # Utility functions ================================================================================================
+    def __len__(self):
+        &#34;&#34;&#34;Size of the graph. Equal to len(self.nodes).&#34;&#34;&#34;
+        return len(self.nodes)
+    
+    def __contains__(self, obj, /):
+        &#34;&#34;&#34;Check if the graph contains a node or an edge.&#34;&#34;&#34;
+        if isinstance(obj, Node):
+            return obj in self.nodes
+        elif isinstance(obj, Edge):
+            return obj in self.edges
+        return False
+    
+    def isdisjoint(self, other):
+        &#34;&#34;&#34;Return True if the graph has no elements in common with other.
+        
+        Dangling nodes are not considered valid parts of a graph. They can only exist as temporary objects.
+        This means that if no nodes are shared, no edges can be shared. If nodes are shared, the graph is already not
+        disjoint. For this reason edges are not checked.
+        &#34;&#34;&#34;
+        return self.nodes.isdisjoint(other.nodes)
+
+    def issubset(self, other):
+        &#34;&#34;&#34;Test whether every element in the set is in other.&#34;&#34;&#34;
+        return self.nodes.issubset(other.nodes) and self.edges.issubset(other.edges)
+    
+    def issuperset(self, other):
+        &#34;&#34;&#34;Test whether every element in other is in the set.&#34;&#34;&#34;
+        return other.issubset(self)
+
+    # Serialization ====================================================================================================
     def serialize(self) -&gt; dict:
         data = {}
 
@@ -303,36 +475,7 @@ GraphSnapshot - frozensets.</p></section>
 
             data[&#34;edges&#34;].append(edge_data)
 
-        return data
-
-    def __len__(self):
-        &#34;&#34;&#34;Size of the graph. Equal to len(self.nodes).&#34;&#34;&#34;
-        return len(self.nodes)
-    
-    def __contains__(self, obj, /):
-        &#34;&#34;&#34;Check if the graph contains a node or an edge.&#34;&#34;&#34;
-        if isinstance(obj, Node):
-            return obj in self.nodes
-        elif isinstance(obj, Edge):
-            return obj in self.edges
-        return False
-    
-    def isdisjoint(self, other):
-        &#34;&#34;&#34;Return True if the graph has no elements in common with other.
-        
-        Dangling nodes are not considered valid parts of a graph. They can only exist as temporary objects.
-        This means that if no nodes are shared, no edges can be shared. If nodes are shared, the graph is already not
-        disjoint. For this reason edges are not checked.
-        &#34;&#34;&#34;
-        return self.nodes.isdisjoint(other.nodes)
-
-    def issubset(self, other):
-        &#34;&#34;&#34;Test whether every element in the set is in other.&#34;&#34;&#34;
-        return self.nodes.issubset(other.nodes) and self.edges.issubset(other.edges)
-    
-    def issuperset(self, other):
-        &#34;&#34;&#34;Test whether every element in other is in the set.&#34;&#34;&#34;
-        return other.issubset(self)</code></pre>
+        return data</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -341,7 +484,28 @@ GraphSnapshot - frozensets.</p></section>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.scheme.graph.AbstractGraphBase.isdisjoint"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect"><code class="name flex">
+<span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return the combined bounding box of all the items in the graph.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def boundingRect(self) -&gt; QRectF:
+    &#34;&#34;&#34;Return the combined bounding box of all the items in the graph.&#34;&#34;&#34;
+    result = QRectF()
+
+    for node in self.nodes:
+        result = result | node.boundingRect() | node.childrenBoundingRect()
+    for edge in self.edge:
+        result = result | edge.boundingRect() | edge.childrenBoundingRect()
+    
+    return result</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint"><code class="name flex">
 <span>def <span class="ident">isdisjoint</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
@@ -363,7 +527,7 @@ disjoint. For this reason edges are not checked.</p></section>
     return self.nodes.isdisjoint(other.nodes)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.graph.AbstractGraphBase.issubset"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.issubset"><code class="name flex">
 <span>def <span class="ident">issubset</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
@@ -377,7 +541,7 @@ disjoint. For this reason edges are not checked.</p></section>
     return self.nodes.issubset(other.nodes) and self.edges.issubset(other.edges)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.graph.AbstractGraphBase.issuperset"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset"><code class="name flex">
 <span>def <span class="ident">issuperset</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
@@ -391,7 +555,65 @@ disjoint. For this reason edges are not checked.</p></section>
     return other.issubset(self)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.graph.AbstractGraphBase.serialize"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.moveBy"><code class="name flex">
+<span>def <span class="ident">moveBy</span></span>(<span>self, dx, dy)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Move all nodes by some offset.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def moveBy(self, dx, dy):
+    &#34;&#34;&#34;Move all nodes by some offset.&#34;&#34;&#34;
+    for node in self.nodes:
+        node.moveBy(dx, dy)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.selectAll"><code class="name flex">
+<span>def <span class="ident">selectAll</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Select the whole graph.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def selectAll(self):
+    &#34;&#34;&#34;Select the whole graph.&#34;&#34;&#34;
+    for node in self.nodes:
+        node.setSelected(True)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.selection"><code class="name flex">
+<span>def <span class="ident">selection</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return a GraphSnapshot containing all selected nodes and edges.</p>
+<p>Edges count as selected if nodes on both ends are selected. This snapshot is equivalent to the data that ends up
+in the clipboard when a selection is copied.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def selection(self):
+    &#34;&#34;&#34;Return a GraphSnapshot containing all selected nodes and edges.
+    
+    Edges count as selected if nodes on both ends are selected. This snapshot is equivalent to the data that ends up
+    in the clipboard when a selection is copied.
+    &#34;&#34;&#34;
+    result = GraphSnapshot()
+
+    selected_nodes = [node for node in self.nodes if node.isSelected()]
+    selected_edges = [edge for edge in self.edges if edge.isShadowSelected()]
+
+    result.nodes = frozenset(selected_nodes)
+    result.edges = frozenset(selected_edges)
+
+    return result</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -434,6 +656,39 @@ disjoint. For this reason edges are not checked.</p></section>
     return data</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.wideSelection"><code class="name flex">
+<span>def <span class="ident">wideSelection</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return a graph snapshot containing all selected nodes and all connected edges.</p>
+<p>Unlike <code>selection()</code>, this method also gets all edges where at least one end is a selected node.
+This snapshot is equivalent to the items that are deleted when a selection is removed or cut.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wideSelection(self):
+    &#34;&#34;&#34;Return a graph snapshot containing all selected nodes and all connected edges.
+    
+    Unlike `selection()`, this method also gets all edges where at least one end is a selected node.
+    This snapshot is equivalent to the items that are deleted when a selection is removed or cut.
+    &#34;&#34;&#34;
+    result = GraphSnapshot()
+
+    selected_nodes = [node for node in self.nodes if node.isSelected()]
+    
+    selected_edges = []
+    for edge in self.edges:
+        if ((edge.source_node() is not None and self.source_node().isSelected()) or 
+            (edge.target_node() is not None and self.target_node().isSelected())):
+            selected_edges.append(edge)  
+
+    result.nodes = frozenset(selected_nodes)
+    result.edges = frozenset(selected_edges)
+
+    return result</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 <dt id="nfb_studio.widgets.scheme.graph.Graph"><code class="flex name class">
@@ -445,7 +700,7 @@ disjoint. For this reason edges are not checked.</p></section>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Graph(AbstractGraphBase):
+<pre><code class="python">class Graph(AbstractGraph):
     &#34;&#34;&#34;A collection of nodes and edges connecting them.&#34;&#34;&#34;
 
     def __init__(self):
@@ -480,11 +735,17 @@ disjoint. For this reason edges are not checked.</p></section>
         
         If a node is removed, all edges to or from that node are also removed.
         &#34;&#34;&#34;
-        self.nodes.remove(node)
-
+        # Remove connected edges
+        to_remove = []
         for edge in self.edges:
             if edge.source_node() == node or edge.target_node() == node:
-                self.removeEdge(edge)
+                to_remove.append(edge)
+        
+        for edge in to_remove:
+            self.removeEdge(edge)
+
+        # Remove the node
+        self.nodes.remove(node)
 
     def removeEdge(self, edge: Edge):
         &#34;&#34;&#34;Remove an edge from this graph.&#34;&#34;&#34;
@@ -521,7 +782,7 @@ disjoint. For this reason edges are not checked.</p></section>
                 return edge
         return None
 
-    # def serialize(self) -&gt; dict  # Inherited from AbstractGraphBase
+    # def serialize(self) -&gt; dict  # Inherited from AbstractGraph
 
     def deserialize(self, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.
@@ -545,11 +806,22 @@ disjoint. For this reason edges are not checked.</p></section>
 
             self.connect_nodes(source, target)
     
-    def merge(self, *others):
-        &#34;&#34;&#34;Merge other graphs into this graph.&#34;&#34;&#34;
-        for other in others:
-            self.nodes.update(other.nodes)
-            self.edges.update(other.edges)
+    def extract(self, other: AbstractGraph):
+        &#34;&#34;&#34;Extract other graph from this graph.
+        
+        After calling this function, self.isdisjoint(other) will return True. All edges that become dangling from node
+        removal are also removed.
+        &#34;&#34;&#34;
+        for node in other.nodes:
+            self.removeNode(node)
+
+    def merge(self, other: AbstractGraph):
+        &#34;&#34;&#34;Merge other graph into this graph.
+        
+        After calling this function, other.issubset(self) will return True.
+        &#34;&#34;&#34;
+        self.nodes.update(other.nodes)
+        self.edges.update(other.edges)
     
     def clear(self):
         for node in self.nodes:
@@ -557,11 +829,7 @@ disjoint. For this reason edges are not checked.</p></section>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase">AbstractGraphBase</a></li>
-</ul>
-<h3>Subclasses</h3>
-<ul class="hlist">
-<li><a title="nfb_studio.widgets.scheme.scheme.Scheme" href="scheme.html#nfb_studio.widgets.scheme.scheme.Scheme">Scheme</a></li>
+<li><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -707,20 +975,44 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
     return None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.graph.Graph.merge"><code class="name flex">
-<span>def <span class="ident">merge</span></span>(<span>self, *others)</span>
+<dt id="nfb_studio.widgets.scheme.graph.Graph.extract"><code class="name flex">
+<span>def <span class="ident">extract</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Merge other graphs into this graph.</p></section>
+<section class="desc"><p>Extract other graph from this graph.</p>
+<p>After calling this function, self.isdisjoint(other) will return True. All edges that become dangling from node
+removal are also removed.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def merge(self, *others):
-    &#34;&#34;&#34;Merge other graphs into this graph.&#34;&#34;&#34;
-    for other in others:
-        self.nodes.update(other.nodes)
-        self.edges.update(other.edges)</code></pre>
+<pre><code class="python">def extract(self, other: AbstractGraph):
+    &#34;&#34;&#34;Extract other graph from this graph.
+    
+    After calling this function, self.isdisjoint(other) will return True. All edges that become dangling from node
+    removal are also removed.
+    &#34;&#34;&#34;
+    for node in other.nodes:
+        self.removeNode(node)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.graph.Graph.merge"><code class="name flex">
+<span>def <span class="ident">merge</span></span>(<span>self, other)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Merge other graph into this graph.</p>
+<p>After calling this function, other.issubset(self) will return True.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def merge(self, other: AbstractGraph):
+    &#34;&#34;&#34;Merge other graph into this graph.
+    
+    After calling this function, other.issubset(self) will return True.
+    &#34;&#34;&#34;
+    self.nodes.update(other.nodes)
+    self.edges.update(other.edges)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.graph.Graph.removeEdge"><code class="name flex">
@@ -755,21 +1047,32 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
     
     If a node is removed, all edges to or from that node are also removed.
     &#34;&#34;&#34;
-    self.nodes.remove(node)
-
+    # Remove connected edges
+    to_remove = []
     for edge in self.edges:
         if edge.source_node() == node or edge.target_node() == node:
-            self.removeEdge(edge)</code></pre>
+            to_remove.append(edge)
+    
+    for edge in to_remove:
+        self.removeEdge(edge)
+
+    # Remove the node
+    self.nodes.remove(node)</code></pre>
 </details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase">AbstractGraphBase</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase.isdisjoint">isdisjoint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase.issubset">issubset</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase.issuperset" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase.issuperset">issuperset</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint">isdisjoint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issubset">issubset</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset">issuperset</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.moveBy" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.moveBy">moveBy</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.selectAll" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.selectAll">selectAll</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.selection" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.selection">selection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.wideSelection" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.wideSelection">wideSelection</a></code></li>
 </ul>
 </li>
 </ul>
@@ -785,7 +1088,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class GraphSnapshot(AbstractGraphBase):
+<pre><code class="python">class GraphSnapshot(AbstractGraph):
     &#34;&#34;&#34;A static reference to a part of a graph. Contains a frozenset of nodes and a frozenset of edges.
 
     A snapshot is not meant to be edited.
@@ -796,7 +1099,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
         self.nodes = nodes or frozenset()
         self.edges = edges or frozenset()
 
-    # def serialize(self) -&gt; dict  # Inherited from AbstractGraphBase
+    # def serialize(self) -&gt; dict  # Inherited from AbstractGraph
 
     def deserialize(self, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.
@@ -811,7 +1114,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase">AbstractGraphBase</a></li>
+<li><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -840,11 +1143,16 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase">AbstractGraphBase</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase.isdisjoint">isdisjoint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase.issubset">issubset</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase.issuperset" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase.issuperset">issuperset</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint">isdisjoint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issubset">issubset</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset">issuperset</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.moveBy" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.moveBy">moveBy</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.selectAll" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.selectAll">selectAll</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.selection" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.selection">selection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.wideSelection" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.wideSelection">wideSelection</a></code></li>
 </ul>
 </li>
 </ul>
@@ -866,12 +1174,17 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase">AbstractGraphBase</a></code></h4>
-<ul class="">
-<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase.isdisjoint">isdisjoint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase.issubset">issubset</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase.issuperset" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase.issuperset">issuperset</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraphBase.serialize" href="#nfb_studio.widgets.scheme.graph.AbstractGraphBase.serialize">serialize</a></code></li>
+<h4><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></code></h4>
+<ul class="two-column">
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint">isdisjoint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issubset">issubset</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset">issuperset</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.moveBy" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.moveBy">moveBy</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.selectAll" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.selectAll">selectAll</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.selection" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.selection">selection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.serialize" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.wideSelection" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.wideSelection">wideSelection</a></code></li>
 </ul>
 </li>
 <li>
@@ -883,6 +1196,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.connect_nodes" href="#nfb_studio.widgets.scheme.graph.Graph.connect_nodes">connect_nodes</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.deserialize" href="#nfb_studio.widgets.scheme.graph.Graph.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.disconnect_nodes" href="#nfb_studio.widgets.scheme.graph.Graph.disconnect_nodes">disconnect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.extract" href="#nfb_studio.widgets.scheme.graph.Graph.extract">extract</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.merge" href="#nfb_studio.widgets.scheme.graph.Graph.merge">merge</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.removeEdge" href="#nfb_studio.widgets.scheme.graph.Graph.removeEdge">removeEdge</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.removeNode" href="#nfb_studio.widgets.scheme.graph.Graph.removeNode">removeNode</a></code></li>

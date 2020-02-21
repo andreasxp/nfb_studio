@@ -265,8 +265,7 @@ class Node(SchemeItem):
             &#34;inputs&#34;: self.inputs,
             &#34;outputs&#34;: self.outputs,
             &#34;messages&#34;: list(self.messages),
-            &#34;position&#34;: self.position(),
-            &#34;size&#34;: self.size()
+            &#34;position&#34;: self.position()
         }
 
     def deserialize(self, data: dict):
@@ -282,8 +281,7 @@ class Node(SchemeItem):
         for message in data[&#34;messages&#34;]:
             self.addMessage(message)
 
-        self.setPosition(data[&#34;position&#34;])
-        self.setSize(data[&#34;size&#34;])</code></pre>
+        self.setPosition(data[&#34;position&#34;])</code></pre>
 </details>
 </section>
 <section>
@@ -531,8 +529,7 @@ class Node(SchemeItem):
             &#34;inputs&#34;: self.inputs,
             &#34;outputs&#34;: self.outputs,
             &#34;messages&#34;: list(self.messages),
-            &#34;position&#34;: self.position(),
-            &#34;size&#34;: self.size()
+            &#34;position&#34;: self.position()
         }
 
     def deserialize(self, data: dict):
@@ -548,8 +545,7 @@ class Node(SchemeItem):
         for message in data[&#34;messages&#34;]:
             self.addMessage(message)
 
-        self.setPosition(data[&#34;position&#34;])
-        self.setSize(data[&#34;size&#34;])</code></pre>
+        self.setPosition(data[&#34;position&#34;])</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -654,8 +650,7 @@ class Node(SchemeItem):
     for message in data[&#34;messages&#34;]:
         self.addMessage(message)
 
-    self.setPosition(data[&#34;position&#34;])
-    self.setSize(data[&#34;size&#34;])</code></pre>
+    self.setPosition(data[&#34;position&#34;])</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.node.Node.insertInput"><code class="name flex">
@@ -796,8 +791,7 @@ class Node(SchemeItem):
         &#34;inputs&#34;: self.inputs,
         &#34;outputs&#34;: self.outputs,
         &#34;messages&#34;: list(self.messages),
-        &#34;position&#34;: self.position(),
-        &#34;size&#34;: self.size()
+        &#34;position&#34;: self.position()
     }</code></pre>
 </details>
 </dd>
