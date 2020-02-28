@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.4" />
+<meta name="generator" content="pdoc 0.7.5" />
 <title>nfb_studio.widgets.scheme.graph API documentation</title>
 <meta name="description" content="Classes representing the graph stucture in the signal scheme." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -87,6 +87,17 @@ class AbstractGraph:
         result.edges = frozenset(selected_edges)
 
         return result
+
+    # Observer functions ===============================================================================================
+    def findNode(self, node_id: int) -&gt; Union[Node, None]:
+        &#34;&#34;&#34;Find and return a node that has the corresponding id.
+        
+        If no such node could be found, return None.
+        &#34;&#34;&#34;
+        for node in self.nodes:
+            if node_id == id(node):
+                return node
+        return None
 
     # Transformations ==================================================================================================
     def boundingRect(self) -&gt; QRectF:
@@ -396,6 +407,17 @@ GraphSnapshot - frozensets.</p></section>
 
         return result
 
+    # Observer functions ===============================================================================================
+    def findNode(self, node_id: int) -&gt; Union[Node, None]:
+        &#34;&#34;&#34;Find and return a node that has the corresponding id.
+        
+        If no such node could be found, return None.
+        &#34;&#34;&#34;
+        for node in self.nodes:
+            if node_id == id(node):
+                return node
+        return None
+
     # Transformations ==================================================================================================
     def boundingRect(self) -&gt; QRectF:
         &#34;&#34;&#34;Return the combined bounding box of all the items in the graph.&#34;&#34;&#34;
@@ -503,6 +525,27 @@ GraphSnapshot - frozensets.</p></section>
         result = result | edge.boundingRect() | edge.childrenBoundingRect()
     
     return result</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.findNode"><code class="name flex">
+<span>def <span class="ident">findNode</span></span>(<span>self, node_id)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Find and return a node that has the corresponding id.</p>
+<p>If no such node could be found, return None.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def findNode(self, node_id: int) -&gt; Union[Node, None]:
+    &#34;&#34;&#34;Find and return a node that has the corresponding id.
+    
+    If no such node could be found, return None.
+    &#34;&#34;&#34;
+    for node in self.nodes:
+        if node_id == id(node):
+            return node
+    return None</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint"><code class="name flex">
@@ -1066,6 +1109,7 @@ removal are also removed.</p></section>
 <li><code><b><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></b></code>:
 <ul class="hlist">
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.findNode" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.findNode">findNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint">isdisjoint</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issubset">issubset</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset">issuperset</a></code></li>
@@ -1146,6 +1190,7 @@ removal are also removed.</p></section>
 <li><code><b><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></b></code>:
 <ul class="hlist">
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.findNode" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.findNode">findNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint">isdisjoint</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issubset">issubset</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset">issuperset</a></code></li>
@@ -1177,6 +1222,7 @@ removal are also removed.</p></section>
 <h4><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></code></h4>
 <ul class="two-column">
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.findNode" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.findNode">findNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint">isdisjoint</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issubset">issubset</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issuperset">issuperset</a></code></li>
@@ -1214,7 +1260,7 @@ removal are also removed.</p></section>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

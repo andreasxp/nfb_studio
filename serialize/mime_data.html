@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.4" />
+<meta name="generator" content="pdoc 0.7.5" />
 <title>nfb_studio.serialize.mime_data API documentation</title>
 <meta name="description" content="Object-aware implementation of QMimeData." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -26,25 +26,34 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Object-aware implementation of QMimeData.&#34;&#34;&#34;
+from typing import Union
 from PySide2.QtCore import QMimeData, QByteArray
 
 from nfb_studio.serialize.encoder import JSONEncoder
 from nfb_studio.serialize.decoder import JSONDecoder
 
 
-class MimeData(QMimeData):
+class MimeData:
     &#34;&#34;&#34;A Mime data class that extends QMimeData by providing ways to serialize python objects.&#34;&#34;&#34;
 
-    def __init__(self, object_hooks=None):
-        super().__init__()
-
+    def __init__(self, data: QMimeData = None, object_hooks=None):
         object_hooks = object_hooks or ({}, {})
+
+        self.qmimedata = data or QMimeData()
         self._encoder = JSONEncoder(object_hooks=object_hooks[0], separators=(&#34;,&#34;, &#34;:&#34;), ensure_ascii=False)
         self._decoder = JSONDecoder(object_hooks=object_hooks[1])
+
+    # Observer functions ===============================================================================================
+    def hasFormat(self, mime_type, /):
+        return self.qmimedata.hasFormat(mime_type)
 
     def hasObject(self, object_type) -&gt; bool:
         mime_type = self._mime_type_of(object_type)
         return self.hasFormat(mime_type)
+
+    # Set functions ====================================================================================================
+    def setData(self, mime_type, binary_data: Union[bytes, bytearray, QByteArray]):
+        self.qmimedata.setData(mime_type, QByteArray(binary_data))
 
     def setObject(self, obj):
         object_type = obj.__class__
@@ -52,7 +61,11 @@ class MimeData(QMimeData):
         data = self._encoder.encode(obj)
         bstr = data.encode(&#34;unicode-escape&#34;)
 
-        self.setData(mime_type, QByteArray(bstr))
+        self.setData(mime_type, bstr)
+
+    # Get functions ====================================================================================================
+    def data(self, mime_type):
+        return self.qmimedata.data(mime_type)
 
     def objectData(self, object_type):
         if self.hasObject(object_type):
@@ -66,7 +79,7 @@ class MimeData(QMimeData):
     
     @staticmethod
     def _mime_type_of(object_type) -&gt; str:
-        return &#34;application/x-pyobject+json;type=\&#34;&#34; + object_type.__module__ + &#34;.&#34; + object_type.__name__ + &#34;\&#34;&#34;</code></pre>
+        return &#34;application/x-pyobject+json;type=\&#34;&#34; + object_type.__module__ + &#34;.&#34; + object_type.__qualname__ + &#34;\&#34;&#34;</code></pre>
 </details>
 </section>
 <section>
@@ -80,7 +93,7 @@ class MimeData(QMimeData):
 <dl>
 <dt id="nfb_studio.serialize.mime_data.MimeData"><code class="flex name class">
 <span>class <span class="ident">MimeData</span></span>
-<span>(</span><span>object_hooks=None)</span>
+<span>(</span><span>data=None, object_hooks=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>A Mime data class that extends QMimeData by providing ways to serialize python objects.</p></section>
@@ -88,19 +101,27 @@ class MimeData(QMimeData):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class MimeData(QMimeData):
+<pre><code class="python">class MimeData:
     &#34;&#34;&#34;A Mime data class that extends QMimeData by providing ways to serialize python objects.&#34;&#34;&#34;
 
-    def __init__(self, object_hooks=None):
-        super().__init__()
-
+    def __init__(self, data: QMimeData = None, object_hooks=None):
         object_hooks = object_hooks or ({}, {})
+
+        self.qmimedata = data or QMimeData()
         self._encoder = JSONEncoder(object_hooks=object_hooks[0], separators=(&#34;,&#34;, &#34;:&#34;), ensure_ascii=False)
         self._decoder = JSONDecoder(object_hooks=object_hooks[1])
+
+    # Observer functions ===============================================================================================
+    def hasFormat(self, mime_type, /):
+        return self.qmimedata.hasFormat(mime_type)
 
     def hasObject(self, object_type) -&gt; bool:
         mime_type = self._mime_type_of(object_type)
         return self.hasFormat(mime_type)
+
+    # Set functions ====================================================================================================
+    def setData(self, mime_type, binary_data: Union[bytes, bytearray, QByteArray]):
+        self.qmimedata.setData(mime_type, QByteArray(binary_data))
 
     def setObject(self, obj):
         object_type = obj.__class__
@@ -108,7 +129,11 @@ class MimeData(QMimeData):
         data = self._encoder.encode(obj)
         bstr = data.encode(&#34;unicode-escape&#34;)
 
-        self.setData(mime_type, QByteArray(bstr))
+        self.setData(mime_type, bstr)
+
+    # Get functions ====================================================================================================
+    def data(self, mime_type):
+        return self.qmimedata.data(mime_type)
 
     def objectData(self, object_type):
         if self.hasObject(object_type):
@@ -122,27 +147,40 @@ class MimeData(QMimeData):
     
     @staticmethod
     def _mime_type_of(object_type) -&gt; str:
-        return &#34;application/x-pyobject+json;type=\&#34;&#34; + object_type.__module__ + &#34;.&#34; + object_type.__name__ + &#34;\&#34;&#34;</code></pre>
+        return &#34;application/x-pyobject+json;type=\&#34;&#34; + object_type.__module__ + &#34;.&#34; + object_type.__qualname__ + &#34;\&#34;&#34;</code></pre>
 </details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>PySide2.QtCore.QMimeData</li>
-<li>PySide2.QtCore.QObject</li>
-<li>Shiboken.Object</li>
-</ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
 <li><a title="nfb_studio.StdMimeData" href="../index.html#nfb_studio.StdMimeData">StdMimeData</a></li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="nfb_studio.serialize.mime_data.MimeData.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-</dl>
 <h3>Methods</h3>
 <dl>
+<dt id="nfb_studio.serialize.mime_data.MimeData.data"><code class="name flex">
+<span>def <span class="ident">data</span></span>(<span>self, mime_type)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def data(self, mime_type):
+    return self.qmimedata.data(mime_type)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serialize.mime_data.MimeData.hasFormat"><code class="name flex">
+<span>def <span class="ident">hasFormat</span></span>(<span>self, mime_type)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hasFormat(self, mime_type, /):
+    return self.qmimedata.hasFormat(mime_type)</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.serialize.mime_data.MimeData.hasObject"><code class="name flex">
 <span>def <span class="ident">hasObject</span></span>(<span>self, object_type)</span>
 </code></dt>
@@ -177,6 +215,19 @@ class MimeData(QMimeData):
     return None</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.serialize.mime_data.MimeData.setData"><code class="name flex">
+<span>def <span class="ident">setData</span></span>(<span>self, mime_type, binary_data)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setData(self, mime_type, binary_data: Union[bytes, bytearray, QByteArray]):
+    self.qmimedata.setData(mime_type, QByteArray(binary_data))</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.serialize.mime_data.MimeData.setObject"><code class="name flex">
 <span>def <span class="ident">setObject</span></span>(<span>self, obj)</span>
 </code></dt>
@@ -192,7 +243,7 @@ class MimeData(QMimeData):
     data = self._encoder.encode(obj)
     bstr = data.encode(&#34;unicode-escape&#34;)
 
-    self.setData(mime_type, QByteArray(bstr))</code></pre>
+    self.setData(mime_type, bstr)</code></pre>
 </details>
 </dd>
 </dl>
@@ -215,11 +266,13 @@ class MimeData(QMimeData):
 <ul>
 <li>
 <h4><code><a title="nfb_studio.serialize.mime_data.MimeData" href="#nfb_studio.serialize.mime_data.MimeData">MimeData</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="nfb_studio.serialize.mime_data.MimeData.data" href="#nfb_studio.serialize.mime_data.MimeData.data">data</a></code></li>
+<li><code><a title="nfb_studio.serialize.mime_data.MimeData.hasFormat" href="#nfb_studio.serialize.mime_data.MimeData.hasFormat">hasFormat</a></code></li>
 <li><code><a title="nfb_studio.serialize.mime_data.MimeData.hasObject" href="#nfb_studio.serialize.mime_data.MimeData.hasObject">hasObject</a></code></li>
 <li><code><a title="nfb_studio.serialize.mime_data.MimeData.objectData" href="#nfb_studio.serialize.mime_data.MimeData.objectData">objectData</a></code></li>
+<li><code><a title="nfb_studio.serialize.mime_data.MimeData.setData" href="#nfb_studio.serialize.mime_data.MimeData.setData">setData</a></code></li>
 <li><code><a title="nfb_studio.serialize.mime_data.MimeData.setObject" href="#nfb_studio.serialize.mime_data.MimeData.setObject">setObject</a></code></li>
-<li><code><a title="nfb_studio.serialize.mime_data.MimeData.staticMetaObject" href="#nfb_studio.serialize.mime_data.MimeData.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
 </li>
 </ul>
@@ -228,7 +281,7 @@ class MimeData(QMimeData):
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

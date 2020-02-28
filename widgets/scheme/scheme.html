@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.4" />
+<meta name="generator" content="pdoc 0.7.5" />
 <title>nfb_studio.widgets.scheme.scheme API documentation</title>
 <meta name="description" content="A data model for the nfb experiment&#39;s system of signals and their components." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
@@ -26,6 +26,8 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.&#34;&#34;&#34;
+from typing import Union
+
 from PySide2.QtCore import Qt, QPointF
 from PySide2.QtGui import QPainter, QKeySequence
 from PySide2.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsItem, QShortcut, QApplication
@@ -149,6 +151,10 @@ class Scheme(QGraphicsScene):
         super().clear()
         self._graph.clear()
 
+    # Observer methods =================================================================================================
+    def findNode(self, node_id: int) -&gt; Union[Node, None]:
+        return self._graph.findNode(node_id)
+
     # Selection ========================================================================================================
     def selectAll(self):
         self._graph.selectAll()
@@ -173,12 +179,12 @@ class Scheme(QGraphicsScene):
         package.setObject(snapshot)
 
         clipboard = QApplication.clipboard()
-        clipboard.setMimeData(package)
+        clipboard.setMimeData(package.qmimedata)
 
     def pasteEvent(self):
         &#34;&#34;&#34;Retrieve the data from a clipboard and paste it.&#34;&#34;&#34;
         clipboard = QApplication.clipboard()
-        package = clipboard.mimeData()
+        package = StdMimeData(clipboard.mimeData())
 
         if package.hasObject(GraphSnapshot):
             snapshot = package.objectData(GraphSnapshot)
@@ -404,6 +410,10 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         super().clear()
         self._graph.clear()
 
+    # Observer methods =================================================================================================
+    def findNode(self, node_id: int) -&gt; Union[Node, None]:
+        return self._graph.findNode(node_id)
+
     # Selection ========================================================================================================
     def selectAll(self):
         self._graph.selectAll()
@@ -428,12 +438,12 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         package.setObject(snapshot)
 
         clipboard = QApplication.clipboard()
-        clipboard.setMimeData(package)
+        clipboard.setMimeData(package.qmimedata)
 
     def pasteEvent(self):
         &#34;&#34;&#34;Retrieve the data from a clipboard and paste it.&#34;&#34;&#34;
         clipboard = QApplication.clipboard()
-        package = clipboard.mimeData()
+        package = StdMimeData(clipboard.mimeData())
 
         if package.hasObject(GraphSnapshot):
             snapshot = package.objectData(GraphSnapshot)
@@ -609,7 +619,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
     package.setObject(snapshot)
 
     clipboard = QApplication.clipboard()
-    clipboard.setMimeData(package)</code></pre>
+    clipboard.setMimeData(package.qmimedata)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.cutEvent"><code class="name flex">
@@ -709,6 +719,19 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
         self.removeItem(node)</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.findNode"><code class="name flex">
+<span>def <span class="ident">findNode</span></span>(<span>self, node_id)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def findNode(self, node_id: int) -&gt; Union[Node, None]:
+    return self._graph.findNode(node_id)</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.getView"><code class="name flex">
 <span>def <span class="ident">getView</span></span>(<span>self)</span>
 </code></dt>
@@ -772,7 +795,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <pre><code class="python">def pasteEvent(self):
     &#34;&#34;&#34;Retrieve the data from a clipboard and paste it.&#34;&#34;&#34;
     clipboard = QApplication.clipboard()
-    package = clipboard.mimeData()
+    package = StdMimeData(clipboard.mimeData())
 
     if package.hasObject(GraphSnapshot):
         snapshot = package.objectData(GraphSnapshot)
@@ -976,6 +999,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deserialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes">disconnect_nodes</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.extract" href="#nfb_studio.widgets.scheme.scheme.Scheme.extract">extract</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.findNode" href="#nfb_studio.widgets.scheme.scheme.Scheme.findNode">findNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.getView" href="#nfb_studio.widgets.scheme.scheme.Scheme.getView">getView</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.merge" href="#nfb_studio.widgets.scheme.scheme.Scheme.merge">merge</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent">pasteEvent</a></code></li>
@@ -998,7 +1022,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.4</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>
