@@ -29,8 +29,6 @@
 from PySide2.QtCore import QPointF, QRectF, QLineF
 from PySide2.QtGui import QPainter, QPainterPath, QPen
 
-from nfb_studio.widgets import ShadowSelectableItem
-
 from .style import Style
 from .palette import Palette
 from .scheme_item import SchemeItem
@@ -39,12 +37,13 @@ from .connection import Input, Output, Connection
 from .data_type import DataType
 
 
-class Edge(SchemeItem, ShadowSelectableItem):
+class Edge(SchemeItem):
     &#34;&#34;&#34;An graphics item representing a bezier curve, connecting one node&#39;s output to another&#39;s input.&#34;&#34;&#34;
 
     def __init__(self):
         super(Edge, self).__init__()
         self.setZValue(-1)  # Draw edges behind nodes
+        self.setFlag(self.ItemIsSelectable)
 
         self._source: Union[Output, None] = None
         &#34;&#34;&#34;An edge is drawn from its source to its target. Node&#39;s output is edge&#39;s source.  
@@ -153,8 +152,6 @@ class Edge(SchemeItem, ShadowSelectableItem):
         Unsetting the target sets the target position to None, which causes the edge to not be drawn, until another
         target (or target position) is supplied.
         &#34;&#34;&#34;
-        assert(target is None or isinstance(target.parentItem(), Node))
-
         if (self._target is not None) and (self._target is not target):
             # Remove self direcly from self._target.edges instead of calling self._target.detach
             # to prevent infinite recursion.
@@ -175,8 +172,6 @@ class Edge(SchemeItem, ShadowSelectableItem):
         Unsetting the source sets the source position to None, which causes the edge to not be drawn, until another
         source (or source position) is supplied.
         &#34;&#34;&#34;
-        assert(source is None or isinstance(source.parentItem(), Node))
-
         if (self._source is not None) and (self._source is not source):
             # Remove self direcly from self._target.edges instead of calling self._target.detach
             # to prevent infinite recursion.
@@ -264,6 +259,9 @@ class Edge(SchemeItem, ShadowSelectableItem):
 
         return self._path.boundingRect().adjusted(0, -edge_width/2, 0, edge_width/2)
 
+    def shape(self) -&gt; QPainterPath:
+        return self._path
+
     def paint(self, painter: QPainter, option, widget=...) -&gt; None:
         if self._source_pos is None or self._target_pos is None:
             return
@@ -301,44 +299,42 @@ class Edge(SchemeItem, ShadowSelectableItem):
                 &#34;\&#34;) are not compatible&#34;
             )
 
-    def updateSelectedStatus(self):
-        &#34;&#34;&#34;Checks if both connections at the ends are selected. If so, set this edge to &#34;selected&#34;.
-
-        Edges are not selectable - this function only recolors the edge. Opposite also applies - if at least one of the
-        nodes is not selected, deselect this edge. This edge queries nodes - not connections - for selected status.
-        Connections derive their selected status from edges, not the other way around.
-        &#34;&#34;&#34;
-        if self._source is None or self._target is None:
-            self.setShadowSelected(False)
-            return
-
-        if self.sourceNode().isSelected() and self.targetNode().isSelected():
-            self.setShadowSelected(True)
-            # Edge does not know which connection called this update. If source called it, target does not know it has
-            # to be selected. So the edge explicitly selects both.
-            self._source.setShadowSelected(True)
-            self._target.setShadowSelected(True)
-        else:
-            # When deselecting, the connections might still be selected because of other edges - so instead of
-            # explicitly deselecting both connections, edge calls updateSelectedStatus() on them.
-            # This happens only when the edge was &#34;toggled&#34;, not &#34;set&#34;, to prevent infinite recursion.
-            is_toggled = self.isShadowSelected()
-            self.setShadowSelected(False)
-
-            if is_toggled:
-                self._source.updateSelectedStatus()
-                self._target.updateSelectedStatus()
-
     # Events ===========================================================================================================
-    def itemShadowSelectedHasChangedEvent(self, value):
-        pal = self.palette()
+    def itemChange(self, change, value):
+        # ItemSelectedChange -------------------------------------------------------------------------------------------
+        # When a selection change is requested, ensure that an edge can be selected on it&#39;s own. Otherwise, follow
+        # autoSelect policy.
+        if change == self.ItemSelectedChange:
+            scheme = self.scene()
 
-        if value == True:
-            pal.setCurrentColorGroup(Palette.Selected)
-        else:
-            pal.setCurrentColorGroup(Palette.Active)
-        
-        self.paletteChange()
+            if len(scheme.selection().nodes) != 0:
+                # If nodes are selected, edges are allowed to be selected only between two nodes. 
+                value = self._autoSelectValue()
+        # ItemSelectedHasChanged ---------------------------------------------------------------------------------------
+        # When a selection status has changed, propagate it to connections on both sides.
+        elif change == self.ItemSelectedHasChanged:
+            if self.source() is not None and self.source().isSelected() != value:
+                self.source().autoSelectFromEdge()
+
+            if self.target() is not None and self.target().isSelected() != value:
+                self.target().autoSelectFromEdge()
+
+        return super().itemChange(change, value)
+    
+    def autoSelect(self):
+        &#34;&#34;&#34;Automatically determine if the edge needs to be selected or not.  
+        This function considers edge selected if nodes on both ends are selected.
+        &#34;&#34;&#34;
+        self.setSelected(self._autoSelectValue())
+
+    def _autoSelectValue(self) -&gt; bool:
+        &#34;&#34;&#34;Value of selection when autoselecting.&#34;&#34;&#34;
+        return (
+            self.sourceNode() is not None and
+            self.targetNode() is not None and
+            self.sourceNode().isSelected() and
+            self.targetNode().isSelected()
+        )
 
     # Style and palette ================================================================================================
     def styleChange(self):
@@ -373,12 +369,13 @@ class Edge(SchemeItem, ShadowSelectableItem):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Edge(SchemeItem, ShadowSelectableItem):
+<pre><code class="python">class Edge(SchemeItem):
     &#34;&#34;&#34;An graphics item representing a bezier curve, connecting one node&#39;s output to another&#39;s input.&#34;&#34;&#34;
 
     def __init__(self):
         super(Edge, self).__init__()
         self.setZValue(-1)  # Draw edges behind nodes
+        self.setFlag(self.ItemIsSelectable)
 
         self._source: Union[Output, None] = None
         &#34;&#34;&#34;An edge is drawn from its source to its target. Node&#39;s output is edge&#39;s source.  
@@ -487,8 +484,6 @@ class Edge(SchemeItem, ShadowSelectableItem):
         Unsetting the target sets the target position to None, which causes the edge to not be drawn, until another
         target (or target position) is supplied.
         &#34;&#34;&#34;
-        assert(target is None or isinstance(target.parentItem(), Node))
-
         if (self._target is not None) and (self._target is not target):
             # Remove self direcly from self._target.edges instead of calling self._target.detach
             # to prevent infinite recursion.
@@ -509,8 +504,6 @@ class Edge(SchemeItem, ShadowSelectableItem):
         Unsetting the source sets the source position to None, which causes the edge to not be drawn, until another
         source (or source position) is supplied.
         &#34;&#34;&#34;
-        assert(source is None or isinstance(source.parentItem(), Node))
-
         if (self._source is not None) and (self._source is not source):
             # Remove self direcly from self._target.edges instead of calling self._target.detach
             # to prevent infinite recursion.
@@ -598,6 +591,9 @@ class Edge(SchemeItem, ShadowSelectableItem):
 
         return self._path.boundingRect().adjusted(0, -edge_width/2, 0, edge_width/2)
 
+    def shape(self) -&gt; QPainterPath:
+        return self._path
+
     def paint(self, painter: QPainter, option, widget=...) -&gt; None:
         if self._source_pos is None or self._target_pos is None:
             return
@@ -635,44 +631,42 @@ class Edge(SchemeItem, ShadowSelectableItem):
                 &#34;\&#34;) are not compatible&#34;
             )
 
-    def updateSelectedStatus(self):
-        &#34;&#34;&#34;Checks if both connections at the ends are selected. If so, set this edge to &#34;selected&#34;.
-
-        Edges are not selectable - this function only recolors the edge. Opposite also applies - if at least one of the
-        nodes is not selected, deselect this edge. This edge queries nodes - not connections - for selected status.
-        Connections derive their selected status from edges, not the other way around.
-        &#34;&#34;&#34;
-        if self._source is None or self._target is None:
-            self.setShadowSelected(False)
-            return
-
-        if self.sourceNode().isSelected() and self.targetNode().isSelected():
-            self.setShadowSelected(True)
-            # Edge does not know which connection called this update. If source called it, target does not know it has
-            # to be selected. So the edge explicitly selects both.
-            self._source.setShadowSelected(True)
-            self._target.setShadowSelected(True)
-        else:
-            # When deselecting, the connections might still be selected because of other edges - so instead of
-            # explicitly deselecting both connections, edge calls updateSelectedStatus() on them.
-            # This happens only when the edge was &#34;toggled&#34;, not &#34;set&#34;, to prevent infinite recursion.
-            is_toggled = self.isShadowSelected()
-            self.setShadowSelected(False)
-
-            if is_toggled:
-                self._source.updateSelectedStatus()
-                self._target.updateSelectedStatus()
-
     # Events ===========================================================================================================
-    def itemShadowSelectedHasChangedEvent(self, value):
-        pal = self.palette()
+    def itemChange(self, change, value):
+        # ItemSelectedChange -------------------------------------------------------------------------------------------
+        # When a selection change is requested, ensure that an edge can be selected on it&#39;s own. Otherwise, follow
+        # autoSelect policy.
+        if change == self.ItemSelectedChange:
+            scheme = self.scene()
 
-        if value == True:
-            pal.setCurrentColorGroup(Palette.Selected)
-        else:
-            pal.setCurrentColorGroup(Palette.Active)
-        
-        self.paletteChange()
+            if len(scheme.selection().nodes) != 0:
+                # If nodes are selected, edges are allowed to be selected only between two nodes. 
+                value = self._autoSelectValue()
+        # ItemSelectedHasChanged ---------------------------------------------------------------------------------------
+        # When a selection status has changed, propagate it to connections on both sides.
+        elif change == self.ItemSelectedHasChanged:
+            if self.source() is not None and self.source().isSelected() != value:
+                self.source().autoSelectFromEdge()
+
+            if self.target() is not None and self.target().isSelected() != value:
+                self.target().autoSelectFromEdge()
+
+        return super().itemChange(change, value)
+    
+    def autoSelect(self):
+        &#34;&#34;&#34;Automatically determine if the edge needs to be selected or not.  
+        This function considers edge selected if nodes on both ends are selected.
+        &#34;&#34;&#34;
+        self.setSelected(self._autoSelectValue())
+
+    def _autoSelectValue(self) -&gt; bool:
+        &#34;&#34;&#34;Value of selection when autoselecting.&#34;&#34;&#34;
+        return (
+            self.sourceNode() is not None and
+            self.targetNode() is not None and
+            self.sourceNode().isSelected() and
+            self.targetNode().isSelected()
+        )
 
     # Style and palette ================================================================================================
     def styleChange(self):
@@ -691,7 +685,6 @@ class Edge(SchemeItem, ShadowSelectableItem):
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
-<li><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem">ShadowSelectableItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
@@ -738,6 +731,23 @@ This function is similar to setSource and setTarget, but determines which side t
     This function is similar to setSource and setTarget, but determines which side to attach automatically.
     &#34;&#34;&#34;
     connection.attach(self)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.edge.Edge.autoSelect"><code class="name flex">
+<span>def <span class="ident">autoSelect</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Automatically determine if the edge needs to be selected or not.<br>
+This function considers edge selected if nodes on both ends are selected.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def autoSelect(self):
+    &#34;&#34;&#34;Automatically determine if the edge needs to be selected or not.  
+    This function considers edge selected if nodes on both ends are selected.
+    &#34;&#34;&#34;
+    self.setSelected(self._autoSelectValue())</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.edge.Edge.boundingRect"><code class="name flex">
@@ -917,8 +927,6 @@ source (or source position) is supplied.</p></section>
     Unsetting the source sets the source position to None, which causes the edge to not be drawn, until another
     source (or source position) is supplied.
     &#34;&#34;&#34;
-    assert(source is None or isinstance(source.parentItem(), Node))
-
     if (self._source is not None) and (self._source is not source):
         # Remove self direcly from self._target.edges instead of calling self._target.detach
         # to prevent infinite recursion.
@@ -974,8 +982,6 @@ target (or target position) is supplied.</p></section>
     Unsetting the target sets the target position to None, which causes the edge to not be drawn, until another
     target (or target position) is supplied.
     &#34;&#34;&#34;
-    assert(target is None or isinstance(target.parentItem(), Node))
-
     if (self._target is not None) and (self._target is not target):
         # Remove self direcly from self._target.edges instead of calling self._target.detach
         # to prevent infinite recursion.
@@ -1012,6 +1018,19 @@ pos is in scene pixel coordinates.</p></section>
     self._target_pos = pos
 
     self.adjust()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.edge.Edge.shape"><code class="name flex">
+<span>def <span class="ident">shape</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>shape(self) -&gt; PySide2.QtGui.QPainterPath</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def shape(self) -&gt; QPainterPath:
+    return self._path</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.edge.Edge.source"><code class="name flex">
@@ -1142,47 +1161,6 @@ not connected but has a statis position set, that is returned. Otherwise, this f
     return self._source_pos</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.updateSelectedStatus"><code class="name flex">
-<span>def <span class="ident">updateSelectedStatus</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Checks if both connections at the ends are selected. If so, set this edge to "selected".</p>
-<p>Edges are not selectable - this function only recolors the edge. Opposite also applies - if at least one of the
-nodes is not selected, deselect this edge. This edge queries nodes - not connections - for selected status.
-Connections derive their selected status from edges, not the other way around.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def updateSelectedStatus(self):
-    &#34;&#34;&#34;Checks if both connections at the ends are selected. If so, set this edge to &#34;selected&#34;.
-
-    Edges are not selectable - this function only recolors the edge. Opposite also applies - if at least one of the
-    nodes is not selected, deselect this edge. This edge queries nodes - not connections - for selected status.
-    Connections derive their selected status from edges, not the other way around.
-    &#34;&#34;&#34;
-    if self._source is None or self._target is None:
-        self.setShadowSelected(False)
-        return
-
-    if self.sourceNode().isSelected() and self.targetNode().isSelected():
-        self.setShadowSelected(True)
-        # Edge does not know which connection called this update. If source called it, target does not know it has
-        # to be selected. So the edge explicitly selects both.
-        self._source.setShadowSelected(True)
-        self._target.setShadowSelected(True)
-    else:
-        # When deselecting, the connections might still be selected because of other edges - so instead of
-        # explicitly deselecting both connections, edge calls updateSelectedStatus() on them.
-        # This happens only when the edge was &#34;toggled&#34;, not &#34;set&#34;, to prevent infinite recursion.
-        is_toggled = self.isShadowSelected()
-        self.setShadowSelected(False)
-
-        if is_toggled:
-            self._source.updateSelectedStatus()
-            self._target.updateSelectedStatus()</code></pre>
-</details>
-</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -1191,16 +1169,6 @@ Connections derive their selected status from edges, not the other way around.</
 <li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-</ul>
-</li>
-<li><code><b><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem">ShadowSelectableItem</a></b></code>:
-<ul class="hlist">
-<li><code><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedHasChangedEvent" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedHasChangedEvent">itemShadowSelectedHasChangedEvent</a></code></li>
-</ul>
-</li>
-<li><code><b><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem">ShadowSelectableItem</a></b></code>:
-<ul class="hlist">
-<li><code><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedChangeEvent" href="../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedChangeEvent">itemShadowSelectedChangeEvent</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1223,9 +1191,10 @@ Connections derive their selected status from edges, not the other way around.</
 <ul>
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.edge.Edge" href="#nfb_studio.widgets.scheme.edge.Edge">Edge</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.adjust" href="#nfb_studio.widgets.scheme.edge.Edge.adjust">adjust</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.attach" href="#nfb_studio.widgets.scheme.edge.Edge.attach">attach</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.autoSelect" href="#nfb_studio.widgets.scheme.edge.Edge.autoSelect">autoSelect</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.boundingRect" href="#nfb_studio.widgets.scheme.edge.Edge.boundingRect">boundingRect</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.checkDataType" href="#nfb_studio.widgets.scheme.edge.Edge.checkDataType">checkDataType</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.dataType" href="#nfb_studio.widgets.scheme.edge.Edge.dataType">dataType</a></code></li>
@@ -1238,6 +1207,7 @@ Connections derive their selected status from edges, not the other way around.</
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.setSourcePos" href="#nfb_studio.widgets.scheme.edge.Edge.setSourcePos">setSourcePos</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.setTarget" href="#nfb_studio.widgets.scheme.edge.Edge.setTarget">setTarget</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.setTargetPos" href="#nfb_studio.widgets.scheme.edge.Edge.setTargetPos">setTargetPos</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.shape" href="#nfb_studio.widgets.scheme.edge.Edge.shape">shape</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.source" href="#nfb_studio.widgets.scheme.edge.Edge.source">source</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.sourceNode" href="#nfb_studio.widgets.scheme.edge.Edge.sourceNode">sourceNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.sourcePos" href="#nfb_studio.widgets.scheme.edge.Edge.sourcePos">sourcePos</a></code></li>
@@ -1245,7 +1215,6 @@ Connections derive their selected status from edges, not the other way around.</
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.target" href="#nfb_studio.widgets.scheme.edge.Edge.target">target</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.targetNode" href="#nfb_studio.widgets.scheme.edge.Edge.targetNode">targetNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.edge.Edge.targetPos" href="#nfb_studio.widgets.scheme.edge.Edge.targetPos">targetPos</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.updateSelectedStatus" href="#nfb_studio.widgets.scheme.edge.Edge.updateSelectedStatus">updateSelectedStatus</a></code></li>
 </ul>
 </li>
 </ul>

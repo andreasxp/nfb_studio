@@ -28,7 +28,7 @@
 from PySide2.QtGui import QPainter, QFontMetricsF
 from PySide2.QtWidgets import QGraphicsItem, QGraphicsLineItem
 
-from nfb_studio.widgets import ShadowSelectableItem, TextLineItem
+from nfb_studio.widgets import TextLineItem, scheme
 
 from ..style import Style
 from ..palette import Palette
@@ -37,15 +37,15 @@ from ..data_type import DataType, Unknown
 from .edge_drag import EdgeDrag
 from .trigger import Trigger
 
-class Connection(SchemeItem, ShadowSelectableItem):
+class Connection(SchemeItem):
     &#34;&#34;&#34;Connection is an input or output from a Node.&#34;&#34;&#34;
 
     def __init__(self, text=None, data_type: DataType = None, parent: QGraphicsItem = None):
         super().__init__(parent)
 
-        self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)  # To enable edge adjusting
-        self.setFlag(QGraphicsItem.ItemIsSelectable)
-        self.setFlag(QGraphicsItem.ItemHasNoContents)  # Drawing occurs using child items
+        self.setFlag(self.ItemSendsScenePositionChanges)  # To enable edge adjusting
+        self.setFlag(self.ItemIsSelectable)
+        self.setFlag(self.ItemHasNoContents)  # Drawing occurs using child items
 
         self.edges = set()
         &#34;&#34;&#34;Edges attached to this connection. To change this set use `Connection`&#39;s methods: attach, detach, detachAll.
@@ -57,6 +57,10 @@ class Connection(SchemeItem, ShadowSelectableItem):
         self._trigger_item = Trigger(self)
 
         self._data_type = data_type or Unknown
+
+        self._approved_selection = True
+        &#34;&#34;&#34;Connection is not selectable from outside sources. This flag is set by some internal methods to indicate that
+        a selection is legitimate.&#34;&#34;&#34;
 
         self.styleChange()
         self.paletteChange()
@@ -134,37 +138,42 @@ class Connection(SchemeItem, ShadowSelectableItem):
         
         This processes position changes by adjusting all the edges and forwards the arguments to the superclass.
         &#34;&#34;&#34;
-        if change == QGraphicsItem.ItemScenePositionHasChanged or change == QGraphicsItem.ItemVisibleHasChanged:
+        # ItemScenePositionHasChanged ----------------------------------------------------------------------------------
+        if change == self.ItemScenePositionHasChanged or change == self.ItemVisibleHasChanged:
             for edge in self.edges:
                 edge.adjust()
+        # ItemSelectedChange -------------------------------------------------------------------------------------------
+        if change == self.ItemSelectedChange:
+            # Connection is not selectable from outside sources. Selection is approved only if the corresponding flag is
+            # set (it is set by internal methods).
+            if not self._approved_selection:
+                value = self.isSelected()
+            self._approved_selection = False
 
         return super().itemChange(change, value)
-
-    def itemShadowSelectedHasChangedEvent(self, value):
-        pal = self.palette()
-
-        if value == True:
-            pal.setCurrentColorGroup(Palette.Selected)
-        else:
-            pal.setCurrentColorGroup(Palette.Active)
-        
-        self.paletteChange()
-
-    def updateSelectedStatus(self):
-        &#34;&#34;&#34;Checks if at least one edge is selected. If so, set this connection to selected.
-        Opposite also applies - if no edges are selected, deselect this edge.
-        The connection is responsible to propagate this call to edges.
+    
+    def autoSelect(self):
+        &#34;&#34;&#34;This function updates connection selection.
+        The connection asks the edges to autoSelect themselves, and they in turn call self.autoSelectFromEdge.
         &#34;&#34;&#34;
         for edge in self.edges:
-            edge.updateSelectedStatus()
+            edge.autoSelect()
 
-        for edge in self.edges:
-            if edge.isShadowSelected():
-                self.setShadowSelected(True)
-                break
-        else:
-            self.setShadowSelected(False)
+    def autoSelectFromEdge(self):
+        &#34;&#34;&#34;This function updates connection selection status when an edge changes selection.&#34;&#34;&#34;
+        value = False
 
+        if self.parentItem().isSelected():
+            for edge in self.edges:
+                if edge.isSelected():
+                    value = True
+                    break
+        
+        if value != self.isSelected():
+            self._approved_selection = True
+            self.setSelected(value)
+
+                
     # Serialization ====================================================================================================
     def serialize(self) -&gt; dict:
         return {
@@ -215,15 +224,15 @@ class Connection(SchemeItem, ShadowSelectableItem):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Connection(SchemeItem, ShadowSelectableItem):
+<pre><code class="python">class Connection(SchemeItem):
     &#34;&#34;&#34;Connection is an input or output from a Node.&#34;&#34;&#34;
 
     def __init__(self, text=None, data_type: DataType = None, parent: QGraphicsItem = None):
         super().__init__(parent)
 
-        self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges)  # To enable edge adjusting
-        self.setFlag(QGraphicsItem.ItemIsSelectable)
-        self.setFlag(QGraphicsItem.ItemHasNoContents)  # Drawing occurs using child items
+        self.setFlag(self.ItemSendsScenePositionChanges)  # To enable edge adjusting
+        self.setFlag(self.ItemIsSelectable)
+        self.setFlag(self.ItemHasNoContents)  # Drawing occurs using child items
 
         self.edges = set()
         &#34;&#34;&#34;Edges attached to this connection. To change this set use `Connection`&#39;s methods: attach, detach, detachAll.
@@ -235,6 +244,10 @@ class Connection(SchemeItem, ShadowSelectableItem):
         self._trigger_item = Trigger(self)
 
         self._data_type = data_type or Unknown
+
+        self._approved_selection = True
+        &#34;&#34;&#34;Connection is not selectable from outside sources. This flag is set by some internal methods to indicate that
+        a selection is legitimate.&#34;&#34;&#34;
 
         self.styleChange()
         self.paletteChange()
@@ -312,37 +325,42 @@ class Connection(SchemeItem, ShadowSelectableItem):
         
         This processes position changes by adjusting all the edges and forwards the arguments to the superclass.
         &#34;&#34;&#34;
-        if change == QGraphicsItem.ItemScenePositionHasChanged or change == QGraphicsItem.ItemVisibleHasChanged:
+        # ItemScenePositionHasChanged ----------------------------------------------------------------------------------
+        if change == self.ItemScenePositionHasChanged or change == self.ItemVisibleHasChanged:
             for edge in self.edges:
                 edge.adjust()
+        # ItemSelectedChange -------------------------------------------------------------------------------------------
+        if change == self.ItemSelectedChange:
+            # Connection is not selectable from outside sources. Selection is approved only if the corresponding flag is
+            # set (it is set by internal methods).
+            if not self._approved_selection:
+                value = self.isSelected()
+            self._approved_selection = False
 
         return super().itemChange(change, value)
-
-    def itemShadowSelectedHasChangedEvent(self, value):
-        pal = self.palette()
-
-        if value == True:
-            pal.setCurrentColorGroup(Palette.Selected)
-        else:
-            pal.setCurrentColorGroup(Palette.Active)
-        
-        self.paletteChange()
-
-    def updateSelectedStatus(self):
-        &#34;&#34;&#34;Checks if at least one edge is selected. If so, set this connection to selected.
-        Opposite also applies - if no edges are selected, deselect this edge.
-        The connection is responsible to propagate this call to edges.
+    
+    def autoSelect(self):
+        &#34;&#34;&#34;This function updates connection selection.
+        The connection asks the edges to autoSelect themselves, and they in turn call self.autoSelectFromEdge.
         &#34;&#34;&#34;
         for edge in self.edges:
-            edge.updateSelectedStatus()
+            edge.autoSelect()
 
-        for edge in self.edges:
-            if edge.isShadowSelected():
-                self.setShadowSelected(True)
-                break
-        else:
-            self.setShadowSelected(False)
+    def autoSelectFromEdge(self):
+        &#34;&#34;&#34;This function updates connection selection status when an edge changes selection.&#34;&#34;&#34;
+        value = False
 
+        if self.parentItem().isSelected():
+            for edge in self.edges:
+                if edge.isSelected():
+                    value = True
+                    break
+        
+        if value != self.isSelected():
+            self._approved_selection = True
+            self.setSelected(value)
+
+                
     # Serialization ====================================================================================================
     def serialize(self) -&gt; dict:
         return {
@@ -376,7 +394,6 @@ class Connection(SchemeItem, ShadowSelectableItem):
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
-<li><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem" href="../../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem">ShadowSelectableItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
@@ -406,6 +423,48 @@ class Connection(SchemeItem, ShadowSelectableItem):
 <pre><code class="python">def attach(self, edge):
     &#34;&#34;&#34;Attach an edge to this connection.&#34;&#34;&#34;
     raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.autoSelect"><code class="name flex">
+<span>def <span class="ident">autoSelect</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>This function updates connection selection.
+The connection asks the edges to autoSelect themselves, and they in turn call self.autoSelectFromEdge.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def autoSelect(self):
+    &#34;&#34;&#34;This function updates connection selection.
+    The connection asks the edges to autoSelect themselves, and they in turn call self.autoSelectFromEdge.
+    &#34;&#34;&#34;
+    for edge in self.edges:
+        edge.autoSelect()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.autoSelectFromEdge"><code class="name flex">
+<span>def <span class="ident">autoSelectFromEdge</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>This function updates connection selection status when an edge changes selection.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def autoSelectFromEdge(self):
+    &#34;&#34;&#34;This function updates connection selection status when an edge changes selection.&#34;&#34;&#34;
+    value = False
+
+    if self.parentItem().isSelected():
+        for edge in self.edges:
+            if edge.isSelected():
+                value = True
+                break
+    
+    if value != self.isSelected():
+        self._approved_selection = True
+        self.setSelected(value)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect"><code class="name flex">
@@ -542,9 +601,17 @@ This operation concludes the edge drawing process.</p></section>
     
     This processes position changes by adjusting all the edges and forwards the arguments to the superclass.
     &#34;&#34;&#34;
-    if change == QGraphicsItem.ItemScenePositionHasChanged or change == QGraphicsItem.ItemVisibleHasChanged:
+    # ItemScenePositionHasChanged ----------------------------------------------------------------------------------
+    if change == self.ItemScenePositionHasChanged or change == self.ItemVisibleHasChanged:
         for edge in self.edges:
             edge.adjust()
+    # ItemSelectedChange -------------------------------------------------------------------------------------------
+    if change == self.ItemSelectedChange:
+        # Connection is not selectable from outside sources. Selection is approved only if the corresponding flag is
+        # set (it is set by internal methods).
+        if not self._approved_selection:
+            value = self.isSelected()
+        self._approved_selection = False
 
     return super().itemChange(change, value)</code></pre>
 </details>
@@ -688,33 +755,6 @@ This operation concludes the edge drawing process.</p></section>
     return self._text_item.text()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.updateSelectedStatus"><code class="name flex">
-<span>def <span class="ident">updateSelectedStatus</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Checks if at least one edge is selected. If so, set this connection to selected.
-Opposite also applies - if no edges are selected, deselect this edge.
-The connection is responsible to propagate this call to edges.</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def updateSelectedStatus(self):
-    &#34;&#34;&#34;Checks if at least one edge is selected. If so, set this connection to selected.
-    Opposite also applies - if no edges are selected, deselect this edge.
-    The connection is responsible to propagate this call to edges.
-    &#34;&#34;&#34;
-    for edge in self.edges:
-        edge.updateSelectedStatus()
-
-    for edge in self.edges:
-        if edge.isShadowSelected():
-            self.setShadowSelected(True)
-            break
-    else:
-        self.setShadowSelected(False)</code></pre>
-</details>
-</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -722,16 +762,6 @@ The connection is responsible to propagate this call to edges.</p></section>
 <ul class="hlist">
 <li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-</ul>
-</li>
-<li><code><b><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem" href="../../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem">ShadowSelectableItem</a></b></code>:
-<ul class="hlist">
-<li><code><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedHasChangedEvent" href="../../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedHasChangedEvent">itemShadowSelectedHasChangedEvent</a></code></li>
-</ul>
-</li>
-<li><code><b><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem" href="../../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem">ShadowSelectableItem</a></b></code>:
-<ul class="hlist">
-<li><code><a title="nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedChangeEvent" href="../../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedChangeEvent">itemShadowSelectedChangeEvent</a></code></li>
 </ul>
 </li>
 </ul>
@@ -754,8 +784,10 @@ The connection is responsible to propagate this call to edges.</p></section>
 <ul>
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection" href="#nfb_studio.widgets.scheme.connection.connection.Connection">Connection</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.attach" href="#nfb_studio.widgets.scheme.connection.connection.Connection.attach">attach</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.autoSelect" href="#nfb_studio.widgets.scheme.connection.connection.Connection.autoSelect">autoSelect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.autoSelectFromEdge" href="#nfb_studio.widgets.scheme.connection.connection.Connection.autoSelectFromEdge">autoSelectFromEdge</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect" href="#nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect">boundingRect</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.dataType" href="#nfb_studio.widgets.scheme.connection.connection.Connection.dataType">dataType</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.deserialize" href="#nfb_studio.widgets.scheme.connection.connection.Connection.deserialize">deserialize</a></code></li>
@@ -775,7 +807,6 @@ The connection is responsible to propagate this call to edges.</p></section>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.stemTip" href="#nfb_studio.widgets.scheme.connection.connection.Connection.stemTip">stemTip</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.styleChange" href="#nfb_studio.widgets.scheme.connection.connection.Connection.styleChange">styleChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.text" href="#nfb_studio.widgets.scheme.connection.connection.Connection.text">text</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.updateSelectedStatus" href="#nfb_studio.widgets.scheme.connection.connection.Connection.updateSelectedStatus">updateSelectedStatus</a></code></li>
 </ul>
 </li>
 </ul>
