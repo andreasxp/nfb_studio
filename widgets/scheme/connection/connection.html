@@ -47,7 +47,9 @@ class Connection(SchemeItem, ShadowSelectableItem):
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setFlag(QGraphicsItem.ItemHasNoContents)  # Drawing occurs using child items
 
-        self.edges = set()  # Edges related to this connection
+        self.edges = set()
+        &#34;&#34;&#34;Edges attached to this connection. To change this set use `Connection`&#39;s methods: attach, detach, detachAll.
+        &#34;&#34;&#34;
 
         self._text_item = TextLineItem(text or &#34;Connection&#34;, self)
         self._stem_item = QGraphicsLineItem(self)
@@ -59,6 +61,22 @@ class Connection(SchemeItem, ShadowSelectableItem):
         self.styleChange()
         self.paletteChange()
 
+    # Working with edges ===============================================================================================
+    def attach(self, edge):
+        &#34;&#34;&#34;Attach an edge to this connection.&#34;&#34;&#34;
+        raise NotImplementedError
+
+    def detach(self, edge):
+        &#34;&#34;&#34;Detach an edge from this connection.  
+        Other connection of this edge is unaffected.
+        &#34;&#34;&#34;
+        raise NotImplementedError
+
+    def detachAll(self):
+        &#34;&#34;&#34;Detach all edges.&#34;&#34;&#34;
+        raise NotImplementedError
+
+    # Member access ====================================================================================================
     def text(self):
         return self._text_item.text()
 
@@ -75,6 +93,7 @@ class Connection(SchemeItem, ShadowSelectableItem):
             # Verify that all edges are fine with changing the data type.
             edge.checkDataType()
 
+    # Geometry and drawing =============================================================================================
     def stemRoot(self):
         &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local inches.&#34;&#34;&#34;
         raise NotImplementedError
@@ -83,6 +102,13 @@ class Connection(SchemeItem, ShadowSelectableItem):
         &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local inches.&#34;&#34;&#34;
         raise NotImplementedError
     
+    def boundingRect(self):
+        return QRectF()
+
+    def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+        pass
+
+    # Style and palette ================================================================================================
     def styleChange(self):
         super().styleChange()
         style = self.style()
@@ -91,7 +117,7 @@ class Connection(SchemeItem, ShadowSelectableItem):
         self._text_item.setMaximumWidth(style.pixelMetric(Style.ConnectionTextLength))
 
         self._stem_item.setPen(style.edgePen(self.palette()))
-
+    
     def paletteChange(self):
         super().paletteChange()
         text_bg = self.palette().background().color()
@@ -102,6 +128,7 @@ class Connection(SchemeItem, ShadowSelectableItem):
 
         self._stem_item.setPen(self.style().edgePen(self.palette()))
 
+    # Events ===========================================================================================================
     def itemChange(self, change, value):
         &#34;&#34;&#34;A function that runs every time some change happens to the connection.
         
@@ -122,12 +149,6 @@ class Connection(SchemeItem, ShadowSelectableItem):
             pal.setCurrentColorGroup(Palette.Active)
         
         self.paletteChange()
-
-    def boundingRect(self):
-        return QRectF()
-
-    def paint(self, painter: QPainter, option, widget=...) -&gt; None:
-        pass
 
     def updateSelectedStatus(self):
         &#34;&#34;&#34;Checks if at least one edge is selected. If so, set this connection to selected.
@@ -159,23 +180,17 @@ class Connection(SchemeItem, ShadowSelectableItem):
     # The heavy lifting such as detecting when the edge started being drawn, mouse moving and data transfers are handled
     # by a member item called self._trigger_item. Connection handles the logic.
     def edgeDragStart(self):
-        &#34;&#34;&#34;Called when user tries to drag an edge from this connection.
-        
-        This operation starts the edge drawing process. It returns an EdgeDrag object that will be given to the
-        reciever.
-        &#34;&#34;&#34;
-        raise NotImplementedError
+        &#34;&#34;&#34;Called when user tries to drag an edge from this connection.&#34;&#34;&#34;
+        self.scene().edgeDragStart(self)
 
-    def edgeDragAccept(self, edgedrag: EdgeDrag):
-        &#34;&#34;&#34;Called when a new edge is being dragged into the drop zone.
-        
+    def edgeDragAccept(self) -&gt; bool:
+        &#34;&#34;&#34;Called when a new edge is being dragged into the drop zone.  
         Returns True or False depending on whether the dragged edge should be accepted or not.
         &#34;&#34;&#34;
         raise NotImplementedError
 
-    def edgeDragDrop(self, edgedrag: EdgeDrag):
-        &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.
-        
+    def edgeDragDrop(self):
+        &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
         This operation concludes the edge drawing process.
         &#34;&#34;&#34;
         raise NotImplementedError</code></pre>
@@ -210,7 +225,9 @@ class Connection(SchemeItem, ShadowSelectableItem):
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setFlag(QGraphicsItem.ItemHasNoContents)  # Drawing occurs using child items
 
-        self.edges = set()  # Edges related to this connection
+        self.edges = set()
+        &#34;&#34;&#34;Edges attached to this connection. To change this set use `Connection`&#39;s methods: attach, detach, detachAll.
+        &#34;&#34;&#34;
 
         self._text_item = TextLineItem(text or &#34;Connection&#34;, self)
         self._stem_item = QGraphicsLineItem(self)
@@ -222,6 +239,22 @@ class Connection(SchemeItem, ShadowSelectableItem):
         self.styleChange()
         self.paletteChange()
 
+    # Working with edges ===============================================================================================
+    def attach(self, edge):
+        &#34;&#34;&#34;Attach an edge to this connection.&#34;&#34;&#34;
+        raise NotImplementedError
+
+    def detach(self, edge):
+        &#34;&#34;&#34;Detach an edge from this connection.  
+        Other connection of this edge is unaffected.
+        &#34;&#34;&#34;
+        raise NotImplementedError
+
+    def detachAll(self):
+        &#34;&#34;&#34;Detach all edges.&#34;&#34;&#34;
+        raise NotImplementedError
+
+    # Member access ====================================================================================================
     def text(self):
         return self._text_item.text()
 
@@ -238,6 +271,7 @@ class Connection(SchemeItem, ShadowSelectableItem):
             # Verify that all edges are fine with changing the data type.
             edge.checkDataType()
 
+    # Geometry and drawing =============================================================================================
     def stemRoot(self):
         &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local inches.&#34;&#34;&#34;
         raise NotImplementedError
@@ -246,6 +280,13 @@ class Connection(SchemeItem, ShadowSelectableItem):
         &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the edge) in local inches.&#34;&#34;&#34;
         raise NotImplementedError
     
+    def boundingRect(self):
+        return QRectF()
+
+    def paint(self, painter: QPainter, option, widget=...) -&gt; None:
+        pass
+
+    # Style and palette ================================================================================================
     def styleChange(self):
         super().styleChange()
         style = self.style()
@@ -254,7 +295,7 @@ class Connection(SchemeItem, ShadowSelectableItem):
         self._text_item.setMaximumWidth(style.pixelMetric(Style.ConnectionTextLength))
 
         self._stem_item.setPen(style.edgePen(self.palette()))
-
+    
     def paletteChange(self):
         super().paletteChange()
         text_bg = self.palette().background().color()
@@ -265,6 +306,7 @@ class Connection(SchemeItem, ShadowSelectableItem):
 
         self._stem_item.setPen(self.style().edgePen(self.palette()))
 
+    # Events ===========================================================================================================
     def itemChange(self, change, value):
         &#34;&#34;&#34;A function that runs every time some change happens to the connection.
         
@@ -285,12 +327,6 @@ class Connection(SchemeItem, ShadowSelectableItem):
             pal.setCurrentColorGroup(Palette.Active)
         
         self.paletteChange()
-
-    def boundingRect(self):
-        return QRectF()
-
-    def paint(self, painter: QPainter, option, widget=...) -&gt; None:
-        pass
 
     def updateSelectedStatus(self):
         &#34;&#34;&#34;Checks if at least one edge is selected. If so, set this connection to selected.
@@ -322,23 +358,17 @@ class Connection(SchemeItem, ShadowSelectableItem):
     # The heavy lifting such as detecting when the edge started being drawn, mouse moving and data transfers are handled
     # by a member item called self._trigger_item. Connection handles the logic.
     def edgeDragStart(self):
-        &#34;&#34;&#34;Called when user tries to drag an edge from this connection.
-        
-        This operation starts the edge drawing process. It returns an EdgeDrag object that will be given to the
-        reciever.
-        &#34;&#34;&#34;
-        raise NotImplementedError
+        &#34;&#34;&#34;Called when user tries to drag an edge from this connection.&#34;&#34;&#34;
+        self.scene().edgeDragStart(self)
 
-    def edgeDragAccept(self, edgedrag: EdgeDrag):
-        &#34;&#34;&#34;Called when a new edge is being dragged into the drop zone.
-        
+    def edgeDragAccept(self) -&gt; bool:
+        &#34;&#34;&#34;Called when a new edge is being dragged into the drop zone.  
         Returns True or False depending on whether the dragged edge should be accepted or not.
         &#34;&#34;&#34;
         raise NotImplementedError
 
-    def edgeDragDrop(self, edgedrag: EdgeDrag):
-        &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.
-        
+    def edgeDragDrop(self):
+        &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
         This operation concludes the edge drawing process.
         &#34;&#34;&#34;
         raise NotImplementedError</code></pre>
@@ -355,8 +385,29 @@ class Connection(SchemeItem, ShadowSelectableItem):
 <li><a title="nfb_studio.widgets.scheme.connection.input.Input" href="input.html#nfb_studio.widgets.scheme.connection.input.Input">Input</a></li>
 <li><a title="nfb_studio.widgets.scheme.connection.output.Output" href="output.html#nfb_studio.widgets.scheme.connection.output.Output">Output</a></li>
 </ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edges"><code class="name">var <span class="ident">edges</span></code></dt>
+<dd>
+<section class="desc"><p>Edges attached to this connection. To change this set use <a title="nfb_studio.widgets.scheme.connection.connection.Connection" href="#nfb_studio.widgets.scheme.connection.connection.Connection"><code>Connection</code></a>'s methods: attach, detach, detachAll.</p></section>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.attach"><code class="name flex">
+<span>def <span class="ident">attach</span></span>(<span>self, edge)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Attach an edge to this connection.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def attach(self, edge):
+    &#34;&#34;&#34;Attach an edge to this connection.&#34;&#34;&#34;
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect"><code class="name flex">
 <span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
 </code></dt>
@@ -397,37 +448,66 @@ class Connection(SchemeItem, ShadowSelectableItem):
     self.setDataType(data[&#34;data_type&#34;])</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept"><code class="name flex">
-<span>def <span class="ident">edgeDragAccept</span></span>(<span>self, edgedrag)</span>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.detach"><code class="name flex">
+<span>def <span class="ident">detach</span></span>(<span>self, edge)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Called when a new edge is being dragged into the drop zone.</p>
-<p>Returns True or False depending on whether the dragged edge should be accepted or not.</p></section>
+<section class="desc"><p>Detach an edge from this connection.<br>
+Other connection of this edge is unaffected.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def edgeDragAccept(self, edgedrag: EdgeDrag):
-    &#34;&#34;&#34;Called when a new edge is being dragged into the drop zone.
-    
+<pre><code class="python">def detach(self, edge):
+    &#34;&#34;&#34;Detach an edge from this connection.  
+    Other connection of this edge is unaffected.
+    &#34;&#34;&#34;
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.detachAll"><code class="name flex">
+<span>def <span class="ident">detachAll</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Detach all edges.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def detachAll(self):
+    &#34;&#34;&#34;Detach all edges.&#34;&#34;&#34;
+    raise NotImplementedError</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept"><code class="name flex">
+<span>def <span class="ident">edgeDragAccept</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Called when a new edge is being dragged into the drop zone.<br>
+Returns True or False depending on whether the dragged edge should be accepted or not.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edgeDragAccept(self) -&gt; bool:
+    &#34;&#34;&#34;Called when a new edge is being dragged into the drop zone.  
     Returns True or False depending on whether the dragged edge should be accepted or not.
     &#34;&#34;&#34;
     raise NotImplementedError</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop"><code class="name flex">
-<span>def <span class="ident">edgeDragDrop</span></span>(<span>self, edgedrag)</span>
+<span>def <span class="ident">edgeDragDrop</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Called when a new edge has been dragged and was dropped.</p>
-<p>This operation concludes the edge drawing process.</p></section>
+<section class="desc"><p>Called when a new edge has been dragged and was dropped.<br>
+This operation concludes the edge drawing process.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def edgeDragDrop(self, edgedrag: EdgeDrag):
-    &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.
-    
+<pre><code class="python">def edgeDragDrop(self):
+    &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
     This operation concludes the edge drawing process.
     &#34;&#34;&#34;
     raise NotImplementedError</code></pre>
@@ -437,20 +517,14 @@ class Connection(SchemeItem, ShadowSelectableItem):
 <span>def <span class="ident">edgeDragStart</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Called when user tries to drag an edge from this connection.</p>
-<p>This operation starts the edge drawing process. It returns an EdgeDrag object that will be given to the
-reciever.</p></section>
+<section class="desc"><p>Called when user tries to drag an edge from this connection.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def edgeDragStart(self):
-    &#34;&#34;&#34;Called when user tries to drag an edge from this connection.
-    
-    This operation starts the edge drawing process. It returns an EdgeDrag object that will be given to the
-    reciever.
-    &#34;&#34;&#34;
-    raise NotImplementedError</code></pre>
+    &#34;&#34;&#34;Called when user tries to drag an edge from this connection.&#34;&#34;&#34;
+    self.scene().edgeDragStart(self)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.connection.Connection.itemChange"><code class="name flex">
@@ -681,12 +755,16 @@ The connection is responsible to propagate this call to edges.</p></section>
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection" href="#nfb_studio.widgets.scheme.connection.connection.Connection">Connection</a></code></h4>
 <ul class="">
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.attach" href="#nfb_studio.widgets.scheme.connection.connection.Connection.attach">attach</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect" href="#nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect">boundingRect</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.dataType" href="#nfb_studio.widgets.scheme.connection.connection.Connection.dataType">dataType</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.deserialize" href="#nfb_studio.widgets.scheme.connection.connection.Connection.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.detach" href="#nfb_studio.widgets.scheme.connection.connection.Connection.detach">detach</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.detachAll" href="#nfb_studio.widgets.scheme.connection.connection.Connection.detachAll">detachAll</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept">edgeDragAccept</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop">edgeDragDrop</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart">edgeDragStart</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edges" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edges">edges</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.itemChange" href="#nfb_studio.widgets.scheme.connection.connection.Connection.itemChange">itemChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.paint" href="#nfb_studio.widgets.scheme.connection.connection.Connection.paint">paint</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.paletteChange" href="#nfb_studio.widgets.scheme.connection.connection.Connection.paletteChange">paletteChange</a></code></li>

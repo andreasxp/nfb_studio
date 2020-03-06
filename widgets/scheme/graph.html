@@ -79,8 +79,8 @@ class AbstractGraph:
         
         selected_edges = []
         for edge in self.edges:
-            if ((edge.source_node() is not None and self.source_node().isSelected()) or 
-                (edge.target_node() is not None and self.target_node().isSelected())):
+            if ((edge.sourceNode() is not None and self.sourceNode().isSelected()) or 
+                (edge.targetNode() is not None and self.targetNode().isSelected())):
                 selected_edges.append(edge)  
 
         result.nodes = frozenset(selected_nodes)
@@ -158,8 +158,8 @@ class AbstractGraph:
         data[&#34;edges&#34;] = []
 
         for edge in self.edges:
-            source_node = edge.source_node()
-            target_node = edge.target_node()
+            source_node = edge.sourceNode()
+            target_node = edge.targetNode()
 
             if source_node is None or target_node is None:
                 # Not serializing dangling nodes
@@ -201,11 +201,8 @@ class Graph(AbstractGraph):
         raised.
         &#34;&#34;&#34;
         # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
-        if (edge.source_node() is None or edge.source_node() in self.nodes) and \
-           (edge.target_node() is None or edge.target_node() in self.nodes):
-            # Ensure that the connections know about this edge
-            edge.source().edges.add(edge)
-            edge.target().edges.add(edge)
+        if (edge.sourceNode() is None or edge.sourceNode() in self.nodes) and \
+           (edge.targetNode() is None or edge.targetNode() in self.nodes):
 
             self.edges.add(edge)
         else:
@@ -219,7 +216,7 @@ class Graph(AbstractGraph):
         # Remove connected edges
         to_remove = []
         for edge in self.edges:
-            if edge.source_node() == node or edge.target_node() == node:
+            if edge.sourceNode() == node or edge.targetNode() == node:
                 to_remove.append(edge)
         
         for edge in to_remove:
@@ -231,9 +228,7 @@ class Graph(AbstractGraph):
     def removeEdge(self, edge: Edge):
         &#34;&#34;&#34;Remove an edge from this graph.&#34;&#34;&#34;
         self.edges.remove(edge)
-
-        edge.source().edges.remove(edge)
-        edge.target().edges.remove(edge)
+        edge.detachAll()  # Disconnect from nodes that are still in this graph
 
     def connect_nodes(self, source: Output, target: Input) -&gt; Edge:
         &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
@@ -241,12 +236,8 @@ class Graph(AbstractGraph):
         Returns the newly created edge.
         &#34;&#34;&#34;
         edge = Edge()
-
         edge.setSource(source)
         edge.setTarget(target)
-
-        source.edges.add(edge)
-        target.edges.add(edge)
 
         self.addEdge(edge)
         return edge
@@ -398,8 +389,8 @@ GraphSnapshot - frozensets.</p></section>
         
         selected_edges = []
         for edge in self.edges:
-            if ((edge.source_node() is not None and self.source_node().isSelected()) or 
-                (edge.target_node() is not None and self.target_node().isSelected())):
+            if ((edge.sourceNode() is not None and self.sourceNode().isSelected()) or 
+                (edge.targetNode() is not None and self.targetNode().isSelected())):
                 selected_edges.append(edge)  
 
         result.nodes = frozenset(selected_nodes)
@@ -477,8 +468,8 @@ GraphSnapshot - frozensets.</p></section>
         data[&#34;edges&#34;] = []
 
         for edge in self.edges:
-            source_node = edge.source_node()
-            target_node = edge.target_node()
+            source_node = edge.sourceNode()
+            target_node = edge.targetNode()
 
             if source_node is None or target_node is None:
                 # Not serializing dangling nodes
@@ -676,8 +667,8 @@ in the clipboard when a selection is copied.</p></section>
     data[&#34;edges&#34;] = []
 
     for edge in self.edges:
-        source_node = edge.source_node()
-        target_node = edge.target_node()
+        source_node = edge.sourceNode()
+        target_node = edge.targetNode()
 
         if source_node is None or target_node is None:
             # Not serializing dangling nodes
@@ -722,8 +713,8 @@ This snapshot is equivalent to the items that are deleted when a selection is re
     
     selected_edges = []
     for edge in self.edges:
-        if ((edge.source_node() is not None and self.source_node().isSelected()) or 
-            (edge.target_node() is not None and self.target_node().isSelected())):
+        if ((edge.sourceNode() is not None and self.sourceNode().isSelected()) or 
+            (edge.targetNode() is not None and self.targetNode().isSelected())):
             selected_edges.append(edge)  
 
     result.nodes = frozenset(selected_nodes)
@@ -763,11 +754,8 @@ This snapshot is equivalent to the items that are deleted when a selection is re
         raised.
         &#34;&#34;&#34;
         # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
-        if (edge.source_node() is None or edge.source_node() in self.nodes) and \
-           (edge.target_node() is None or edge.target_node() in self.nodes):
-            # Ensure that the connections know about this edge
-            edge.source().edges.add(edge)
-            edge.target().edges.add(edge)
+        if (edge.sourceNode() is None or edge.sourceNode() in self.nodes) and \
+           (edge.targetNode() is None or edge.targetNode() in self.nodes):
 
             self.edges.add(edge)
         else:
@@ -781,7 +769,7 @@ This snapshot is equivalent to the items that are deleted when a selection is re
         # Remove connected edges
         to_remove = []
         for edge in self.edges:
-            if edge.source_node() == node or edge.target_node() == node:
+            if edge.sourceNode() == node or edge.targetNode() == node:
                 to_remove.append(edge)
         
         for edge in to_remove:
@@ -793,9 +781,7 @@ This snapshot is equivalent to the items that are deleted when a selection is re
     def removeEdge(self, edge: Edge):
         &#34;&#34;&#34;Remove an edge from this graph.&#34;&#34;&#34;
         self.edges.remove(edge)
-
-        edge.source().edges.remove(edge)
-        edge.target().edges.remove(edge)
+        edge.detachAll()  # Disconnect from nodes that are still in this graph
 
     def connect_nodes(self, source: Output, target: Input) -&gt; Edge:
         &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
@@ -803,12 +789,8 @@ This snapshot is equivalent to the items that are deleted when a selection is re
         Returns the newly created edge.
         &#34;&#34;&#34;
         edge = Edge()
-
         edge.setSource(source)
         edge.setTarget(target)
-
-        source.edges.add(edge)
-        target.edges.add(edge)
 
         self.addEdge(edge)
         return edge
@@ -894,11 +876,8 @@ raised.</p></section>
     raised.
     &#34;&#34;&#34;
     # Check that this edge is valid, that is both its source and target are in the scene (if they exist)
-    if (edge.source_node() is None or edge.source_node() in self.nodes) and \
-       (edge.target_node() is None or edge.target_node() in self.nodes):
-        # Ensure that the connections know about this edge
-        edge.source().edges.add(edge)
-        edge.target().edges.add(edge)
+    if (edge.sourceNode() is None or edge.sourceNode() in self.nodes) and \
+       (edge.targetNode() is None or edge.targetNode() in self.nodes):
 
         self.edges.add(edge)
     else:
@@ -949,12 +928,8 @@ raised.</p></section>
     Returns the newly created edge.
     &#34;&#34;&#34;
     edge = Edge()
-
     edge.setSource(source)
     edge.setTarget(target)
-
-    source.edges.add(edge)
-    target.edges.add(edge)
 
     self.addEdge(edge)
     return edge</code></pre>
@@ -1070,9 +1045,7 @@ removal are also removed.</p></section>
 <pre><code class="python">def removeEdge(self, edge: Edge):
     &#34;&#34;&#34;Remove an edge from this graph.&#34;&#34;&#34;
     self.edges.remove(edge)
-
-    edge.source().edges.remove(edge)
-    edge.target().edges.remove(edge)</code></pre>
+    edge.detachAll()  # Disconnect from nodes that are still in this graph</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.graph.Graph.removeNode"><code class="name flex">
@@ -1093,7 +1066,7 @@ removal are also removed.</p></section>
     # Remove connected edges
     to_remove = []
     for edge in self.edges:
-        if edge.source_node() == node or edge.target_node() == node:
+        if edge.sourceNode() == node or edge.targetNode() == node:
             to_remove.append(edge)
     
     for edge in to_remove:

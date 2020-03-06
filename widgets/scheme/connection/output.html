@@ -35,7 +35,6 @@ from ..palette import Palette
 from ..scheme_item import SchemeItem
 from ..data_type import DataType, Unknown
 from .connection import Connection
-from .edge_drag import EdgeDrag
 
 
 class Output(Connection):
@@ -49,6 +48,27 @@ class Output(Connection):
         
         self.styleChange()
 
+    # Working with edges ===============================================================================================
+    def attach(self, edge):
+        &#34;&#34;&#34;Attach an edge to this connection.&#34;&#34;&#34;
+        edge.setSource(self)
+
+    def detach(self, edge):
+        &#34;&#34;&#34;Detach an edge from this connection.  
+        Other connection of this edge is unaffected.
+        &#34;&#34;&#34;
+        assert(edge in self.edges)
+        assert(edge.source() is self)
+
+        edge.setSource(None)
+
+    def detachAll(self):
+        &#34;&#34;&#34;Detach all edges.&#34;&#34;&#34;
+        edges_ = list(self.edges)  # self.edges will shrink during iteration
+        for edge in edges_:
+            edge.setSource(None)
+
+    # Style and palette ================================================================================================
     def styleChange(self):
         super().styleChange()
         self.prepareGeometryChange()
@@ -60,6 +80,7 @@ class Output(Connection):
         self._stem_item.setLine(QLineF(self.stemRoot(), self.stemTip()))
         self._text_item.setPos(self.stemTip().x() + margin, metrics.capHeight() / 2)
 
+    # Geometry and drawing =============================================================================================
     def stemRoot(self):
         &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local coordinates.&#34;&#34;&#34;
         return QPointF(0, 0)  # Stem root is located exactly at the origin
@@ -73,42 +94,22 @@ class Output(Connection):
     # Drawing edges ====================================================================================================
     # The heavy lifting such as detecting when the edge started being drawn, mouse moving and data transfers are handled
     # by a member item called self._trigger_item. Connection handles the logic.
-    def edgeDragStart(self) -&gt; EdgeDrag:
-        &#34;&#34;&#34;Called when user tries to drag an edge from this connection.
-        
-        This operation starts the edge drawing process. It returns an EdgeDrag object that will be given to the
-        reciever.
-        &#34;&#34;&#34;
-        result = EdgeDrag()
-        node = self.parentItem()
-
-        result.node_id = id(node)
-        result.connection_type = &#34;Output&#34;
-        result.connection_index = node.outputs.index(self)
-        result.data_type = self.dataType()
-        
-        return result
-
-    def edgeDragAccept(self, edge_drag: EdgeDrag):
-        &#34;&#34;&#34;Called when a new edge is being dragged into the drop zone.
-        
+    def edgeDragAccept(self):
+        &#34;&#34;&#34;Called when a new edge is being dragged into the drop zone.  
         Returns True or False depending on whether the dragged edge should be accepted or not.
         &#34;&#34;&#34;
-        return (edge_drag.connection_type != &#34;Output&#34; and edge_drag.data_type == self.dataType())
+        fake_edge = self.scene()._dragging_edge  # The edge being dragged as the mouse moves
 
-    def edgeDragDrop(self, edge_drag: EdgeDrag):
-        &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.
-        
-        This operation concludes the edge drawing process.
+        return fake_edge.source() is None and fake_edge.dataType() == self.dataType()
+
+    def edgeDragDrop(self):
+        &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
+        This operation concludes the edge drawing process. It creates a real edge between source and self.
         &#34;&#34;&#34;
         scene = self.scene()
+        fake_edge = scene._dragging_edge
 
-        source = self
-
-        target_node = scene.findNode(edge_drag.node_id)
-        target = target_node.inputs[edge_drag.connection_index]
-
-        scene.connect_nodes(source, target)</code></pre>
+        scene.connect_nodes(self, fake_edge.target())</code></pre>
 </details>
 </section>
 <section>
@@ -141,6 +142,27 @@ class Output(Connection):
         
         self.styleChange()
 
+    # Working with edges ===============================================================================================
+    def attach(self, edge):
+        &#34;&#34;&#34;Attach an edge to this connection.&#34;&#34;&#34;
+        edge.setSource(self)
+
+    def detach(self, edge):
+        &#34;&#34;&#34;Detach an edge from this connection.  
+        Other connection of this edge is unaffected.
+        &#34;&#34;&#34;
+        assert(edge in self.edges)
+        assert(edge.source() is self)
+
+        edge.setSource(None)
+
+    def detachAll(self):
+        &#34;&#34;&#34;Detach all edges.&#34;&#34;&#34;
+        edges_ = list(self.edges)  # self.edges will shrink during iteration
+        for edge in edges_:
+            edge.setSource(None)
+
+    # Style and palette ================================================================================================
     def styleChange(self):
         super().styleChange()
         self.prepareGeometryChange()
@@ -152,6 +174,7 @@ class Output(Connection):
         self._stem_item.setLine(QLineF(self.stemRoot(), self.stemTip()))
         self._text_item.setPos(self.stemTip().x() + margin, metrics.capHeight() / 2)
 
+    # Geometry and drawing =============================================================================================
     def stemRoot(self):
         &#34;&#34;&#34;Return position of stem&#39;s root (where the stem connects to the node) in local coordinates.&#34;&#34;&#34;
         return QPointF(0, 0)  # Stem root is located exactly at the origin
@@ -165,42 +188,22 @@ class Output(Connection):
     # Drawing edges ====================================================================================================
     # The heavy lifting such as detecting when the edge started being drawn, mouse moving and data transfers are handled
     # by a member item called self._trigger_item. Connection handles the logic.
-    def edgeDragStart(self) -&gt; EdgeDrag:
-        &#34;&#34;&#34;Called when user tries to drag an edge from this connection.
-        
-        This operation starts the edge drawing process. It returns an EdgeDrag object that will be given to the
-        reciever.
-        &#34;&#34;&#34;
-        result = EdgeDrag()
-        node = self.parentItem()
-
-        result.node_id = id(node)
-        result.connection_type = &#34;Output&#34;
-        result.connection_index = node.outputs.index(self)
-        result.data_type = self.dataType()
-        
-        return result
-
-    def edgeDragAccept(self, edge_drag: EdgeDrag):
-        &#34;&#34;&#34;Called when a new edge is being dragged into the drop zone.
-        
+    def edgeDragAccept(self):
+        &#34;&#34;&#34;Called when a new edge is being dragged into the drop zone.  
         Returns True or False depending on whether the dragged edge should be accepted or not.
         &#34;&#34;&#34;
-        return (edge_drag.connection_type != &#34;Output&#34; and edge_drag.data_type == self.dataType())
+        fake_edge = self.scene()._dragging_edge  # The edge being dragged as the mouse moves
 
-    def edgeDragDrop(self, edge_drag: EdgeDrag):
-        &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.
-        
-        This operation concludes the edge drawing process.
+        return fake_edge.source() is None and fake_edge.dataType() == self.dataType()
+
+    def edgeDragDrop(self):
+        &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
+        This operation concludes the edge drawing process. It creates a real edge between source and self.
         &#34;&#34;&#34;
         scene = self.scene()
+        fake_edge = scene._dragging_edge
 
-        source = self
-
-        target_node = scene.findNode(edge_drag.node_id)
-        target = target_node.inputs[edge_drag.connection_index]
-
-        scene.connect_nodes(source, target)</code></pre>
+        scene.connect_nodes(self, fake_edge.target())</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -212,6 +215,26 @@ class Output(Connection):
 </ul>
 <h3>Methods</h3>
 <dl>
+<dt id="nfb_studio.widgets.scheme.connection.output.Output.edgeDragDrop"><code class="name flex">
+<span>def <span class="ident">edgeDragDrop</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Called when a new edge has been dragged and was dropped.<br>
+This operation concludes the edge drawing process. It creates a real edge between source and self.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edgeDragDrop(self):
+    &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
+    This operation concludes the edge drawing process. It creates a real edge between source and self.
+    &#34;&#34;&#34;
+    scene = self.scene()
+    fake_edge = scene._dragging_edge
+
+    scene.connect_nodes(self, fake_edge.target())</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.connection.output.Output.stemRoot"><code class="name flex">
 <span>def <span class="ident">stemRoot</span></span>(<span>self)</span>
 </code></dt>
@@ -268,10 +291,13 @@ class Output(Connection):
 <ul class="hlist">
 <li><code><b><a title="nfb_studio.widgets.scheme.connection.connection.Connection" href="connection.html#nfb_studio.widgets.scheme.connection.connection.Connection">Connection</a></b></code>:
 <ul class="hlist">
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.attach" href="connection.html#nfb_studio.widgets.scheme.connection.connection.Connection.attach">attach</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect" href="connection.html#nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.detach" href="connection.html#nfb_studio.widgets.scheme.connection.connection.Connection.detach">detach</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.detachAll" href="connection.html#nfb_studio.widgets.scheme.connection.connection.Connection.detachAll">detachAll</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept" href="connection.html#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept">edgeDragAccept</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop" href="connection.html#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop">edgeDragDrop</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart" href="connection.html#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart">edgeDragStart</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edges" href="connection.html#nfb_studio.widgets.scheme.connection.connection.Connection.edges">edges</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.itemChange" href="connection.html#nfb_studio.widgets.scheme.connection.connection.Connection.itemChange">itemChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.itemShadowSelectedChangeEvent" href="../../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedChangeEvent">itemShadowSelectedChangeEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.itemShadowSelectedHasChangedEvent" href="../../shadow_selectable_item.html#nfb_studio.widgets.shadow_selectable_item.ShadowSelectableItem.itemShadowSelectedHasChangedEvent">itemShadowSelectedHasChangedEvent</a></code></li>
@@ -302,6 +328,7 @@ class Output(Connection):
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.connection.output.Output" href="#nfb_studio.widgets.scheme.connection.output.Output">Output</a></code></h4>
 <ul class="">
+<li><code><a title="nfb_studio.widgets.scheme.connection.output.Output.edgeDragDrop" href="#nfb_studio.widgets.scheme.connection.output.Output.edgeDragDrop">edgeDragDrop</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.output.Output.stemRoot" href="#nfb_studio.widgets.scheme.connection.output.Output.stemRoot">stemRoot</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.output.Output.stemTip" href="#nfb_studio.widgets.scheme.connection.output.Output.stemTip">stemTip</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.output.Output.styleChange" href="#nfb_studio.widgets.scheme.connection.output.Output.styleChange">styleChange</a></code></li>

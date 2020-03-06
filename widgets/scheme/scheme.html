@@ -37,17 +37,21 @@ from nfb_studio import StdMimeData
 from .graph import AbstractGraph, Graph, GraphSnapshot
 from .node import Node
 from .edge import Edge
-from .connection import Input, Output
+from .connection import Input, Output, Connection
+from .connection.edge_drag import EdgeDrag
 from .style import Style
 from .palette import Palette
-
 
 class Scheme(QGraphicsScene):
     &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
 
-    This class is a combination of nfb_studio.widgets.scheme.Graph and a QGraphicsScene, which represents the node graph
-    in a graphical scene that is then displayed by a QGraphicsView. To get a QGraphicsView that is pre-configured to
-    display the contents correcly and has all the necessary shortcuts attached, use the `getView` method.        
+    This class is a combination of three things:
+    - nfb_studio.widgets.scheme.Graph: a graph of nodes and edges;
+    - QGraphicsScene (inherits): a Qt representation of that graph and additional items;
+    - QGraphicsView: a view of QGraphicsScene. Only one view is allowed - creating multiple views will make the program
+    behave incorrectly.
+
+    The main components are available as self.graph, super() and self.view.
 
     See Also
     --------
@@ -55,16 +59,50 @@ class Scheme(QGraphicsScene):
     nfb_studio.widgets.scheme.Edge : Graph edge.
     nfb_studio.widgets.scheme.Graph : A collection of nodes and edges.
     &#34;&#34;&#34;
-    def __init__(self, parent=None):
-        &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the super().&#34;&#34;&#34;
-        super().__init__(parent)
-        self._graph = Graph()
+    class View(QGraphicsView):
+        def __init__(self, parent=None):
+            super().__init__(parent=parent)
+            self.setDragMode(QGraphicsView.RubberBandDrag)
+            self.setRubberBandSelectionMode(Qt.ContainsItemShape)
+            self.setRenderHint(QPainter.Antialiasing)
+            self.setRenderHint(QPainter.SmoothPixmapTransform)
 
+        def setScene(self, scene):
+            if not isinstance(scene, Scheme):
+                raise TypeError(&#34;Scheme.View only connects to a Scheme as its data source&#34;)
+
+            super().setScene(scene)
+            cut_shortcut = QShortcut(QKeySequence.Cut, self)
+            cut_shortcut.activated.connect(scene.cutEvent)
+
+            copy_shortcut = QShortcut(QKeySequence.Copy, self)
+            copy_shortcut.activated.connect(scene.copyEvent)
+
+            paste_shortcut = QShortcut(QKeySequence.Paste, self)
+            paste_shortcut.activated.connect(scene.pasteEvent)
+
+            delete_shortcut = QShortcut(QKeySequence.Delete, self)
+            delete_shortcut.activated.connect(scene.deleteEvent)
+
+
+    def __init__(self):
+        &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the super().&#34;&#34;&#34;
+        super().__init__()
+        self.graph = Graph()
+
+        self.view = self.View()
+        self.view.setScene(self)
+
+        # Drag-drawing edges support -----------------------------------------------------------------------------------
+        self._dragging_edge = None
+        &#34;&#34;&#34;A temporary edge that is being displayed when an edge is drawn by the user with drag and drop.&#34;&#34;&#34;
+
+        # Style and palette --------------------------------------------------------------------------------------------
         self._style = Style()
         self._palette = Palette()
 
-        self.schemeStyleChange()
-        self.schemePaletteChange()
+        self.styleChange()
+        self.paletteChange()
 
     # Element manipulation =============================================================================================
     def addItem(self, item: QGraphicsItem):
@@ -73,15 +111,15 @@ class Scheme(QGraphicsScene):
         An override of super().addItem method that detects when a node or edge was added.
         &#34;&#34;&#34;
         if isinstance(item, Node):
-            self._graph.addNode(item)
+            self.graph.addNode(item)
         elif isinstance(item, Edge):
-            self._graph.addEdge(item)
+            self.graph.addEdge(item)
         else:
             raise TypeError(&#34;unrecognised graphics item of type &#34; + type(item).__name__)
 
         super().addItem(item)
 
-    def removeItem(self, item):
+    def removeItem(self, item: QGraphicsItem):
         &#34;&#34;&#34;Add an item to the scene.
 
         An override of super().removeItem method that detects when a node or edge was removed.
@@ -90,18 +128,18 @@ class Scheme(QGraphicsScene):
         if isinstance(item, Node):
             # Remove connected edges first
             to_remove = []
-            for edge in self._graph.edges:
-                if edge.source_node() == item or edge.target_node() == item:
+            for edge in self.graph.edges:
+                if edge.sourceNode() is item or edge.targetNode() is item:
                     to_remove.append(edge)
             
             for edge in to_remove:
                 self.removeItem(edge)
 
             # Remove the node
-            self._graph.removeNode(item)
+            self.graph.removeNode(item)
         # Remove an Edge -----------------------------------------------------------------------------------------------
         elif isinstance(item, Edge):
-            self._graph.removeEdge(item)
+            self.graph.removeEdge(item)
         # Unknown item -------------------------------------------------------------------------------------------------
         else:
             raise TypeError(&#34;unrecognised graphics item of type &#34; + type(item).__name__)
@@ -113,7 +151,7 @@ class Scheme(QGraphicsScene):
         
         Returns the newly created edge.
         &#34;&#34;&#34;
-        edge = self._graph.connect_nodes(source, target)
+        edge = self.graph.connect_nodes(source, target)
         super().addItem(edge)
 
         return edge
@@ -124,7 +162,7 @@ class Scheme(QGraphicsScene):
         If output and input are connected more than once, only one edge is removed.
         Returns the edge that was removed, or None if no such edge was found.
         &#34;&#34;&#34;
-        edge = self._graph.disconnect_nodes(source, target)
+        edge = self.graph.disconnect_nodes(source, target)
         if edge is not None:
             super().removeItem(edge)
         return edge
@@ -139,7 +177,7 @@ class Scheme(QGraphicsScene):
 
     def merge(self, other: AbstractGraph):
         &#34;&#34;&#34;Update the scheme, adding elements from a graph.&#34;&#34;&#34;
-        self._graph.merge(other)
+        self.graph.merge(other)
 
         for node in other.nodes:
             super().addItem(node)
@@ -149,21 +187,21 @@ class Scheme(QGraphicsScene):
     def clear(self):
         &#34;&#34;&#34;Clear the scheme.&#34;&#34;&#34;
         super().clear()
-        self._graph.clear()
+        self.graph.clear()
 
     # Observer methods =================================================================================================
     def findNode(self, node_id: int) -&gt; Union[Node, None]:
-        return self._graph.findNode(node_id)
+        return self.graph.findNode(node_id)
 
     # Selection ========================================================================================================
     def selectAll(self):
-        self._graph.selectAll()
+        self.graph.selectAll()
 
     def selection(self) -&gt; GraphSnapshot:
-        return self._graph.selection()
+        return self.graph.selection()
     
     def wideSelection(self) -&gt; GraphSnapshot:
-        return self._graph.wideSelection()
+        return self.graph.wideSelection()
 
     # User actions =====================================================================================================
     def cutEvent(self):
@@ -205,51 +243,63 @@ class Scheme(QGraphicsScene):
         self.extract(self.selection())
 
     # Style and palette ================================================================================================
-    def schemeStyleChange(self):
+    def styleChange(self):
         pass
 
-    def schemePaletteChange(self):
-        self.setBackgroundBrush(self.schemePalette().background())
+    def paletteChange(self):
+        super().setBackgroundBrush(self.schemePalette().background())
 
     def schemeStyle(self):
         return self._style
 
-    def setSchemeStyle(self, style):
+    def setStyle(self, style):
         self._style = style
-        self.schemeStyleChange()
+        self.styleChange()
 
     def schemePalette(self):
         return self._palette
     
-    def setSchemePalette(self, palette):
+    def setPalette(self, palette):
         self._palette = palette
-        self.schemePaletteChange()
+        self.paletteChange()
 
-    # Widgets ==========================================================================================================
-    def getView(self) -&gt; QGraphicsView:
-        &#34;&#34;&#34;Generate and return a new QGraphicsView, configured for optimal viewing.&#34;&#34;&#34;
-        v = QGraphicsView(self)
-        v.setDragMode(QGraphicsView.RubberBandDrag)
-        v.setRubberBandSelectionMode(Qt.ContainsItemShape)
-        v.setRenderHint(QPainter.Antialiasing)
-        v.setRenderHint(QPainter.SmoothPixmapTransform)
+    # Edge drawing =====================================================================================================
+    def hasEdgeDrag(self) -&gt; bool:
+        &#34;&#34;&#34;Returns True if an edge is currently being drawn via drag and drop.&#34;&#34;&#34;
+        return self._dragging_edge is not None
 
-        cut_shortcut = QShortcut(QKeySequence.Cut, v)
-        cut_shortcut.activated.connect(self.cutEvent)
+    def edgeDragStart(self, connection: Connection):
+        &#34;&#34;&#34;Triggers a start to an edge drawing mode.  
+        By holding left mouse button while dragging from an end of a connection, user can start dragging an edge from
+        one connection to the other. The scene stores a &#34;fake&#34; edge that the user drags with their mouse. That edge is
+        created here and updated with mouse movements in dragMoveEvent.
+        &#34;&#34;&#34;
+        self._dragging_edge = Edge()
+        self._dragging_edge.attach(connection)       
 
-        copy_shortcut = QShortcut(QKeySequence.Copy, v)
-        copy_shortcut.activated.connect(self.copyEvent)
+        super().addItem(self._dragging_edge)  # Edge is present in the scene, but not in the graph.
 
-        paste_shortcut = QShortcut(QKeySequence.Paste, v)
-        paste_shortcut.activated.connect(self.pasteEvent)
+    def edgeDragStop(self):
+        &#34;&#34;&#34;Triggers an end of an edge drawing mode.  
+        Cleans up by removing the fake edge. This function is called from the QDrag-like object, EdgeDrag.
+        &#34;&#34;&#34;
+        super().removeItem(self._dragging_edge)
 
-        delete_shortcut = QShortcut(QKeySequence.Delete, v)
-        delete_shortcut.activated.connect(self.deleteEvent)
+        self._dragging_edge.detachAll()
+        self._dragging_edge = None
 
-        return v
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasFormat(EdgeDrag.format) and self.hasEdgeDrag():
+            # Update edge position, but otherwise do the default thing.
+            super().dragMoveEvent(event)  
+            if self._dragging_edge.source() is None:
+                self._dragging_edge.setSourcePos(event.scenePos())
+            else:
+                self._dragging_edge.setTargetPos(event.scenePos())
 
     # Serialization ====================================================================================================
-    # def serialize(self) -&gt; dict: Inherited from Graph
+    def serialize(self) -&gt; dict:
+        return self.graph.serialize()
 
     def deserialize(self, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
@@ -258,7 +308,7 @@ class Scheme(QGraphicsScene):
             self.removeItem(node)
 
         # Deserialize as graph -----------------------------------------------------------------------------------------
-        self._graph.deserialize(data)
+        self.graph.deserialize(data)
 
         # Bring the scene up to speed ----------------------------------------------------------------------------------
         for node in self.nodes:
@@ -279,14 +329,15 @@ class Scheme(QGraphicsScene):
 <dl>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme"><code class="flex name class">
 <span>class <span class="ident">Scheme</span></span>
-<span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>A data model for the nfb experiment's system of signals and their components.</p>
-<p>This class is a combination of nfb_studio.widgets.scheme.Graph and a QGraphicsScene, which represents the node graph
-in a graphical scene that is then displayed by a QGraphicsView. To get a QGraphicsView that is pre-configured to
-display the contents correcly and has all the necessary shortcuts attached, use the <code>getView</code> method.
-</p>
+<p>This class is a combination of three things:
+- nfb_studio.widgets.scheme.Graph: a graph of nodes and edges;
+- QGraphicsScene (inherits): a Qt representation of that graph and additional items;
+- QGraphicsView: a view of QGraphicsScene. Only one view is allowed - creating multiple views will make the program
+behave incorrectly.</p>
+<p>The main components are available as self.graph, super() and self.view.</p>
 <h2 id="see-also">See Also</h2>
 <dl>
 <dt><code>nfb_studio.widgets.scheme.Node</code></dt>
@@ -304,9 +355,13 @@ display the contents correcly and has all the necessary shortcuts attached, use 
 <pre><code class="python">class Scheme(QGraphicsScene):
     &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
 
-    This class is a combination of nfb_studio.widgets.scheme.Graph and a QGraphicsScene, which represents the node graph
-    in a graphical scene that is then displayed by a QGraphicsView. To get a QGraphicsView that is pre-configured to
-    display the contents correcly and has all the necessary shortcuts attached, use the `getView` method.        
+    This class is a combination of three things:
+    - nfb_studio.widgets.scheme.Graph: a graph of nodes and edges;
+    - QGraphicsScene (inherits): a Qt representation of that graph and additional items;
+    - QGraphicsView: a view of QGraphicsScene. Only one view is allowed - creating multiple views will make the program
+    behave incorrectly.
+
+    The main components are available as self.graph, super() and self.view.
 
     See Also
     --------
@@ -314,16 +369,50 @@ display the contents correcly and has all the necessary shortcuts attached, use 
     nfb_studio.widgets.scheme.Edge : Graph edge.
     nfb_studio.widgets.scheme.Graph : A collection of nodes and edges.
     &#34;&#34;&#34;
-    def __init__(self, parent=None):
-        &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the super().&#34;&#34;&#34;
-        super().__init__(parent)
-        self._graph = Graph()
+    class View(QGraphicsView):
+        def __init__(self, parent=None):
+            super().__init__(parent=parent)
+            self.setDragMode(QGraphicsView.RubberBandDrag)
+            self.setRubberBandSelectionMode(Qt.ContainsItemShape)
+            self.setRenderHint(QPainter.Antialiasing)
+            self.setRenderHint(QPainter.SmoothPixmapTransform)
 
+        def setScene(self, scene):
+            if not isinstance(scene, Scheme):
+                raise TypeError(&#34;Scheme.View only connects to a Scheme as its data source&#34;)
+
+            super().setScene(scene)
+            cut_shortcut = QShortcut(QKeySequence.Cut, self)
+            cut_shortcut.activated.connect(scene.cutEvent)
+
+            copy_shortcut = QShortcut(QKeySequence.Copy, self)
+            copy_shortcut.activated.connect(scene.copyEvent)
+
+            paste_shortcut = QShortcut(QKeySequence.Paste, self)
+            paste_shortcut.activated.connect(scene.pasteEvent)
+
+            delete_shortcut = QShortcut(QKeySequence.Delete, self)
+            delete_shortcut.activated.connect(scene.deleteEvent)
+
+
+    def __init__(self):
+        &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the super().&#34;&#34;&#34;
+        super().__init__()
+        self.graph = Graph()
+
+        self.view = self.View()
+        self.view.setScene(self)
+
+        # Drag-drawing edges support -----------------------------------------------------------------------------------
+        self._dragging_edge = None
+        &#34;&#34;&#34;A temporary edge that is being displayed when an edge is drawn by the user with drag and drop.&#34;&#34;&#34;
+
+        # Style and palette --------------------------------------------------------------------------------------------
         self._style = Style()
         self._palette = Palette()
 
-        self.schemeStyleChange()
-        self.schemePaletteChange()
+        self.styleChange()
+        self.paletteChange()
 
     # Element manipulation =============================================================================================
     def addItem(self, item: QGraphicsItem):
@@ -332,15 +421,15 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         An override of super().addItem method that detects when a node or edge was added.
         &#34;&#34;&#34;
         if isinstance(item, Node):
-            self._graph.addNode(item)
+            self.graph.addNode(item)
         elif isinstance(item, Edge):
-            self._graph.addEdge(item)
+            self.graph.addEdge(item)
         else:
             raise TypeError(&#34;unrecognised graphics item of type &#34; + type(item).__name__)
 
         super().addItem(item)
 
-    def removeItem(self, item):
+    def removeItem(self, item: QGraphicsItem):
         &#34;&#34;&#34;Add an item to the scene.
 
         An override of super().removeItem method that detects when a node or edge was removed.
@@ -349,18 +438,18 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         if isinstance(item, Node):
             # Remove connected edges first
             to_remove = []
-            for edge in self._graph.edges:
-                if edge.source_node() == item or edge.target_node() == item:
+            for edge in self.graph.edges:
+                if edge.sourceNode() is item or edge.targetNode() is item:
                     to_remove.append(edge)
             
             for edge in to_remove:
                 self.removeItem(edge)
 
             # Remove the node
-            self._graph.removeNode(item)
+            self.graph.removeNode(item)
         # Remove an Edge -----------------------------------------------------------------------------------------------
         elif isinstance(item, Edge):
-            self._graph.removeEdge(item)
+            self.graph.removeEdge(item)
         # Unknown item -------------------------------------------------------------------------------------------------
         else:
             raise TypeError(&#34;unrecognised graphics item of type &#34; + type(item).__name__)
@@ -372,7 +461,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         
         Returns the newly created edge.
         &#34;&#34;&#34;
-        edge = self._graph.connect_nodes(source, target)
+        edge = self.graph.connect_nodes(source, target)
         super().addItem(edge)
 
         return edge
@@ -383,7 +472,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         If output and input are connected more than once, only one edge is removed.
         Returns the edge that was removed, or None if no such edge was found.
         &#34;&#34;&#34;
-        edge = self._graph.disconnect_nodes(source, target)
+        edge = self.graph.disconnect_nodes(source, target)
         if edge is not None:
             super().removeItem(edge)
         return edge
@@ -398,7 +487,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
 
     def merge(self, other: AbstractGraph):
         &#34;&#34;&#34;Update the scheme, adding elements from a graph.&#34;&#34;&#34;
-        self._graph.merge(other)
+        self.graph.merge(other)
 
         for node in other.nodes:
             super().addItem(node)
@@ -408,21 +497,21 @@ display the contents correcly and has all the necessary shortcuts attached, use 
     def clear(self):
         &#34;&#34;&#34;Clear the scheme.&#34;&#34;&#34;
         super().clear()
-        self._graph.clear()
+        self.graph.clear()
 
     # Observer methods =================================================================================================
     def findNode(self, node_id: int) -&gt; Union[Node, None]:
-        return self._graph.findNode(node_id)
+        return self.graph.findNode(node_id)
 
     # Selection ========================================================================================================
     def selectAll(self):
-        self._graph.selectAll()
+        self.graph.selectAll()
 
     def selection(self) -&gt; GraphSnapshot:
-        return self._graph.selection()
+        return self.graph.selection()
     
     def wideSelection(self) -&gt; GraphSnapshot:
-        return self._graph.wideSelection()
+        return self.graph.wideSelection()
 
     # User actions =====================================================================================================
     def cutEvent(self):
@@ -464,51 +553,63 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         self.extract(self.selection())
 
     # Style and palette ================================================================================================
-    def schemeStyleChange(self):
+    def styleChange(self):
         pass
 
-    def schemePaletteChange(self):
-        self.setBackgroundBrush(self.schemePalette().background())
+    def paletteChange(self):
+        super().setBackgroundBrush(self.schemePalette().background())
 
     def schemeStyle(self):
         return self._style
 
-    def setSchemeStyle(self, style):
+    def setStyle(self, style):
         self._style = style
-        self.schemeStyleChange()
+        self.styleChange()
 
     def schemePalette(self):
         return self._palette
     
-    def setSchemePalette(self, palette):
+    def setPalette(self, palette):
         self._palette = palette
-        self.schemePaletteChange()
+        self.paletteChange()
 
-    # Widgets ==========================================================================================================
-    def getView(self) -&gt; QGraphicsView:
-        &#34;&#34;&#34;Generate and return a new QGraphicsView, configured for optimal viewing.&#34;&#34;&#34;
-        v = QGraphicsView(self)
-        v.setDragMode(QGraphicsView.RubberBandDrag)
-        v.setRubberBandSelectionMode(Qt.ContainsItemShape)
-        v.setRenderHint(QPainter.Antialiasing)
-        v.setRenderHint(QPainter.SmoothPixmapTransform)
+    # Edge drawing =====================================================================================================
+    def hasEdgeDrag(self) -&gt; bool:
+        &#34;&#34;&#34;Returns True if an edge is currently being drawn via drag and drop.&#34;&#34;&#34;
+        return self._dragging_edge is not None
 
-        cut_shortcut = QShortcut(QKeySequence.Cut, v)
-        cut_shortcut.activated.connect(self.cutEvent)
+    def edgeDragStart(self, connection: Connection):
+        &#34;&#34;&#34;Triggers a start to an edge drawing mode.  
+        By holding left mouse button while dragging from an end of a connection, user can start dragging an edge from
+        one connection to the other. The scene stores a &#34;fake&#34; edge that the user drags with their mouse. That edge is
+        created here and updated with mouse movements in dragMoveEvent.
+        &#34;&#34;&#34;
+        self._dragging_edge = Edge()
+        self._dragging_edge.attach(connection)       
 
-        copy_shortcut = QShortcut(QKeySequence.Copy, v)
-        copy_shortcut.activated.connect(self.copyEvent)
+        super().addItem(self._dragging_edge)  # Edge is present in the scene, but not in the graph.
 
-        paste_shortcut = QShortcut(QKeySequence.Paste, v)
-        paste_shortcut.activated.connect(self.pasteEvent)
+    def edgeDragStop(self):
+        &#34;&#34;&#34;Triggers an end of an edge drawing mode.  
+        Cleans up by removing the fake edge. This function is called from the QDrag-like object, EdgeDrag.
+        &#34;&#34;&#34;
+        super().removeItem(self._dragging_edge)
 
-        delete_shortcut = QShortcut(QKeySequence.Delete, v)
-        delete_shortcut.activated.connect(self.deleteEvent)
+        self._dragging_edge.detachAll()
+        self._dragging_edge = None
 
-        return v
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasFormat(EdgeDrag.format) and self.hasEdgeDrag():
+            # Update edge position, but otherwise do the default thing.
+            super().dragMoveEvent(event)  
+            if self._dragging_edge.source() is None:
+                self._dragging_edge.setSourcePos(event.scenePos())
+            else:
+                self._dragging_edge.setTargetPos(event.scenePos())
 
     # Serialization ====================================================================================================
-    # def serialize(self) -&gt; dict: Inherited from Graph
+    def serialize(self) -&gt; dict:
+        return self.graph.serialize()
 
     def deserialize(self, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
@@ -517,7 +618,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
             self.removeItem(node)
 
         # Deserialize as graph -----------------------------------------------------------------------------------------
-        self._graph.deserialize(data)
+        self.graph.deserialize(data)
 
         # Bring the scene up to speed ----------------------------------------------------------------------------------
         for node in self.nodes:
@@ -534,6 +635,11 @@ display the contents correcly and has all the necessary shortcuts attached, use 
 </ul>
 <h3>Class variables</h3>
 <dl>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.View"><code class="name">var <span class="ident">View</span></code></dt>
+<dd>
+<section class="desc"><p>QGraphicsView(self, parent: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)
+QGraphicsView(self, scene: PySide2.QtWidgets.QGraphicsScene, parent: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></section>
+</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <section class="desc"></section>
@@ -557,9 +663,9 @@ display the contents correcly and has all the necessary shortcuts attached, use 
     An override of super().addItem method that detects when a node or edge was added.
     &#34;&#34;&#34;
     if isinstance(item, Node):
-        self._graph.addNode(item)
+        self.graph.addNode(item)
     elif isinstance(item, Edge):
-        self._graph.addEdge(item)
+        self.graph.addEdge(item)
     else:
         raise TypeError(&#34;unrecognised graphics item of type &#34; + type(item).__name__)
 
@@ -578,7 +684,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
 <pre><code class="python">def clear(self):
     &#34;&#34;&#34;Clear the scheme.&#34;&#34;&#34;
     super().clear()
-    self._graph.clear()</code></pre>
+    self.graph.clear()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes"><code class="name flex">
@@ -596,7 +702,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
     
     Returns the newly created edge.
     &#34;&#34;&#34;
-    edge = self._graph.connect_nodes(source, target)
+    edge = self.graph.connect_nodes(source, target)
     super().addItem(edge)
 
     return edge</code></pre>
@@ -667,7 +773,7 @@ display the contents correcly and has all the necessary shortcuts attached, use 
         self.removeItem(node)
 
     # Deserialize as graph -----------------------------------------------------------------------------------------
-    self._graph.deserialize(data)
+    self.graph.deserialize(data)
 
     # Bring the scene up to speed ----------------------------------------------------------------------------------
     for node in self.nodes:
@@ -694,10 +800,73 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
     If output and input are connected more than once, only one edge is removed.
     Returns the edge that was removed, or None if no such edge was found.
     &#34;&#34;&#34;
-    edge = self._graph.disconnect_nodes(source, target)
+    edge = self.graph.disconnect_nodes(source, target)
     if edge is not None:
         super().removeItem(edge)
     return edge</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.dragMoveEvent"><code class="name flex">
+<span>def <span class="ident">dragMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>dragMoveEvent(self, event: PySide2.QtWidgets.QGraphicsSceneDragDropEvent)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dragMoveEvent(self, event):
+    if event.mimeData().hasFormat(EdgeDrag.format) and self.hasEdgeDrag():
+        # Update edge position, but otherwise do the default thing.
+        super().dragMoveEvent(event)  
+        if self._dragging_edge.source() is None:
+            self._dragging_edge.setSourcePos(event.scenePos())
+        else:
+            self._dragging_edge.setTargetPos(event.scenePos())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart"><code class="name flex">
+<span>def <span class="ident">edgeDragStart</span></span>(<span>self, connection)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Triggers a start to an edge drawing mode.<br>
+By holding left mouse button while dragging from an end of a connection, user can start dragging an edge from
+one connection to the other. The scene stores a "fake" edge that the user drags with their mouse. That edge is
+created here and updated with mouse movements in dragMoveEvent.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edgeDragStart(self, connection: Connection):
+    &#34;&#34;&#34;Triggers a start to an edge drawing mode.  
+    By holding left mouse button while dragging from an end of a connection, user can start dragging an edge from
+    one connection to the other. The scene stores a &#34;fake&#34; edge that the user drags with their mouse. That edge is
+    created here and updated with mouse movements in dragMoveEvent.
+    &#34;&#34;&#34;
+    self._dragging_edge = Edge()
+    self._dragging_edge.attach(connection)       
+
+    super().addItem(self._dragging_edge)  # Edge is present in the scene, but not in the graph.</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop"><code class="name flex">
+<span>def <span class="ident">edgeDragStop</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Triggers an end of an edge drawing mode.<br>
+Cleans up by removing the fake edge. This function is called from the QDrag-like object, EdgeDrag.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edgeDragStop(self):
+    &#34;&#34;&#34;Triggers an end of an edge drawing mode.  
+    Cleans up by removing the fake edge. This function is called from the QDrag-like object, EdgeDrag.
+    &#34;&#34;&#34;
+    super().removeItem(self._dragging_edge)
+
+    self._dragging_edge.detachAll()
+    self._dragging_edge = None</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.extract"><code class="name flex">
@@ -729,39 +898,21 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def findNode(self, node_id: int) -&gt; Union[Node, None]:
-    return self._graph.findNode(node_id)</code></pre>
+    return self.graph.findNode(node_id)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.getView"><code class="name flex">
-<span>def <span class="ident">getView</span></span>(<span>self)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag"><code class="name flex">
+<span>def <span class="ident">hasEdgeDrag</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Generate and return a new QGraphicsView, configured for optimal viewing.</p></section>
+<section class="desc"><p>Returns True if an edge is currently being drawn via drag and drop.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def getView(self) -&gt; QGraphicsView:
-    &#34;&#34;&#34;Generate and return a new QGraphicsView, configured for optimal viewing.&#34;&#34;&#34;
-    v = QGraphicsView(self)
-    v.setDragMode(QGraphicsView.RubberBandDrag)
-    v.setRubberBandSelectionMode(Qt.ContainsItemShape)
-    v.setRenderHint(QPainter.Antialiasing)
-    v.setRenderHint(QPainter.SmoothPixmapTransform)
-
-    cut_shortcut = QShortcut(QKeySequence.Cut, v)
-    cut_shortcut.activated.connect(self.cutEvent)
-
-    copy_shortcut = QShortcut(QKeySequence.Copy, v)
-    copy_shortcut.activated.connect(self.copyEvent)
-
-    paste_shortcut = QShortcut(QKeySequence.Paste, v)
-    paste_shortcut.activated.connect(self.pasteEvent)
-
-    delete_shortcut = QShortcut(QKeySequence.Delete, v)
-    delete_shortcut.activated.connect(self.deleteEvent)
-
-    return v</code></pre>
+<pre><code class="python">def hasEdgeDrag(self) -&gt; bool:
+    &#34;&#34;&#34;Returns True if an edge is currently being drawn via drag and drop.&#34;&#34;&#34;
+    return self._dragging_edge is not None</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.merge"><code class="name flex">
@@ -775,12 +926,25 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 </summary>
 <pre><code class="python">def merge(self, other: AbstractGraph):
     &#34;&#34;&#34;Update the scheme, adding elements from a graph.&#34;&#34;&#34;
-    self._graph.merge(other)
+    self.graph.merge(other)
 
     for node in other.nodes:
         super().addItem(node)
     for edge in other.edges:
         super().addItem(edge)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.paletteChange"><code class="name flex">
+<span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paletteChange(self):
+    super().setBackgroundBrush(self.schemePalette().background())</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent"><code class="name flex">
@@ -822,7 +986,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def removeItem(self, item):
+<pre><code class="python">def removeItem(self, item: QGraphicsItem):
     &#34;&#34;&#34;Add an item to the scene.
 
     An override of super().removeItem method that detects when a node or edge was removed.
@@ -831,18 +995,18 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
     if isinstance(item, Node):
         # Remove connected edges first
         to_remove = []
-        for edge in self._graph.edges:
-            if edge.source_node() == item or edge.target_node() == item:
+        for edge in self.graph.edges:
+            if edge.sourceNode() is item or edge.targetNode() is item:
                 to_remove.append(edge)
         
         for edge in to_remove:
             self.removeItem(edge)
 
         # Remove the node
-        self._graph.removeNode(item)
+        self.graph.removeNode(item)
     # Remove an Edge -----------------------------------------------------------------------------------------------
     elif isinstance(item, Edge):
-        self._graph.removeEdge(item)
+        self.graph.removeEdge(item)
     # Unknown item -------------------------------------------------------------------------------------------------
     else:
         raise TypeError(&#34;unrecognised graphics item of type &#34; + type(item).__name__)
@@ -863,19 +1027,6 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
     return self._palette</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.schemePaletteChange"><code class="name flex">
-<span>def <span class="ident">schemePaletteChange</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def schemePaletteChange(self):
-    self.setBackgroundBrush(self.schemePalette().background())</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle"><code class="name flex">
 <span>def <span class="ident">schemeStyle</span></span>(<span>self)</span>
 </code></dt>
@@ -889,19 +1040,6 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
     return self._style</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyleChange"><code class="name flex">
-<span>def <span class="ident">schemeStyleChange</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def schemeStyleChange(self):
-    pass</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.selectAll"><code class="name flex">
 <span>def <span class="ident">selectAll</span></span>(<span>self)</span>
 </code></dt>
@@ -912,7 +1050,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def selectAll(self):
-    self._graph.selectAll()</code></pre>
+    self.graph.selectAll()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.selection"><code class="name flex">
@@ -925,11 +1063,11 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def selection(self) -&gt; GraphSnapshot:
-    return self._graph.selection()</code></pre>
+    return self.graph.selection()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.setSchemePalette"><code class="name flex">
-<span>def <span class="ident">setSchemePalette</span></span>(<span>self, palette)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -937,13 +1075,40 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setSchemePalette(self, palette):
+<pre><code class="python">def serialize(self) -&gt; dict:
+    return self.graph.serialize()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.setPalette"><code class="name flex">
+<span>def <span class="ident">setPalette</span></span>(<span>self, palette)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>setPalette(self, palette: PySide2.QtGui.QPalette)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setPalette(self, palette):
     self._palette = palette
-    self.schemePaletteChange()</code></pre>
+    self.paletteChange()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.setSchemeStyle"><code class="name flex">
-<span>def <span class="ident">setSchemeStyle</span></span>(<span>self, style)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.setStyle"><code class="name flex">
+<span>def <span class="ident">setStyle</span></span>(<span>self, style)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>setStyle(self, style: PySide2.QtWidgets.QStyle)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setStyle(self, style):
+    self._style = style
+    self.styleChange()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.styleChange"><code class="name flex">
+<span>def <span class="ident">styleChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -951,9 +1116,8 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setSchemeStyle(self, style):
-    self._style = style
-    self.schemeStyleChange()</code></pre>
+<pre><code class="python">def styleChange(self):
+    pass</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.wideSelection"><code class="name flex">
@@ -966,7 +1130,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def wideSelection(self) -&gt; GraphSnapshot:
-    return self._graph.wideSelection()</code></pre>
+    return self.graph.wideSelection()</code></pre>
 </details>
 </dd>
 </dl>
@@ -990,6 +1154,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.scheme.Scheme" href="#nfb_studio.widgets.scheme.scheme.Scheme">Scheme</a></code></h4>
 <ul class="two-column">
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.View" href="#nfb_studio.widgets.scheme.scheme.Scheme.View">View</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.addItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.addItem">addItem</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.clear" href="#nfb_studio.widgets.scheme.scheme.Scheme.clear">clear</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes">connect_nodes</a></code></li>
@@ -998,21 +1163,25 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deleteEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.deleteEvent">deleteEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deserialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes">disconnect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.dragMoveEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.dragMoveEvent">dragMoveEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart" href="#nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart">edgeDragStart</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop" href="#nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop">edgeDragStop</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.extract" href="#nfb_studio.widgets.scheme.scheme.Scheme.extract">extract</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.findNode" href="#nfb_studio.widgets.scheme.scheme.Scheme.findNode">findNode</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.getView" href="#nfb_studio.widgets.scheme.scheme.Scheme.getView">getView</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag" href="#nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag">hasEdgeDrag</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.merge" href="#nfb_studio.widgets.scheme.scheme.Scheme.merge">merge</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.paletteChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.paletteChange">paletteChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent">pasteEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.removeItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.removeItem">removeItem</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemePalette" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemePalette">schemePalette</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemePaletteChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemePaletteChange">schemePaletteChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle">schemeStyle</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyleChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemeStyleChange">schemeStyleChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.selectAll" href="#nfb_studio.widgets.scheme.scheme.Scheme.selectAll">selectAll</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.selection" href="#nfb_studio.widgets.scheme.scheme.Scheme.selection">selection</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.setSchemePalette" href="#nfb_studio.widgets.scheme.scheme.Scheme.setSchemePalette">setSchemePalette</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.setSchemeStyle" href="#nfb_studio.widgets.scheme.scheme.Scheme.setSchemeStyle">setSchemeStyle</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.serialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.setPalette" href="#nfb_studio.widgets.scheme.scheme.Scheme.setPalette">setPalette</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.setStyle" href="#nfb_studio.widgets.scheme.scheme.Scheme.setStyle">setStyle</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject" href="#nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.styleChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.styleChange">styleChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.wideSelection" href="#nfb_studio.widgets.scheme.scheme.Scheme.wideSelection">wideSelection</a></code></li>
 </ul>
 </li>

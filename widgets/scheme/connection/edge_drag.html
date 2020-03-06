@@ -24,26 +24,29 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class EdgeDrag:
-    def __init__(self):
-        self.node_id = None
-        self.connection_type = None
-        self.connection_index = None
-        self.data_type = None
-    
-    def serialize(self) -&gt; dict:
-        return {
-            &#34;node_id&#34;: self.node_id,
-            &#34;connection_type&#34;: self.connection_type,
-            &#34;connection_index&#34;: self.connection_index,
-            &#34;data_type&#34;: self.data_type
-        }
-    
-    def deserialize(self, data: dict):
-        self.node_id = data[&#34;node_id&#34;]
-        self.connection_type = data[&#34;connection_type&#34;]
-        self.connection_index = data[&#34;connection_index&#34;]
-        self.data_type = data[&#34;data_type&#34;]</code></pre>
+<pre><code class="python">from PySide2.QtCore import QMimeData
+from PySide2.QtGui import QDrag
+
+class EdgeDrag(QDrag):
+    format = &#34;application/x-edgedrag&#34;
+    &#34;&#34;&#34;Format that is used as the tag mime type. Actual information is stored in the scene.&#34;&#34;&#34;
+
+    def __init__(self, scheme, dragSource):
+        super().__init__(dragSource)
+        self.scheme = scheme
+
+        # Add a tag-like mimedata. No info, just a type.
+        package = QMimeData()
+        package.setData(self.format, bytes())
+        self.setMimeData(package)
+
+    def exec_(self, *args, **kwargs):
+        result = super().exec_(*args, **kwargs)
+        
+        # Delete the fake edge, regardless of the outcome
+        self.scheme.edgeDragStop()
+
+        return result</code></pre>
 </details>
 </section>
 <section>
@@ -57,68 +60,71 @@
 <dl>
 <dt id="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag"><code class="flex name class">
 <span>class <span class="ident">EdgeDrag</span></span>
+<span>(</span><span>scheme, dragSource)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>QDrag(self, dragSource: PySide2.QtCore.QObject)</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class EdgeDrag:
-    def __init__(self):
-        self.node_id = None
-        self.connection_type = None
-        self.connection_index = None
-        self.data_type = None
-    
-    def serialize(self) -&gt; dict:
-        return {
-            &#34;node_id&#34;: self.node_id,
-            &#34;connection_type&#34;: self.connection_type,
-            &#34;connection_index&#34;: self.connection_index,
-            &#34;data_type&#34;: self.data_type
-        }
-    
-    def deserialize(self, data: dict):
-        self.node_id = data[&#34;node_id&#34;]
-        self.connection_type = data[&#34;connection_type&#34;]
-        self.connection_index = data[&#34;connection_index&#34;]
-        self.data_type = data[&#34;data_type&#34;]</code></pre>
+<pre><code class="python">class EdgeDrag(QDrag):
+    format = &#34;application/x-edgedrag&#34;
+    &#34;&#34;&#34;Format that is used as the tag mime type. Actual information is stored in the scene.&#34;&#34;&#34;
+
+    def __init__(self, scheme, dragSource):
+        super().__init__(dragSource)
+        self.scheme = scheme
+
+        # Add a tag-like mimedata. No info, just a type.
+        package = QMimeData()
+        package.setData(self.format, bytes())
+        self.setMimeData(package)
+
+    def exec_(self, *args, **kwargs):
+        result = super().exec_(*args, **kwargs)
+        
+        # Delete the fake edge, regardless of the outcome
+        self.scheme.edgeDragStop()
+
+        return result</code></pre>
 </details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PySide2.QtGui.QDrag</li>
+<li>PySide2.QtCore.QObject</li>
+<li>Shiboken.Object</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.format"><code class="name">var <span class="ident">format</span></code></dt>
+<dd>
+<section class="desc"><p>Format that is used as the tag mime type. Actual information is stored in the scene.</p></section>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data)</span>
+<dt id="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.exec_"><code class="name flex">
+<span>def <span class="ident">exec_</span></span>(<span>self, *args, **kwargs)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<section class="desc"><p>exec_(self, supportedActions: PySide2.QtCore.Qt.DropActions, defaultAction: PySide2.QtCore.Qt.DropAction) -&gt; PySide2.QtCore.Qt.DropAction
+exec_(self, supportedActions: PySide2.QtCore.Qt.DropActions = PySide2.QtCore.Qt.DropAction.MoveAction) -&gt; PySide2.QtCore.Qt.DropAction</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    self.node_id = data[&#34;node_id&#34;]
-    self.connection_type = data[&#34;connection_type&#34;]
-    self.connection_index = data[&#34;connection_index&#34;]
-    self.data_type = data[&#34;data_type&#34;]</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.serialize"><code class="name flex">
-<span>def <span class="ident">serialize</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<section class="desc"></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def serialize(self) -&gt; dict:
-    return {
-        &#34;node_id&#34;: self.node_id,
-        &#34;connection_type&#34;: self.connection_type,
-        &#34;connection_index&#34;: self.connection_index,
-        &#34;data_type&#34;: self.data_type
-    }</code></pre>
+<pre><code class="python">def exec_(self, *args, **kwargs):
+    result = super().exec_(*args, **kwargs)
+    
+    # Delete the fake edge, regardless of the outcome
+    self.scheme.edgeDragStop()
+
+    return result</code></pre>
 </details>
 </dd>
 </dl>
@@ -142,8 +148,9 @@
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag" href="#nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag">EdgeDrag</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.deserialize" href="#nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.serialize" href="#nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.exec_" href="#nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.exec_">exec_</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.format" href="#nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.format">format</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.staticMetaObject" href="#nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
 </li>
 </ul>
