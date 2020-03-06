@@ -68,6 +68,21 @@ class Node(SchemeItem):
         self.styleChange()
         self.paletteChange()
 
+    # Operations =======================================================================================================
+    def showConnectionText(self):
+        for input in self.inputs:
+            input.showText()
+
+        for output in self.outputs:
+            output.showText() 
+
+    def hideConnectionText(self):
+        for input in self.inputs:
+            input.hideText()
+
+        for output in self.outputs:
+            output.hideText() 
+
     # Input/output management ==========================================================================================
     def addInput(self, obj: Input):
         self.insertInput(len(self.inputs), obj)
@@ -336,6 +351,21 @@ class Node(SchemeItem):
         # Set proper style and color for the item
         self.styleChange()
         self.paletteChange()
+
+    # Operations =======================================================================================================
+    def showConnectionText(self):
+        for input in self.inputs:
+            input.showText()
+
+        for output in self.outputs:
+            output.showText() 
+
+    def hideConnectionText(self):
+        for input in self.inputs:
+            input.hideText()
+
+        for output in self.outputs:
+            output.hideText() 
 
     # Input/output management ==========================================================================================
     def addInput(self, obj: Input):
@@ -664,6 +694,23 @@ class Node(SchemeItem):
     self.setPosition(data[&#34;position&#34;])</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.node.Node.hideConnectionText"><code class="name flex">
+<span>def <span class="ident">hideConnectionText</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hideConnectionText(self):
+    for input in self.inputs:
+        input.hideText()
+
+    for output in self.outputs:
+        output.hideText() </code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.node.Node.insertInput"><code class="name flex">
 <span>def <span class="ident">insertInput</span></span>(<span>self, index, obj)</span>
 </code></dt>
@@ -850,6 +897,23 @@ class Node(SchemeItem):
     return path</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.node.Node.showConnectionText"><code class="name flex">
+<span>def <span class="ident">showConnectionText</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def showConnectionText(self):
+    for input in self.inputs:
+        input.showText()
+
+    for output in self.outputs:
+        output.showText() </code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.node.Node.size"><code class="name flex">
 <span>def <span class="ident">size</span></span>(<span>self)</span>
 </code></dt>
@@ -972,6 +1036,7 @@ class Node(SchemeItem):
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.boundingRect" href="#nfb_studio.widgets.scheme.node.Node.boundingRect">boundingRect</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.description" href="#nfb_studio.widgets.scheme.node.Node.description">description</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.deserialize" href="#nfb_studio.widgets.scheme.node.Node.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.Node.hideConnectionText" href="#nfb_studio.widgets.scheme.node.Node.hideConnectionText">hideConnectionText</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.insertInput" href="#nfb_studio.widgets.scheme.node.Node.insertInput">insertInput</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.insertOutput" href="#nfb_studio.widgets.scheme.node.Node.insertOutput">insertOutput</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.paint" href="#nfb_studio.widgets.scheme.node.Node.paint">paint</a></code></li>
@@ -983,6 +1048,7 @@ class Node(SchemeItem):
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.setDescription" href="#nfb_studio.widgets.scheme.node.Node.setDescription">setDescription</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.setTitle" href="#nfb_studio.widgets.scheme.node.Node.setTitle">setTitle</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.shape" href="#nfb_studio.widgets.scheme.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.Node.showConnectionText" href="#nfb_studio.widgets.scheme.node.Node.showConnectionText">showConnectionText</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.size" href="#nfb_studio.widgets.scheme.node.Node.size">size</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.styleChange" href="#nfb_studio.widgets.scheme.node.Node.styleChange">styleChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.node.Node.title" href="#nfb_studio.widgets.scheme.node.Node.title">title</a></code></li>

@@ -57,11 +57,16 @@ class Connection(SchemeItem):
         self._trigger_item = Trigger(self)
 
         self._data_type = data_type or Unknown
+        self._is_multiple = False
+        &#34;&#34;&#34;Determines if the connection can have multiple edges coming out of it.  
+        By default, it is True for Input and False for Output.
+        &#34;&#34;&#34;
 
         self._approved_selection = True
         &#34;&#34;&#34;Connection is not selectable from outside sources. This flag is set by some internal methods to indicate that
         a selection is legitimate.&#34;&#34;&#34;
 
+        self.hideText()
         self.styleChange()
         self.paletteChange()
 
@@ -79,6 +84,13 @@ class Connection(SchemeItem):
     def detachAll(self):
         &#34;&#34;&#34;Detach all edges.&#34;&#34;&#34;
         raise NotImplementedError
+    
+    # Operations =======================================================================================================
+    def showText(self):
+        self._text_item.setVisible(True)
+
+    def hideText(self):
+        self._text_item.setVisible(False)
 
     # Member access ====================================================================================================
     def text(self):
@@ -86,6 +98,9 @@ class Connection(SchemeItem):
 
     def dataType(self):
         return self._data_type
+
+    def isMultiple(self):
+        return self._is_multiple
 
     def setText(self, text):
         self._text_item.setText(text)
@@ -96,6 +111,9 @@ class Connection(SchemeItem):
         for edge in self.edges:
             # Verify that all edges are fine with changing the data type.
             edge.checkDataType()
+    
+    def setMultiple(self, multiple: bool):
+        self._is_multiple = multiple
 
     # Geometry and drawing =============================================================================================
     def stemRoot(self):
@@ -190,6 +208,8 @@ class Connection(SchemeItem):
     # by a member item called self._trigger_item. Connection handles the logic.
     def edgeDragStart(self):
         &#34;&#34;&#34;Called when user tries to drag an edge from this connection.&#34;&#34;&#34;
+        if not self.isMultiple():
+            self.detachAll()
         self.scene().edgeDragStart(self)
 
     def edgeDragAccept(self) -&gt; bool:
@@ -202,7 +222,8 @@ class Connection(SchemeItem):
         &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
         This operation concludes the edge drawing process.
         &#34;&#34;&#34;
-        raise NotImplementedError</code></pre>
+        if not self.isMultiple():
+            self.detachAll()</code></pre>
 </details>
 </section>
 <section>
@@ -244,11 +265,16 @@ class Connection(SchemeItem):
         self._trigger_item = Trigger(self)
 
         self._data_type = data_type or Unknown
+        self._is_multiple = False
+        &#34;&#34;&#34;Determines if the connection can have multiple edges coming out of it.  
+        By default, it is True for Input and False for Output.
+        &#34;&#34;&#34;
 
         self._approved_selection = True
         &#34;&#34;&#34;Connection is not selectable from outside sources. This flag is set by some internal methods to indicate that
         a selection is legitimate.&#34;&#34;&#34;
 
+        self.hideText()
         self.styleChange()
         self.paletteChange()
 
@@ -266,6 +292,13 @@ class Connection(SchemeItem):
     def detachAll(self):
         &#34;&#34;&#34;Detach all edges.&#34;&#34;&#34;
         raise NotImplementedError
+    
+    # Operations =======================================================================================================
+    def showText(self):
+        self._text_item.setVisible(True)
+
+    def hideText(self):
+        self._text_item.setVisible(False)
 
     # Member access ====================================================================================================
     def text(self):
@@ -273,6 +306,9 @@ class Connection(SchemeItem):
 
     def dataType(self):
         return self._data_type
+
+    def isMultiple(self):
+        return self._is_multiple
 
     def setText(self, text):
         self._text_item.setText(text)
@@ -283,6 +319,9 @@ class Connection(SchemeItem):
         for edge in self.edges:
             # Verify that all edges are fine with changing the data type.
             edge.checkDataType()
+    
+    def setMultiple(self, multiple: bool):
+        self._is_multiple = multiple
 
     # Geometry and drawing =============================================================================================
     def stemRoot(self):
@@ -377,6 +416,8 @@ class Connection(SchemeItem):
     # by a member item called self._trigger_item. Connection handles the logic.
     def edgeDragStart(self):
         &#34;&#34;&#34;Called when user tries to drag an edge from this connection.&#34;&#34;&#34;
+        if not self.isMultiple():
+            self.detachAll()
         self.scene().edgeDragStart(self)
 
     def edgeDragAccept(self) -&gt; bool:
@@ -389,7 +430,8 @@ class Connection(SchemeItem):
         &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
         This operation concludes the edge drawing process.
         &#34;&#34;&#34;
-        raise NotImplementedError</code></pre>
+        if not self.isMultiple():
+            self.detachAll()</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -569,7 +611,8 @@ This operation concludes the edge drawing process.</p></section>
     &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
     This operation concludes the edge drawing process.
     &#34;&#34;&#34;
-    raise NotImplementedError</code></pre>
+    if not self.isMultiple():
+        self.detachAll()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart"><code class="name flex">
@@ -583,7 +626,35 @@ This operation concludes the edge drawing process.</p></section>
 </summary>
 <pre><code class="python">def edgeDragStart(self):
     &#34;&#34;&#34;Called when user tries to drag an edge from this connection.&#34;&#34;&#34;
+    if not self.isMultiple():
+        self.detachAll()
     self.scene().edgeDragStart(self)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.hideText"><code class="name flex">
+<span>def <span class="ident">hideText</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hideText(self):
+    self._text_item.setVisible(False)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.isMultiple"><code class="name flex">
+<span>def <span class="ident">isMultiple</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def isMultiple(self):
+    return self._is_multiple</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.connection.Connection.itemChange"><code class="name flex">
@@ -682,6 +753,19 @@ This operation concludes the edge drawing process.</p></section>
         edge.checkDataType()</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.setMultiple"><code class="name flex">
+<span>def <span class="ident">setMultiple</span></span>(<span>self, multiple)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setMultiple(self, multiple: bool):
+    self._is_multiple = multiple</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.connection.connection.Connection.setText"><code class="name flex">
 <span>def <span class="ident">setText</span></span>(<span>self, text)</span>
 </code></dt>
@@ -693,6 +777,19 @@ This operation concludes the edge drawing process.</p></section>
 </summary>
 <pre><code class="python">def setText(self, text):
     self._text_item.setText(text)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.showText"><code class="name flex">
+<span>def <span class="ident">showText</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def showText(self):
+    self._text_item.setVisible(True)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.connection.Connection.stemRoot"><code class="name flex">
@@ -797,12 +894,16 @@ This operation concludes the edge drawing process.</p></section>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop">edgeDragDrop</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart">edgeDragStart</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edges" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edges">edges</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.hideText" href="#nfb_studio.widgets.scheme.connection.connection.Connection.hideText">hideText</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.isMultiple" href="#nfb_studio.widgets.scheme.connection.connection.Connection.isMultiple">isMultiple</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.itemChange" href="#nfb_studio.widgets.scheme.connection.connection.Connection.itemChange">itemChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.paint" href="#nfb_studio.widgets.scheme.connection.connection.Connection.paint">paint</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.paletteChange" href="#nfb_studio.widgets.scheme.connection.connection.Connection.paletteChange">paletteChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.serialize" href="#nfb_studio.widgets.scheme.connection.connection.Connection.serialize">serialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.setDataType" href="#nfb_studio.widgets.scheme.connection.connection.Connection.setDataType">setDataType</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.setMultiple" href="#nfb_studio.widgets.scheme.connection.connection.Connection.setMultiple">setMultiple</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.setText" href="#nfb_studio.widgets.scheme.connection.connection.Connection.setText">setText</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.showText" href="#nfb_studio.widgets.scheme.connection.connection.Connection.showText">showText</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.stemRoot" href="#nfb_studio.widgets.scheme.connection.connection.Connection.stemRoot">stemRoot</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.stemTip" href="#nfb_studio.widgets.scheme.connection.connection.Connection.stemTip">stemTip</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.styleChange" href="#nfb_studio.widgets.scheme.connection.connection.Connection.styleChange">styleChange</a></code></li>

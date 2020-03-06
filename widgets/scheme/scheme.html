@@ -67,6 +67,9 @@ class Scheme(QGraphicsScene):
             self.setRenderHint(QPainter.Antialiasing)
             self.setRenderHint(QPainter.SmoothPixmapTransform)
 
+            self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
         def setScene(self, scene):
             if not isinstance(scene, Scheme):
                 raise TypeError(&#34;Scheme.View only connects to a Scheme as its data source&#34;)
@@ -124,6 +127,8 @@ class Scheme(QGraphicsScene):
 
         An override of super().removeItem method that detects when a node or edge was removed.
         &#34;&#34;&#34;
+        super().removeItem(item)
+
         # Remove a Node ------------------------------------------------------------------------------------------------
         if isinstance(item, Node):
             # Remove connected edges first
@@ -143,8 +148,6 @@ class Scheme(QGraphicsScene):
         # Unknown item -------------------------------------------------------------------------------------------------
         else:
             raise TypeError(&#34;unrecognised graphics item of type &#34; + type(item).__name__)
-
-        super().removeItem(item)
 
     def connect_nodes(self, source: Output, target: Input):
         &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
@@ -172,6 +175,9 @@ class Scheme(QGraphicsScene):
         
         `other` represents a subgraph of the scheme graph that is to be extracted.
         &#34;&#34;&#34;
+        for edge in other.edges:
+            self.removeItem(edge)
+
         for node in other.nodes:
             self.removeItem(node)
 
@@ -200,6 +206,9 @@ class Scheme(QGraphicsScene):
     def selection(self) -&gt; GraphSnapshot:
         return self.graph.selection()
     
+    def clipboardSelection(self) -&gt; GraphSnapshot:
+        return self.graph.clipboardSelection()
+    
     def wideSelection(self) -&gt; GraphSnapshot:
         return self.graph.wideSelection()
 
@@ -211,7 +220,9 @@ class Scheme(QGraphicsScene):
 
     def copyEvent(self):
         &#34;&#34;&#34;Copy the selected graph and place it in the clipboard.&#34;&#34;&#34;
-        snapshot = self.selection()
+        snapshot = self.clipboardSelection()
+        if len(snapshot.nodes) == 0:  # Nothing to copy
+            return
 
         package = StdMimeData()
         package.setObject(snapshot)
@@ -294,6 +305,25 @@ class Scheme(QGraphicsScene):
                 self._dragging_edge.setSourcePos(event.scenePos())
             else:
                 self._dragging_edge.setTargetPos(event.scenePos())
+
+    # Key presses ======================================================================================================
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Alt:
+            event.accept()
+            for node in self.graph.nodes:
+                node.showConnectionText()
+            return
+        
+        super().keyPressEvent(event)
+    
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key_Alt:
+            event.accept()
+            for node in self.graph.nodes:
+                node.hideConnectionText()
+            return
+
+        super().keyReleaseEvent(event)
 
     # Serialization ====================================================================================================
     def serialize(self) -&gt; dict:
@@ -375,6 +405,9 @@ behave incorrectly.</p>
             self.setRenderHint(QPainter.Antialiasing)
             self.setRenderHint(QPainter.SmoothPixmapTransform)
 
+            self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
         def setScene(self, scene):
             if not isinstance(scene, Scheme):
                 raise TypeError(&#34;Scheme.View only connects to a Scheme as its data source&#34;)
@@ -432,6 +465,8 @@ behave incorrectly.</p>
 
         An override of super().removeItem method that detects when a node or edge was removed.
         &#34;&#34;&#34;
+        super().removeItem(item)
+
         # Remove a Node ------------------------------------------------------------------------------------------------
         if isinstance(item, Node):
             # Remove connected edges first
@@ -451,8 +486,6 @@ behave incorrectly.</p>
         # Unknown item -------------------------------------------------------------------------------------------------
         else:
             raise TypeError(&#34;unrecognised graphics item of type &#34; + type(item).__name__)
-
-        super().removeItem(item)
 
     def connect_nodes(self, source: Output, target: Input):
         &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
@@ -480,6 +513,9 @@ behave incorrectly.</p>
         
         `other` represents a subgraph of the scheme graph that is to be extracted.
         &#34;&#34;&#34;
+        for edge in other.edges:
+            self.removeItem(edge)
+
         for node in other.nodes:
             self.removeItem(node)
 
@@ -508,6 +544,9 @@ behave incorrectly.</p>
     def selection(self) -&gt; GraphSnapshot:
         return self.graph.selection()
     
+    def clipboardSelection(self) -&gt; GraphSnapshot:
+        return self.graph.clipboardSelection()
+    
     def wideSelection(self) -&gt; GraphSnapshot:
         return self.graph.wideSelection()
 
@@ -519,7 +558,9 @@ behave incorrectly.</p>
 
     def copyEvent(self):
         &#34;&#34;&#34;Copy the selected graph and place it in the clipboard.&#34;&#34;&#34;
-        snapshot = self.selection()
+        snapshot = self.clipboardSelection()
+        if len(snapshot.nodes) == 0:  # Nothing to copy
+            return
 
         package = StdMimeData()
         package.setObject(snapshot)
@@ -603,6 +644,25 @@ behave incorrectly.</p>
             else:
                 self._dragging_edge.setTargetPos(event.scenePos())
 
+    # Key presses ======================================================================================================
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Alt:
+            event.accept()
+            for node in self.graph.nodes:
+                node.showConnectionText()
+            return
+        
+        super().keyPressEvent(event)
+    
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key_Alt:
+            event.accept()
+            for node in self.graph.nodes:
+                node.hideConnectionText()
+            return
+
+        super().keyReleaseEvent(event)
+
     # Serialization ====================================================================================================
     def serialize(self) -&gt; dict:
         return self.graph.serialize()
@@ -683,6 +743,19 @@ QGraphicsView(self, scene: PySide2.QtWidgets.QGraphicsScene, parent: typing.Unio
     self.graph.clear()</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.clipboardSelection"><code class="name flex">
+<span>def <span class="ident">clipboardSelection</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clipboardSelection(self) -&gt; GraphSnapshot:
+    return self.graph.clipboardSelection()</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes"><code class="name flex">
 <span>def <span class="ident">connect_nodes</span></span>(<span>self, source, target)</span>
 </code></dt>
@@ -715,7 +788,9 @@ QGraphicsView(self, scene: PySide2.QtWidgets.QGraphicsScene, parent: typing.Unio
 </summary>
 <pre><code class="python">def copyEvent(self):
     &#34;&#34;&#34;Copy the selected graph and place it in the clipboard.&#34;&#34;&#34;
-    snapshot = self.selection()
+    snapshot = self.clipboardSelection()
+    if len(snapshot.nodes) == 0:  # Nothing to copy
+        return
 
     package = StdMimeData()
     package.setObject(snapshot)
@@ -880,6 +955,9 @@ Cleans up by removing the fake edge. This function is called from the QDrag-like
     
     `other` represents a subgraph of the scheme graph that is to be extracted.
     &#34;&#34;&#34;
+    for edge in other.edges:
+        self.removeItem(edge)
+
     for node in other.nodes:
         self.removeItem(node)</code></pre>
 </details>
@@ -909,6 +987,44 @@ Cleans up by removing the fake edge. This function is called from the QDrag-like
 <pre><code class="python">def hasEdgeDrag(self) -&gt; bool:
     &#34;&#34;&#34;Returns True if an edge is currently being drawn via drag and drop.&#34;&#34;&#34;
     return self._dragging_edge is not None</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.keyPressEvent"><code class="name flex">
+<span>def <span class="ident">keyPressEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>keyPressEvent(self, event: PySide2.QtGui.QKeyEvent)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keyPressEvent(self, event):
+    if event.key() == Qt.Key_Alt:
+        event.accept()
+        for node in self.graph.nodes:
+            node.showConnectionText()
+        return
+    
+    super().keyPressEvent(event)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.keyReleaseEvent"><code class="name flex">
+<span>def <span class="ident">keyReleaseEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>keyReleaseEvent(self, event: PySide2.QtGui.QKeyEvent)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keyReleaseEvent(self, event):
+    if event.key() == Qt.Key_Alt:
+        event.accept()
+        for node in self.graph.nodes:
+            node.hideConnectionText()
+        return
+
+    super().keyReleaseEvent(event)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.merge"><code class="name flex">
@@ -985,6 +1101,8 @@ Cleans up by removing the fake edge. This function is called from the QDrag-like
 
     An override of super().removeItem method that detects when a node or edge was removed.
     &#34;&#34;&#34;
+    super().removeItem(item)
+
     # Remove a Node ------------------------------------------------------------------------------------------------
     if isinstance(item, Node):
         # Remove connected edges first
@@ -1003,9 +1121,7 @@ Cleans up by removing the fake edge. This function is called from the QDrag-like
         self.graph.removeEdge(item)
     # Unknown item -------------------------------------------------------------------------------------------------
     else:
-        raise TypeError(&#34;unrecognised graphics item of type &#34; + type(item).__name__)
-
-    super().removeItem(item)</code></pre>
+        raise TypeError(&#34;unrecognised graphics item of type &#34; + type(item).__name__)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.schemePalette"><code class="name flex">
@@ -1151,6 +1267,7 @@ Cleans up by removing the fake edge. This function is called from the QDrag-like
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.View" href="#nfb_studio.widgets.scheme.scheme.Scheme.View">View</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.addItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.addItem">addItem</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.clear" href="#nfb_studio.widgets.scheme.scheme.Scheme.clear">clear</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.clipboardSelection" href="#nfb_studio.widgets.scheme.scheme.Scheme.clipboardSelection">clipboardSelection</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes">connect_nodes</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.copyEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.copyEvent">copyEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.cutEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.cutEvent">cutEvent</a></code></li>
@@ -1163,6 +1280,8 @@ Cleans up by removing the fake edge. This function is called from the QDrag-like
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.extract" href="#nfb_studio.widgets.scheme.scheme.Scheme.extract">extract</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.findNode" href="#nfb_studio.widgets.scheme.scheme.Scheme.findNode">findNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag" href="#nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag">hasEdgeDrag</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.keyPressEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.keyPressEvent">keyPressEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.keyReleaseEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.keyReleaseEvent">keyReleaseEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.merge" href="#nfb_studio.widgets.scheme.scheme.Scheme.merge">merge</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.paletteChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.paletteChange">paletteChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent">pasteEvent</a></code></li>

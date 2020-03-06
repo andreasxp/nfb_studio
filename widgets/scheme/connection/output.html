@@ -46,6 +46,8 @@ class Output(Connection):
         self._text_item.setAlignMode(Qt.AlignLeft)
         self._trigger_item.setPos(self.stemTip())
         
+        self.setMultiple(True)
+
         self.styleChange()
 
     # Working with edges ===============================================================================================
@@ -106,6 +108,8 @@ class Output(Connection):
         &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
         This operation concludes the edge drawing process. It creates a real edge between source and self.
         &#34;&#34;&#34;
+        super().edgeDragDrop()
+
         scene = self.scene()
         fake_edge = scene._dragging_edge
 
@@ -140,6 +144,8 @@ class Output(Connection):
         self._text_item.setAlignMode(Qt.AlignLeft)
         self._trigger_item.setPos(self.stemTip())
         
+        self.setMultiple(True)
+
         self.styleChange()
 
     # Working with edges ===============================================================================================
@@ -200,6 +206,8 @@ class Output(Connection):
         &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
         This operation concludes the edge drawing process. It creates a real edge between source and self.
         &#34;&#34;&#34;
+        super().edgeDragDrop()
+
         scene = self.scene()
         fake_edge = scene._dragging_edge
 
@@ -228,6 +236,8 @@ This operation concludes the edge drawing process. It creates a real edge betwee
     &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
     This operation concludes the edge drawing process. It creates a real edge between source and self.
     &#34;&#34;&#34;
+    super().edgeDragDrop()
+
     scene = self.scene()
     fake_edge = scene._dragging_edge
 

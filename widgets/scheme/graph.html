@@ -54,8 +54,8 @@ class AbstractGraph:
     def selection(self):
         &#34;&#34;&#34;Return a GraphSnapshot containing all selected nodes and edges.
         
-        Edges count as selected if nodes on both ends are selected. This snapshot is equivalent to the data that ends up
-        in the clipboard when a selection is copied.
+        This selection is equivalent to the highlighted items the user sees on screen. This means that it is possible
+        that the resulting GraphSnapshot will contain only edges and no nodes.
         &#34;&#34;&#34;
         result = GraphSnapshot()
 
@@ -67,10 +67,31 @@ class AbstractGraph:
 
         return result
     
+    def clipboardSelection(self):
+        &#34;&#34;&#34;Return a GraphSnapshot containing all selected nodes and edges, suitable for copying to clipboard.
+        
+        This selection is similar to `self.selection()` in that it only contains nodes and edges highlighted to the
+        user. The difference is that if the user selected only edges, this is considered unsuitable for copying and an
+        empty GraphSnapshot is returned instead.
+        &#34;&#34;&#34;
+        result = GraphSnapshot()
+
+        selected_nodes = [node for node in self.nodes if node.isSelected()]
+        if len(selected_nodes) == 0:
+            return result
+
+        selected_edges = [edge for edge in self.edges if edge.isSelected()]
+
+        result.nodes = frozenset(selected_nodes)
+        result.edges = frozenset(selected_edges)
+
+        return result
+
+
     def wideSelection(self):
         &#34;&#34;&#34;Return a graph snapshot containing all selected nodes and all connected edges.
         
-        Unlike `selection()`, this method also gets all edges where at least one end is a selected node.
+        Unlike `self.selection()`, this method also gets all edges where at least one end is a selected node.  
         This snapshot is equivalent to the items that are deleted when a selection is removed or cut.
         &#34;&#34;&#34;
         result = GraphSnapshot()
@@ -284,6 +305,9 @@ class Graph(AbstractGraph):
         After calling this function, self.isdisjoint(other) will return True. All edges that become dangling from node
         removal are also removed.
         &#34;&#34;&#34;
+        for edge in other.edges:
+            self.removeItem(edge)
+
         for node in other.nodes:
             self.removeNode(node)
 
@@ -364,8 +388,8 @@ GraphSnapshot - frozensets.</p></section>
     def selection(self):
         &#34;&#34;&#34;Return a GraphSnapshot containing all selected nodes and edges.
         
-        Edges count as selected if nodes on both ends are selected. This snapshot is equivalent to the data that ends up
-        in the clipboard when a selection is copied.
+        This selection is equivalent to the highlighted items the user sees on screen. This means that it is possible
+        that the resulting GraphSnapshot will contain only edges and no nodes.
         &#34;&#34;&#34;
         result = GraphSnapshot()
 
@@ -377,10 +401,31 @@ GraphSnapshot - frozensets.</p></section>
 
         return result
     
+    def clipboardSelection(self):
+        &#34;&#34;&#34;Return a GraphSnapshot containing all selected nodes and edges, suitable for copying to clipboard.
+        
+        This selection is similar to `self.selection()` in that it only contains nodes and edges highlighted to the
+        user. The difference is that if the user selected only edges, this is considered unsuitable for copying and an
+        empty GraphSnapshot is returned instead.
+        &#34;&#34;&#34;
+        result = GraphSnapshot()
+
+        selected_nodes = [node for node in self.nodes if node.isSelected()]
+        if len(selected_nodes) == 0:
+            return result
+
+        selected_edges = [edge for edge in self.edges if edge.isSelected()]
+
+        result.nodes = frozenset(selected_nodes)
+        result.edges = frozenset(selected_edges)
+
+        return result
+
+
     def wideSelection(self):
         &#34;&#34;&#34;Return a graph snapshot containing all selected nodes and all connected edges.
         
-        Unlike `selection()`, this method also gets all edges where at least one end is a selected node.
+        Unlike `self.selection()`, this method also gets all edges where at least one end is a selected node.  
         This snapshot is equivalent to the items that are deleted when a selection is removed or cut.
         &#34;&#34;&#34;
         result = GraphSnapshot()
@@ -518,6 +563,39 @@ GraphSnapshot - frozensets.</p></section>
     return result</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.clipboardSelection"><code class="name flex">
+<span>def <span class="ident">clipboardSelection</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return a GraphSnapshot containing all selected nodes and edges, suitable for copying to clipboard.</p>
+<p>This selection is similar to <code>self.selection()</code> in that it only contains nodes and edges highlighted to the
+user. The difference is that if the user selected only edges, this is considered unsuitable for copying and an
+empty GraphSnapshot is returned instead.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clipboardSelection(self):
+    &#34;&#34;&#34;Return a GraphSnapshot containing all selected nodes and edges, suitable for copying to clipboard.
+    
+    This selection is similar to `self.selection()` in that it only contains nodes and edges highlighted to the
+    user. The difference is that if the user selected only edges, this is considered unsuitable for copying and an
+    empty GraphSnapshot is returned instead.
+    &#34;&#34;&#34;
+    result = GraphSnapshot()
+
+    selected_nodes = [node for node in self.nodes if node.isSelected()]
+    if len(selected_nodes) == 0:
+        return result
+
+    selected_edges = [edge for edge in self.edges if edge.isSelected()]
+
+    result.nodes = frozenset(selected_nodes)
+    result.edges = frozenset(selected_edges)
+
+    return result</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.graph.AbstractGraph.findNode"><code class="name flex">
 <span>def <span class="ident">findNode</span></span>(<span>self, node_id)</span>
 </code></dt>
@@ -624,8 +702,8 @@ disjoint. For this reason edges are not checked.</p></section>
 </code></dt>
 <dd>
 <section class="desc"><p>Return a GraphSnapshot containing all selected nodes and edges.</p>
-<p>Edges count as selected if nodes on both ends are selected. This snapshot is equivalent to the data that ends up
-in the clipboard when a selection is copied.</p></section>
+<p>This selection is equivalent to the highlighted items the user sees on screen. This means that it is possible
+that the resulting GraphSnapshot will contain only edges and no nodes.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -633,8 +711,8 @@ in the clipboard when a selection is copied.</p></section>
 <pre><code class="python">def selection(self):
     &#34;&#34;&#34;Return a GraphSnapshot containing all selected nodes and edges.
     
-    Edges count as selected if nodes on both ends are selected. This snapshot is equivalent to the data that ends up
-    in the clipboard when a selection is copied.
+    This selection is equivalent to the highlighted items the user sees on screen. This means that it is possible
+    that the resulting GraphSnapshot will contain only edges and no nodes.
     &#34;&#34;&#34;
     result = GraphSnapshot()
 
@@ -695,7 +773,7 @@ in the clipboard when a selection is copied.</p></section>
 </code></dt>
 <dd>
 <section class="desc"><p>Return a graph snapshot containing all selected nodes and all connected edges.</p>
-<p>Unlike <code>selection()</code>, this method also gets all edges where at least one end is a selected node.
+<p>Unlike <code>self.selection()</code>, this method also gets all edges where at least one end is a selected node.<br>
 This snapshot is equivalent to the items that are deleted when a selection is removed or cut.</p></section>
 <details class="source">
 <summary>
@@ -704,7 +782,7 @@ This snapshot is equivalent to the items that are deleted when a selection is re
 <pre><code class="python">def wideSelection(self):
     &#34;&#34;&#34;Return a graph snapshot containing all selected nodes and all connected edges.
     
-    Unlike `selection()`, this method also gets all edges where at least one end is a selected node.
+    Unlike `self.selection()`, this method also gets all edges where at least one end is a selected node.  
     This snapshot is equivalent to the items that are deleted when a selection is removed or cut.
     &#34;&#34;&#34;
     result = GraphSnapshot()
@@ -837,6 +915,9 @@ This snapshot is equivalent to the items that are deleted when a selection is re
         After calling this function, self.isdisjoint(other) will return True. All edges that become dangling from node
         removal are also removed.
         &#34;&#34;&#34;
+        for edge in other.edges:
+            self.removeItem(edge)
+
         for node in other.nodes:
             self.removeNode(node)
 
@@ -1010,6 +1091,9 @@ removal are also removed.</p></section>
     After calling this function, self.isdisjoint(other) will return True. All edges that become dangling from node
     removal are also removed.
     &#34;&#34;&#34;
+    for edge in other.edges:
+        self.removeItem(edge)
+
     for node in other.nodes:
         self.removeNode(node)</code></pre>
 </details>
@@ -1082,6 +1166,7 @@ removal are also removed.</p></section>
 <li><code><b><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></b></code>:
 <ul class="hlist">
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.clipboardSelection" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.clipboardSelection">clipboardSelection</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.findNode" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.findNode">findNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint">isdisjoint</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issubset">issubset</a></code></li>
@@ -1163,6 +1248,7 @@ removal are also removed.</p></section>
 <li><code><b><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></b></code>:
 <ul class="hlist">
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.clipboardSelection" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.clipboardSelection">clipboardSelection</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.findNode" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.findNode">findNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint">isdisjoint</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issubset">issubset</a></code></li>
@@ -1195,6 +1281,7 @@ removal are also removed.</p></section>
 <h4><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph" href="#nfb_studio.widgets.scheme.graph.AbstractGraph">AbstractGraph</a></code></h4>
 <ul class="two-column">
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.clipboardSelection" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.clipboardSelection">clipboardSelection</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.findNode" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.findNode">findNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.isdisjoint">isdisjoint</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.AbstractGraph.issubset" href="#nfb_studio.widgets.scheme.graph.AbstractGraph.issubset">issubset</a></code></li>
