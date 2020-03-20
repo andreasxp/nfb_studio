@@ -293,6 +293,15 @@ class Node(SchemeItem):
         self.setTitle(data[&#34;title&#34;])
         self.setDescription(data[&#34;description&#34;])
 
+        for i in range(len(self.inputs)):
+            self.removeInput(0)
+
+        for i in range(len(self.outputs)):
+            self.removeOutput(0)
+
+        for i in range(len(self.messages)):
+            self.removeMessage(0)
+
         for input in data[&#34;inputs&#34;]:
             self.addInput(input)
 
@@ -577,6 +586,15 @@ class Node(SchemeItem):
         self.setTitle(data[&#34;title&#34;])
         self.setDescription(data[&#34;description&#34;])
 
+        for i in range(len(self.inputs)):
+            self.removeInput(0)
+
+        for i in range(len(self.outputs)):
+            self.removeOutput(0)
+
+        for i in range(len(self.messages)):
+            self.removeMessage(0)
+
         for input in data[&#34;inputs&#34;]:
             self.addInput(input)
 
@@ -681,6 +699,15 @@ class Node(SchemeItem):
 <pre><code class="python">def deserialize(self, data: dict):
     self.setTitle(data[&#34;title&#34;])
     self.setDescription(data[&#34;description&#34;])
+
+    for i in range(len(self.inputs)):
+        self.removeInput(0)
+
+    for i in range(len(self.outputs)):
+        self.removeOutput(0)
+
+    for i in range(len(self.messages)):
+        self.removeMessage(0)
 
     for input in data[&#34;inputs&#34;]:
         self.addInput(input)

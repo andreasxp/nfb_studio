@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.5" />
-<title>nfb_studio.serialize.encoder API documentation</title>
+<title>nfb_studio.serial.json.encoder API documentation</title>
 <meta name="description" content="An object-aware JSON encoder." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.serialize.encoder</code></h1>
+<h1 class="title">Module <code>nfb_studio.serial.json.encoder</code></h1>
 </header>
 <section id="section-intro">
 <p>An object-aware JSON encoder.</p>
@@ -28,6 +28,9 @@
 <pre><code class="python">&#34;&#34;&#34;An object-aware JSON encoder.&#34;&#34;&#34;
 import json
 from warnings import warn
+from typing import Union
+
+from ..hooks import Hooks
 
 
 def _write_metadata(obj, data: dict) -&gt; dict:
@@ -61,13 +64,14 @@ class JSONEncoder(json.JSONEncoder):
 
     You can add support for serializing your class in two ways:  
     - By adding a member function to your class: `def serialize(self) -&gt; dict`;
-    - By adding an external function `def serialize(obj) -&gt; dict` and passing it in a dict as the `object_hooks`
-      parameter. (`object_hooks` is a dict that matches a class to a serialization function.)
+    - By adding an external function `def serialize(obj) -&gt; dict` and passing it in a dict as the `hooks`
+      parameter. (`hooks` is a dict that matches a class to a serialization function.). This parameter also can accept a
+      Hooks object or a tuple of two dicts: a serialization dict and a deserialization dict (the latter is ignored).
 
-    When serializing an object, this encoder checks if that object&#39;s class has a function in `object_hooks` or has a
+    When serializing an object, this encoder checks if that object&#39;s class has a function in `hooks` or has a
     callable serialize() attribute. If that is the case, the resulting dict from calling the function will be used in
     that object&#39;s place in json.
-    Functions in the `object_hooks` parameter take precedence over member functions.
+    Functions in the `hooks` parameter take precedence over member functions.
 
     .. warning::
         JSONEncoder adds a field to the dict, produced from the object, called `__class__`. This field is used in the
@@ -79,24 +83,29 @@ class JSONEncoder(json.JSONEncoder):
     nfb_studio.serialize.decoder.JSONDecoder : An object-aware JSON decoder.
     &#34;&#34;&#34;
 
-    def __init__(self, *, object_hooks: dict = None, skipkeys=False, ensure_ascii=False, check_circular=True,
-                 allow_nan=True, sort_keys=False, indent=None, separators=None, **kw):
+    def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None, skipkeys=False, ensure_ascii=False, 
+                 check_circular=True, allow_nan=True, sort_keys=False, indent=None, separators=None, **kw):
         &#34;&#34;&#34;Constructs the JSONEncoder object.
         
         Constructs the object from the following arguments:  
-        - object_hooks - a dict, mapping types to functions that can be used to serialize them in the format
-          `def foo(obj) -&gt; dict`;
-        - other arguments inherited from JSONEncoder, except for `default, which is not inherited and is ignored.
+        - hooks - a dict, mapping types to functions that can be used to serialize them in the format
+          `def foo(obj) -&gt; dict`, a tuple containing such dict as it&#39;s element 0, or a `hooks.Hooks` object;
+        - other arguments inherited from JSONEncoder, except for `default`, which is not inherited and is ignored.
         &#34;&#34;&#34;
         super().__init__(skipkeys=skipkeys, ensure_ascii=ensure_ascii, check_circular=check_circular,
                          allow_nan=allow_nan, sort_keys=sort_keys, indent=indent, separators=separators)
         
-        self.object_hooks = object_hooks or {}
+        if isinstance(hooks, dict):
+            self.hooks = hooks
+        elif isinstance(hooks, tuple):  # hooks.Hooks is also a tuple
+            self.hooks = hooks[0]  # Only serialization functions
+        else:
+            self.hooks = {}
 
     def default(self, obj):
         &#34;&#34;&#34;Implementation of `JSONEncoder`&#39;s `default` method that enables the serialization logic.&#34;&#34;&#34;
-        if type(obj) in self.object_hooks:
-            data = self.object_hooks[type(obj)](obj)
+        if type(obj) in self.hooks:
+            data = self.hooks[type(obj)](obj)
             _write_metadata(obj, data)
             return data
 
@@ -118,20 +127,21 @@ class JSONEncoder(json.JSONEncoder):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.serialize.encoder.JSONEncoder"><code class="flex name class">
+<dt id="nfb_studio.serial.json.encoder.JSONEncoder"><code class="flex name class">
 <span>class <span class="ident">JSONEncoder</span></span>
-<span>(</span><span>*, object_hooks=None, skipkeys=False, ensure_ascii=False, check_circular=True, allow_nan=True, sort_keys=False, indent=None, separators=None, **kw)</span>
+<span>(</span><span>*, hooks=None, skipkeys=False, ensure_ascii=False, check_circular=True, allow_nan=True, sort_keys=False, indent=None, separators=None, **kw)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>JSON encoder that provides tools to serialize custom objects.</p>
 <p>You can add support for serializing your class in two ways:<br>
 - By adding a member function to your class: <code>def serialize(self) -&gt; dict</code>;
-- By adding an external function <code>def serialize(obj) -&gt; dict</code> and passing it in a dict as the <code>object_hooks</code>
-parameter. (<code>object_hooks</code> is a dict that matches a class to a serialization function.)</p>
-<p>When serializing an object, this encoder checks if that object's class has a function in <code>object_hooks</code> or has a
+- By adding an external function <code>def serialize(obj) -&gt; dict</code> and passing it in a dict as the <code>hooks</code>
+parameter. (<code>hooks</code> is a dict that matches a class to a serialization function.). This parameter also can accept a
+Hooks object or a tuple of two dicts: a serialization dict and a deserialization dict (the latter is ignored).</p>
+<p>When serializing an object, this encoder checks if that object's class has a function in <code>hooks</code> or has a
 callable serialize() attribute. If that is the case, the resulting dict from calling the function will be used in
 that object's place in json.
-Functions in the <code>object_hooks</code> parameter take precedence over member functions.</p>
+Functions in the <code>hooks</code> parameter take precedence over member functions.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>JSONEncoder adds a field to the dict, produced from the object, called <code>__class__</code>. This field is used in the
@@ -140,14 +150,14 @@ Do not write anything in this field yourself - it will be overwritten.</p>
 </div>
 <h2 id="see-also">See Also</h2>
 <dl>
-<dt><a title="nfb_studio.serialize.decoder.JSONDecoder" href="decoder.html#nfb_studio.serialize.decoder.JSONDecoder"><code>JSONDecoder</code></a></dt>
+<dt><code>nfb_studio.serialize.decoder.JSONDecoder</code></dt>
 <dd>An object-aware JSON decoder.</dd>
 </dl>
 <p><code>Constructs the JSONEncoder object.</code></p>
 <p>Constructs the object from the following arguments:<br>
-- object_hooks - a dict, mapping types to functions that can be used to serialize them in the format
-<code>def foo(obj) -&gt; dict</code>;
-- other arguments inherited from JSONEncoder, except for `default, which is not inherited and is ignored.</p></section>
+- hooks - a dict, mapping types to functions that can be used to serialize them in the format
+<code>def foo(obj) -&gt; dict</code>, a tuple containing such dict as it's element 0, or a <code>hooks.Hooks</code> object;
+- other arguments inherited from JSONEncoder, except for <code>default</code>, which is not inherited and is ignored.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -157,13 +167,14 @@ Do not write anything in this field yourself - it will be overwritten.</p>
 
     You can add support for serializing your class in two ways:  
     - By adding a member function to your class: `def serialize(self) -&gt; dict`;
-    - By adding an external function `def serialize(obj) -&gt; dict` and passing it in a dict as the `object_hooks`
-      parameter. (`object_hooks` is a dict that matches a class to a serialization function.)
+    - By adding an external function `def serialize(obj) -&gt; dict` and passing it in a dict as the `hooks`
+      parameter. (`hooks` is a dict that matches a class to a serialization function.). This parameter also can accept a
+      Hooks object or a tuple of two dicts: a serialization dict and a deserialization dict (the latter is ignored).
 
-    When serializing an object, this encoder checks if that object&#39;s class has a function in `object_hooks` or has a
+    When serializing an object, this encoder checks if that object&#39;s class has a function in `hooks` or has a
     callable serialize() attribute. If that is the case, the resulting dict from calling the function will be used in
     that object&#39;s place in json.
-    Functions in the `object_hooks` parameter take precedence over member functions.
+    Functions in the `hooks` parameter take precedence over member functions.
 
     .. warning::
         JSONEncoder adds a field to the dict, produced from the object, called `__class__`. This field is used in the
@@ -175,24 +186,29 @@ Do not write anything in this field yourself - it will be overwritten.</p>
     nfb_studio.serialize.decoder.JSONDecoder : An object-aware JSON decoder.
     &#34;&#34;&#34;
 
-    def __init__(self, *, object_hooks: dict = None, skipkeys=False, ensure_ascii=False, check_circular=True,
-                 allow_nan=True, sort_keys=False, indent=None, separators=None, **kw):
+    def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None, skipkeys=False, ensure_ascii=False, 
+                 check_circular=True, allow_nan=True, sort_keys=False, indent=None, separators=None, **kw):
         &#34;&#34;&#34;Constructs the JSONEncoder object.
         
         Constructs the object from the following arguments:  
-        - object_hooks - a dict, mapping types to functions that can be used to serialize them in the format
-          `def foo(obj) -&gt; dict`;
-        - other arguments inherited from JSONEncoder, except for `default, which is not inherited and is ignored.
+        - hooks - a dict, mapping types to functions that can be used to serialize them in the format
+          `def foo(obj) -&gt; dict`, a tuple containing such dict as it&#39;s element 0, or a `hooks.Hooks` object;
+        - other arguments inherited from JSONEncoder, except for `default`, which is not inherited and is ignored.
         &#34;&#34;&#34;
         super().__init__(skipkeys=skipkeys, ensure_ascii=ensure_ascii, check_circular=check_circular,
                          allow_nan=allow_nan, sort_keys=sort_keys, indent=indent, separators=separators)
         
-        self.object_hooks = object_hooks or {}
+        if isinstance(hooks, dict):
+            self.hooks = hooks
+        elif isinstance(hooks, tuple):  # hooks.Hooks is also a tuple
+            self.hooks = hooks[0]  # Only serialization functions
+        else:
+            self.hooks = {}
 
     def default(self, obj):
         &#34;&#34;&#34;Implementation of `JSONEncoder`&#39;s `default` method that enables the serialization logic.&#34;&#34;&#34;
-        if type(obj) in self.object_hooks:
-            data = self.object_hooks[type(obj)](obj)
+        if type(obj) in self.hooks:
+            data = self.hooks[type(obj)](obj)
             _write_metadata(obj, data)
             return data
 
@@ -210,19 +226,19 @@ Do not write anything in this field yourself - it will be overwritten.</p>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.serialize.encoder.JSONEncoder.default"><code class="name flex">
+<dt id="nfb_studio.serial.json.encoder.JSONEncoder.default"><code class="name flex">
 <span>def <span class="ident">default</span></span>(<span>self, obj)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Implementation of <a title="nfb_studio.serialize.encoder.JSONEncoder" href="#nfb_studio.serialize.encoder.JSONEncoder"><code>JSONEncoder</code></a>'s <code>default</code> method that enables the serialization logic.</p></section>
+<section class="desc"><p>Implementation of <a title="nfb_studio.serial.json.encoder.JSONEncoder" href="#nfb_studio.serial.json.encoder.JSONEncoder"><code>JSONEncoder</code></a>'s <code>default</code> method that enables the serialization logic.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def default(self, obj):
     &#34;&#34;&#34;Implementation of `JSONEncoder`&#39;s `default` method that enables the serialization logic.&#34;&#34;&#34;
-    if type(obj) in self.object_hooks:
-        data = self.object_hooks[type(obj)](obj)
+    if type(obj) in self.hooks:
+        data = self.hooks[type(obj)](obj)
         _write_metadata(obj, data)
         return data
 
@@ -248,15 +264,15 @@ Do not write anything in this field yourself - it will be overwritten.</p>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.serialize" href="index.html">nfb_studio.serialize</a></code></li>
+<li><code><a title="nfb_studio.serial.json" href="index.html">nfb_studio.serial.json</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.serialize.encoder.JSONEncoder" href="#nfb_studio.serialize.encoder.JSONEncoder">JSONEncoder</a></code></h4>
+<h4><code><a title="nfb_studio.serial.json.encoder.JSONEncoder" href="#nfb_studio.serial.json.encoder.JSONEncoder">JSONEncoder</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.serialize.encoder.JSONEncoder.default" href="#nfb_studio.serialize.encoder.JSONEncoder.default">default</a></code></li>
+<li><code><a title="nfb_studio.serial.json.encoder.JSONEncoder.default" href="#nfb_studio.serial.json.encoder.JSONEncoder.default">default</a></code></li>
 </ul>
 </li>
 </ul>

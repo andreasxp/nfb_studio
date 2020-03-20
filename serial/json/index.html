@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.5" />
-<title>nfb_studio.widgets.scheme.connection.edge_drag API documentation</title>
-<meta name="description" content="" />
+<title>nfb_studio.serial.json API documentation</title>
+<meta name="description" content="A module responsible for serializing data into json …" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,142 +17,74 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.scheme.connection.edge_drag</code></h1>
+<h1 class="title">Module <code>nfb_studio.serial.json</code></h1>
 </header>
 <section id="section-intro">
+<p>A module responsible for serializing data into json.</p>
+<p>Internally, all serialization algorithms are based on json. See top-level documentation for usage examples.</p>
+<h2 id="see-also">See Also</h2>
+<dl>
+<dt><a title="nfb_studio.serial.json.encoder.JSONEncoder" href="encoder.html#nfb_studio.serial.json.encoder.JSONEncoder"><code>JSONEncoder</code></a></dt>
+<dd>An object-aware JSON encoder.</dd>
+<dt><a title="nfb_studio.serial.json.decoder.JSONDecoder" href="decoder.html#nfb_studio.serial.json.decoder.JSONDecoder"><code>JSONDecoder</code></a></dt>
+<dd>An object-aware JSON decoder.</dd>
+</dl>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from PySide2.QtCore import QMimeData
-from PySide2.QtGui import QDrag
+<pre><code class="python">&#34;&#34;&#34;A module responsible for serializing data into json.
 
-class EdgeDrag(QDrag):
-    format = &#34;application/x-edgedrag&#34;
-    &#34;&#34;&#34;Format that is used as the tag mime type. Actual information is stored in the scene.&#34;&#34;&#34;
+Internally, all serialization algorithms are based on json. See top-level documentation for usage examples.
 
-    def __init__(self, scheme, dragSource):
-        super().__init__(dragSource)
-        self.scheme = scheme
+See Also
+--------
+encoder.JSONEncoder : An object-aware JSON encoder.
+decoder.JSONDecoder : An object-aware JSON decoder.
+&#34;&#34;&#34;
+from json import load, loads, dump, dumps
 
-        # Add a tag-like mimedata. No info, just a type.
-        package = QMimeData()
-        package.setData(self.format, bytes())
-        self.setMimeData(package)
-
-    def exec_(self, *args, **kwargs):
-        result = super().exec_(*args, **kwargs)
-        
-        # Delete the fake edge, regardless of the outcome
-        self.scheme.edgeDragStop()
-
-        return result</code></pre>
+from .encoder import JSONEncoder
+from .decoder import JSONDecoder</code></pre>
 </details>
 </section>
 <section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="nfb_studio.serial.json.decoder" href="decoder.html">nfb_studio.serial.json.decoder</a></code></dt>
+<dd>
+<section class="desc"><p>An object-aware JSON decoder.</p></section>
+</dd>
+<dt><code class="name"><a title="nfb_studio.serial.json.encoder" href="encoder.html">nfb_studio.serial.json.encoder</a></code></dt>
+<dd>
+<section class="desc"><p>An object-aware JSON encoder.</p></section>
+</dd>
+</dl>
 </section>
 <section>
 </section>
 <section>
 </section>
 <section>
-<h2 class="section-title" id="header-classes">Classes</h2>
-<dl>
-<dt id="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag"><code class="flex name class">
-<span>class <span class="ident">EdgeDrag</span></span>
-<span>(</span><span>scheme, dragSource)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>QDrag(self, dragSource: PySide2.QtCore.QObject)</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class EdgeDrag(QDrag):
-    format = &#34;application/x-edgedrag&#34;
-    &#34;&#34;&#34;Format that is used as the tag mime type. Actual information is stored in the scene.&#34;&#34;&#34;
-
-    def __init__(self, scheme, dragSource):
-        super().__init__(dragSource)
-        self.scheme = scheme
-
-        # Add a tag-like mimedata. No info, just a type.
-        package = QMimeData()
-        package.setData(self.format, bytes())
-        self.setMimeData(package)
-
-    def exec_(self, *args, **kwargs):
-        result = super().exec_(*args, **kwargs)
-        
-        # Delete the fake edge, regardless of the outcome
-        self.scheme.edgeDragStop()
-
-        return result</code></pre>
-</details>
-<h3>Ancestors</h3>
-<ul class="hlist">
-<li>PySide2.QtGui.QDrag</li>
-<li>PySide2.QtCore.QObject</li>
-<li>Shiboken.Object</li>
-</ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.format"><code class="name">var <span class="ident">format</span></code></dt>
-<dd>
-<section class="desc"><p>Format that is used as the tag mime type. Actual information is stored in the scene.</p></section>
-</dd>
-<dt id="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-</dl>
-<h3>Methods</h3>
-<dl>
-<dt id="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.exec_"><code class="name flex">
-<span>def <span class="ident">exec_</span></span>(<span>self, *args, **kwargs)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>exec_(self, supportedActions: PySide2.QtCore.Qt.DropActions, defaultAction: PySide2.QtCore.Qt.DropAction) -&gt; PySide2.QtCore.Qt.DropAction
-exec_(self, supportedActions: PySide2.QtCore.Qt.DropActions = PySide2.QtCore.Qt.DropAction.MoveAction) -&gt; PySide2.QtCore.Qt.DropAction</p></section>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def exec_(self, *args, **kwargs):
-    result = super().exec_(*args, **kwargs)
-    
-    # Delete the fake edge, regardless of the outcome
-    self.scheme.edgeDragStop()
-
-    return result</code></pre>
-</details>
-</dd>
-</dl>
-</dd>
-</dl>
 </section>
 </article>
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#see-also">See Also</a></li>
+</ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.scheme.connection" href="index.html">nfb_studio.widgets.scheme.connection</a></code></li>
+<li><code><a title="nfb_studio.serial" href="../index.html">nfb_studio.serial</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-classes">Classes</a></h3>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li>
-<h4><code><a title="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag" href="#nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag">EdgeDrag</a></code></h4>
-<ul class="">
-<li><code><a title="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.exec_" href="#nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.exec_">exec_</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.format" href="#nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.format">format</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.staticMetaObject" href="#nfb_studio.widgets.scheme.connection.edge_drag.EdgeDrag.staticMetaObject">staticMetaObject</a></code></li>
-</ul>
-</li>
+<li><code><a title="nfb_studio.serial.json.decoder" href="decoder.html">nfb_studio.serial.json.decoder</a></code></li>
+<li><code><a title="nfb_studio.serial.json.encoder" href="encoder.html">nfb_studio.serial.json.encoder</a></code></li>
 </ul>
 </li>
 </ul>

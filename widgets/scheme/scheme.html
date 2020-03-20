@@ -28,19 +28,21 @@
 <pre><code class="python">&#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.&#34;&#34;&#34;
 from typing import Union
 
-from PySide2.QtCore import Qt, QPointF
+from PySide2.QtCore import Qt, QPointF, QMimeData
 from PySide2.QtGui import QPainter, QKeySequence
-from PySide2.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsItem, QShortcut, QApplication
+from PySide2.QtWidgets import (
+    QGraphicsScene, QGraphicsView, QGraphicsItem, QGraphicsRectItem, QShortcut, QApplication, QSizePolicy
+)
 
-from nfb_studio import StdMimeData
+from nfb_studio.serial import mime, hooks
 
 from .graph import AbstractGraph, Graph, GraphSnapshot
 from .node import Node
 from .edge import Edge
 from .connection import Input, Output, Connection
-from .connection.edge_drag import EdgeDrag
 from .style import Style
 from .palette import Palette
+from .toolbox import Toolbox
 
 class Scheme(QGraphicsScene):
     &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
@@ -67,8 +69,12 @@ class Scheme(QGraphicsScene):
             self.setRenderHint(QPainter.Antialiasing)
             self.setRenderHint(QPainter.SmoothPixmapTransform)
 
+            # Remove the scrollbars
             self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+            self.setSceneRect(0, 0, self.size().width(), self.size().height())
+            self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
 
         def setScene(self, scene):
             if not isinstance(scene, Scheme):
@@ -88,9 +94,11 @@ class Scheme(QGraphicsScene):
             delete_shortcut.activated.connect(scene.deleteEvent)
 
 
-    def __init__(self):
+    ClipboardMimeType = &#34;application/x-nfb_studio-graph&#34;
+
+    def __init__(self, parent=None):
         &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the super().&#34;&#34;&#34;
-        super().__init__()
+        super().__init__(parent)
         self.graph = Graph()
 
         self.view = self.View()
@@ -99,6 +107,10 @@ class Scheme(QGraphicsScene):
         # Drag-drawing edges support -----------------------------------------------------------------------------------
         self._dragging_edge = None
         &#34;&#34;&#34;A temporary edge that is being displayed when an edge is drawn by the user with drag and drop.&#34;&#34;&#34;
+
+        # Clipboard support --------------------------------------------------------------------------------------------
+        self.paste_pos = QPointF()
+        &#34;&#34;&#34;Position where the center of the pasted object will be located.&#34;&#34;&#34;
 
         # Style and palette --------------------------------------------------------------------------------------------
         self._style = Style()
@@ -224,19 +236,19 @@ class Scheme(QGraphicsScene):
         if len(snapshot.nodes) == 0:  # Nothing to copy
             return
 
-        package = StdMimeData()
-        package.setObject(snapshot)
+        package = QMimeData()
+        mime.dump(snapshot, package, self.ClipboardMimeType, hooks=hooks.qt)
 
         clipboard = QApplication.clipboard()
-        clipboard.setMimeData(package.qmimedata)
+        clipboard.setMimeData(package)
 
     def pasteEvent(self):
         &#34;&#34;&#34;Retrieve the data from a clipboard and paste it.&#34;&#34;&#34;
         clipboard = QApplication.clipboard()
-        package = StdMimeData(clipboard.mimeData())
+        package = clipboard.mimeData()
 
-        if package.hasObject(GraphSnapshot):
-            snapshot = package.objectData(GraphSnapshot)
+        if package.hasFormat(self.ClipboardMimeType):
+            snapshot = mime.load(package, self.ClipboardMimeType, hooks=hooks.qt)
             self.merge(snapshot)
 
             self.clearSelection()  # Clear old selection
@@ -290,15 +302,38 @@ class Scheme(QGraphicsScene):
 
     def edgeDragStop(self):
         &#34;&#34;&#34;Triggers an end of an edge drawing mode.  
-        Cleans up by removing the fake edge. This function is called from the QDrag-like object, EdgeDrag.
+        Cleans up by removing the fake edge. This function is called regardless of whether edge drag resulted in a
+        successful connection.
         &#34;&#34;&#34;
         super().removeItem(self._dragging_edge)
 
         self._dragging_edge.detachAll()
         self._dragging_edge = None
 
+    def dragEnterEvent(self, event):
+        package = event.mimeData()
+        event.setAccepted(
+            package.hasFormat(Toolbox.DragMimeType) or
+            package.hasFormat(Connection.EdgeDragMimeType)
+        )
+    
+    def dropEvent(self, event):
+        package = event.mimeData()
+
+        if package.hasFormat(Toolbox.DragMimeType):
+            node = mime.load(package, Toolbox.DragMimeType, hooks=hooks.qt)
+
+            pos = event.scenePos() - QPointF(
+                node.boundingRect().size().width()/2,
+                node.boundingRect().size().height()/2
+            )
+            node.setPos(pos)
+            self.addItem(node)
+        else:
+            super().dropEvent(event)
+
     def dragMoveEvent(self, event):
-        if event.mimeData().hasFormat(EdgeDrag.format) and self.hasEdgeDrag():
+        if event.mimeData().hasFormat(Connection.EdgeDragMimeType) and self.hasEdgeDrag():
             # Update edge position, but otherwise do the default thing.
             super().dragMoveEvent(event)  
             if self._dragging_edge.source() is None:
@@ -357,6 +392,7 @@ class Scheme(QGraphicsScene):
 <dl>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme"><code class="flex name class">
 <span>class <span class="ident">Scheme</span></span>
+<span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>A data model for the nfb experiment's system of signals and their components.</p>
@@ -405,8 +441,12 @@ behave incorrectly.</p>
             self.setRenderHint(QPainter.Antialiasing)
             self.setRenderHint(QPainter.SmoothPixmapTransform)
 
+            # Remove the scrollbars
             self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+            self.setSceneRect(0, 0, self.size().width(), self.size().height())
+            self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
 
         def setScene(self, scene):
             if not isinstance(scene, Scheme):
@@ -426,9 +466,11 @@ behave incorrectly.</p>
             delete_shortcut.activated.connect(scene.deleteEvent)
 
 
-    def __init__(self):
+    ClipboardMimeType = &#34;application/x-nfb_studio-graph&#34;
+
+    def __init__(self, parent=None):
         &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the super().&#34;&#34;&#34;
-        super().__init__()
+        super().__init__(parent)
         self.graph = Graph()
 
         self.view = self.View()
@@ -437,6 +479,10 @@ behave incorrectly.</p>
         # Drag-drawing edges support -----------------------------------------------------------------------------------
         self._dragging_edge = None
         &#34;&#34;&#34;A temporary edge that is being displayed when an edge is drawn by the user with drag and drop.&#34;&#34;&#34;
+
+        # Clipboard support --------------------------------------------------------------------------------------------
+        self.paste_pos = QPointF()
+        &#34;&#34;&#34;Position where the center of the pasted object will be located.&#34;&#34;&#34;
 
         # Style and palette --------------------------------------------------------------------------------------------
         self._style = Style()
@@ -562,19 +608,19 @@ behave incorrectly.</p>
         if len(snapshot.nodes) == 0:  # Nothing to copy
             return
 
-        package = StdMimeData()
-        package.setObject(snapshot)
+        package = QMimeData()
+        mime.dump(snapshot, package, self.ClipboardMimeType, hooks=hooks.qt)
 
         clipboard = QApplication.clipboard()
-        clipboard.setMimeData(package.qmimedata)
+        clipboard.setMimeData(package)
 
     def pasteEvent(self):
         &#34;&#34;&#34;Retrieve the data from a clipboard and paste it.&#34;&#34;&#34;
         clipboard = QApplication.clipboard()
-        package = StdMimeData(clipboard.mimeData())
+        package = clipboard.mimeData()
 
-        if package.hasObject(GraphSnapshot):
-            snapshot = package.objectData(GraphSnapshot)
+        if package.hasFormat(self.ClipboardMimeType):
+            snapshot = mime.load(package, self.ClipboardMimeType, hooks=hooks.qt)
             self.merge(snapshot)
 
             self.clearSelection()  # Clear old selection
@@ -628,15 +674,38 @@ behave incorrectly.</p>
 
     def edgeDragStop(self):
         &#34;&#34;&#34;Triggers an end of an edge drawing mode.  
-        Cleans up by removing the fake edge. This function is called from the QDrag-like object, EdgeDrag.
+        Cleans up by removing the fake edge. This function is called regardless of whether edge drag resulted in a
+        successful connection.
         &#34;&#34;&#34;
         super().removeItem(self._dragging_edge)
 
         self._dragging_edge.detachAll()
         self._dragging_edge = None
 
+    def dragEnterEvent(self, event):
+        package = event.mimeData()
+        event.setAccepted(
+            package.hasFormat(Toolbox.DragMimeType) or
+            package.hasFormat(Connection.EdgeDragMimeType)
+        )
+    
+    def dropEvent(self, event):
+        package = event.mimeData()
+
+        if package.hasFormat(Toolbox.DragMimeType):
+            node = mime.load(package, Toolbox.DragMimeType, hooks=hooks.qt)
+
+            pos = event.scenePos() - QPointF(
+                node.boundingRect().size().width()/2,
+                node.boundingRect().size().height()/2
+            )
+            node.setPos(pos)
+            self.addItem(node)
+        else:
+            super().dropEvent(event)
+
     def dragMoveEvent(self, event):
-        if event.mimeData().hasFormat(EdgeDrag.format) and self.hasEdgeDrag():
+        if event.mimeData().hasFormat(Connection.EdgeDragMimeType) and self.hasEdgeDrag():
             # Update edge position, but otherwise do the default thing.
             super().dragMoveEvent(event)  
             if self._dragging_edge.source() is None:
@@ -691,6 +760,10 @@ behave incorrectly.</p>
 </ul>
 <h3>Class variables</h3>
 <dl>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.ClipboardMimeType"><code class="name">var <span class="ident">ClipboardMimeType</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.View"><code class="name">var <span class="ident">View</span></code></dt>
 <dd>
 <section class="desc"><p>QGraphicsView(self, parent: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)
@@ -699,6 +772,13 @@ QGraphicsView(self, scene: PySide2.QtWidgets.QGraphicsScene, parent: typing.Unio
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <section class="desc"></section>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.paste_pos"><code class="name">var <span class="ident">paste_pos</span></code></dt>
+<dd>
+<section class="desc"><p>Position where the center of the pasted object will be located.</p></section>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -792,11 +872,11 @@ QGraphicsView(self, scene: PySide2.QtWidgets.QGraphicsScene, parent: typing.Unio
     if len(snapshot.nodes) == 0:  # Nothing to copy
         return
 
-    package = StdMimeData()
-    package.setObject(snapshot)
+    package = QMimeData()
+    mime.dump(snapshot, package, self.ClipboardMimeType, hooks=hooks.qt)
 
     clipboard = QApplication.clipboard()
-    clipboard.setMimeData(package.qmimedata)</code></pre>
+    clipboard.setMimeData(package)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.cutEvent"><code class="name flex">
@@ -877,6 +957,23 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
     return edge</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.dragEnterEvent"><code class="name flex">
+<span>def <span class="ident">dragEnterEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>dragEnterEvent(self, event: PySide2.QtWidgets.QGraphicsSceneDragDropEvent)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dragEnterEvent(self, event):
+    package = event.mimeData()
+    event.setAccepted(
+        package.hasFormat(Toolbox.DragMimeType) or
+        package.hasFormat(Connection.EdgeDragMimeType)
+    )</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.dragMoveEvent"><code class="name flex">
 <span>def <span class="ident">dragMoveEvent</span></span>(<span>self, event)</span>
 </code></dt>
@@ -887,13 +984,38 @@ Returns the edge that was removed, or None if no such edge was found.</p></secti
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def dragMoveEvent(self, event):
-    if event.mimeData().hasFormat(EdgeDrag.format) and self.hasEdgeDrag():
+    if event.mimeData().hasFormat(Connection.EdgeDragMimeType) and self.hasEdgeDrag():
         # Update edge position, but otherwise do the default thing.
         super().dragMoveEvent(event)  
         if self._dragging_edge.source() is None:
             self._dragging_edge.setSourcePos(event.scenePos())
         else:
             self._dragging_edge.setTargetPos(event.scenePos())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.dropEvent"><code class="name flex">
+<span>def <span class="ident">dropEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>dropEvent(self, event: PySide2.QtWidgets.QGraphicsSceneDragDropEvent)</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dropEvent(self, event):
+    package = event.mimeData()
+
+    if package.hasFormat(Toolbox.DragMimeType):
+        node = mime.load(package, Toolbox.DragMimeType, hooks=hooks.qt)
+
+        pos = event.scenePos() - QPointF(
+            node.boundingRect().size().width()/2,
+            node.boundingRect().size().height()/2
+        )
+        node.setPos(pos)
+        self.addItem(node)
+    else:
+        super().dropEvent(event)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart"><code class="name flex">
@@ -925,14 +1047,16 @@ created here and updated with mouse movements in dragMoveEvent.</p></section>
 </code></dt>
 <dd>
 <section class="desc"><p>Triggers an end of an edge drawing mode.<br>
-Cleans up by removing the fake edge. This function is called from the QDrag-like object, EdgeDrag.</p></section>
+Cleans up by removing the fake edge. This function is called regardless of whether edge drag resulted in a
+successful connection.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def edgeDragStop(self):
     &#34;&#34;&#34;Triggers an end of an edge drawing mode.  
-    Cleans up by removing the fake edge. This function is called from the QDrag-like object, EdgeDrag.
+    Cleans up by removing the fake edge. This function is called regardless of whether edge drag resulted in a
+    successful connection.
     &#34;&#34;&#34;
     super().removeItem(self._dragging_edge)
 
@@ -1071,10 +1195,10 @@ Cleans up by removing the fake edge. This function is called from the QDrag-like
 <pre><code class="python">def pasteEvent(self):
     &#34;&#34;&#34;Retrieve the data from a clipboard and paste it.&#34;&#34;&#34;
     clipboard = QApplication.clipboard()
-    package = StdMimeData(clipboard.mimeData())
+    package = clipboard.mimeData()
 
-    if package.hasObject(GraphSnapshot):
-        snapshot = package.objectData(GraphSnapshot)
+    if package.hasFormat(self.ClipboardMimeType):
+        snapshot = mime.load(package, self.ClipboardMimeType, hooks=hooks.qt)
         self.merge(snapshot)
 
         self.clearSelection()  # Clear old selection
@@ -1264,6 +1388,7 @@ Cleans up by removing the fake edge. This function is called from the QDrag-like
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.scheme.Scheme" href="#nfb_studio.widgets.scheme.scheme.Scheme">Scheme</a></code></h4>
 <ul class="two-column">
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.ClipboardMimeType" href="#nfb_studio.widgets.scheme.scheme.Scheme.ClipboardMimeType">ClipboardMimeType</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.View" href="#nfb_studio.widgets.scheme.scheme.Scheme.View">View</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.addItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.addItem">addItem</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.clear" href="#nfb_studio.widgets.scheme.scheme.Scheme.clear">clear</a></code></li>
@@ -1274,7 +1399,9 @@ Cleans up by removing the fake edge. This function is called from the QDrag-like
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deleteEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.deleteEvent">deleteEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deserialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes">disconnect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.dragEnterEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.dragEnterEvent">dragEnterEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.dragMoveEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.dragMoveEvent">dragMoveEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.dropEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.dropEvent">dropEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart" href="#nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart">edgeDragStart</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop" href="#nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop">edgeDragStop</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.extract" href="#nfb_studio.widgets.scheme.scheme.Scheme.extract">extract</a></code></li>
@@ -1285,6 +1412,7 @@ Cleans up by removing the fake edge. This function is called from the QDrag-like
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.merge" href="#nfb_studio.widgets.scheme.scheme.Scheme.merge">merge</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.paletteChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.paletteChange">paletteChange</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent">pasteEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.paste_pos" href="#nfb_studio.widgets.scheme.scheme.Scheme.paste_pos">paste_pos</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.removeItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.removeItem">removeItem</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemePalette" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemePalette">schemePalette</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle">schemeStyle</a></code></li>

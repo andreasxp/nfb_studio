@@ -24,67 +24,72 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from PySide2.QtCore import Qt, QPointF, QRectF, QLineF
+<pre><code class="python">from PySide2.QtCore import Qt, QPointF, QRectF, QLineF, QMimeData
 from PySide2.QtGui import QDrag, QPainterPath
 from PySide2.QtWidgets import QGraphicsSceneMouseEvent, QGraphicsSceneDragDropEvent, QApplication
 
-from nfb_studio import StdMimeData
-
 from ..scheme_item import SchemeItem
 from ..style import Style
-from .edge_drag import EdgeDrag
 
 class Trigger(SchemeItem):
-        &#34;&#34;&#34;Special invisible item that handles the area from which and to which the edge can be drawn.&#34;&#34;&#34;
+    &#34;&#34;&#34;Special invisible item that handles the area from which and to which the edge can be drawn.&#34;&#34;&#34;
+    DragMimeType = &#34;application/x-nfb_studio-edge_drag&#34;
 
-        def __init__(self, parent=None):
-                super().__init__(parent)
-                self.setAcceptedMouseButtons(Qt.LeftButton)
-                self.setFlag(self.ItemHasNoContents)  # Item is invisible
-                self.setAcceptDrops(True)
-                self.setCursor(Qt.CrossCursor)
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAcceptedMouseButtons(Qt.LeftButton)
+        self.setFlag(self.ItemHasNoContents)  # Item is invisible
+        self.setAcceptDrops(True)
+        self.setCursor(Qt.CrossCursor)
 
-                self._radius = self.style().pixelMetric(Style.EdgeDragPrecisionRadius)
+        self._radius = self.style().pixelMetric(Style.EdgeDragPrecisionRadius)
+    
+    def shape(self):
+        path = QPainterPath()
+        path.addEllipse(QPointF(), self._radius, self._radius)
+        return path; 
+
+    def boundingRect(self):
+        return QRectF(-self._radius, -self._radius, self._radius*2, self._radius*2)
+    
+    def paint(self, painter, option, widget):
+        &#39;&#39;&#39;path = QPainterPath()
+        path.addEllipse(QPointF(), self._radius, self._radius)
+        painter.drawPath(path)&#39;&#39;&#39;
+
+    def styleChange(self):
+        self.prepareGeometryChange()
+        self._radius = self.style().pixelMetric(Style.EdgeDragPrecisionRadius)
+
+    def mousePressEvent(self, event):
+        pass
+
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
+        if (QLineF(event.screenPos(), event.buttonDownScreenPos(Qt.LeftButton)).length()
+            &lt; QApplication.startDragDistance()):
+            return
         
-        def shape(self):
-                path = QPainterPath()
-                path.addEllipse(QPointF(), self._radius, self._radius)
-                return path; 
+        self.parentItem().edgeDragStart()
 
-        def boundingRect(self):
-                return QRectF(-self._radius, -self._radius, self._radius*2, self._radius*2)
-        
-        def paint(self, painter, option, widget):
-                &#39;&#39;&#39;path = QPainterPath()
-                path.addEllipse(QPointF(), self._radius, self._radius)
-                painter.drawPath(path)&#39;&#39;&#39;
+        package = QMimeData()
+        package.setData(self.DragMimeType, bytes())
 
-        def styleChange(self):
-                self.prepareGeometryChange()
-                self._radius = self.style().pixelMetric(Style.EdgeDragPrecisionRadius)
+        drag = QDrag(event.widget())
+        drag.setMimeData(package)
+        drag.exec_()
 
-        def mousePressEvent(self, event):
-                pass
+        self.parentItem().edgeDragStop()
 
-        def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
-                if (QLineF(event.screenPos(), event.buttonDownScreenPos(Qt.LeftButton)).length()
-                        &lt; QApplication.startDragDistance()):
-                        return
-                
-                self.parentItem().edgeDragStart()
-                drag = EdgeDrag(scheme=self.scene(), dragSource=event.widget())
-                drag.exec_()
+    def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):
+        package = event.mimeData()
 
-        def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):
-                package = event.mimeData()
+        if package.hasFormat(self.DragMimeType):
+            event.setAccepted(self.parentItem().edgeDragAccept())
+        else:
+            event.ignore()
 
-                if package.hasFormat(EdgeDrag.format):
-                        event.setAccepted(self.parentItem().edgeDragAccept())
-                else:
-                        event.ignore()
-
-        def dropEvent(self, event: QGraphicsSceneDragDropEvent):
-                self.parentItem().edgeDragDrop()</code></pre>
+    def dropEvent(self, event: QGraphicsSceneDragDropEvent):
+        self.parentItem().edgeDragDrop()</code></pre>
 </details>
 </section>
 <section>
@@ -107,56 +112,64 @@ class Trigger(SchemeItem):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Trigger(SchemeItem):
-        &#34;&#34;&#34;Special invisible item that handles the area from which and to which the edge can be drawn.&#34;&#34;&#34;
+    &#34;&#34;&#34;Special invisible item that handles the area from which and to which the edge can be drawn.&#34;&#34;&#34;
+    DragMimeType = &#34;application/x-nfb_studio-edge_drag&#34;
 
-        def __init__(self, parent=None):
-                super().__init__(parent)
-                self.setAcceptedMouseButtons(Qt.LeftButton)
-                self.setFlag(self.ItemHasNoContents)  # Item is invisible
-                self.setAcceptDrops(True)
-                self.setCursor(Qt.CrossCursor)
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAcceptedMouseButtons(Qt.LeftButton)
+        self.setFlag(self.ItemHasNoContents)  # Item is invisible
+        self.setAcceptDrops(True)
+        self.setCursor(Qt.CrossCursor)
 
-                self._radius = self.style().pixelMetric(Style.EdgeDragPrecisionRadius)
+        self._radius = self.style().pixelMetric(Style.EdgeDragPrecisionRadius)
+    
+    def shape(self):
+        path = QPainterPath()
+        path.addEllipse(QPointF(), self._radius, self._radius)
+        return path; 
+
+    def boundingRect(self):
+        return QRectF(-self._radius, -self._radius, self._radius*2, self._radius*2)
+    
+    def paint(self, painter, option, widget):
+        &#39;&#39;&#39;path = QPainterPath()
+        path.addEllipse(QPointF(), self._radius, self._radius)
+        painter.drawPath(path)&#39;&#39;&#39;
+
+    def styleChange(self):
+        self.prepareGeometryChange()
+        self._radius = self.style().pixelMetric(Style.EdgeDragPrecisionRadius)
+
+    def mousePressEvent(self, event):
+        pass
+
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
+        if (QLineF(event.screenPos(), event.buttonDownScreenPos(Qt.LeftButton)).length()
+            &lt; QApplication.startDragDistance()):
+            return
         
-        def shape(self):
-                path = QPainterPath()
-                path.addEllipse(QPointF(), self._radius, self._radius)
-                return path; 
+        self.parentItem().edgeDragStart()
 
-        def boundingRect(self):
-                return QRectF(-self._radius, -self._radius, self._radius*2, self._radius*2)
-        
-        def paint(self, painter, option, widget):
-                &#39;&#39;&#39;path = QPainterPath()
-                path.addEllipse(QPointF(), self._radius, self._radius)
-                painter.drawPath(path)&#39;&#39;&#39;
+        package = QMimeData()
+        package.setData(self.DragMimeType, bytes())
 
-        def styleChange(self):
-                self.prepareGeometryChange()
-                self._radius = self.style().pixelMetric(Style.EdgeDragPrecisionRadius)
+        drag = QDrag(event.widget())
+        drag.setMimeData(package)
+        drag.exec_()
 
-        def mousePressEvent(self, event):
-                pass
+        self.parentItem().edgeDragStop()
 
-        def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
-                if (QLineF(event.screenPos(), event.buttonDownScreenPos(Qt.LeftButton)).length()
-                        &lt; QApplication.startDragDistance()):
-                        return
-                
-                self.parentItem().edgeDragStart()
-                drag = EdgeDrag(scheme=self.scene(), dragSource=event.widget())
-                drag.exec_()
+    def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):
+        package = event.mimeData()
 
-        def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):
-                package = event.mimeData()
+        if package.hasFormat(self.DragMimeType):
+            event.setAccepted(self.parentItem().edgeDragAccept())
+        else:
+            event.ignore()
 
-                if package.hasFormat(EdgeDrag.format):
-                        event.setAccepted(self.parentItem().edgeDragAccept())
-                else:
-                        event.ignore()
-
-        def dropEvent(self, event: QGraphicsSceneDragDropEvent):
-                self.parentItem().edgeDragDrop()</code></pre>
+    def dropEvent(self, event: QGraphicsSceneDragDropEvent):
+        self.parentItem().edgeDragDrop()</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -164,6 +177,13 @@ class Trigger(SchemeItem):
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.connection.trigger.Trigger.DragMimeType"><code class="name">var <span class="ident">DragMimeType</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.scheme.connection.trigger.Trigger.boundingRect"><code class="name flex">
@@ -176,7 +196,7 @@ class Trigger(SchemeItem):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def boundingRect(self):
-        return QRectF(-self._radius, -self._radius, self._radius*2, self._radius*2)</code></pre>
+    return QRectF(-self._radius, -self._radius, self._radius*2, self._radius*2)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.trigger.Trigger.dragEnterEvent"><code class="name flex">
@@ -189,12 +209,12 @@ class Trigger(SchemeItem):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def dragEnterEvent(self, event: QGraphicsSceneDragDropEvent):
-        package = event.mimeData()
+    package = event.mimeData()
 
-        if package.hasFormat(EdgeDrag.format):
-                event.setAccepted(self.parentItem().edgeDragAccept())
-        else:
-                event.ignore()</code></pre>
+    if package.hasFormat(self.DragMimeType):
+        event.setAccepted(self.parentItem().edgeDragAccept())
+    else:
+        event.ignore()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.trigger.Trigger.dropEvent"><code class="name flex">
@@ -207,7 +227,7 @@ class Trigger(SchemeItem):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def dropEvent(self, event: QGraphicsSceneDragDropEvent):
-        self.parentItem().edgeDragDrop()</code></pre>
+    self.parentItem().edgeDragDrop()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.trigger.Trigger.mouseMoveEvent"><code class="name flex">
@@ -220,13 +240,20 @@ class Trigger(SchemeItem):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
-        if (QLineF(event.screenPos(), event.buttonDownScreenPos(Qt.LeftButton)).length()
-                &lt; QApplication.startDragDistance()):
-                return
-        
-        self.parentItem().edgeDragStart()
-        drag = EdgeDrag(scheme=self.scene(), dragSource=event.widget())
-        drag.exec_()</code></pre>
+    if (QLineF(event.screenPos(), event.buttonDownScreenPos(Qt.LeftButton)).length()
+        &lt; QApplication.startDragDistance()):
+        return
+    
+    self.parentItem().edgeDragStart()
+
+    package = QMimeData()
+    package.setData(self.DragMimeType, bytes())
+
+    drag = QDrag(event.widget())
+    drag.setMimeData(package)
+    drag.exec_()
+
+    self.parentItem().edgeDragStop()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.trigger.Trigger.mousePressEvent"><code class="name flex">
@@ -239,7 +266,7 @@ class Trigger(SchemeItem):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def mousePressEvent(self, event):
-        pass</code></pre>
+    pass</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.trigger.Trigger.paint"><code class="name flex">
@@ -254,9 +281,9 @@ painter.drawPath(path)</p></section>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def paint(self, painter, option, widget):
-        &#39;&#39;&#39;path = QPainterPath()
-        path.addEllipse(QPointF(), self._radius, self._radius)
-        painter.drawPath(path)&#39;&#39;&#39;</code></pre>
+    &#39;&#39;&#39;path = QPainterPath()
+    path.addEllipse(QPointF(), self._radius, self._radius)
+    painter.drawPath(path)&#39;&#39;&#39;</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.trigger.Trigger.shape"><code class="name flex">
@@ -269,9 +296,9 @@ painter.drawPath(path)</p></section>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def shape(self):
-        path = QPainterPath()
-        path.addEllipse(QPointF(), self._radius, self._radius)
-        return path; </code></pre>
+    path = QPainterPath()
+    path.addEllipse(QPointF(), self._radius, self._radius)
+    return path; </code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.trigger.Trigger.styleChange"><code class="name flex">
@@ -284,8 +311,8 @@ painter.drawPath(path)</p></section>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def styleChange(self):
-        self.prepareGeometryChange()
-        self._radius = self.style().pixelMetric(Style.EdgeDragPrecisionRadius)</code></pre>
+    self.prepareGeometryChange()
+    self._radius = self.style().pixelMetric(Style.EdgeDragPrecisionRadius)</code></pre>
 </details>
 </dd>
 </dl>
@@ -319,6 +346,7 @@ painter.drawPath(path)</p></section>
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.connection.trigger.Trigger" href="#nfb_studio.widgets.scheme.connection.trigger.Trigger">Trigger</a></code></h4>
 <ul class="two-column">
+<li><code><a title="nfb_studio.widgets.scheme.connection.trigger.Trigger.DragMimeType" href="#nfb_studio.widgets.scheme.connection.trigger.Trigger.DragMimeType">DragMimeType</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.trigger.Trigger.boundingRect" href="#nfb_studio.widgets.scheme.connection.trigger.Trigger.boundingRect">boundingRect</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.trigger.Trigger.dragEnterEvent" href="#nfb_studio.widgets.scheme.connection.trigger.Trigger.dragEnterEvent">dragEnterEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.trigger.Trigger.dropEvent" href="#nfb_studio.widgets.scheme.connection.trigger.Trigger.dropEvent">dropEvent</a></code></li>

@@ -34,11 +34,11 @@ from ..style import Style
 from ..palette import Palette
 from ..scheme_item import SchemeItem
 from ..data_type import DataType, Unknown
-from .edge_drag import EdgeDrag
 from .trigger import Trigger
 
 class Connection(SchemeItem):
     &#34;&#34;&#34;Connection is an input or output from a Node.&#34;&#34;&#34;
+    EdgeDragMimeType = Trigger.DragMimeType
 
     def __init__(self, text=None, data_type: DataType = None, parent: QGraphicsItem = None):
         super().__init__(parent)
@@ -219,11 +219,19 @@ class Connection(SchemeItem):
         raise NotImplementedError
 
     def edgeDragDrop(self):
-        &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
-        This operation concludes the edge drawing process.
+        &#34;&#34;&#34;Called when a new edge has been dragged and dropped into this connection&#39;s trigger zone.  
+        This function is responsible for actually connecting the two nodes with a real edge.
         &#34;&#34;&#34;
         if not self.isMultiple():
-            self.detachAll()</code></pre>
+            self.detachAll()
+    
+    def edgeDragStop(self):
+        &#34;&#34;&#34;Conclude the edge drawing process.
+        This function is called when a drag process from this connection has stopped, regardless of the outcome. (For 
+        example, when the edge drawing has failed). Default implementation calls the scene-wide version of this
+        function.
+        &#34;&#34;&#34;
+        self.scene().edgeDragStop()</code></pre>
 </details>
 </section>
 <section>
@@ -247,6 +255,7 @@ class Connection(SchemeItem):
 </summary>
 <pre><code class="python">class Connection(SchemeItem):
     &#34;&#34;&#34;Connection is an input or output from a Node.&#34;&#34;&#34;
+    EdgeDragMimeType = Trigger.DragMimeType
 
     def __init__(self, text=None, data_type: DataType = None, parent: QGraphicsItem = None):
         super().__init__(parent)
@@ -427,11 +436,19 @@ class Connection(SchemeItem):
         raise NotImplementedError
 
     def edgeDragDrop(self):
-        &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
-        This operation concludes the edge drawing process.
+        &#34;&#34;&#34;Called when a new edge has been dragged and dropped into this connection&#39;s trigger zone.  
+        This function is responsible for actually connecting the two nodes with a real edge.
         &#34;&#34;&#34;
         if not self.isMultiple():
-            self.detachAll()</code></pre>
+            self.detachAll()
+    
+    def edgeDragStop(self):
+        &#34;&#34;&#34;Conclude the edge drawing process.
+        This function is called when a drag process from this connection has stopped, regardless of the outcome. (For 
+        example, when the edge drawing has failed). Default implementation calls the scene-wide version of this
+        function.
+        &#34;&#34;&#34;
+        self.scene().edgeDragStop()</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -444,6 +461,13 @@ class Connection(SchemeItem):
 <li><a title="nfb_studio.widgets.scheme.connection.input.Input" href="input.html#nfb_studio.widgets.scheme.connection.input.Input">Input</a></li>
 <li><a title="nfb_studio.widgets.scheme.connection.output.Output" href="output.html#nfb_studio.widgets.scheme.connection.output.Output">Output</a></li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.EdgeDragMimeType"><code class="name">var <span class="ident">EdgeDragMimeType</span></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+</dl>
 <h3>Instance variables</h3>
 <dl>
 <dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edges"><code class="name">var <span class="ident">edges</span></code></dt>
@@ -601,15 +625,15 @@ Returns True or False depending on whether the dragged edge should be accepted o
 <span>def <span class="ident">edgeDragDrop</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Called when a new edge has been dragged and was dropped.<br>
-This operation concludes the edge drawing process.</p></section>
+<section class="desc"><p>Called when a new edge has been dragged and dropped into this connection's trigger zone.<br>
+This function is responsible for actually connecting the two nodes with a real edge.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def edgeDragDrop(self):
-    &#34;&#34;&#34;Called when a new edge has been dragged and was dropped.  
-    This operation concludes the edge drawing process.
+    &#34;&#34;&#34;Called when a new edge has been dragged and dropped into this connection&#39;s trigger zone.  
+    This function is responsible for actually connecting the two nodes with a real edge.
     &#34;&#34;&#34;
     if not self.isMultiple():
         self.detachAll()</code></pre>
@@ -629,6 +653,27 @@ This operation concludes the edge drawing process.</p></section>
     if not self.isMultiple():
         self.detachAll()
     self.scene().edgeDragStart(self)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStop"><code class="name flex">
+<span>def <span class="ident">edgeDragStop</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Conclude the edge drawing process.
+This function is called when a drag process from this connection has stopped, regardless of the outcome. (For
+example, when the edge drawing has failed). Default implementation calls the scene-wide version of this
+function.</p></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edgeDragStop(self):
+    &#34;&#34;&#34;Conclude the edge drawing process.
+    This function is called when a drag process from this connection has stopped, regardless of the outcome. (For 
+    example, when the edge drawing has failed). Default implementation calls the scene-wide version of this
+    function.
+    &#34;&#34;&#34;
+    self.scene().edgeDragStop()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.connection.connection.Connection.hideText"><code class="name flex">
@@ -882,6 +927,7 @@ This operation concludes the edge drawing process.</p></section>
 <li>
 <h4><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection" href="#nfb_studio.widgets.scheme.connection.connection.Connection">Connection</a></code></h4>
 <ul class="two-column">
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.EdgeDragMimeType" href="#nfb_studio.widgets.scheme.connection.connection.Connection.EdgeDragMimeType">EdgeDragMimeType</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.attach" href="#nfb_studio.widgets.scheme.connection.connection.Connection.attach">attach</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.autoSelect" href="#nfb_studio.widgets.scheme.connection.connection.Connection.autoSelect">autoSelect</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.autoSelectFromEdge" href="#nfb_studio.widgets.scheme.connection.connection.Connection.autoSelectFromEdge">autoSelectFromEdge</a></code></li>
@@ -893,6 +939,7 @@ This operation concludes the edge drawing process.</p></section>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept">edgeDragAccept</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop">edgeDragDrop</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart">edgeDragStart</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStop" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStop">edgeDragStop</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edges" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edges">edges</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.hideText" href="#nfb_studio.widgets.scheme.connection.connection.Connection.hideText">hideText</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.isMultiple" href="#nfb_studio.widgets.scheme.connection.connection.Connection.isMultiple">isMultiple</a></code></li>

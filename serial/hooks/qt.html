@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.5" />
-<title>nfb_studio API documentation</title>
-<meta name="description" content="NFB experiment designer." />
+<title>nfb_studio.serial.hooks.qt API documentation</title>
+<meta name="description" content="A collection of object_hooks for serializing and deserializing some common Qt objects." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,49 +17,131 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio</code></h1>
+<h1 class="title">Module <code>nfb_studio.serial.hooks.qt</code></h1>
 </header>
 <section id="section-intro">
-<p>NFB experiment designer.</p>
+<p>A collection of object_hooks for serializing and deserializing some common Qt objects.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;NFB experiment designer.&#34;&#34;&#34;
-from .serial import json, hooks
+<pre><code class="python">&#34;&#34;&#34;A collection of object_hooks for serializing and deserializing some common Qt objects.&#34;&#34;&#34;
+from PySide2.QtCore import QPointF, QSizeF
+import nfb_studio.serial.hooks as hk
 
-std_encoder = json.JSONEncoder(hooks=hooks.qt, indent=&#39;\t&#39;)
-std_decoder = json.JSONDecoder(hooks=hooks.qt)</code></pre>
+# Serialize ============================================================================================================
+def serialize_QPointF(obj: QPointF) -&gt; dict:
+    return {
+        &#34;x&#34;: obj.x(),
+        &#34;y&#34;: obj.y()
+    }
+
+def serialize_QSizeF(obj: QSizeF) -&gt; dict:
+    return {
+        &#34;width&#34;: obj.width(),
+        &#34;height&#34;: obj.height()
+    }
+
+
+# Deserialize ==========================================================================================================
+def deserialize_QPointF(obj: QPointF, data: dict):
+    obj.setX(data[&#34;x&#34;])
+    obj.setY(data[&#34;y&#34;])
+
+def deserialize_QSizeF(obj: QSizeF, data: dict):
+    obj.setWidth(data[&#34;width&#34;])
+    obj.setHeight(data[&#34;height&#34;])
+
+
+# Hooks ================================================================================================================
+qt = hk.Hooks(
+    {
+        QPointF: serialize_QPointF,
+        QSizeF: serialize_QSizeF
+    },
+    {
+        QPointF: deserialize_QPointF,
+        QSizeF: deserialize_QSizeF
+    }
+)
+&#34;&#34;&#34;Serialization hooks for the most common Qt classes.&#34;&#34;&#34;</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
 <dl>
-<dt><code class="name"><a title="nfb_studio.gui" href="gui/index.html">nfb_studio.gui</a></code></dt>
+<dt id="nfb_studio.serial.hooks.qt.qt"><code class="name">var <span class="ident">qt</span></code></dt>
 <dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="nfb_studio.math" href="math/index.html">nfb_studio.math</a></code></dt>
-<dd>
-<section class="desc"><p>A collection of math functions.</p></section>
-</dd>
-<dt><code class="name"><a title="nfb_studio.serial" href="serial/index.html">nfb_studio.serial</a></code></dt>
-<dd>
-<section class="desc"><p>A module that implements nfb_studio's custom serialization engine …</p></section>
-</dd>
-<dt><code class="name"><a title="nfb_studio.util" href="util/index.html">nfb_studio.util</a></code></dt>
-<dd>
-<section class="desc"><p>Utility classes and functions.</p></section>
-</dd>
-<dt><code class="name"><a title="nfb_studio.widgets" href="widgets/index.html">nfb_studio.widgets</a></code></dt>
-<dd>
-<section class="desc"><p>A collection of custom general-purpose Qt widgets …</p></section>
+<section class="desc"><p>Serialization hooks for the most common Qt classes.</p></section>
 </dd>
 </dl>
 </section>
 <section>
-</section>
-<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="nfb_studio.serial.hooks.qt.deserialize_QPointF"><code class="name flex">
+<span>def <span class="ident">deserialize_QPointF</span></span>(<span>obj, data)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize_QPointF(obj: QPointF, data: dict):
+    obj.setX(data[&#34;x&#34;])
+    obj.setY(data[&#34;y&#34;])</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serial.hooks.qt.deserialize_QSizeF"><code class="name flex">
+<span>def <span class="ident">deserialize_QSizeF</span></span>(<span>obj, data)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize_QSizeF(obj: QSizeF, data: dict):
+    obj.setWidth(data[&#34;width&#34;])
+    obj.setHeight(data[&#34;height&#34;])</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serial.hooks.qt.serialize_QPointF"><code class="name flex">
+<span>def <span class="ident">serialize_QPointF</span></span>(<span>obj)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize_QPointF(obj: QPointF) -&gt; dict:
+    return {
+        &#34;x&#34;: obj.x(),
+        &#34;y&#34;: obj.y()
+    }</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serial.hooks.qt.serialize_QSizeF"><code class="name flex">
+<span>def <span class="ident">serialize_QSizeF</span></span>(<span>obj)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize_QSizeF(obj: QSizeF) -&gt; dict:
+    return {
+        &#34;width&#34;: obj.width(),
+        &#34;height&#34;: obj.height()
+    }</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 </section>
@@ -70,13 +152,22 @@ std_decoder = json.JSONDecoder(hooks=hooks.qt)</code></pre>
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.gui" href="gui/index.html">nfb_studio.gui</a></code></li>
-<li><code><a title="nfb_studio.math" href="math/index.html">nfb_studio.math</a></code></li>
-<li><code><a title="nfb_studio.serial" href="serial/index.html">nfb_studio.serial</a></code></li>
-<li><code><a title="nfb_studio.util" href="util/index.html">nfb_studio.util</a></code></li>
-<li><code><a title="nfb_studio.widgets" href="widgets/index.html">nfb_studio.widgets</a></code></li>
+<li><code><a title="nfb_studio.serial.hooks" href="index.html">nfb_studio.serial.hooks</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="nfb_studio.serial.hooks.qt.qt" href="#nfb_studio.serial.hooks.qt.qt">qt</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="nfb_studio.serial.hooks.qt.deserialize_QPointF" href="#nfb_studio.serial.hooks.qt.deserialize_QPointF">deserialize_QPointF</a></code></li>
+<li><code><a title="nfb_studio.serial.hooks.qt.deserialize_QSizeF" href="#nfb_studio.serial.hooks.qt.deserialize_QSizeF">deserialize_QSizeF</a></code></li>
+<li><code><a title="nfb_studio.serial.hooks.qt.serialize_QPointF" href="#nfb_studio.serial.hooks.qt.serialize_QPointF">serialize_QPointF</a></code></li>
+<li><code><a title="nfb_studio.serial.hooks.qt.serialize_QSizeF" href="#nfb_studio.serial.hooks.qt.serialize_QSizeF">serialize_QSizeF</a></code></li>
 </ul>
 </li>
 </ul>
