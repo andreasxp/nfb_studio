@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.5" />
-<title>nfb_studio.widgets.text_line_item API documentation</title>
+<title>nfb_studio.util.widgets.text_line_item API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.text_line_item</code></h1>
+<h1 class="title">Module <code>nfb_studio.util.widgets.text_line_item</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -174,7 +174,7 @@ class TextLineItem(QAbstractGraphicsShapeItem):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem"><code class="flex name class">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem"><code class="flex name class">
 <span>class <span class="ident">TextLineItem</span></span>
 <span>(</span><span>text=None, parent=None)</span>
 </code></dt>
@@ -328,7 +328,7 @@ newline characters.</p></section>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.adjust"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.adjust"><code class="name flex">
 <span>def <span class="ident">adjust</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -370,7 +370,7 @@ newline characters.</p></section>
     self.background.setRect(self.boundingRect())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.alignMode"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.alignMode"><code class="name flex">
 <span>def <span class="ident">alignMode</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -383,7 +383,7 @@ newline characters.</p></section>
     return self._align_mode</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.backgroundBrush"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.backgroundBrush"><code class="name flex">
 <span>def <span class="ident">backgroundBrush</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -396,7 +396,7 @@ newline characters.</p></section>
     return self.background.brush()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.boundingRect"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.boundingRect"><code class="name flex">
 <span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -409,7 +409,7 @@ newline characters.</p></section>
     return self._bounding_rect</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.elideMode"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.elideMode"><code class="name flex">
 <span>def <span class="ident">elideMode</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -422,7 +422,7 @@ newline characters.</p></section>
     return self._elide_mode</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.elidedText"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.elidedText"><code class="name flex">
 <span>def <span class="ident">elidedText</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -435,7 +435,7 @@ newline characters.</p></section>
     return self._elided_text</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.font"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.font"><code class="name flex">
 <span>def <span class="ident">font</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -448,7 +448,7 @@ newline characters.</p></section>
     return self._font</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.maximumWidth"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.maximumWidth"><code class="name flex">
 <span>def <span class="ident">maximumWidth</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -462,7 +462,7 @@ newline characters.</p></section>
     return self._max_width</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.paint"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.paint"><code class="name flex">
 <span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget=Ellipsis)</span>
 </code></dt>
 <dd>
@@ -479,7 +479,7 @@ newline characters.</p></section>
     painter.drawText(self.boundingRect(), self.alignMode(), self.elidedText())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setAlignMode"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setAlignMode"><code class="name flex">
 <span>def <span class="ident">setAlignMode</span></span>(<span>self, mode)</span>
 </code></dt>
 <dd>
@@ -508,7 +508,7 @@ newline characters.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setBackgroundBrush"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setBackgroundBrush"><code class="name flex">
 <span>def <span class="ident">setBackgroundBrush</span></span>(<span>self, brush)</span>
 </code></dt>
 <dd>
@@ -521,7 +521,7 @@ newline characters.</p></section>
     self.background.setBrush(brush)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setElideMode"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setElideMode"><code class="name flex">
 <span>def <span class="ident">setElideMode</span></span>(<span>self, mode)</span>
 </code></dt>
 <dd>
@@ -540,7 +540,7 @@ Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setFont"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setFont"><code class="name flex">
 <span>def <span class="ident">setFont</span></span>(<span>self, font)</span>
 </code></dt>
 <dd>
@@ -555,7 +555,7 @@ Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setMaximumWidth"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setMaximumWidth"><code class="name flex">
 <span>def <span class="ident">setMaximumWidth</span></span>(<span>self, width)</span>
 </code></dt>
 <dd>
@@ -571,7 +571,7 @@ Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.setText"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setText"><code class="name flex">
 <span>def <span class="ident">setText</span></span>(<span>self, text)</span>
 </code></dt>
 <dd>
@@ -589,7 +589,7 @@ Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.text_line_item.TextLineItem.text"><code class="name flex">
+<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.text"><code class="name flex">
 <span>def <span class="ident">text</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -615,30 +615,30 @@ Qt.ElideRight.</p></section>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets" href="index.html">nfb_studio.widgets</a></code></li>
+<li><code><a title="nfb_studio.util.widgets" href="index.html">nfb_studio.util.widgets</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.text_line_item.TextLineItem" href="#nfb_studio.widgets.text_line_item.TextLineItem">TextLineItem</a></code></h4>
+<h4><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem" href="#nfb_studio.util.widgets.text_line_item.TextLineItem">TextLineItem</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.adjust" href="#nfb_studio.widgets.text_line_item.TextLineItem.adjust">adjust</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.alignMode" href="#nfb_studio.widgets.text_line_item.TextLineItem.alignMode">alignMode</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.backgroundBrush" href="#nfb_studio.widgets.text_line_item.TextLineItem.backgroundBrush">backgroundBrush</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.boundingRect" href="#nfb_studio.widgets.text_line_item.TextLineItem.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.elideMode" href="#nfb_studio.widgets.text_line_item.TextLineItem.elideMode">elideMode</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.elidedText" href="#nfb_studio.widgets.text_line_item.TextLineItem.elidedText">elidedText</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.font" href="#nfb_studio.widgets.text_line_item.TextLineItem.font">font</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.maximumWidth" href="#nfb_studio.widgets.text_line_item.TextLineItem.maximumWidth">maximumWidth</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.paint" href="#nfb_studio.widgets.text_line_item.TextLineItem.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setAlignMode" href="#nfb_studio.widgets.text_line_item.TextLineItem.setAlignMode">setAlignMode</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setBackgroundBrush" href="#nfb_studio.widgets.text_line_item.TextLineItem.setBackgroundBrush">setBackgroundBrush</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setElideMode" href="#nfb_studio.widgets.text_line_item.TextLineItem.setElideMode">setElideMode</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setFont" href="#nfb_studio.widgets.text_line_item.TextLineItem.setFont">setFont</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setMaximumWidth" href="#nfb_studio.widgets.text_line_item.TextLineItem.setMaximumWidth">setMaximumWidth</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.setText" href="#nfb_studio.widgets.text_line_item.TextLineItem.setText">setText</a></code></li>
-<li><code><a title="nfb_studio.widgets.text_line_item.TextLineItem.text" href="#nfb_studio.widgets.text_line_item.TextLineItem.text">text</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.adjust" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.adjust">adjust</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.alignMode" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.alignMode">alignMode</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.backgroundBrush" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.backgroundBrush">backgroundBrush</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.boundingRect" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.elideMode" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.elideMode">elideMode</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.elidedText" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.elidedText">elidedText</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.font" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.font">font</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.maximumWidth" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.maximumWidth">maximumWidth</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.paint" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setAlignMode" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setAlignMode">setAlignMode</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setBackgroundBrush" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setBackgroundBrush">setBackgroundBrush</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setElideMode" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setElideMode">setElideMode</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setFont" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setFont">setFont</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setMaximumWidth" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setMaximumWidth">setMaximumWidth</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setText" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setText">setText</a></code></li>
+<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.text" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.text">text</a></code></li>
 </ul>
 </li>
 </ul>

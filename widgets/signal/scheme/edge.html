@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.5" />
-<title>nfb_studio.widgets.scheme.edge API documentation</title>
+<title>nfb_studio.widgets.signal.scheme.edge API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.scheme.edge</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.signal.scheme.edge</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -271,10 +271,10 @@ class Edge(SchemeItem):
 
     # Utility functions ================================================================================================
     def adjust(self):
-        &#34;&#34;&#34;Adjust the edge&#39;s coordinates to match those of the input and output of nodes.
-
+        &#34;&#34;&#34;Adjust the edge&#39;s coordinates to match those of the input and output of nodes.  
         Call this function if the node moved or source/target was changed.
         &#34;&#34;&#34;
+        self.setPos(0, 0)  # Edge is always at position 0
         self.prepareGeometryChange()
         
         if self._source is not None:
@@ -360,7 +360,7 @@ class Edge(SchemeItem):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.scheme.edge.Edge"><code class="flex name class">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge"><code class="flex name class">
 <span>class <span class="ident">Edge</span></span>
 </code></dt>
 <dd>
@@ -603,10 +603,10 @@ class Edge(SchemeItem):
 
     # Utility functions ================================================================================================
     def adjust(self):
-        &#34;&#34;&#34;Adjust the edge&#39;s coordinates to match those of the input and output of nodes.
-
+        &#34;&#34;&#34;Adjust the edge&#39;s coordinates to match those of the input and output of nodes.  
         Call this function if the node moved or source/target was changed.
         &#34;&#34;&#34;
+        self.setPos(0, 0)  # Edge is always at position 0
         self.prepareGeometryChange()
         
         if self._source is not None:
@@ -684,27 +684,27 @@ class Edge(SchemeItem):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
+<li><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.adjust"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.adjust"><code class="name flex">
 <span>def <span class="ident">adjust</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Adjust the edge's coordinates to match those of the input and output of nodes.</p>
-<p>Call this function if the node moved or source/target was changed.</p></section>
+<section class="desc"><p>Adjust the edge's coordinates to match those of the input and output of nodes.<br>
+Call this function if the node moved or source/target was changed.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def adjust(self):
-    &#34;&#34;&#34;Adjust the edge&#39;s coordinates to match those of the input and output of nodes.
-
+    &#34;&#34;&#34;Adjust the edge&#39;s coordinates to match those of the input and output of nodes.  
     Call this function if the node moved or source/target was changed.
     &#34;&#34;&#34;
+    self.setPos(0, 0)  # Edge is always at position 0
     self.prepareGeometryChange()
     
     if self._source is not None:
@@ -716,7 +716,7 @@ class Edge(SchemeItem):
     self._path = self.path()  # Recompute path</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.attach"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.attach"><code class="name flex">
 <span>def <span class="ident">attach</span></span>(<span>self, connection)</span>
 </code></dt>
 <dd>
@@ -733,7 +733,7 @@ This function is similar to setSource and setTarget, but determines which side t
     connection.attach(self)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.autoSelect"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.autoSelect"><code class="name flex">
 <span>def <span class="ident">autoSelect</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -750,7 +750,7 @@ This function considers edge selected if nodes on both ends are selected.</p></s
     self.setSelected(self._autoSelectValue())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.boundingRect"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.boundingRect"><code class="name flex">
 <span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -768,7 +768,7 @@ This function considers edge selected if nodes on both ends are selected.</p></s
     return self._path.boundingRect().adjusted(0, -edge_width/2, 0, edge_width/2)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.checkDataType"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.checkDataType"><code class="name flex">
 <span>def <span class="ident">checkDataType</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -792,7 +792,7 @@ This function considers edge selected if nodes on both ends are selected.</p></s
         )</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.dataType"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.dataType"><code class="name flex">
 <span>def <span class="ident">dataType</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -817,7 +817,7 @@ If the edge is not connected to anything, returns None.</p></section>
     return None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.detach"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.detach"><code class="name flex">
 <span>def <span class="ident">detach</span></span>(<span>self, connection)</span>
 </code></dt>
 <dd>
@@ -836,7 +836,7 @@ automatically.</p></section>
     connection.detach(self)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.detachAll"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.detachAll"><code class="name flex">
 <span>def <span class="ident">detachAll</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -854,7 +854,7 @@ automatically.</p></section>
         self.setTarget(None)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.paint"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.paint"><code class="name flex">
 <span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget=Ellipsis)</span>
 </code></dt>
 <dd>
@@ -871,7 +871,7 @@ automatically.</p></section>
     painter.drawPath(self._path)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.paletteChange"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.paletteChange"><code class="name flex">
 <span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -886,7 +886,7 @@ automatically.</p></section>
     self.update(self.boundingRect())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.path"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.path"><code class="name flex">
 <span>def <span class="ident">path</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -910,7 +910,7 @@ Internal function use this to reset their path in response to external changes.<
     return result</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.setSource"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.setSource"><code class="name flex">
 <span>def <span class="ident">setSource</span></span>(<span>self, source)</span>
 </code></dt>
 <dd>
@@ -942,7 +942,7 @@ source (or source position) is supplied.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.setSourcePos"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.setSourcePos"><code class="name flex">
 <span>def <span class="ident">setSourcePos</span></span>(<span>self, pos)</span>
 </code></dt>
 <dd>
@@ -965,7 +965,7 @@ pos is in scene pixel coordinates.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.setTarget"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.setTarget"><code class="name flex">
 <span>def <span class="ident">setTarget</span></span>(<span>self, target)</span>
 </code></dt>
 <dd>
@@ -997,7 +997,7 @@ target (or target position) is supplied.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.setTargetPos"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.setTargetPos"><code class="name flex">
 <span>def <span class="ident">setTargetPos</span></span>(<span>self, pos)</span>
 </code></dt>
 <dd>
@@ -1020,7 +1020,7 @@ pos is in scene pixel coordinates.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.shape"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.shape"><code class="name flex">
 <span>def <span class="ident">shape</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1033,7 +1033,7 @@ pos is in scene pixel coordinates.</p></section>
     return self._path</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.source"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.source"><code class="name flex">
 <span>def <span class="ident">source</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1050,7 +1050,7 @@ Note that an edge can have a source pos (as in coordinates), but not a source co
     return self._source</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.sourceNode"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.sourceNode"><code class="name flex">
 <span>def <span class="ident">sourceNode</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1069,7 +1069,7 @@ If the edge has no source connection, it consequently has no source node.</p></s
     return None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.sourcePos"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.sourcePos"><code class="name flex">
 <span>def <span class="ident">sourcePos</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1088,7 +1088,7 @@ not connected but has a statis position set, that is returned. Otherwise, this f
     return self._source_pos</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.styleChange"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.styleChange"><code class="name flex">
 <span>def <span class="ident">styleChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1106,7 +1106,7 @@ not connected but has a statis position set, that is returned. Otherwise, this f
     self._path = self.path()  # Recompute path with new parameters</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.target"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.target"><code class="name flex">
 <span>def <span class="ident">target</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1123,7 +1123,7 @@ Note that an edge can have a target pos (as in coordinates), but not a target co
     return self._target</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.targetNode"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.targetNode"><code class="name flex">
 <span>def <span class="ident">targetNode</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1142,7 +1142,7 @@ If the edge has no target connection, it consequently has no target node.</p></s
     return None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.edge.Edge.targetPos"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.edge.Edge.targetPos"><code class="name flex">
 <span>def <span class="ident">targetPos</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1164,11 +1164,11 @@ not connected but has a statis position set, that is returned. Otherwise, this f
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition" href="scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1184,37 +1184,37 @@ not connected but has a statis position set, that is returned. Otherwise, this f
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.scheme" href="index.html">nfb_studio.widgets.scheme</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme" href="index.html">nfb_studio.widgets.signal.scheme</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.scheme.edge.Edge" href="#nfb_studio.widgets.scheme.edge.Edge">Edge</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge" href="#nfb_studio.widgets.signal.scheme.edge.Edge">Edge</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.adjust" href="#nfb_studio.widgets.scheme.edge.Edge.adjust">adjust</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.attach" href="#nfb_studio.widgets.scheme.edge.Edge.attach">attach</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.autoSelect" href="#nfb_studio.widgets.scheme.edge.Edge.autoSelect">autoSelect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.boundingRect" href="#nfb_studio.widgets.scheme.edge.Edge.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.checkDataType" href="#nfb_studio.widgets.scheme.edge.Edge.checkDataType">checkDataType</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.dataType" href="#nfb_studio.widgets.scheme.edge.Edge.dataType">dataType</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.detach" href="#nfb_studio.widgets.scheme.edge.Edge.detach">detach</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.detachAll" href="#nfb_studio.widgets.scheme.edge.Edge.detachAll">detachAll</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.paint" href="#nfb_studio.widgets.scheme.edge.Edge.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.paletteChange" href="#nfb_studio.widgets.scheme.edge.Edge.paletteChange">paletteChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.path" href="#nfb_studio.widgets.scheme.edge.Edge.path">path</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.setSource" href="#nfb_studio.widgets.scheme.edge.Edge.setSource">setSource</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.setSourcePos" href="#nfb_studio.widgets.scheme.edge.Edge.setSourcePos">setSourcePos</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.setTarget" href="#nfb_studio.widgets.scheme.edge.Edge.setTarget">setTarget</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.setTargetPos" href="#nfb_studio.widgets.scheme.edge.Edge.setTargetPos">setTargetPos</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.shape" href="#nfb_studio.widgets.scheme.edge.Edge.shape">shape</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.source" href="#nfb_studio.widgets.scheme.edge.Edge.source">source</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.sourceNode" href="#nfb_studio.widgets.scheme.edge.Edge.sourceNode">sourceNode</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.sourcePos" href="#nfb_studio.widgets.scheme.edge.Edge.sourcePos">sourcePos</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.styleChange" href="#nfb_studio.widgets.scheme.edge.Edge.styleChange">styleChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.target" href="#nfb_studio.widgets.scheme.edge.Edge.target">target</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.targetNode" href="#nfb_studio.widgets.scheme.edge.Edge.targetNode">targetNode</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.edge.Edge.targetPos" href="#nfb_studio.widgets.scheme.edge.Edge.targetPos">targetPos</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.adjust" href="#nfb_studio.widgets.signal.scheme.edge.Edge.adjust">adjust</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.attach" href="#nfb_studio.widgets.signal.scheme.edge.Edge.attach">attach</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.autoSelect" href="#nfb_studio.widgets.signal.scheme.edge.Edge.autoSelect">autoSelect</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.boundingRect" href="#nfb_studio.widgets.signal.scheme.edge.Edge.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.checkDataType" href="#nfb_studio.widgets.signal.scheme.edge.Edge.checkDataType">checkDataType</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.dataType" href="#nfb_studio.widgets.signal.scheme.edge.Edge.dataType">dataType</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.detach" href="#nfb_studio.widgets.signal.scheme.edge.Edge.detach">detach</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.detachAll" href="#nfb_studio.widgets.signal.scheme.edge.Edge.detachAll">detachAll</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.paint" href="#nfb_studio.widgets.signal.scheme.edge.Edge.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.paletteChange" href="#nfb_studio.widgets.signal.scheme.edge.Edge.paletteChange">paletteChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.path" href="#nfb_studio.widgets.signal.scheme.edge.Edge.path">path</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.setSource" href="#nfb_studio.widgets.signal.scheme.edge.Edge.setSource">setSource</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.setSourcePos" href="#nfb_studio.widgets.signal.scheme.edge.Edge.setSourcePos">setSourcePos</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.setTarget" href="#nfb_studio.widgets.signal.scheme.edge.Edge.setTarget">setTarget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.setTargetPos" href="#nfb_studio.widgets.signal.scheme.edge.Edge.setTargetPos">setTargetPos</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.shape" href="#nfb_studio.widgets.signal.scheme.edge.Edge.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.source" href="#nfb_studio.widgets.signal.scheme.edge.Edge.source">source</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.sourceNode" href="#nfb_studio.widgets.signal.scheme.edge.Edge.sourceNode">sourceNode</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.sourcePos" href="#nfb_studio.widgets.signal.scheme.edge.Edge.sourcePos">sourcePos</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.styleChange" href="#nfb_studio.widgets.signal.scheme.edge.Edge.styleChange">styleChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.target" href="#nfb_studio.widgets.signal.scheme.edge.Edge.target">target</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.targetNode" href="#nfb_studio.widgets.signal.scheme.edge.Edge.targetNode">targetNode</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge.Edge.targetPos" href="#nfb_studio.widgets.signal.scheme.edge.Edge.targetPos">targetPos</a></code></li>
 </ul>
 </li>
 </ul>

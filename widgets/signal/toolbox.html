@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.5" />
-<title>nfb_studio.widgets.scheme.toolbox API documentation</title>
+<title>nfb_studio.widgets.signal.toolbox API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.scheme.toolbox</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.signal.toolbox</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -29,9 +29,12 @@ from PySide2.QtWidgets import QListView
 from sortedcontainers import SortedDict
 
 from nfb_studio.serial import mime, hooks
-from .node import Node
+from .scheme import Node
 
 class Toolbox(QAbstractListModel):
+    &#34;&#34;&#34;A list of signal nodes that can be dragged to the scheme.
+    &#34;&#34;&#34;
+
     DragMimeType = &#34;application/x-toolbox-drag&#34;
 
     def __init__(self, parent):
@@ -110,17 +113,20 @@ class Toolbox(QAbstractListModel):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox"><code class="flex name class">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox"><code class="flex name class">
 <span>class <span class="ident">Toolbox</span></span>
 <span>(</span><span>parent)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>QAbstractListModel(self, parent: typing.Union[PySide2.QtCore.QObject, NoneType] = None)</p></section>
+<section class="desc"><p>A list of signal nodes that can be dragged to the scheme.</p></section>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Toolbox(QAbstractListModel):
+    &#34;&#34;&#34;A list of signal nodes that can be dragged to the scheme.
+    &#34;&#34;&#34;
+
     DragMimeType = &#34;application/x-toolbox-drag&#34;
 
     def __init__(self, parent):
@@ -198,18 +204,18 @@ class Toolbox(QAbstractListModel):
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.DragMimeType"><code class="name">var <span class="ident">DragMimeType</span></code></dt>
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.DragMimeType"><code class="name">var <span class="ident">DragMimeType</span></code></dt>
 <dd>
 <section class="desc"></section>
 </dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <section class="desc"></section>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.addItem"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.addItem"><code class="name flex">
 <span>def <span class="ident">addItem</span></span>(<span>self, name, item)</span>
 </code></dt>
 <dd>
@@ -226,7 +232,7 @@ class Toolbox(QAbstractListModel):
     self.endInsertRows()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.data"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.data"><code class="name flex">
 <span>def <span class="ident">data</span></span>(<span>self, index, role=PySide2.QtCore.Qt.ItemDataRole.DisplayRole)</span>
 </code></dt>
 <dd>
@@ -243,7 +249,7 @@ class Toolbox(QAbstractListModel):
     return None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.deserialize"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.deserialize"><code class="name flex">
 <span>def <span class="ident">deserialize</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
@@ -256,7 +262,7 @@ class Toolbox(QAbstractListModel):
     self._items = data</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.flags"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.flags"><code class="name flex">
 <span>def <span class="ident">flags</span></span>(<span>self, index)</span>
 </code></dt>
 <dd>
@@ -273,7 +279,7 @@ class Toolbox(QAbstractListModel):
     return default_flags</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.getView"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.getView"><code class="name flex">
 <span>def <span class="ident">getView</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -294,7 +300,7 @@ class Toolbox(QAbstractListModel):
     return view</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.headerData"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.headerData"><code class="name flex">
 <span>def <span class="ident">headerData</span></span>(<span>self, section, orientation, role=PySide2.QtCore.Qt.ItemDataRole.DisplayRole)</span>
 </code></dt>
 <dd>
@@ -312,7 +318,7 @@ class Toolbox(QAbstractListModel):
     return None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.mimeData"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.mimeData"><code class="name flex">
 <span>def <span class="ident">mimeData</span></span>(<span>self, indexes)</span>
 </code></dt>
 <dd>
@@ -331,7 +337,7 @@ class Toolbox(QAbstractListModel):
     return package</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.mimeTypes"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.mimeTypes"><code class="name flex">
 <span>def <span class="ident">mimeTypes</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -344,7 +350,7 @@ class Toolbox(QAbstractListModel):
     return [self.DragMimeType]</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.rowCount"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.rowCount"><code class="name flex">
 <span>def <span class="ident">rowCount</span></span>(<span>self, parent=&lt;PySide2.QtCore.QModelIndex(-1,-1,0x0,QObject(0x0))&gt;)</span>
 </code></dt>
 <dd>
@@ -357,7 +363,7 @@ class Toolbox(QAbstractListModel):
     return len(self._items)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.serialize"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.toolbox.Toolbox.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -383,26 +389,26 @@ class Toolbox(QAbstractListModel):
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.scheme" href="index.html">nfb_studio.widgets.scheme</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal" href="index.html">nfb_studio.widgets.signal</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox" href="#nfb_studio.widgets.scheme.toolbox.Toolbox">Toolbox</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox" href="#nfb_studio.widgets.signal.toolbox.Toolbox">Toolbox</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.DragMimeType" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.DragMimeType">DragMimeType</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.addItem" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.addItem">addItem</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.data" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.data">data</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.deserialize" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.flags" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.flags">flags</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.getView" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.getView">getView</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.headerData" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.headerData">headerData</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.mimeData" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.mimeData">mimeData</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.mimeTypes" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.mimeTypes">mimeTypes</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.rowCount" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.rowCount">rowCount</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.serialize" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.serialize">serialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.toolbox.Toolbox.staticMetaObject" href="#nfb_studio.widgets.scheme.toolbox.Toolbox.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.DragMimeType" href="#nfb_studio.widgets.signal.toolbox.Toolbox.DragMimeType">DragMimeType</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.addItem" href="#nfb_studio.widgets.signal.toolbox.Toolbox.addItem">addItem</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.data" href="#nfb_studio.widgets.signal.toolbox.Toolbox.data">data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.deserialize" href="#nfb_studio.widgets.signal.toolbox.Toolbox.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.flags" href="#nfb_studio.widgets.signal.toolbox.Toolbox.flags">flags</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.getView" href="#nfb_studio.widgets.signal.toolbox.Toolbox.getView">getView</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.headerData" href="#nfb_studio.widgets.signal.toolbox.Toolbox.headerData">headerData</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.mimeData" href="#nfb_studio.widgets.signal.toolbox.Toolbox.mimeData">mimeData</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.mimeTypes" href="#nfb_studio.widgets.signal.toolbox.Toolbox.mimeTypes">mimeTypes</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.rowCount" href="#nfb_studio.widgets.signal.toolbox.Toolbox.rowCount">rowCount</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.serialize" href="#nfb_studio.widgets.signal.toolbox.Toolbox.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.toolbox.Toolbox.staticMetaObject" href="#nfb_studio.widgets.signal.toolbox.Toolbox.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
 </li>
 </ul>

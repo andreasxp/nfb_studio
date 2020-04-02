@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.5" />
-<title>nfb_studio.widgets.scheme.connection API documentation</title>
-<meta name="description" content="" />
+<title>nfb_studio.widgets.signal.scheme API documentation</title>
+<meta name="description" content="A graph scheme as a Qt object that represents the dataflow diagram of signals in nfb_studio." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,36 +17,68 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.scheme.connection</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.signal.scheme</code></h1>
 </header>
 <section id="section-intro">
+<p>A graph scheme as a Qt object that represents the dataflow diagram of signals in nfb_studio.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from .connection import Connection
-from .input import Input
-from .output import Output</code></pre>
+<pre><code class="python">&#34;&#34;&#34;A graph scheme as a Qt object that represents the dataflow diagram of signals in nfb_studio.&#34;&#34;&#34;
+from .scheme import Scheme
+
+from .node import Node
+from .edge import Edge
+from .connection import Connection, Input, Output
+from .message import Message, InfoMessage, WarningMessage, ErrorMessage
+
+from .style import Style
+from .palette import Palette</code></pre>
 </details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt><code class="name"><a title="nfb_studio.widgets.scheme.connection.connection" href="connection.html">nfb_studio.widgets.scheme.connection.connection</a></code></dt>
+<dt><code class="name"><a title="nfb_studio.widgets.signal.scheme.connection" href="connection/index.html">nfb_studio.widgets.signal.scheme.connection</a></code></dt>
 <dd>
 <section class="desc"></section>
 </dd>
-<dt><code class="name"><a title="nfb_studio.widgets.scheme.connection.input" href="input.html">nfb_studio.widgets.scheme.connection.input</a></code></dt>
+<dt><code class="name"><a title="nfb_studio.widgets.signal.scheme.data_type" href="data_type.html">nfb_studio.widgets.signal.scheme.data_type</a></code></dt>
 <dd>
 <section class="desc"></section>
 </dd>
-<dt><code class="name"><a title="nfb_studio.widgets.scheme.connection.output" href="output.html">nfb_studio.widgets.scheme.connection.output</a></code></dt>
+<dt><code class="name"><a title="nfb_studio.widgets.signal.scheme.edge" href="edge.html">nfb_studio.widgets.signal.scheme.edge</a></code></dt>
 <dd>
 <section class="desc"></section>
 </dd>
-<dt><code class="name"><a title="nfb_studio.widgets.scheme.connection.trigger" href="trigger.html">nfb_studio.widgets.scheme.connection.trigger</a></code></dt>
+<dt><code class="name"><a title="nfb_studio.widgets.signal.scheme.graph" href="graph.html">nfb_studio.widgets.signal.scheme.graph</a></code></dt>
+<dd>
+<section class="desc"><p>Classes representing the graph stucture in the signal scheme.</p></section>
+</dd>
+<dt><code class="name"><a title="nfb_studio.widgets.signal.scheme.message" href="message.html">nfb_studio.widgets.signal.scheme.message</a></code></dt>
 <dd>
 <section class="desc"></section>
+</dd>
+<dt><code class="name"><a title="nfb_studio.widgets.signal.scheme.node" href="node.html">nfb_studio.widgets.signal.scheme.node</a></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt><code class="name"><a title="nfb_studio.widgets.signal.scheme.palette" href="palette.html">nfb_studio.widgets.signal.scheme.palette</a></code></dt>
+<dd>
+<section class="desc"><p>A collection of colors for use in the scheme graphics items.</p></section>
+</dd>
+<dt><code class="name"><a title="nfb_studio.widgets.signal.scheme.scheme" href="scheme.html">nfb_studio.widgets.signal.scheme.scheme</a></code></dt>
+<dd>
+<section class="desc"><p>A data model for the nfb experiment's system of signals and their components.</p></section>
+</dd>
+<dt><code class="name"><a title="nfb_studio.widgets.signal.scheme.scheme_item" href="scheme_item.html">nfb_studio.widgets.signal.scheme.scheme_item</a></code></dt>
+<dd>
+<section class="desc"></section>
+</dd>
+<dt><code class="name"><a title="nfb_studio.widgets.signal.scheme.style" href="style.html">nfb_studio.widgets.signal.scheme.style</a></code></dt>
+<dd>
+<section class="desc"><p>A collection of properties for drawing scheme items.</p></section>
 </dd>
 </dl>
 </section>
@@ -65,15 +97,21 @@ from .output import Output</code></pre>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.scheme" href="../index.html">nfb_studio.widgets.scheme</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal" href="../index.html">nfb_studio.widgets.signal</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection" href="connection.html">nfb_studio.widgets.scheme.connection.connection</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.input" href="input.html">nfb_studio.widgets.scheme.connection.input</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.output" href="output.html">nfb_studio.widgets.scheme.connection.output</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.trigger" href="trigger.html">nfb_studio.widgets.scheme.connection.trigger</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection" href="connection/index.html">nfb_studio.widgets.signal.scheme.connection</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.data_type" href="data_type.html">nfb_studio.widgets.signal.scheme.data_type</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.edge" href="edge.html">nfb_studio.widgets.signal.scheme.edge</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.graph" href="graph.html">nfb_studio.widgets.signal.scheme.graph</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.message" href="message.html">nfb_studio.widgets.signal.scheme.message</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.node" href="node.html">nfb_studio.widgets.signal.scheme.node</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.palette" href="palette.html">nfb_studio.widgets.signal.scheme.palette</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.scheme" href="scheme.html">nfb_studio.widgets.signal.scheme.scheme</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item" href="scheme_item.html">nfb_studio.widgets.signal.scheme.scheme_item</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.style" href="style.html">nfb_studio.widgets.signal.scheme.style</a></code></li>
 </ul>
 </li>
 </ul>

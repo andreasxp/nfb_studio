@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.7.5" />
-<title>nfb_studio.widgets.scheme.connection.connection API documentation</title>
+<title>nfb_studio.widgets.signal.scheme.connection.connection API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.scheme.connection.connection</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.signal.scheme.connection.connection</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -28,7 +28,7 @@
 from PySide2.QtGui import QPainter, QFontMetricsF
 from PySide2.QtWidgets import QGraphicsItem, QGraphicsLineItem
 
-from nfb_studio.widgets import TextLineItem, scheme
+from nfb_studio.util import TextLineItem
 
 from ..style import Style
 from ..palette import Palette
@@ -243,7 +243,7 @@ class Connection(SchemeItem):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection"><code class="flex name class">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection"><code class="flex name class">
 <span>class <span class="ident">Connection</span></span>
 <span>(</span><span>text=None, data_type=None, parent=None)</span>
 </code></dt>
@@ -452,32 +452,32 @@ class Connection(SchemeItem):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
+<li><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.scheme.connection.input.Input" href="input.html#nfb_studio.widgets.scheme.connection.input.Input">Input</a></li>
-<li><a title="nfb_studio.widgets.scheme.connection.output.Output" href="output.html#nfb_studio.widgets.scheme.connection.output.Output">Output</a></li>
+<li><a title="nfb_studio.widgets.signal.scheme.connection.input.Input" href="input.html#nfb_studio.widgets.signal.scheme.connection.input.Input">Input</a></li>
+<li><a title="nfb_studio.widgets.signal.scheme.connection.output.Output" href="output.html#nfb_studio.widgets.signal.scheme.connection.output.Output">Output</a></li>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.EdgeDragMimeType"><code class="name">var <span class="ident">EdgeDragMimeType</span></code></dt>
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.EdgeDragMimeType"><code class="name">var <span class="ident">EdgeDragMimeType</span></code></dt>
 <dd>
 <section class="desc"></section>
 </dd>
 </dl>
 <h3>Instance variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edges"><code class="name">var <span class="ident">edges</span></code></dt>
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.edges"><code class="name">var <span class="ident">edges</span></code></dt>
 <dd>
-<section class="desc"><p>Edges attached to this connection. To change this set use <a title="nfb_studio.widgets.scheme.connection.connection.Connection" href="#nfb_studio.widgets.scheme.connection.connection.Connection"><code>Connection</code></a>'s methods: attach, detach, detachAll.</p></section>
+<section class="desc"><p>Edges attached to this connection. To change this set use <a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection"><code>Connection</code></a>'s methods: attach, detach, detachAll.</p></section>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.attach"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.attach"><code class="name flex">
 <span>def <span class="ident">attach</span></span>(<span>self, edge)</span>
 </code></dt>
 <dd>
@@ -491,7 +491,7 @@ class Connection(SchemeItem):
     raise NotImplementedError</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.autoSelect"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.autoSelect"><code class="name flex">
 <span>def <span class="ident">autoSelect</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -509,7 +509,7 @@ The connection asks the edges to autoSelect themselves, and they in turn call se
         edge.autoSelect()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.autoSelectFromEdge"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.autoSelectFromEdge"><code class="name flex">
 <span>def <span class="ident">autoSelectFromEdge</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -533,7 +533,7 @@ The connection asks the edges to autoSelect themselves, and they in turn call se
         self.setSelected(value)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.boundingRect"><code class="name flex">
 <span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -546,7 +546,7 @@ The connection asks the edges to autoSelect themselves, and they in turn call se
     return QRectF()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.dataType"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.dataType"><code class="name flex">
 <span>def <span class="ident">dataType</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -559,7 +559,7 @@ The connection asks the edges to autoSelect themselves, and they in turn call se
     return self._data_type</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.deserialize"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.deserialize"><code class="name flex">
 <span>def <span class="ident">deserialize</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
@@ -573,7 +573,7 @@ The connection asks the edges to autoSelect themselves, and they in turn call se
     self.setDataType(data[&#34;data_type&#34;])</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.detach"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.detach"><code class="name flex">
 <span>def <span class="ident">detach</span></span>(<span>self, edge)</span>
 </code></dt>
 <dd>
@@ -590,7 +590,7 @@ Other connection of this edge is unaffected.</p></section>
     raise NotImplementedError</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.detachAll"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.detachAll"><code class="name flex">
 <span>def <span class="ident">detachAll</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -604,7 +604,7 @@ Other connection of this edge is unaffected.</p></section>
     raise NotImplementedError</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragAccept"><code class="name flex">
 <span>def <span class="ident">edgeDragAccept</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -621,7 +621,7 @@ Returns True or False depending on whether the dragged edge should be accepted o
     raise NotImplementedError</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragDrop"><code class="name flex">
 <span>def <span class="ident">edgeDragDrop</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -639,7 +639,7 @@ This function is responsible for actually connecting the two nodes with a real e
         self.detachAll()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragStart"><code class="name flex">
 <span>def <span class="ident">edgeDragStart</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -655,7 +655,7 @@ This function is responsible for actually connecting the two nodes with a real e
     self.scene().edgeDragStart(self)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStop"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragStop"><code class="name flex">
 <span>def <span class="ident">edgeDragStop</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -676,7 +676,7 @@ function.</p></section>
     self.scene().edgeDragStop()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.hideText"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.hideText"><code class="name flex">
 <span>def <span class="ident">hideText</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -689,7 +689,7 @@ function.</p></section>
     self._text_item.setVisible(False)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.isMultiple"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.isMultiple"><code class="name flex">
 <span>def <span class="ident">isMultiple</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -702,7 +702,7 @@ function.</p></section>
     return self._is_multiple</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.itemChange"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.itemChange"><code class="name flex">
 <span>def <span class="ident">itemChange</span></span>(<span>self, change, value)</span>
 </code></dt>
 <dd>
@@ -732,7 +732,7 @@ function.</p></section>
     return super().itemChange(change, value)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.paint"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.paint"><code class="name flex">
 <span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget=Ellipsis)</span>
 </code></dt>
 <dd>
@@ -745,7 +745,7 @@ function.</p></section>
     pass</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.paletteChange"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.paletteChange"><code class="name flex">
 <span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -765,7 +765,7 @@ function.</p></section>
     self._stem_item.setPen(self.style().edgePen(self.palette()))</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.serialize"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -781,7 +781,7 @@ function.</p></section>
     }</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.setDataType"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.setDataType"><code class="name flex">
 <span>def <span class="ident">setDataType</span></span>(<span>self, data_type)</span>
 </code></dt>
 <dd>
@@ -798,7 +798,7 @@ function.</p></section>
         edge.checkDataType()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.setMultiple"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.setMultiple"><code class="name flex">
 <span>def <span class="ident">setMultiple</span></span>(<span>self, multiple)</span>
 </code></dt>
 <dd>
@@ -811,7 +811,7 @@ function.</p></section>
     self._is_multiple = multiple</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.setText"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.setText"><code class="name flex">
 <span>def <span class="ident">setText</span></span>(<span>self, text)</span>
 </code></dt>
 <dd>
@@ -824,7 +824,7 @@ function.</p></section>
     self._text_item.setText(text)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.showText"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.showText"><code class="name flex">
 <span>def <span class="ident">showText</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -837,7 +837,7 @@ function.</p></section>
     self._text_item.setVisible(True)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.stemRoot"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.stemRoot"><code class="name flex">
 <span>def <span class="ident">stemRoot</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -851,7 +851,7 @@ function.</p></section>
     raise NotImplementedError</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.stemTip"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.stemTip"><code class="name flex">
 <span>def <span class="ident">stemTip</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -865,7 +865,7 @@ function.</p></section>
     raise NotImplementedError</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.styleChange"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.styleChange"><code class="name flex">
 <span>def <span class="ident">styleChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -884,7 +884,7 @@ function.</p></section>
     self._stem_item.setPen(style.edgePen(self.palette()))</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.connection.connection.Connection.text"><code class="name flex">
+<dt id="nfb_studio.widgets.signal.scheme.connection.connection.Connection.text"><code class="name flex">
 <span>def <span class="ident">text</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -900,10 +900,10 @@ function.</p></section>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position" href="../scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition" href="../scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
 </ul>
 </li>
 </ul>
@@ -919,42 +919,42 @@ function.</p></section>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.scheme.connection" href="index.html">nfb_studio.widgets.scheme.connection</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection" href="index.html">nfb_studio.widgets.signal.scheme.connection</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection" href="#nfb_studio.widgets.scheme.connection.connection.Connection">Connection</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection">Connection</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.EdgeDragMimeType" href="#nfb_studio.widgets.scheme.connection.connection.Connection.EdgeDragMimeType">EdgeDragMimeType</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.attach" href="#nfb_studio.widgets.scheme.connection.connection.Connection.attach">attach</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.autoSelect" href="#nfb_studio.widgets.scheme.connection.connection.Connection.autoSelect">autoSelect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.autoSelectFromEdge" href="#nfb_studio.widgets.scheme.connection.connection.Connection.autoSelectFromEdge">autoSelectFromEdge</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect" href="#nfb_studio.widgets.scheme.connection.connection.Connection.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.dataType" href="#nfb_studio.widgets.scheme.connection.connection.Connection.dataType">dataType</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.deserialize" href="#nfb_studio.widgets.scheme.connection.connection.Connection.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.detach" href="#nfb_studio.widgets.scheme.connection.connection.Connection.detach">detach</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.detachAll" href="#nfb_studio.widgets.scheme.connection.connection.Connection.detachAll">detachAll</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragAccept">edgeDragAccept</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragDrop">edgeDragDrop</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStart">edgeDragStart</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStop" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edgeDragStop">edgeDragStop</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.edges" href="#nfb_studio.widgets.scheme.connection.connection.Connection.edges">edges</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.hideText" href="#nfb_studio.widgets.scheme.connection.connection.Connection.hideText">hideText</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.isMultiple" href="#nfb_studio.widgets.scheme.connection.connection.Connection.isMultiple">isMultiple</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.itemChange" href="#nfb_studio.widgets.scheme.connection.connection.Connection.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.paint" href="#nfb_studio.widgets.scheme.connection.connection.Connection.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.paletteChange" href="#nfb_studio.widgets.scheme.connection.connection.Connection.paletteChange">paletteChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.serialize" href="#nfb_studio.widgets.scheme.connection.connection.Connection.serialize">serialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.setDataType" href="#nfb_studio.widgets.scheme.connection.connection.Connection.setDataType">setDataType</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.setMultiple" href="#nfb_studio.widgets.scheme.connection.connection.Connection.setMultiple">setMultiple</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.setText" href="#nfb_studio.widgets.scheme.connection.connection.Connection.setText">setText</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.showText" href="#nfb_studio.widgets.scheme.connection.connection.Connection.showText">showText</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.stemRoot" href="#nfb_studio.widgets.scheme.connection.connection.Connection.stemRoot">stemRoot</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.stemTip" href="#nfb_studio.widgets.scheme.connection.connection.Connection.stemTip">stemTip</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.styleChange" href="#nfb_studio.widgets.scheme.connection.connection.Connection.styleChange">styleChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.connection.connection.Connection.text" href="#nfb_studio.widgets.scheme.connection.connection.Connection.text">text</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.EdgeDragMimeType" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.EdgeDragMimeType">EdgeDragMimeType</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.attach" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.attach">attach</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.autoSelect" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.autoSelect">autoSelect</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.autoSelectFromEdge" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.autoSelectFromEdge">autoSelectFromEdge</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.boundingRect" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.dataType" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.dataType">dataType</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.deserialize" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.detach" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.detach">detach</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.detachAll" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.detachAll">detachAll</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragAccept" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragAccept">edgeDragAccept</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragDrop" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragDrop">edgeDragDrop</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragStart" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragStart">edgeDragStart</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragStop" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.edgeDragStop">edgeDragStop</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.edges" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.edges">edges</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.hideText" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.hideText">hideText</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.isMultiple" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.isMultiple">isMultiple</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.itemChange" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.paint" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.paletteChange" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.paletteChange">paletteChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.serialize" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.setDataType" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.setDataType">setDataType</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.setMultiple" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.setMultiple">setMultiple</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.setText" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.setText">setText</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.showText" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.showText">showText</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.stemRoot" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.stemRoot">stemRoot</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.stemTip" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.stemTip">stemTip</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.styleChange" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.styleChange">styleChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection.text" href="#nfb_studio.widgets.signal.scheme.connection.connection.Connection.text">text</a></code></li>
 </ul>
 </li>
 </ul>
