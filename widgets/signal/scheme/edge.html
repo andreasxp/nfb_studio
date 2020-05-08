@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.5" />
+<meta name="generator" content="pdoc 0.8.1" />
 <title>nfb_studio.widgets.signal.scheme.edge API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
-<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
-<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 </head>
 <body>
@@ -364,7 +364,7 @@ class Edge(SchemeItem):
 <span>class <span class="ident">Edge</span></span>
 </code></dt>
 <dd>
-<section class="desc"><p>An graphics item representing a bezier curve, connecting one node's output to another's input.</p></section>
+<div class="desc"><p>An graphics item representing a bezier curve, connecting one node's output to another's input.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -694,8 +694,8 @@ class Edge(SchemeItem):
 <span>def <span class="ident">adjust</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Adjust the edge's coordinates to match those of the input and output of nodes.<br>
-Call this function if the node moved or source/target was changed.</p></section>
+<div class="desc"><p>Adjust the edge's coordinates to match those of the input and output of nodes.<br>
+Call this function if the node moved or source/target was changed.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -717,11 +717,11 @@ Call this function if the node moved or source/target was changed.</p></section>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.attach"><code class="name flex">
-<span>def <span class="ident">attach</span></span>(<span>self, connection)</span>
+<span>def <span class="ident">attach</span></span>(<span>self, connection: <a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection" href="connection/connection.html#nfb_studio.widgets.signal.scheme.connection.connection.Connection">Connection</a>)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Attach this edge to a connection.<br>
-This function is similar to setSource and setTarget, but determines which side to attach automatically.</p></section>
+<div class="desc"><p>Attach this edge to a connection.<br>
+This function is similar to setSource and setTarget, but determines which side to attach automatically.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -737,8 +737,8 @@ This function is similar to setSource and setTarget, but determines which side t
 <span>def <span class="ident">autoSelect</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Automatically determine if the edge needs to be selected or not.<br>
-This function considers edge selected if nodes on both ends are selected.</p></section>
+<div class="desc"><p>Automatically determine if the edge needs to be selected or not.<br>
+This function considers edge selected if nodes on both ends are selected.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -751,10 +751,10 @@ This function considers edge selected if nodes on both ends are selected.</p></s
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.boundingRect"><code class="name flex">
-<span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
+<span>def <span class="ident">boundingRect</span></span>(<span>self) -> PySide2.QtCore.QRectF</span>
 </code></dt>
 <dd>
-<section class="desc"><p>boundingRect(self) -&gt; PySide2.QtCore.QRectF</p></section>
+<div class="desc"><p>boundingRect(self) -&gt; PySide2.QtCore.QRectF</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -772,7 +772,7 @@ This function considers edge selected if nodes on both ends are selected.</p></s
 <span>def <span class="ident">checkDataType</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Check if the data type of two connections matches and raise a ValueError if it does not.</p></section>
+<div class="desc"><p>Check if the data type of two connections matches and raise a ValueError if it does not.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -793,13 +793,13 @@ This function considers edge selected if nodes on both ends are selected.</p></s
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.dataType"><code class="name flex">
-<span>def <span class="ident">dataType</span></span>(<span>self)</span>
+<span>def <span class="ident">dataType</span></span>(<span>self) -> typing.Union[<a title="nfb_studio.widgets.signal.scheme.data_type.DataType" href="data_type.html#nfb_studio.widgets.signal.scheme.data_type.DataType">DataType</a>, NoneType]</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Return this edge's data type.<br>
+<div class="desc"><p>Return this edge's data type.<br>
 By themselves, edges do not have a data type. However, if an edge is connected to something, it assumes that
 connection's data type as its own.<br>
-If the edge is not connected to anything, returns None.</p></section>
+If the edge is not connected to anything, returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -818,12 +818,12 @@ If the edge is not connected to anything, returns None.</p></section>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.detach"><code class="name flex">
-<span>def <span class="ident">detach</span></span>(<span>self, connection)</span>
+<span>def <span class="ident">detach</span></span>(<span>self, connection: <a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection" href="connection/connection.html#nfb_studio.widgets.signal.scheme.connection.connection.Connection">Connection</a>)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Detach this edge from a connection.<br>
+<div class="desc"><p>Detach this edge from a connection.<br>
 This function is similar to setSource(None) and setTarget(None), but determines which side to detach
-automatically.</p></section>
+automatically.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -840,7 +840,7 @@ automatically.</p></section>
 <span>def <span class="ident">detachAll</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Detach this edge from both source and target nodes.</p></section>
+<div class="desc"><p>Detach this edge from both source and target nodes.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -855,10 +855,10 @@ automatically.</p></section>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.paint"><code class="name flex">
-<span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget=Ellipsis)</span>
+<span>def <span class="ident">paint</span></span>(<span>self, painter: PySide2.QtGui.QPainter, option, widget=Ellipsis) -> NoneType</span>
 </code></dt>
 <dd>
-<section class="desc"><p>paint(self, painter: PySide2.QtGui.QPainter, option: PySide2.QtWidgets.QStyleOptionGraphicsItem, widget: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></section>
+<div class="desc"><p>paint(self, painter: PySide2.QtGui.QPainter, option: PySide2.QtWidgets.QStyleOptionGraphicsItem, widget: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -875,7 +875,7 @@ automatically.</p></section>
 <span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -890,8 +890,8 @@ automatically.</p></section>
 <span>def <span class="ident">path</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Compute and return QPainterPath that is used to draw the curved line.<br>
-Internal function use this to reset their path in response to external changes.</p></section>
+<div class="desc"><p>Compute and return QPainterPath that is used to draw the curved line.<br>
+Internal function use this to reset their path in response to external changes.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -911,12 +911,12 @@ Internal function use this to reset their path in response to external changes.<
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.setSource"><code class="name flex">
-<span>def <span class="ident">setSource</span></span>(<span>self, source)</span>
+<span>def <span class="ident">setSource</span></span>(<span>self, source: typing.Union[nfb_studio.widgets.signal.scheme.connection.output.Output, NoneType])</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set (or unset) the source of this edge.</p>
+<div class="desc"><p>Set (or unset) the source of this edge.</p>
 <p>Unsetting the source sets the source position to None, which causes the edge to not be drawn, until another
-source (or source position) is supplied.</p></section>
+source (or source position) is supplied.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -943,12 +943,12 @@ source (or source position) is supplied.</p></section>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.setSourcePos"><code class="name flex">
-<span>def <span class="ident">setSourcePos</span></span>(<span>self, pos)</span>
+<span>def <span class="ident">setSourcePos</span></span>(<span>self, pos: PySide2.QtCore.QPointF)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set source position not from a source connection, but to some static coordinates.</p>
+<div class="desc"><p>Set source position not from a source connection, but to some static coordinates.</p>
 <p>Useful when drawing an edge to the tip of the mouse. This function sets edge's source to None.
-pos is in scene pixel coordinates.</p></section>
+pos is in scene pixel coordinates.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -966,12 +966,12 @@ pos is in scene pixel coordinates.</p></section>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.setTarget"><code class="name flex">
-<span>def <span class="ident">setTarget</span></span>(<span>self, target)</span>
+<span>def <span class="ident">setTarget</span></span>(<span>self, target: typing.Union[nfb_studio.widgets.signal.scheme.connection.input.Input, NoneType])</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set (or unset) the target of this edge.</p>
+<div class="desc"><p>Set (or unset) the target of this edge.</p>
 <p>Unsetting the target sets the target position to None, which causes the edge to not be drawn, until another
-target (or target position) is supplied.</p></section>
+target (or target position) is supplied.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -998,12 +998,12 @@ target (or target position) is supplied.</p></section>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.setTargetPos"><code class="name flex">
-<span>def <span class="ident">setTargetPos</span></span>(<span>self, pos)</span>
+<span>def <span class="ident">setTargetPos</span></span>(<span>self, pos: PySide2.QtCore.QPointF)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set target position not from a target connection, but to some static coordinates.</p>
+<div class="desc"><p>Set target position not from a target connection, but to some static coordinates.</p>
 <p>Useful when drawing an edge to the tip of the mouse. This function sets edge's target to None.
-pos is in scene pixel coordinates.</p></section>
+pos is in scene pixel coordinates.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1021,10 +1021,10 @@ pos is in scene pixel coordinates.</p></section>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.shape"><code class="name flex">
-<span>def <span class="ident">shape</span></span>(<span>self)</span>
+<span>def <span class="ident">shape</span></span>(<span>self) -> PySide2.QtGui.QPainterPath</span>
 </code></dt>
 <dd>
-<section class="desc"><p>shape(self) -&gt; PySide2.QtGui.QPainterPath</p></section>
+<div class="desc"><p>shape(self) -&gt; PySide2.QtGui.QPainterPath</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1034,11 +1034,11 @@ pos is in scene pixel coordinates.</p></section>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.source"><code class="name flex">
-<span>def <span class="ident">source</span></span>(<span>self)</span>
+<span>def <span class="ident">source</span></span>(<span>self) -> typing.Union[<a title="nfb_studio.widgets.signal.scheme.connection.output.Output" href="connection/output.html#nfb_studio.widgets.signal.scheme.connection.output.Output">Output</a>, NoneType]</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Return an output connection from which the edge goes, if it exists.<br>
-Note that an edge can have a source pos (as in coordinates), but not a source connection.</p></section>
+<div class="desc"><p>Return an output connection from which the edge goes, if it exists.<br>
+Note that an edge can have a source pos (as in coordinates), but not a source connection.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1051,11 +1051,11 @@ Note that an edge can have a source pos (as in coordinates), but not a source co
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.sourceNode"><code class="name flex">
-<span>def <span class="ident">sourceNode</span></span>(<span>self)</span>
+<span>def <span class="ident">sourceNode</span></span>(<span>self) -> typing.Union[<a title="nfb_studio.widgets.signal.scheme.node.Node" href="node.html#nfb_studio.widgets.signal.scheme.node.Node">Node</a>, NoneType]</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Return a node from which the edge originates, if it exists.<br>
-If the edge has no source connection, it consequently has no source node.</p></section>
+<div class="desc"><p>Return a node from which the edge originates, if it exists.<br>
+If the edge has no source connection, it consequently has no source node.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1070,12 +1070,12 @@ If the edge has no source connection, it consequently has no source node.</p></s
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.sourcePos"><code class="name flex">
-<span>def <span class="ident">sourcePos</span></span>(<span>self)</span>
+<span>def <span class="ident">sourcePos</span></span>(<span>self) -> typing.Union[PySide2.QtCore.QPointF, NoneType]</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Return this edge's source position, if it exists.<br>
+<div class="desc"><p>Return this edge's source position, if it exists.<br>
 If the edge is connected to a node on the source side, node's output's coordinates is this position. If it is
-not connected but has a statis position set, that is returned. Otherwise, this function returns None.</p></section>
+not connected but has a statis position set, that is returned. Otherwise, this function returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1092,7 +1092,7 @@ not connected but has a statis position set, that is returned. Otherwise, this f
 <span>def <span class="ident">styleChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1107,11 +1107,11 @@ not connected but has a statis position set, that is returned. Otherwise, this f
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.target"><code class="name flex">
-<span>def <span class="ident">target</span></span>(<span>self)</span>
+<span>def <span class="ident">target</span></span>(<span>self) -> typing.Union[<a title="nfb_studio.widgets.signal.scheme.connection.input.Input" href="connection/input.html#nfb_studio.widgets.signal.scheme.connection.input.Input">Input</a>, NoneType]</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Return an input connection to which the edge goes, if it exists.<br>
-Note that an edge can have a target pos (as in coordinates), but not a target connection.</p></section>
+<div class="desc"><p>Return an input connection to which the edge goes, if it exists.<br>
+Note that an edge can have a target pos (as in coordinates), but not a target connection.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1124,11 +1124,11 @@ Note that an edge can have a target pos (as in coordinates), but not a target co
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.targetNode"><code class="name flex">
-<span>def <span class="ident">targetNode</span></span>(<span>self)</span>
+<span>def <span class="ident">targetNode</span></span>(<span>self) -> typing.Union[<a title="nfb_studio.widgets.signal.scheme.node.Node" href="node.html#nfb_studio.widgets.signal.scheme.node.Node">Node</a>, NoneType]</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Return a node to which the edge goes, if it exists.<br>
-If the edge has no target connection, it consequently has no target node.</p></section>
+<div class="desc"><p>Return a node to which the edge goes, if it exists.<br>
+If the edge has no target connection, it consequently has no target node.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1143,12 +1143,12 @@ If the edge has no target connection, it consequently has no target node.</p></s
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal.scheme.edge.Edge.targetPos"><code class="name flex">
-<span>def <span class="ident">targetPos</span></span>(<span>self)</span>
+<span>def <span class="ident">targetPos</span></span>(<span>self) -> typing.Union[PySide2.QtCore.QPointF, NoneType]</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Return this edge's source position, if it exists.<br>
+<div class="desc"><p>Return this edge's source position, if it exists.<br>
 If the edge is connected to a node on the target side, node's input's coordinates is this position. If it is
-not connected but has a statis position set, that is returned. Otherwise, this function returns None.</p></section>
+not connected but has a statis position set, that is returned. Otherwise, this function returns None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -1223,7 +1223,7 @@ not connected but has a statis position set, that is returned. Otherwise, this f
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>

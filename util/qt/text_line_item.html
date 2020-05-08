@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.7.5" />
-<title>nfb_studio.util.widgets.text_line_item API documentation</title>
+<meta name="generator" content="pdoc 0.8.1" />
+<title>nfb_studio.util.qt.text_line_item API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
-<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
-<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
 </head>
 <body>
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.util.widgets.text_line_item</code></h1>
+<h1 class="title">Module <code>nfb_studio.util.qt.text_line_item</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -174,15 +174,15 @@ class TextLineItem(QAbstractGraphicsShapeItem):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem"><code class="flex name class">
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem"><code class="flex name class">
 <span>class <span class="ident">TextLineItem</span></span>
 <span>(</span><span>text=None, parent=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>A one-line text item.</p>
+<div class="desc"><p>A one-line text item.</p>
 <p>Default origin point is at the left side of the baseline. This can change if setAlignMode is called. TextLineItem
 also supports drawing text background. Its brush can be set using setBackgroundBrush(). Text must not contain
-newline characters.</p></section>
+newline characters.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -328,11 +328,11 @@ newline characters.</p></section>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.adjust"><code class="name flex">
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.adjust"><code class="name flex">
 <span>def <span class="ident">adjust</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Adjust the item's geometry in response to changes.</p></section>
+<div class="desc"><p>Adjust the item's geometry in response to changes.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -370,11 +370,11 @@ newline characters.</p></section>
     self.background.setRect(self.boundingRect())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.alignMode"><code class="name flex">
-<span>def <span class="ident">alignMode</span></span>(<span>self)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.alignMode"><code class="name flex">
+<span>def <span class="ident">alignMode</span></span>(<span>self) -> int</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -383,11 +383,11 @@ newline characters.</p></section>
     return self._align_mode</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.backgroundBrush"><code class="name flex">
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.backgroundBrush"><code class="name flex">
 <span>def <span class="ident">backgroundBrush</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -396,11 +396,11 @@ newline characters.</p></section>
     return self.background.brush()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.boundingRect"><code class="name flex">
-<span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.boundingRect"><code class="name flex">
+<span>def <span class="ident">boundingRect</span></span>(<span>self) -> PySide2.QtCore.QRectF</span>
 </code></dt>
 <dd>
-<section class="desc"><p>boundingRect(self) -&gt; PySide2.QtCore.QRectF</p></section>
+<div class="desc"><p>boundingRect(self) -&gt; PySide2.QtCore.QRectF</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -409,11 +409,11 @@ newline characters.</p></section>
     return self._bounding_rect</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.elideMode"><code class="name flex">
-<span>def <span class="ident">elideMode</span></span>(<span>self)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.elideMode"><code class="name flex">
+<span>def <span class="ident">elideMode</span></span>(<span>self) -> int</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -422,11 +422,11 @@ newline characters.</p></section>
     return self._elide_mode</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.elidedText"><code class="name flex">
-<span>def <span class="ident">elidedText</span></span>(<span>self)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.elidedText"><code class="name flex">
+<span>def <span class="ident">elidedText</span></span>(<span>self) -> str</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -435,11 +435,11 @@ newline characters.</p></section>
     return self._elided_text</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.font"><code class="name flex">
-<span>def <span class="ident">font</span></span>(<span>self)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.font"><code class="name flex">
+<span>def <span class="ident">font</span></span>(<span>self) -> PySide2.QtGui.QFont</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -448,11 +448,11 @@ newline characters.</p></section>
     return self._font</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.maximumWidth"><code class="name flex">
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.maximumWidth"><code class="name flex">
 <span>def <span class="ident">maximumWidth</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Maximum width the text is allowed to be. <code>None</code> represents unlimited width.</p></section>
+<div class="desc"><p>Maximum width the text is allowed to be. <code>None</code> represents unlimited width.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -462,11 +462,11 @@ newline characters.</p></section>
     return self._max_width</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.paint"><code class="name flex">
-<span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget=Ellipsis)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.paint"><code class="name flex">
+<span>def <span class="ident">paint</span></span>(<span>self, painter: PySide2.QtGui.QPainter, option, widget=Ellipsis) -> NoneType</span>
 </code></dt>
 <dd>
-<section class="desc"><p>paint(self, painter: PySide2.QtGui.QPainter, option: PySide2.QtWidgets.QStyleOptionGraphicsItem, widget: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></section>
+<div class="desc"><p>paint(self, painter: PySide2.QtGui.QPainter, option: PySide2.QtWidgets.QStyleOptionGraphicsItem, widget: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -479,16 +479,16 @@ newline characters.</p></section>
     painter.drawText(self.boundingRect(), self.alignMode(), self.elidedText())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setAlignMode"><code class="name flex">
-<span>def <span class="ident">setAlignMode</span></span>(<span>self, mode)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.setAlignMode"><code class="name flex">
+<span>def <span class="ident">setAlignMode</span></span>(<span>self, mode: int) -> NoneType</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Align mode specifies text alignment.</p>
+<div class="desc"><p>Align mode specifies text alignment.</p>
 <p>Text alignment changes the origin point x position:<br>
 - If mode is Qt.AlignLeft, the origin point is on the left of the baseline.
 - If mode is Qt.AlignHCenter, the origin point is in the center of the baseline.
 - If mode is Qt.AlignRight, the origin point is on the right of the baseline.</p>
-<p>Vertical alignment has no meaning for one line of text and should not be set. Default value is Qt.AlignLeft.</p></section>
+<p>Vertical alignment has no meaning for one line of text and should not be set. Default value is Qt.AlignLeft.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -508,11 +508,11 @@ newline characters.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setBackgroundBrush"><code class="name flex">
-<span>def <span class="ident">setBackgroundBrush</span></span>(<span>self, brush)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.setBackgroundBrush"><code class="name flex">
+<span>def <span class="ident">setBackgroundBrush</span></span>(<span>self, brush: PySide2.QtGui.QBrush)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -521,12 +521,12 @@ newline characters.</p></section>
     self.background.setBrush(brush)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setElideMode"><code class="name flex">
-<span>def <span class="ident">setElideMode</span></span>(<span>self, mode)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.setElideMode"><code class="name flex">
+<span>def <span class="ident">setElideMode</span></span>(<span>self, mode: int) -> NoneType</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Elide mode specifies where the ellipsis should be located when the text is elided. Default value is
-Qt.ElideRight.</p></section>
+<div class="desc"><p>Elide mode specifies where the ellipsis should be located when the text is elided. Default value is
+Qt.ElideRight.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -540,11 +540,11 @@ Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setFont"><code class="name flex">
-<span>def <span class="ident">setFont</span></span>(<span>self, font)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.setFont"><code class="name flex">
+<span>def <span class="ident">setFont</span></span>(<span>self, font: PySide2.QtGui.QFont) -> NoneType</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -555,11 +555,11 @@ Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setMaximumWidth"><code class="name flex">
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.setMaximumWidth"><code class="name flex">
 <span>def <span class="ident">setMaximumWidth</span></span>(<span>self, width)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Set the maximum width the text is allowed to be. <code>None</code> represents unlimited width.</p></section>
+<div class="desc"><p>Set the maximum width the text is allowed to be. <code>None</code> represents unlimited width.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -571,11 +571,11 @@ Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.setText"><code class="name flex">
-<span>def <span class="ident">setText</span></span>(<span>self, text)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.setText"><code class="name flex">
+<span>def <span class="ident">setText</span></span>(<span>self, text: str) -> NoneType</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -589,11 +589,11 @@ Qt.ElideRight.</p></section>
     self.adjust()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.widgets.text_line_item.TextLineItem.text"><code class="name flex">
-<span>def <span class="ident">text</span></span>(<span>self)</span>
+<dt id="nfb_studio.util.qt.text_line_item.TextLineItem.text"><code class="name flex">
+<span>def <span class="ident">text</span></span>(<span>self) -> str</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -615,30 +615,30 @@ Qt.ElideRight.</p></section>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.util.widgets" href="index.html">nfb_studio.util.widgets</a></code></li>
+<li><code><a title="nfb_studio.util.qt" href="index.html">nfb_studio.util.qt</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem" href="#nfb_studio.util.widgets.text_line_item.TextLineItem">TextLineItem</a></code></h4>
+<h4><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem" href="#nfb_studio.util.qt.text_line_item.TextLineItem">TextLineItem</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.adjust" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.adjust">adjust</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.alignMode" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.alignMode">alignMode</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.backgroundBrush" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.backgroundBrush">backgroundBrush</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.boundingRect" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.elideMode" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.elideMode">elideMode</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.elidedText" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.elidedText">elidedText</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.font" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.font">font</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.maximumWidth" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.maximumWidth">maximumWidth</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.paint" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setAlignMode" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setAlignMode">setAlignMode</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setBackgroundBrush" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setBackgroundBrush">setBackgroundBrush</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setElideMode" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setElideMode">setElideMode</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setFont" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setFont">setFont</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setMaximumWidth" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setMaximumWidth">setMaximumWidth</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.setText" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.setText">setText</a></code></li>
-<li><code><a title="nfb_studio.util.widgets.text_line_item.TextLineItem.text" href="#nfb_studio.util.widgets.text_line_item.TextLineItem.text">text</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.adjust" href="#nfb_studio.util.qt.text_line_item.TextLineItem.adjust">adjust</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.alignMode" href="#nfb_studio.util.qt.text_line_item.TextLineItem.alignMode">alignMode</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.backgroundBrush" href="#nfb_studio.util.qt.text_line_item.TextLineItem.backgroundBrush">backgroundBrush</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.boundingRect" href="#nfb_studio.util.qt.text_line_item.TextLineItem.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.elideMode" href="#nfb_studio.util.qt.text_line_item.TextLineItem.elideMode">elideMode</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.elidedText" href="#nfb_studio.util.qt.text_line_item.TextLineItem.elidedText">elidedText</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.font" href="#nfb_studio.util.qt.text_line_item.TextLineItem.font">font</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.maximumWidth" href="#nfb_studio.util.qt.text_line_item.TextLineItem.maximumWidth">maximumWidth</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.paint" href="#nfb_studio.util.qt.text_line_item.TextLineItem.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.setAlignMode" href="#nfb_studio.util.qt.text_line_item.TextLineItem.setAlignMode">setAlignMode</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.setBackgroundBrush" href="#nfb_studio.util.qt.text_line_item.TextLineItem.setBackgroundBrush">setBackgroundBrush</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.setElideMode" href="#nfb_studio.util.qt.text_line_item.TextLineItem.setElideMode">setElideMode</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.setFont" href="#nfb_studio.util.qt.text_line_item.TextLineItem.setFont">setFont</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.setMaximumWidth" href="#nfb_studio.util.qt.text_line_item.TextLineItem.setMaximumWidth">setMaximumWidth</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.setText" href="#nfb_studio.util.qt.text_line_item.TextLineItem.setText">setText</a></code></li>
+<li><code><a title="nfb_studio.util.qt.text_line_item.TextLineItem.text" href="#nfb_studio.util.qt.text_line_item.TextLineItem.text">text</a></code></li>
 </ul>
 </li>
 </ul>
@@ -647,7 +647,7 @@ Qt.ElideRight.</p></section>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.7.5</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad()</script>
