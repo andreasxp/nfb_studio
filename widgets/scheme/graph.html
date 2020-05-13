@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets.signal.scheme.graph API documentation</title>
-<meta name="description" content="Classes representing the graph stucture in the signal scheme." />
+<title>nfb_studio.widgets.scheme.graph API documentation</title>
+<meta name="description" content="Classes representing the graph stucture in the node scheme." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,15 +17,15 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.signal.scheme.graph</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.graph</code></h1>
 </header>
 <section id="section-intro">
-<p>Classes representing the graph stucture in the signal scheme.</p>
+<p>Classes representing the graph stucture in the node scheme.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;Classes representing the graph stucture in the signal scheme.&#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34;Classes representing the graph stucture in the node scheme.&#34;&#34;&#34;
 from typing import Union
 from itertools import filterfalse
 from collections import MutableSet
@@ -34,10 +34,7 @@ from PySide2.QtCore import QRectF
 
 from nfb_studio.util import GraphicsItemGroup
 
-from .node import Node
-from .edge import Edge
-from .connection import Input, Output
-
+from .node import Node, Edge, Input, Output
 
 class Graph(GraphicsItemGroup):
     &#34;&#34;&#34;A collection of nodes and edges connecting them.&#34;&#34;&#34;
@@ -240,7 +237,7 @@ class Graph(GraphicsItemGroup):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph"><code class="flex name class">
+<dt id="nfb_studio.widgets.scheme.graph.Graph"><code class="flex name class">
 <span>class <span class="ident">Graph</span></span>
 </code></dt>
 <dd>
@@ -442,7 +439,7 @@ class Graph(GraphicsItemGroup):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup" href="../../../util/qt/graphics_item_group.html#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup">GraphicsItemGroup</a></li>
+<li><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup" href="../../util/qt/graphics_item_group.html#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup">GraphicsItemGroup</a></li>
 <li>collections.abc.MutableSet</li>
 <li>collections.abc.Set</li>
 <li>collections.abc.Collection</li>
@@ -452,7 +449,7 @@ class Graph(GraphicsItemGroup):
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph.clipboardSelection"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.Graph.clipboardSelection"><code class="name flex">
 <span>def <span class="ident">clipboardSelection</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -479,8 +476,8 @@ empty graph is returned instead.</p></div>
     return result</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph.connect_nodes"><code class="name flex">
-<span>def <span class="ident">connect_nodes</span></span>(<span>self, source: <a title="nfb_studio.widgets.signal.scheme.connection.output.Output" href="connection/output.html#nfb_studio.widgets.signal.scheme.connection.output.Output">Output</a>, target: <a title="nfb_studio.widgets.signal.scheme.connection.input.Input" href="connection/input.html#nfb_studio.widgets.signal.scheme.connection.input.Input">Input</a>) -> <a title="nfb_studio.widgets.signal.scheme.edge.Edge" href="edge.html#nfb_studio.widgets.signal.scheme.edge.Edge">Edge</a></span>
+<dt id="nfb_studio.widgets.scheme.graph.Graph.connect_nodes"><code class="name flex">
+<span>def <span class="ident">connect_nodes</span></span>(<span>self, source: <a title="nfb_studio.widgets.scheme.node.connection.output.Output" href="node/connection/output.html#nfb_studio.widgets.scheme.node.connection.output.Output">Output</a>, target: <a title="nfb_studio.widgets.scheme.node.connection.input.Input" href="node/connection/input.html#nfb_studio.widgets.scheme.node.connection.input.Input">Input</a>) -> <a title="nfb_studio.widgets.scheme.node.edge.Edge" href="node/edge.html#nfb_studio.widgets.scheme.node.edge.Edge">Edge</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Connect an Output connection to an Input connection with an edge.</p>
@@ -502,7 +499,7 @@ empty graph is returned instead.</p></div>
     return edge</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph.deserialize"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.Graph.deserialize"><code class="name flex">
 <span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
 </code></dt>
 <dd>
@@ -536,8 +533,8 @@ deserialization.</p></div>
         self.connect_nodes(source, target)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph.disconnect_nodes"><code class="name flex">
-<span>def <span class="ident">disconnect_nodes</span></span>(<span>self, source: <a title="nfb_studio.widgets.signal.scheme.connection.output.Output" href="connection/output.html#nfb_studio.widgets.signal.scheme.connection.output.Output">Output</a>, target: <a title="nfb_studio.widgets.signal.scheme.connection.input.Input" href="connection/input.html#nfb_studio.widgets.signal.scheme.connection.input.Input">Input</a>) -> typing.Union[<a title="nfb_studio.widgets.signal.scheme.edge.Edge" href="edge.html#nfb_studio.widgets.signal.scheme.edge.Edge">Edge</a>, NoneType]</span>
+<dt id="nfb_studio.widgets.scheme.graph.Graph.disconnect_nodes"><code class="name flex">
+<span>def <span class="ident">disconnect_nodes</span></span>(<span>self, source: <a title="nfb_studio.widgets.scheme.node.connection.output.Output" href="node/connection/output.html#nfb_studio.widgets.scheme.node.connection.output.Output">Output</a>, target: <a title="nfb_studio.widgets.scheme.node.connection.input.Input" href="node/connection/input.html#nfb_studio.widgets.scheme.node.connection.input.Input">Input</a>) -> typing.Union[<a title="nfb_studio.widgets.scheme.node.edge.Edge" href="node/edge.html#nfb_studio.widgets.scheme.node.edge.Edge">Edge</a>, NoneType]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Remove a connection between a node output and an input.</p>
@@ -560,7 +557,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></div>
     return None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph.extract"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.Graph.extract"><code class="name flex">
 <span>def <span class="ident">extract</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
@@ -584,7 +581,7 @@ removal are also removed.</p></div>
         self.discard(node)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph.merge"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.Graph.merge"><code class="name flex">
 <span>def <span class="ident">merge</span></span>(<span>self, other)</span>
 </code></dt>
 <dd>
@@ -604,7 +601,7 @@ removal are also removed.</p></div>
     self.edges |= other.edges</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph.selectAll"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.Graph.selectAll"><code class="name flex">
 <span>def <span class="ident">selectAll</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -619,7 +616,7 @@ removal are also removed.</p></div>
         node.setSelected(True)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph.selection"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.Graph.selection"><code class="name flex">
 <span>def <span class="ident">selection</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -645,7 +642,7 @@ that the resulting graph will contain only edges and no nodes.</p></div>
     return result</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph.serialize"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.Graph.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
 </code></dt>
 <dd>
@@ -688,7 +685,7 @@ that the resulting graph will contain only edges and no nodes.</p></div>
     return data</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.graph.Graph.wideSelection"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graph.Graph.wideSelection"><code class="name flex">
 <span>def <span class="ident">wideSelection</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -718,10 +715,10 @@ This snapshot is equivalent to the items that are deleted when a selection is re
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup" href="../../../util/qt/graphics_item_group.html#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup">GraphicsItemGroup</a></b></code>:
+<li><code><b><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup" href="../../util/qt/graphics_item_group.html#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup">GraphicsItemGroup</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.add" href="../../../util/qt/graphics_item_group.html#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.add">add</a></code></li>
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.discard" href="../../../util/qt/graphics_item_group.html#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.discard">discard</a></code></li>
+<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.add" href="../../util/qt/graphics_item_group.html#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.add">add</a></code></li>
+<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.discard" href="../../util/qt/graphics_item_group.html#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.discard">discard</a></code></li>
 </ul>
 </li>
 </ul>
@@ -737,24 +734,24 @@ This snapshot is equivalent to the items that are deleted when a selection is re
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.signal.scheme" href="index.html">nfb_studio.widgets.signal.scheme</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme" href="index.html">nfb_studio.widgets.scheme</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph" href="#nfb_studio.widgets.signal.scheme.graph.Graph">Graph</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.scheme.graph.Graph" href="#nfb_studio.widgets.scheme.graph.Graph">Graph</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph.clipboardSelection" href="#nfb_studio.widgets.signal.scheme.graph.Graph.clipboardSelection">clipboardSelection</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph.connect_nodes" href="#nfb_studio.widgets.signal.scheme.graph.Graph.connect_nodes">connect_nodes</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph.deserialize" href="#nfb_studio.widgets.signal.scheme.graph.Graph.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph.disconnect_nodes" href="#nfb_studio.widgets.signal.scheme.graph.Graph.disconnect_nodes">disconnect_nodes</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph.extract" href="#nfb_studio.widgets.signal.scheme.graph.Graph.extract">extract</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph.merge" href="#nfb_studio.widgets.signal.scheme.graph.Graph.merge">merge</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph.selectAll" href="#nfb_studio.widgets.signal.scheme.graph.Graph.selectAll">selectAll</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph.selection" href="#nfb_studio.widgets.signal.scheme.graph.Graph.selection">selection</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph.serialize" href="#nfb_studio.widgets.signal.scheme.graph.Graph.serialize">serialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.graph.Graph.wideSelection" href="#nfb_studio.widgets.signal.scheme.graph.Graph.wideSelection">wideSelection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.clipboardSelection" href="#nfb_studio.widgets.scheme.graph.Graph.clipboardSelection">clipboardSelection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.connect_nodes" href="#nfb_studio.widgets.scheme.graph.Graph.connect_nodes">connect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.deserialize" href="#nfb_studio.widgets.scheme.graph.Graph.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.disconnect_nodes" href="#nfb_studio.widgets.scheme.graph.Graph.disconnect_nodes">disconnect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.extract" href="#nfb_studio.widgets.scheme.graph.Graph.extract">extract</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.merge" href="#nfb_studio.widgets.scheme.graph.Graph.merge">merge</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.selectAll" href="#nfb_studio.widgets.scheme.graph.Graph.selectAll">selectAll</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.selection" href="#nfb_studio.widgets.scheme.graph.Graph.selection">selection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.serialize" href="#nfb_studio.widgets.scheme.graph.Graph.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.wideSelection" href="#nfb_studio.widgets.scheme.graph.Graph.wideSelection">wideSelection</a></code></li>
 </ul>
 </li>
 </ul>

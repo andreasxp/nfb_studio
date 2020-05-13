@@ -28,8 +28,7 @@
 <pre><code class="python">&#34;&#34;&#34;NFB main source signal.&#34;&#34;&#34;
 from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QLineEdit
 
-from ..signal import Node, Input, Output, DataType
-from ..signal.scheme.data_type import Unknown
+from ..scheme import Node, Input, Output, DataType
 
 
 class DerivedSignalExport(Node):
@@ -48,8 +47,8 @@ class DerivedSignalExport(Node):
         super().__init__(parent)
 
         self.setTitle(&#34;Derived Signal Export&#34;)
-        self.addInput(Input(&#34;Input&#34;, Unknown))
-        self.addOutput(Output(&#34;Output&#34;, Unknown))
+        self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
+        self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
         self.setConfigWidget(self.Config())</code></pre>
 </details>
@@ -90,15 +89,15 @@ class DerivedSignalExport(Node):
         super().__init__(parent)
 
         self.setTitle(&#34;Derived Signal Export&#34;)
-        self.addInput(Input(&#34;Input&#34;, Unknown))
-        self.addOutput(Output(&#34;Output&#34;, Unknown))
+        self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
+        self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
         self.setConfigWidget(self.Config())</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.signal.scheme.node.Node" href="../signal/scheme/node.html#nfb_studio.widgets.signal.scheme.node.Node">Node</a></li>
-<li><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="../signal/scheme/scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></li>
+<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
@@ -111,16 +110,16 @@ class DerivedSignalExport(Node):
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.signal.scheme.node.Node" href="../signal/scheme/node.html#nfb_studio.widgets.signal.scheme.node.Node">Node</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.signal.scheme.node.Node.boundingRect" href="../signal/scheme/node.html#nfb_studio.widgets.signal.scheme.node.Node.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.node.Node.configWidget" href="../signal/scheme/node.html#nfb_studio.widgets.signal.scheme.node.Node.configWidget">configWidget</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.node.Node.itemChange" href="../signal/scheme/scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.node.Node.mouseDoubleClickEvent" href="../signal/scheme/node.html#nfb_studio.widgets.signal.scheme.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.node.Node.paint" href="../signal/scheme/node.html#nfb_studio.widgets.signal.scheme.node.Node.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.node.Node.position" href="../signal/scheme/scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.node.Node.setPosition" href="../signal/scheme/scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.node.Node.shape" href="../signal/scheme/node.html#nfb_studio.widgets.signal.scheme.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
 </ul>
 </li>
 </ul>

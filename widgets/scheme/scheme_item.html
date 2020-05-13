@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets.signal.scheme.scheme_item API documentation</title>
+<title>nfb_studio.widgets.scheme.scheme_item API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.signal.scheme.scheme_item</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.scheme_item</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -97,7 +97,7 @@ class SchemeItem(QGraphicsItem):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem"><code class="flex name class">
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem"><code class="flex name class">
 <span>class <span class="ident">SchemeItem</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
@@ -169,15 +169,15 @@ class SchemeItem(QGraphicsItem):
 </ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection" href="connection/connection.html#nfb_studio.widgets.signal.scheme.connection.connection.Connection">Connection</a></li>
-<li><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger" href="connection/trigger.html#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger">Trigger</a></li>
-<li><a title="nfb_studio.widgets.signal.scheme.edge.Edge" href="edge.html#nfb_studio.widgets.signal.scheme.edge.Edge">Edge</a></li>
-<li><a title="nfb_studio.widgets.signal.scheme.message.Message" href="message.html#nfb_studio.widgets.signal.scheme.message.Message">Message</a></li>
-<li><a title="nfb_studio.widgets.signal.scheme.node.Node" href="node.html#nfb_studio.widgets.signal.scheme.node.Node">Node</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.connection.connection.Connection" href="node/connection/connection.html#nfb_studio.widgets.scheme.node.connection.connection.Connection">Connection</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger" href="node/connection/trigger.html#nfb_studio.widgets.scheme.node.connection.trigger.Trigger">Trigger</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.edge.Edge" href="node/edge.html#nfb_studio.widgets.scheme.node.edge.Edge">Edge</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.message.Message" href="node/message.html#nfb_studio.widgets.scheme.node.message.Message">Message</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.node.Node" href="node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange"><code class="name flex">
 <span>def <span class="ident">itemChange</span></span>(<span>self, change: PySide2.QtWidgets.QGraphicsItem.GraphicsItemChange, value)</span>
 </code></dt>
 <dd>
@@ -197,8 +197,8 @@ class SchemeItem(QGraphicsItem):
     return super().itemChange(change, value)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.palette"><code class="name flex">
-<span>def <span class="ident">palette</span></span>(<span>self) -> <a title="nfb_studio.widgets.signal.scheme.palette.Palette" href="palette.html#nfb_studio.widgets.signal.scheme.palette.Palette">Palette</a></span>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.palette"><code class="name flex">
+<span>def <span class="ident">palette</span></span>(<span>self) -> <a title="nfb_studio.widgets.scheme.palette.Palette" href="palette.html#nfb_studio.widgets.scheme.palette.Palette">Palette</a></span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -210,7 +210,7 @@ class SchemeItem(QGraphicsItem):
     return self._palette</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.paletteChange"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.paletteChange"><code class="name flex">
 <span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -223,7 +223,7 @@ class SchemeItem(QGraphicsItem):
     pass</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position"><code class="name flex">
 <span>def <span class="ident">position</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -241,8 +241,8 @@ class SchemeItem(QGraphicsItem):
     return pixels_to_inches(self.pos())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPalette"><code class="name flex">
-<span>def <span class="ident">setPalette</span></span>(<span>self, palette: <a title="nfb_studio.widgets.signal.scheme.palette.Palette" href="palette.html#nfb_studio.widgets.signal.scheme.palette.Palette">Palette</a>)</span>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPalette"><code class="name flex">
+<span>def <span class="ident">setPalette</span></span>(<span>self, palette: <a title="nfb_studio.widgets.scheme.palette.Palette" href="palette.html#nfb_studio.widgets.scheme.palette.Palette">Palette</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -255,7 +255,7 @@ class SchemeItem(QGraphicsItem):
     self.paletteChange()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition"><code class="name flex">
 <span>def <span class="ident">setPosition</span></span>(<span>self, *args, **kwargs)</span>
 </code></dt>
 <dd>
@@ -275,8 +275,8 @@ class SchemeItem(QGraphicsItem):
     self.setPos(inches_to_pixels(point))</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setStyle"><code class="name flex">
-<span>def <span class="ident">setStyle</span></span>(<span>self, style: <a title="nfb_studio.widgets.signal.scheme.style.Style" href="style.html#nfb_studio.widgets.signal.scheme.style.Style">Style</a>)</span>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setStyle"><code class="name flex">
+<span>def <span class="ident">setStyle</span></span>(<span>self, style: <a title="nfb_studio.widgets.scheme.style.Style" href="style.html#nfb_studio.widgets.scheme.style.Style">Style</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -289,8 +289,8 @@ class SchemeItem(QGraphicsItem):
     self.styleChange()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.style"><code class="name flex">
-<span>def <span class="ident">style</span></span>(<span>self) -> <a title="nfb_studio.widgets.signal.scheme.style.Style" href="style.html#nfb_studio.widgets.signal.scheme.style.Style">Style</a></span>
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.style"><code class="name flex">
+<span>def <span class="ident">style</span></span>(<span>self) -> <a title="nfb_studio.widgets.scheme.style.Style" href="style.html#nfb_studio.widgets.scheme.style.Style">Style</a></span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -302,7 +302,7 @@ class SchemeItem(QGraphicsItem):
     return self._style</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.styleChange"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme_item.SchemeItem.styleChange"><code class="name flex">
 <span>def <span class="ident">styleChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -328,23 +328,23 @@ class SchemeItem(QGraphicsItem):
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.signal.scheme" href="index.html">nfb_studio.widgets.signal.scheme</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme" href="index.html">nfb_studio.widgets.scheme</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange" href="#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.palette" href="#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.palette">palette</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.paletteChange" href="#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.paletteChange">paletteChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position" href="#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPalette" href="#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPalette">setPalette</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition" href="#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setStyle" href="#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setStyle">setStyle</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.style" href="#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.style">style</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.styleChange" href="#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.styleChange">styleChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.palette" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.palette">palette</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.paletteChange" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.paletteChange">paletteChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPalette" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPalette">setPalette</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setStyle" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setStyle">setStyle</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.style" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.style">style</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.styleChange" href="#nfb_studio.widgets.scheme.scheme_item.SchemeItem.styleChange">styleChange</a></code></li>
 </ul>
 </li>
 </ul>

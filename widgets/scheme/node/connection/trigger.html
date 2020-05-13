@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets.signal.scheme.connection.trigger API documentation</title>
+<title>nfb_studio.widgets.scheme.node.connection.trigger API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.signal.scheme.connection.trigger</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.node.connection.trigger</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -28,8 +28,8 @@
 from PySide2.QtGui import QDrag, QPainterPath
 from PySide2.QtWidgets import QGraphicsSceneMouseEvent, QGraphicsSceneDragDropEvent, QApplication
 
-from ..scheme_item import SchemeItem
-from ..style import Style
+from ...scheme_item import SchemeItem
+from ...style import Style
 
 class Trigger(SchemeItem):
     &#34;&#34;&#34;Special invisible item that handles the area from which and to which the edge can be drawn.&#34;&#34;&#34;
@@ -101,7 +101,7 @@ class Trigger(SchemeItem):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger"><code class="flex name class">
+<dt id="nfb_studio.widgets.scheme.node.connection.trigger.Trigger"><code class="flex name class">
 <span>class <span class="ident">Trigger</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
@@ -173,20 +173,20 @@ class Trigger(SchemeItem):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.DragMimeType"><code class="name">var <span class="ident">DragMimeType</span></code></dt>
+<dt id="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.DragMimeType"><code class="name">var <span class="ident">DragMimeType</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.boundingRect"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.boundingRect"><code class="name flex">
 <span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -199,7 +199,7 @@ class Trigger(SchemeItem):
     return QRectF(-self._radius, -self._radius, self._radius*2, self._radius*2)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.dragEnterEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.dragEnterEvent"><code class="name flex">
 <span>def <span class="ident">dragEnterEvent</span></span>(<span>self, event: PySide2.QtWidgets.QGraphicsSceneDragDropEvent)</span>
 </code></dt>
 <dd>
@@ -217,7 +217,7 @@ class Trigger(SchemeItem):
         event.ignore()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.dropEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.dropEvent"><code class="name flex">
 <span>def <span class="ident">dropEvent</span></span>(<span>self, event: PySide2.QtWidgets.QGraphicsSceneDragDropEvent)</span>
 </code></dt>
 <dd>
@@ -230,7 +230,7 @@ class Trigger(SchemeItem):
     self.parentItem().edgeDragDrop()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.mouseMoveEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.mouseMoveEvent"><code class="name flex">
 <span>def <span class="ident">mouseMoveEvent</span></span>(<span>self, event: PySide2.QtWidgets.QGraphicsSceneMouseEvent)</span>
 </code></dt>
 <dd>
@@ -256,7 +256,7 @@ class Trigger(SchemeItem):
     self.parentItem().edgeDragStop()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.mousePressEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.mousePressEvent"><code class="name flex">
 <span>def <span class="ident">mousePressEvent</span></span>(<span>self, event)</span>
 </code></dt>
 <dd>
@@ -269,7 +269,7 @@ class Trigger(SchemeItem):
     pass</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.paint"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.paint"><code class="name flex">
 <span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget)</span>
 </code></dt>
 <dd>
@@ -286,7 +286,7 @@ painter.drawPath(path)</p></div>
     painter.drawPath(path)&#39;&#39;&#39;</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.shape"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.shape"><code class="name flex">
 <span>def <span class="ident">shape</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -301,7 +301,7 @@ painter.drawPath(path)</p></div>
     return path; </code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.styleChange"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.styleChange"><code class="name flex">
 <span>def <span class="ident">styleChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -318,11 +318,11 @@ painter.drawPath(path)</p></div>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange" href="../scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position" href="../scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition" href="../scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange" href="../../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position" href="../../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition" href="../../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
 </ul>
 </li>
 </ul>
@@ -338,23 +338,23 @@ painter.drawPath(path)</p></div>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.signal.scheme.connection" href="index.html">nfb_studio.widgets.signal.scheme.connection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.connection" href="index.html">nfb_studio.widgets.scheme.node.connection</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger" href="#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger">Trigger</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger" href="#nfb_studio.widgets.scheme.node.connection.trigger.Trigger">Trigger</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.DragMimeType" href="#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.DragMimeType">DragMimeType</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.boundingRect" href="#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.dragEnterEvent" href="#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.dragEnterEvent">dragEnterEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.dropEvent" href="#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.dropEvent">dropEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.mouseMoveEvent" href="#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.mouseMoveEvent">mouseMoveEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.mousePressEvent" href="#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.mousePressEvent">mousePressEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.paint" href="#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.shape" href="#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.shape">shape</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.styleChange" href="#nfb_studio.widgets.signal.scheme.connection.trigger.Trigger.styleChange">styleChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.DragMimeType" href="#nfb_studio.widgets.scheme.node.connection.trigger.Trigger.DragMimeType">DragMimeType</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.boundingRect" href="#nfb_studio.widgets.scheme.node.connection.trigger.Trigger.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.dragEnterEvent" href="#nfb_studio.widgets.scheme.node.connection.trigger.Trigger.dragEnterEvent">dragEnterEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.dropEvent" href="#nfb_studio.widgets.scheme.node.connection.trigger.Trigger.dropEvent">dropEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.mouseMoveEvent" href="#nfb_studio.widgets.scheme.node.connection.trigger.Trigger.mouseMoveEvent">mouseMoveEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.mousePressEvent" href="#nfb_studio.widgets.scheme.node.connection.trigger.Trigger.mousePressEvent">mousePressEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.paint" href="#nfb_studio.widgets.scheme.node.connection.trigger.Trigger.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.shape" href="#nfb_studio.widgets.scheme.node.connection.trigger.Trigger.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.connection.trigger.Trigger.styleChange" href="#nfb_studio.widgets.scheme.node.connection.trigger.Trigger.styleChange">styleChange</a></code></li>
 </ul>
 </li>
 </ul>

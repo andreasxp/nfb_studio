@@ -26,14 +26,17 @@
 </summary>
 <pre><code class="python">from PySide2.QtCore import Qt, QModelIndex
 from PySide2.QtWidgets import QMainWindow, QDockWidget, QStackedWidget, QAction
+
+from nfb_studio.util.qt.tree_model import TreeModelItem
+
 from .experiment import Experiment
-from .widgets.signal import SignalEditor
+from .widgets.scheme import SchemeEditor
 from .property_tree import PropertyTree
 from .widgets.config import BlockConfig, GroupConfig, ExperimentConfig
 from .block import Block
 from .group import Group
 from .widgets.signal_nodes import *
-from nfb_studio.util.qt.tree_model import TreeModelItem
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -43,7 +46,7 @@ class MainWindow(QMainWindow):
 
         # Property tree ------------------------------------------------------------------------------------------------
         self.property_tree = PropertyTree()
-        self.property_tree_view = self.property_tree.view()
+        self.property_tree_view = self.property_tree.getView()
         self.property_tree_view.clicked.connect(self.setCurrentIndex)
 
         self.property_tree_dock = QDockWidget(&#34;Properties&#34;, self)
@@ -55,13 +58,14 @@ class MainWindow(QMainWindow):
         # Editing widgets ----------------------------------------------------------------------------------------------
         self.experiment_config = ExperimentConfig(self.experiment)
         
-        self.signal_editor = SignalEditor()
-        self.signal_editor.toolbox.addItem(&#34;LSL Input&#34;, LSLInput())
-        self.signal_editor.toolbox.addItem(&#34;Spatial Filter&#34;, SpatialFilter())
-        self.signal_editor.toolbox.addItem(&#34;Bandpass Filter&#34;, BandpassFilter())
-        self.signal_editor.toolbox.addItem(&#34;Envelope Detector&#34;, EnvelopeDetector())
-        self.signal_editor.toolbox.addItem(&#34;Standardise&#34;, Standardise())
-        self.signal_editor.toolbox.addItem(&#34;Signal Export&#34;, DerivedSignalExport())
+        self.signal_editor = SchemeEditor()
+        self.signal_editor.setScheme(self.experiment.signal_scheme)
+        self.signal_editor._toolbox.addItem(&#34;LSL Input&#34;, LSLInput())
+        self.signal_editor.toolbox().addItem(&#34;Spatial Filter&#34;, SpatialFilter())
+        self.signal_editor.toolbox().addItem(&#34;Bandpass Filter&#34;, BandpassFilter())
+        self.signal_editor.toolbox().addItem(&#34;Envelope Detector&#34;, EnvelopeDetector())
+        self.signal_editor.toolbox().addItem(&#34;Standardise&#34;, Standardise())
+        self.signal_editor.toolbox().addItem(&#34;Signal Export&#34;, DerivedSignalExport())
 
         self.block_stack = QStackedWidget()
         self.group_stack = QStackedWidget()
@@ -83,7 +87,6 @@ class MainWindow(QMainWindow):
         filemenu = menubar.addMenu(&#34;File&#34;)
         export = filemenu.addAction(&#34;Export&#34;)
         export.triggered.connect(self.export)
-
 
     def setCurrentIndex(self, index: QModelIndex):
         &#34;&#34;&#34;Set central widget in the main window to display config info for item at `index` in the property tree.&#34;&#34;&#34;
@@ -188,7 +191,7 @@ class MainWindow(QMainWindow):
         self.experiment.sequence = self.experiment_config.sequence.text().split(&#34; &#34;)
 
         signals = []
-        for node in self.signal_editor.scheme.graph.nodes:
+        for node in self.signal_editor.scheme().graph.nodes:
             if isinstance(node, DerivedSignalExport):
                 signal = []
                 n = node
@@ -231,9 +234,7 @@ class MainWindow(QMainWindow):
         
         self.experiment.signals = signals
 
-        print(self.experiment.export())
-
-        </code></pre>
+        print(self.experiment.export())</code></pre>
 </details>
 </section>
 <section>
@@ -262,7 +263,7 @@ class MainWindow(QMainWindow):
 
         # Property tree ------------------------------------------------------------------------------------------------
         self.property_tree = PropertyTree()
-        self.property_tree_view = self.property_tree.view()
+        self.property_tree_view = self.property_tree.getView()
         self.property_tree_view.clicked.connect(self.setCurrentIndex)
 
         self.property_tree_dock = QDockWidget(&#34;Properties&#34;, self)
@@ -274,13 +275,14 @@ class MainWindow(QMainWindow):
         # Editing widgets ----------------------------------------------------------------------------------------------
         self.experiment_config = ExperimentConfig(self.experiment)
         
-        self.signal_editor = SignalEditor()
-        self.signal_editor.toolbox.addItem(&#34;LSL Input&#34;, LSLInput())
-        self.signal_editor.toolbox.addItem(&#34;Spatial Filter&#34;, SpatialFilter())
-        self.signal_editor.toolbox.addItem(&#34;Bandpass Filter&#34;, BandpassFilter())
-        self.signal_editor.toolbox.addItem(&#34;Envelope Detector&#34;, EnvelopeDetector())
-        self.signal_editor.toolbox.addItem(&#34;Standardise&#34;, Standardise())
-        self.signal_editor.toolbox.addItem(&#34;Signal Export&#34;, DerivedSignalExport())
+        self.signal_editor = SchemeEditor()
+        self.signal_editor.setScheme(self.experiment.signal_scheme)
+        self.signal_editor._toolbox.addItem(&#34;LSL Input&#34;, LSLInput())
+        self.signal_editor.toolbox().addItem(&#34;Spatial Filter&#34;, SpatialFilter())
+        self.signal_editor.toolbox().addItem(&#34;Bandpass Filter&#34;, BandpassFilter())
+        self.signal_editor.toolbox().addItem(&#34;Envelope Detector&#34;, EnvelopeDetector())
+        self.signal_editor.toolbox().addItem(&#34;Standardise&#34;, Standardise())
+        self.signal_editor.toolbox().addItem(&#34;Signal Export&#34;, DerivedSignalExport())
 
         self.block_stack = QStackedWidget()
         self.group_stack = QStackedWidget()
@@ -302,7 +304,6 @@ class MainWindow(QMainWindow):
         filemenu = menubar.addMenu(&#34;File&#34;)
         export = filemenu.addAction(&#34;Export&#34;)
         export.triggered.connect(self.export)
-
 
     def setCurrentIndex(self, index: QModelIndex):
         &#34;&#34;&#34;Set central widget in the main window to display config info for item at `index` in the property tree.&#34;&#34;&#34;
@@ -407,7 +408,7 @@ class MainWindow(QMainWindow):
         self.experiment.sequence = self.experiment_config.sequence.text().split(&#34; &#34;)
 
         signals = []
-        for node in self.signal_editor.scheme.graph.nodes:
+        for node in self.signal_editor.scheme().graph.nodes:
             if isinstance(node, DerivedSignalExport):
                 signal = []
                 n = node
@@ -584,7 +585,7 @@ class MainWindow(QMainWindow):
     self.experiment.sequence = self.experiment_config.sequence.text().split(&#34; &#34;)
 
     signals = []
-    for node in self.signal_editor.scheme.graph.nodes:
+    for node in self.signal_editor.scheme().graph.nodes:
         if isinstance(node, DerivedSignalExport):
             signal = []
             n = node

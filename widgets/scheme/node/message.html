@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets.signal.scheme.message API documentation</title>
+<title>nfb_studio.widgets.scheme.node.message API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.signal.scheme.message</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.node.message</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -34,8 +34,8 @@ from PySide2.QtSvg import QGraphicsSvgItem, QSvgRenderer
 
 from nfb_studio.util import TextLineItem
 
-from .style import Style
-from .scheme_item import SchemeItem
+from ..scheme_item import SchemeItem
+from ..style import Style
 
 this_dir = os.path.dirname(__file__)
 
@@ -199,7 +199,7 @@ class ErrorMessage(Message):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.message.ErrorMessage"><code class="flex name class">
+<dt id="nfb_studio.widgets.scheme.node.message.ErrorMessage"><code class="flex name class">
 <span>class <span class="ident">ErrorMessage</span></span>
 <span>(</span><span>text=None, parent=None)</span>
 </code></dt>
@@ -231,27 +231,27 @@ This message reports a serious problem that poses a critical risk to the user's 
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.signal.scheme.message.Message" href="#nfb_studio.widgets.signal.scheme.message.Message">Message</a></li>
-<li><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.message.Message" href="#nfb_studio.widgets.scheme.node.message.Message">Message</a></li>
+<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.signal.scheme.message.Message" href="#nfb_studio.widgets.signal.scheme.message.Message">Message</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.scheme.node.message.Message" href="#nfb_studio.widgets.scheme.node.message.Message">Message</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.boundingRect" href="#nfb_studio.widgets.signal.scheme.message.Message.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.itemChange" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.paint" href="#nfb_studio.widgets.signal.scheme.message.Message.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.position" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.setIcon" href="#nfb_studio.widgets.signal.scheme.message.Message.setIcon">setIcon</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.setPosition" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.severity" href="#nfb_studio.widgets.signal.scheme.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.boundingRect" href="#nfb_studio.widgets.scheme.node.message.Message.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.itemChange" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.paint" href="#nfb_studio.widgets.scheme.node.message.Message.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.position" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.setIcon" href="#nfb_studio.widgets.scheme.node.message.Message.setIcon">setIcon</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.setPosition" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.severity" href="#nfb_studio.widgets.scheme.node.message.Message.severity">severity</a></code></li>
 </ul>
 </li>
 </ul>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.InfoMessage"><code class="flex name class">
+<dt id="nfb_studio.widgets.scheme.node.message.InfoMessage"><code class="flex name class">
 <span>class <span class="ident">InfoMessage</span></span>
 <span>(</span><span>text=None, parent=None)</span>
 </code></dt>
@@ -285,27 +285,27 @@ problematic way.</p></div>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.signal.scheme.message.Message" href="#nfb_studio.widgets.signal.scheme.message.Message">Message</a></li>
-<li><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.message.Message" href="#nfb_studio.widgets.scheme.node.message.Message">Message</a></li>
+<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.signal.scheme.message.Message" href="#nfb_studio.widgets.signal.scheme.message.Message">Message</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.scheme.node.message.Message" href="#nfb_studio.widgets.scheme.node.message.Message">Message</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.boundingRect" href="#nfb_studio.widgets.signal.scheme.message.Message.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.itemChange" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.paint" href="#nfb_studio.widgets.signal.scheme.message.Message.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.position" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.setIcon" href="#nfb_studio.widgets.signal.scheme.message.Message.setIcon">setIcon</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.setPosition" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.severity" href="#nfb_studio.widgets.signal.scheme.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.boundingRect" href="#nfb_studio.widgets.scheme.node.message.Message.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.itemChange" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.paint" href="#nfb_studio.widgets.scheme.node.message.Message.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.position" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.setIcon" href="#nfb_studio.widgets.scheme.node.message.Message.setIcon">setIcon</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.setPosition" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.severity" href="#nfb_studio.widgets.scheme.node.message.Message.severity">severity</a></code></li>
 </ul>
 </li>
 </ul>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message"><code class="flex name class">
+<dt id="nfb_studio.widgets.scheme.node.message.Message"><code class="flex name class">
 <span>class <span class="ident">Message</span></span>
 <span>(</span><span>text=None, icon_filename=None, parent=None)</span>
 </code></dt>
@@ -410,19 +410,19 @@ ErrorMessage.</p></div>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.signal.scheme.message.ErrorMessage" href="#nfb_studio.widgets.signal.scheme.message.ErrorMessage">ErrorMessage</a></li>
-<li><a title="nfb_studio.widgets.signal.scheme.message.InfoMessage" href="#nfb_studio.widgets.signal.scheme.message.InfoMessage">InfoMessage</a></li>
-<li><a title="nfb_studio.widgets.signal.scheme.message.WarningMessage" href="#nfb_studio.widgets.signal.scheme.message.WarningMessage">WarningMessage</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.message.ErrorMessage" href="#nfb_studio.widgets.scheme.node.message.ErrorMessage">ErrorMessage</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.message.InfoMessage" href="#nfb_studio.widgets.scheme.node.message.InfoMessage">InfoMessage</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.message.WarningMessage" href="#nfb_studio.widgets.scheme.node.message.WarningMessage">WarningMessage</a></li>
 </ul>
 <h3>Static methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message.severity"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.message.Message.severity"><code class="name flex">
 <span>def <span class="ident">severity</span></span>(<span>)</span>
 </code></dt>
 <dd>
@@ -440,7 +440,7 @@ def severity(cls):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message.boundingRect"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.message.Message.boundingRect"><code class="name flex">
 <span>def <span class="ident">boundingRect</span></span>(<span>self) -> PySide2.QtCore.QRectF</span>
 </code></dt>
 <dd>
@@ -453,7 +453,7 @@ def severity(cls):
     return QRectF()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message.deserialize"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.message.Message.deserialize"><code class="name flex">
 <span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
 </code></dt>
 <dd>
@@ -466,7 +466,7 @@ def severity(cls):
     self.setText(data[&#34;text&#34;])</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message.paint"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.message.Message.paint"><code class="name flex">
 <span>def <span class="ident">paint</span></span>(<span>self, painter: PySide2.QtGui.QPainter, option, widget=Ellipsis) -> NoneType</span>
 </code></dt>
 <dd>
@@ -479,7 +479,7 @@ def severity(cls):
     pass</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message.paletteChange"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.message.Message.paletteChange"><code class="name flex">
 <span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -497,7 +497,7 @@ def severity(cls):
     self._text_item.setBackgroundBrush(text_bg)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message.serialize"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.message.Message.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
 </code></dt>
 <dd>
@@ -512,7 +512,7 @@ def severity(cls):
     }</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message.setIcon"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.message.Message.setIcon"><code class="name flex">
 <span>def <span class="ident">setIcon</span></span>(<span>self, icon_filename)</span>
 </code></dt>
 <dd>
@@ -532,7 +532,7 @@ def severity(cls):
     self._icon_item.setScale(scale)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message.setText"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.message.Message.setText"><code class="name flex">
 <span>def <span class="ident">setText</span></span>(<span>self, text)</span>
 </code></dt>
 <dd>
@@ -545,7 +545,7 @@ def severity(cls):
     self._text_item.setText(text)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message.styleChange"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.message.Message.styleChange"><code class="name flex">
 <span>def <span class="ident">styleChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -581,7 +581,7 @@ def severity(cls):
     self._icon_item.setScale(scale)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.Message.text"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.node.message.Message.text"><code class="name flex">
 <span>def <span class="ident">text</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -597,16 +597,16 @@ def severity(cls):
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.position" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
 </ul>
 </li>
 </ul>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.message.WarningMessage"><code class="flex name class">
+<dt id="nfb_studio.widgets.scheme.node.message.WarningMessage"><code class="flex name class">
 <span>class <span class="ident">WarningMessage</span></span>
 <span>(</span><span>text=None, parent=None)</span>
 </code></dt>
@@ -638,22 +638,22 @@ This message reports a problem that does not pose a critical risk to the user's 
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.signal.scheme.message.Message" href="#nfb_studio.widgets.signal.scheme.message.Message">Message</a></li>
-<li><a title="nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
+<li><a title="nfb_studio.widgets.scheme.node.message.Message" href="#nfb_studio.widgets.scheme.node.message.Message">Message</a></li>
+<li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.signal.scheme.message.Message" href="#nfb_studio.widgets.signal.scheme.message.Message">Message</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.scheme.node.message.Message" href="#nfb_studio.widgets.scheme.node.message.Message">Message</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.boundingRect" href="#nfb_studio.widgets.signal.scheme.message.Message.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.itemChange" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.paint" href="#nfb_studio.widgets.signal.scheme.message.Message.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.position" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.setIcon" href="#nfb_studio.widgets.signal.scheme.message.Message.setIcon">setIcon</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.setPosition" href="scheme_item.html#nfb_studio.widgets.signal.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.severity" href="#nfb_studio.widgets.signal.scheme.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.boundingRect" href="#nfb_studio.widgets.scheme.node.message.Message.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.itemChange" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.paint" href="#nfb_studio.widgets.scheme.node.message.Message.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.position" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.setIcon" href="#nfb_studio.widgets.scheme.node.message.Message.setIcon">setIcon</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.setPosition" href="../scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.severity" href="#nfb_studio.widgets.scheme.node.message.Message.severity">severity</a></code></li>
 </ul>
 </li>
 </ul>
@@ -669,34 +669,34 @@ This message reports a problem that does not pose a critical risk to the user's 
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.signal.scheme" href="index.html">nfb_studio.widgets.signal.scheme</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node" href="index.html">nfb_studio.widgets.scheme.node</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.signal.scheme.message.ErrorMessage" href="#nfb_studio.widgets.signal.scheme.message.ErrorMessage">ErrorMessage</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.scheme.node.message.ErrorMessage" href="#nfb_studio.widgets.scheme.node.message.ErrorMessage">ErrorMessage</a></code></h4>
 </li>
 <li>
-<h4><code><a title="nfb_studio.widgets.signal.scheme.message.InfoMessage" href="#nfb_studio.widgets.signal.scheme.message.InfoMessage">InfoMessage</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.scheme.node.message.InfoMessage" href="#nfb_studio.widgets.scheme.node.message.InfoMessage">InfoMessage</a></code></h4>
 </li>
 <li>
-<h4><code><a title="nfb_studio.widgets.signal.scheme.message.Message" href="#nfb_studio.widgets.signal.scheme.message.Message">Message</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.scheme.node.message.Message" href="#nfb_studio.widgets.scheme.node.message.Message">Message</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.boundingRect" href="#nfb_studio.widgets.signal.scheme.message.Message.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.deserialize" href="#nfb_studio.widgets.signal.scheme.message.Message.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.paint" href="#nfb_studio.widgets.signal.scheme.message.Message.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.paletteChange" href="#nfb_studio.widgets.signal.scheme.message.Message.paletteChange">paletteChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.serialize" href="#nfb_studio.widgets.signal.scheme.message.Message.serialize">serialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.setIcon" href="#nfb_studio.widgets.signal.scheme.message.Message.setIcon">setIcon</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.setText" href="#nfb_studio.widgets.signal.scheme.message.Message.setText">setText</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.severity" href="#nfb_studio.widgets.signal.scheme.message.Message.severity">severity</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.styleChange" href="#nfb_studio.widgets.signal.scheme.message.Message.styleChange">styleChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.message.Message.text" href="#nfb_studio.widgets.signal.scheme.message.Message.text">text</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.boundingRect" href="#nfb_studio.widgets.scheme.node.message.Message.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.deserialize" href="#nfb_studio.widgets.scheme.node.message.Message.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.paint" href="#nfb_studio.widgets.scheme.node.message.Message.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.paletteChange" href="#nfb_studio.widgets.scheme.node.message.Message.paletteChange">paletteChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.serialize" href="#nfb_studio.widgets.scheme.node.message.Message.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.setIcon" href="#nfb_studio.widgets.scheme.node.message.Message.setIcon">setIcon</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.setText" href="#nfb_studio.widgets.scheme.node.message.Message.setText">setText</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.severity" href="#nfb_studio.widgets.scheme.node.message.Message.severity">severity</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.styleChange" href="#nfb_studio.widgets.scheme.node.message.Message.styleChange">styleChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.node.message.Message.text" href="#nfb_studio.widgets.scheme.node.message.Message.text">text</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="nfb_studio.widgets.signal.scheme.message.WarningMessage" href="#nfb_studio.widgets.signal.scheme.message.WarningMessage">WarningMessage</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.scheme.node.message.WarningMessage" href="#nfb_studio.widgets.scheme.node.message.WarningMessage">WarningMessage</a></code></h4>
 </li>
 </ul>
 </li>

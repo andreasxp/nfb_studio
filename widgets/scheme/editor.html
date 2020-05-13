@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets.signal.signal_editor API documentation</title>
+<title>nfb_studio.widgets.scheme.editor API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.signal.signal_editor</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.editor</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -25,14 +25,14 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QMainWindow, QDockWidget
+from PySide2.QtWidgets import QMainWindow, QDockWidget, QWidget
 
 from .scheme import Scheme
 from .toolbox import Toolbox
 
-class SignalEditor(QMainWindow):
-    &#34;&#34;&#34;Signal editor is the widget responsible for the signal editing experience.  
-    As its main components, SignalEditor contains the following widgets:
+class SchemeEditor(QMainWindow):
+    &#34;&#34;&#34;Scheme editor is the widget responsible for the scheme editing experience.  
+    As its main components, SchemeEditor contains the following widgets:
     - scheme - the canvas for dragging and connecting nodes to form signals;
     - toolbox - a list of draggable nodes to be put on the scheme;
     - (optionally) config widget - a widget for manipulating properties of nodes.
@@ -40,25 +40,53 @@ class SignalEditor(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.scheme = Scheme(self)
-        self.toolbox = Toolbox(self)
-
-        self.setCentralWidget(self.scheme.view)
+        self._scheme = None
+        self._toolbox = None
 
         self.toolbox_dock = QDockWidget(&#34;Node toolbox&#34;, self)
         self.toolbox_dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.toolbox_dock.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
-        self.toolbox_dock.setWidget(self.toolbox.getView())
         self.addDockWidget(Qt.LeftDockWidgetArea, self.toolbox_dock)
+        self.setToolbox(Toolbox(self))
 
         self.config_widget_dock = QDockWidget(&#34;Configuration&#34;, self)
         self.config_widget_dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.addDockWidget(Qt.RightDockWidgetArea, self.config_widget_dock)
         self.config_widget_dock.hide()
 
-        self.scheme.view.configRequested.connect(self.showConfigWidget)
-    
+    def setScheme(self, scheme: Scheme):
+        if self._scheme is not None:
+            self.setCentralWidget(QWidget())
+            self._scheme.view().configRequested.disconnect(self.showConfigWidget)
+            self._scheme.setCustomDropEvent(self.toolbox.DragMimeType, None)
+
+        self._scheme = scheme
+
+        if self._scheme is not None:
+            # Set the scheme as the central widget
+            self.setCentralWidget(self._scheme.view())
+
+            # Conect the signal for config widget
+            self._scheme.view().configRequested.connect(self.showConfigWidget)
+
+            # Add a custom drop event for the scheme from the toolbox
+            self._scheme.setCustomDropEvent(self.toolbox().DragMimeType, self.toolbox().schemeDropEvent)
+
+    def scheme(self):
+        return self._scheme
+
+    def setToolbox(self, toolbox):
+        self._toolbox = toolbox
+
+        self.toolbox_dock.setWidget(self._toolbox.getView())
+
+    def toolbox(self):
+        return self._toolbox
+
     def showConfigWidget(self, node):
+        &#34;&#34;&#34;Show config widget for a node.
+        This function is automatically connected as a slot to the scheme view&#39;s configRequested signal.
+        &#34;&#34;&#34;
         self.config_widget_dock.setWidget(node.configWidget())
         self.config_widget_dock.show()</code></pre>
 </details>
@@ -72,13 +100,13 @@ class SignalEditor(QMainWindow):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.signal.signal_editor.SignalEditor"><code class="flex name class">
-<span>class <span class="ident">SignalEditor</span></span>
+<dt id="nfb_studio.widgets.scheme.editor.SchemeEditor"><code class="flex name class">
+<span>class <span class="ident">SchemeEditor</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Signal editor is the widget responsible for the signal editing experience.<br>
-As its main components, SignalEditor contains the following widgets:
+<div class="desc"><p>Scheme editor is the widget responsible for the scheme editing experience.<br>
+As its main components, SchemeEditor contains the following widgets:
 - scheme - the canvas for dragging and connecting nodes to form signals;
 - toolbox - a list of draggable nodes to be put on the scheme;
 - (optionally) config widget - a widget for manipulating properties of nodes.</p></div>
@@ -86,9 +114,9 @@ As its main components, SignalEditor contains the following widgets:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class SignalEditor(QMainWindow):
-    &#34;&#34;&#34;Signal editor is the widget responsible for the signal editing experience.  
-    As its main components, SignalEditor contains the following widgets:
+<pre><code class="python">class SchemeEditor(QMainWindow):
+    &#34;&#34;&#34;Scheme editor is the widget responsible for the scheme editing experience.  
+    As its main components, SchemeEditor contains the following widgets:
     - scheme - the canvas for dragging and connecting nodes to form signals;
     - toolbox - a list of draggable nodes to be put on the scheme;
     - (optionally) config widget - a widget for manipulating properties of nodes.
@@ -96,25 +124,53 @@ As its main components, SignalEditor contains the following widgets:
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.scheme = Scheme(self)
-        self.toolbox = Toolbox(self)
-
-        self.setCentralWidget(self.scheme.view)
+        self._scheme = None
+        self._toolbox = None
 
         self.toolbox_dock = QDockWidget(&#34;Node toolbox&#34;, self)
         self.toolbox_dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.toolbox_dock.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
-        self.toolbox_dock.setWidget(self.toolbox.getView())
         self.addDockWidget(Qt.LeftDockWidgetArea, self.toolbox_dock)
+        self.setToolbox(Toolbox(self))
 
         self.config_widget_dock = QDockWidget(&#34;Configuration&#34;, self)
         self.config_widget_dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.addDockWidget(Qt.RightDockWidgetArea, self.config_widget_dock)
         self.config_widget_dock.hide()
 
-        self.scheme.view.configRequested.connect(self.showConfigWidget)
-    
+    def setScheme(self, scheme: Scheme):
+        if self._scheme is not None:
+            self.setCentralWidget(QWidget())
+            self._scheme.view().configRequested.disconnect(self.showConfigWidget)
+            self._scheme.setCustomDropEvent(self.toolbox.DragMimeType, None)
+
+        self._scheme = scheme
+
+        if self._scheme is not None:
+            # Set the scheme as the central widget
+            self.setCentralWidget(self._scheme.view())
+
+            # Conect the signal for config widget
+            self._scheme.view().configRequested.connect(self.showConfigWidget)
+
+            # Add a custom drop event for the scheme from the toolbox
+            self._scheme.setCustomDropEvent(self.toolbox().DragMimeType, self.toolbox().schemeDropEvent)
+
+    def scheme(self):
+        return self._scheme
+
+    def setToolbox(self, toolbox):
+        self._toolbox = toolbox
+
+        self.toolbox_dock.setWidget(self._toolbox.getView())
+
+    def toolbox(self):
+        return self._toolbox
+
     def showConfigWidget(self, node):
+        &#34;&#34;&#34;Show config widget for a node.
+        This function is automatically connected as a slot to the scheme view&#39;s configRequested signal.
+        &#34;&#34;&#34;
         self.config_widget_dock.setWidget(node.configWidget())
         self.config_widget_dock.show()</code></pre>
 </details>
@@ -128,15 +184,15 @@ As its main components, SignalEditor contains the following widgets:
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.signal_editor.SignalEditor.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dt id="nfb_studio.widgets.scheme.editor.SchemeEditor.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.signal_editor.SignalEditor.showConfigWidget"><code class="name flex">
-<span>def <span class="ident">showConfigWidget</span></span>(<span>self, node)</span>
+<dt id="nfb_studio.widgets.scheme.editor.SchemeEditor.scheme"><code class="name flex">
+<span>def <span class="ident">scheme</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -144,9 +200,82 @@ As its main components, SignalEditor contains the following widgets:
 <summary>
 <span>Expand source code</span>
 </summary>
+<pre><code class="python">def scheme(self):
+    return self._scheme</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.editor.SchemeEditor.setScheme"><code class="name flex">
+<span>def <span class="ident">setScheme</span></span>(<span>self, scheme: <a title="nfb_studio.widgets.scheme.scheme.Scheme" href="scheme.html#nfb_studio.widgets.scheme.scheme.Scheme">Scheme</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setScheme(self, scheme: Scheme):
+    if self._scheme is not None:
+        self.setCentralWidget(QWidget())
+        self._scheme.view().configRequested.disconnect(self.showConfigWidget)
+        self._scheme.setCustomDropEvent(self.toolbox.DragMimeType, None)
+
+    self._scheme = scheme
+
+    if self._scheme is not None:
+        # Set the scheme as the central widget
+        self.setCentralWidget(self._scheme.view())
+
+        # Conect the signal for config widget
+        self._scheme.view().configRequested.connect(self.showConfigWidget)
+
+        # Add a custom drop event for the scheme from the toolbox
+        self._scheme.setCustomDropEvent(self.toolbox().DragMimeType, self.toolbox().schemeDropEvent)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.editor.SchemeEditor.setToolbox"><code class="name flex">
+<span>def <span class="ident">setToolbox</span></span>(<span>self, toolbox)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setToolbox(self, toolbox):
+    self._toolbox = toolbox
+
+    self.toolbox_dock.setWidget(self._toolbox.getView())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.editor.SchemeEditor.showConfigWidget"><code class="name flex">
+<span>def <span class="ident">showConfigWidget</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Show config widget for a node.
+This function is automatically connected as a slot to the scheme view's configRequested signal.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
 <pre><code class="python">def showConfigWidget(self, node):
+    &#34;&#34;&#34;Show config widget for a node.
+    This function is automatically connected as a slot to the scheme view&#39;s configRequested signal.
+    &#34;&#34;&#34;
     self.config_widget_dock.setWidget(node.configWidget())
     self.config_widget_dock.show()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.editor.SchemeEditor.toolbox"><code class="name flex">
+<span>def <span class="ident">toolbox</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def toolbox(self):
+    return self._toolbox</code></pre>
 </details>
 </dd>
 </dl>
@@ -162,16 +291,20 @@ As its main components, SignalEditor contains the following widgets:
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.signal" href="index.html">nfb_studio.widgets.signal</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme" href="index.html">nfb_studio.widgets.scheme</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.signal.signal_editor.SignalEditor" href="#nfb_studio.widgets.signal.signal_editor.SignalEditor">SignalEditor</a></code></h4>
-<ul class="">
-<li><code><a title="nfb_studio.widgets.signal.signal_editor.SignalEditor.showConfigWidget" href="#nfb_studio.widgets.signal.signal_editor.SignalEditor.showConfigWidget">showConfigWidget</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.signal_editor.SignalEditor.staticMetaObject" href="#nfb_studio.widgets.signal.signal_editor.SignalEditor.staticMetaObject">staticMetaObject</a></code></li>
+<h4><code><a title="nfb_studio.widgets.scheme.editor.SchemeEditor" href="#nfb_studio.widgets.scheme.editor.SchemeEditor">SchemeEditor</a></code></h4>
+<ul class="two-column">
+<li><code><a title="nfb_studio.widgets.scheme.editor.SchemeEditor.scheme" href="#nfb_studio.widgets.scheme.editor.SchemeEditor.scheme">scheme</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.editor.SchemeEditor.setScheme" href="#nfb_studio.widgets.scheme.editor.SchemeEditor.setScheme">setScheme</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.editor.SchemeEditor.setToolbox" href="#nfb_studio.widgets.scheme.editor.SchemeEditor.setToolbox">setToolbox</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.editor.SchemeEditor.showConfigWidget" href="#nfb_studio.widgets.scheme.editor.SchemeEditor.showConfigWidget">showConfigWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.editor.SchemeEditor.staticMetaObject" href="#nfb_studio.widgets.scheme.editor.SchemeEditor.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.editor.SchemeEditor.toolbox" href="#nfb_studio.widgets.scheme.editor.SchemeEditor.toolbox">toolbox</a></code></li>
 </ul>
 </li>
 </ul>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets.signal.scheme.scheme API documentation</title>
+<title>nfb_studio.widgets.scheme.scheme API documentation</title>
 <meta name="description" content="A data model for the nfb experiment&#39;s system of signals and their components." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.signal.scheme.scheme</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.scheme</code></h1>
 </header>
 <section id="section-intro">
 <p>A data model for the nfb experiment's system of signals and their components.</p>
@@ -37,12 +37,9 @@ from PySide2.QtWidgets import (
 from nfb_studio.serial import mime, hooks
 
 from .graph import Graph
-from .node import Node
-from .edge import Edge
-from .connection import Input, Output, Connection
+from .node import Node, Edge, Input, Output, Connection
 from .style import Style
 from .palette import Palette
-from nfb_studio.widgets import signal
 
 class Scheme(QGraphicsScene):
     &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
@@ -95,6 +92,10 @@ class Scheme(QGraphicsScene):
 
             delete_shortcut = QShortcut(QKeySequence.Delete, self)
             delete_shortcut.activated.connect(scene.deleteEvent)
+        
+        def setScheme(self, scheme):
+            &#34;&#34;&#34;Alias function for setScene.&#34;&#34;&#34;
+            self.setScene(scheme)
 
 
     ClipboardMimeType = &#34;application/x-nfb_studio-graph&#34;
@@ -104,8 +105,13 @@ class Scheme(QGraphicsScene):
         super().__init__(parent)
         self.graph = Graph()
 
-        self.view = self.View()
-        self.view.setScene(self)
+        self._view = None
+
+        self._custom_drop_events = {}
+        &#34;&#34;&#34;A dict mapping MIME types to custom functions to be executed when drag and drop operation finishes.  
+        Users of this scheme can set their own drop event for a particular MIME type. MIME types that are present in
+        this dict will always be accepted drags.
+        &#34;&#34;&#34;
 
         # Drag-drawing edges support -----------------------------------------------------------------------------------
         self._dragging_edge = None
@@ -121,6 +127,18 @@ class Scheme(QGraphicsScene):
 
         self.styleChange()
         self.paletteChange()
+
+    # Viewing ==========================================================================================================
+    def view(self):
+        &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.
+        Note that only one view can exist for a given scheme. This function will construct the widget when it&#39;s first
+        called, and always return this widget.
+        &#34;&#34;&#34;
+        if self._view is None:
+            self._view = self.View()
+            self._view.setScene(self)
+
+        return self._view
 
     # Element manipulation =============================================================================================
     def addItem(self, item: QGraphicsItem):
@@ -198,7 +216,7 @@ class Scheme(QGraphicsScene):
         self.graph.clear()
 
     # Observer methods =================================================================================================
-    def findNode(self, node_id: int) -&gt; Union[Node, None]:
+    def findNode(self, node_id: int) -&gt; Union[Node, None]:  # FIXME: Where is this used? What is the node_id?
         return self.graph.findNode(node_id)
 
     # Selection ========================================================================================================
@@ -310,25 +328,28 @@ class Scheme(QGraphicsScene):
 
     def dragEnterEvent(self, event):
         package = event.mimeData()
-        event.setAccepted(
-            package.hasFormat(signal.Toolbox.DragMimeType) or
-            package.hasFormat(Connection.EdgeDragMimeType)
+
+        # Form a list of accepted formats. Accepted formats include all format with custom drop functions, as well as
+        # Connection.EdgeDragMimeType
+        accepted_formats = (
+            list(self._custom_drop_events.keys()) + 
+            [Connection.EdgeDragMimeType]
         )
+        
+        # If any of the accepted_formats is present in package.formats(), accept the event.
+        for format in package.formats():
+            if format in accepted_formats:
+                event.accept()
+                break
     
     def dropEvent(self, event):
         package = event.mimeData()
 
-        if package.hasFormat(signal.Toolbox.DragMimeType):
-            node = mime.load(package, signal.Toolbox.DragMimeType, hooks=hooks.qt)
+        for format in self._custom_drop_events.keys():
+            if package.hasFormat(format):
+                self._custom_drop_events[format](scheme=self, event=event)
 
-            pos = event.scenePos() - QPointF(
-                node.boundingRect().size().width()/2,
-                node.boundingRect().size().height()/2
-            )
-            node.setPos(pos)
-            self.addItem(node)
-        else:
-            super().dropEvent(event)
+        super().dropEvent(event)
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasFormat(Connection.EdgeDragMimeType) and self.hasEdgeDrag():
@@ -338,6 +359,19 @@ class Scheme(QGraphicsScene):
                 self._dragging_edge.setSourcePos(event.scenePos())
             else:
                 self._dragging_edge.setTargetPos(event.scenePos())
+
+    def setCustomDropEvent(self, format, event):
+        &#34;&#34;&#34;Set a custom drop event for a particular MIME type (format).
+        Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
+        If event is None, the format is instead removed from the list of accepted formats.
+        If not None, event should be a function accepting two keyword arguments:
+        - scheme, which will contain this scheme
+        - event, which will contain the event that is being dropped
+        &#34;&#34;&#34;
+        if event is None:
+            self._custom_drop_events.pop(format)
+        else:
+            self._custom_drop_events[format] = event
 
     # Key presses ======================================================================================================
     def keyPressEvent(self, event):
@@ -388,7 +422,7 @@ class Scheme(QGraphicsScene):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme"><code class="flex name class">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme"><code class="flex name class">
 <span>class <span class="ident">Scheme</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
@@ -409,7 +443,7 @@ behave incorrectly.</p>
 <dt><code>nfb_studio.widgets.scheme.Graph</code></dt>
 <dd>A collection of nodes and edges.</dd>
 </dl>
-<p><code>Constructs a <a title="nfb_studio.widgets.signal.scheme.scheme.Scheme" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme">Scheme</a> with an optional </code>parent<code> parameter that is passed to the super().</code></p></div>
+<p><code>Constructs a <a title="nfb_studio.widgets.scheme.scheme.Scheme" href="#nfb_studio.widgets.scheme.scheme.Scheme">Scheme</a> with an optional </code>parent<code> parameter that is passed to the super().</code></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -465,6 +499,10 @@ behave incorrectly.</p>
 
             delete_shortcut = QShortcut(QKeySequence.Delete, self)
             delete_shortcut.activated.connect(scene.deleteEvent)
+        
+        def setScheme(self, scheme):
+            &#34;&#34;&#34;Alias function for setScene.&#34;&#34;&#34;
+            self.setScene(scheme)
 
 
     ClipboardMimeType = &#34;application/x-nfb_studio-graph&#34;
@@ -474,8 +512,13 @@ behave incorrectly.</p>
         super().__init__(parent)
         self.graph = Graph()
 
-        self.view = self.View()
-        self.view.setScene(self)
+        self._view = None
+
+        self._custom_drop_events = {}
+        &#34;&#34;&#34;A dict mapping MIME types to custom functions to be executed when drag and drop operation finishes.  
+        Users of this scheme can set their own drop event for a particular MIME type. MIME types that are present in
+        this dict will always be accepted drags.
+        &#34;&#34;&#34;
 
         # Drag-drawing edges support -----------------------------------------------------------------------------------
         self._dragging_edge = None
@@ -491,6 +534,18 @@ behave incorrectly.</p>
 
         self.styleChange()
         self.paletteChange()
+
+    # Viewing ==========================================================================================================
+    def view(self):
+        &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.
+        Note that only one view can exist for a given scheme. This function will construct the widget when it&#39;s first
+        called, and always return this widget.
+        &#34;&#34;&#34;
+        if self._view is None:
+            self._view = self.View()
+            self._view.setScene(self)
+
+        return self._view
 
     # Element manipulation =============================================================================================
     def addItem(self, item: QGraphicsItem):
@@ -568,7 +623,7 @@ behave incorrectly.</p>
         self.graph.clear()
 
     # Observer methods =================================================================================================
-    def findNode(self, node_id: int) -&gt; Union[Node, None]:
+    def findNode(self, node_id: int) -&gt; Union[Node, None]:  # FIXME: Where is this used? What is the node_id?
         return self.graph.findNode(node_id)
 
     # Selection ========================================================================================================
@@ -680,25 +735,28 @@ behave incorrectly.</p>
 
     def dragEnterEvent(self, event):
         package = event.mimeData()
-        event.setAccepted(
-            package.hasFormat(signal.Toolbox.DragMimeType) or
-            package.hasFormat(Connection.EdgeDragMimeType)
+
+        # Form a list of accepted formats. Accepted formats include all format with custom drop functions, as well as
+        # Connection.EdgeDragMimeType
+        accepted_formats = (
+            list(self._custom_drop_events.keys()) + 
+            [Connection.EdgeDragMimeType]
         )
+        
+        # If any of the accepted_formats is present in package.formats(), accept the event.
+        for format in package.formats():
+            if format in accepted_formats:
+                event.accept()
+                break
     
     def dropEvent(self, event):
         package = event.mimeData()
 
-        if package.hasFormat(signal.Toolbox.DragMimeType):
-            node = mime.load(package, signal.Toolbox.DragMimeType, hooks=hooks.qt)
+        for format in self._custom_drop_events.keys():
+            if package.hasFormat(format):
+                self._custom_drop_events[format](scheme=self, event=event)
 
-            pos = event.scenePos() - QPointF(
-                node.boundingRect().size().width()/2,
-                node.boundingRect().size().height()/2
-            )
-            node.setPos(pos)
-            self.addItem(node)
-        else:
-            super().dropEvent(event)
+        super().dropEvent(event)
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasFormat(Connection.EdgeDragMimeType) and self.hasEdgeDrag():
@@ -708,6 +766,19 @@ behave incorrectly.</p>
                 self._dragging_edge.setSourcePos(event.scenePos())
             else:
                 self._dragging_edge.setTargetPos(event.scenePos())
+
+    def setCustomDropEvent(self, format, event):
+        &#34;&#34;&#34;Set a custom drop event for a particular MIME type (format).
+        Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
+        If event is None, the format is instead removed from the list of accepted formats.
+        If not None, event should be a function accepting two keyword arguments:
+        - scheme, which will contain this scheme
+        - event, which will contain the event that is being dropped
+        &#34;&#34;&#34;
+        if event is None:
+            self._custom_drop_events.pop(format)
+        else:
+            self._custom_drop_events[format] = event
 
     # Key presses ======================================================================================================
     def keyPressEvent(self, event):
@@ -756,30 +827,30 @@ behave incorrectly.</p>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.ClipboardMimeType"><code class="name">var <span class="ident">ClipboardMimeType</span></code></dt>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.ClipboardMimeType"><code class="name">var <span class="ident">ClipboardMimeType</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.View"><code class="name">var <span class="ident">View</span></code></dt>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.View"><code class="name">var <span class="ident">View</span></code></dt>
 <dd>
 <div class="desc"><p>QGraphicsView(self, parent: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)
 QGraphicsView(self, scene: PySide2.QtWidgets.QGraphicsScene, parent: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></div>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Instance variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.paste_pos"><code class="name">var <span class="ident">paste_pos</span></code></dt>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.paste_pos"><code class="name">var <span class="ident">paste_pos</span></code></dt>
 <dd>
 <div class="desc"><p>Position where the center of the pasted object will be located.</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.addItem"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.addItem"><code class="name flex">
 <span>def <span class="ident">addItem</span></span>(<span>self, item: PySide2.QtWidgets.QGraphicsItem)</span>
 </code></dt>
 <dd>
@@ -798,7 +869,7 @@ QGraphicsView(self, scene: PySide2.QtWidgets.QGraphicsScene, parent: typing.Unio
     super().addItem(item)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.advancePastePos"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.advancePastePos"><code class="name flex">
 <span>def <span class="ident">advancePastePos</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -816,7 +887,7 @@ This function is usually called when an object has been pasted.</p></div>
     self.paste_pos += QPointF(offset, offset)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.clear"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.clear"><code class="name flex">
 <span>def <span class="ident">clear</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -831,8 +902,8 @@ This function is usually called when an object has been pasted.</p></div>
     self.graph.clear()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.clipboardSelection"><code class="name flex">
-<span>def <span class="ident">clipboardSelection</span></span>(<span>self) -> <a title="nfb_studio.widgets.signal.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.signal.scheme.graph.Graph">Graph</a></span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.clipboardSelection"><code class="name flex">
+<span>def <span class="ident">clipboardSelection</span></span>(<span>self) -> <a title="nfb_studio.widgets.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.scheme.graph.Graph">Graph</a></span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -844,8 +915,8 @@ This function is usually called when an object has been pasted.</p></div>
     return self.graph.clipboardSelection()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.connect_nodes"><code class="name flex">
-<span>def <span class="ident">connect_nodes</span></span>(<span>self, source: <a title="nfb_studio.widgets.signal.scheme.connection.output.Output" href="connection/output.html#nfb_studio.widgets.signal.scheme.connection.output.Output">Output</a>, target: <a title="nfb_studio.widgets.signal.scheme.connection.input.Input" href="connection/input.html#nfb_studio.widgets.signal.scheme.connection.input.Input">Input</a>)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes"><code class="name flex">
+<span>def <span class="ident">connect_nodes</span></span>(<span>self, source: <a title="nfb_studio.widgets.scheme.node.connection.output.Output" href="node/connection/output.html#nfb_studio.widgets.scheme.node.connection.output.Output">Output</a>, target: <a title="nfb_studio.widgets.scheme.node.connection.input.Input" href="node/connection/input.html#nfb_studio.widgets.scheme.node.connection.input.Input">Input</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Connect an Output connection to an Input connection with an edge.</p>
@@ -865,7 +936,7 @@ This function is usually called when an object has been pasted.</p></div>
     return edge</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.copyEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.copyEvent"><code class="name flex">
 <span>def <span class="ident">copyEvent</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -890,7 +961,7 @@ This function is usually called when an object has been pasted.</p></div>
     clipboard.setMimeData(package)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.cutEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.cutEvent"><code class="name flex">
 <span>def <span class="ident">cutEvent</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -905,7 +976,7 @@ This function is usually called when an object has been pasted.</p></div>
     self.deleteEvent()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.deleteEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.deleteEvent"><code class="name flex">
 <span>def <span class="ident">deleteEvent</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -919,7 +990,7 @@ This function is usually called when an object has been pasted.</p></div>
     self.extract(self.selection())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.deserialize"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.deserialize"><code class="name flex">
 <span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
 </code></dt>
 <dd>
@@ -945,8 +1016,8 @@ This function is usually called when an object has been pasted.</p></div>
         super().addItem(edge)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.disconnect_nodes"><code class="name flex">
-<span>def <span class="ident">disconnect_nodes</span></span>(<span>self, source: <a title="nfb_studio.widgets.signal.scheme.connection.output.Output" href="connection/output.html#nfb_studio.widgets.signal.scheme.connection.output.Output">Output</a>, target: <a title="nfb_studio.widgets.signal.scheme.connection.input.Input" href="connection/input.html#nfb_studio.widgets.signal.scheme.connection.input.Input">Input</a>)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes"><code class="name flex">
+<span>def <span class="ident">disconnect_nodes</span></span>(<span>self, source: <a title="nfb_studio.widgets.scheme.node.connection.output.Output" href="node/connection/output.html#nfb_studio.widgets.scheme.node.connection.output.Output">Output</a>, target: <a title="nfb_studio.widgets.scheme.node.connection.input.Input" href="node/connection/input.html#nfb_studio.widgets.scheme.node.connection.input.Input">Input</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Remove a connection between a node output and an input.</p>
@@ -968,7 +1039,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></div>
     return edge</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.dragEnterEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.dragEnterEvent"><code class="name flex">
 <span>def <span class="ident">dragEnterEvent</span></span>(<span>self, event)</span>
 </code></dt>
 <dd>
@@ -979,13 +1050,22 @@ Returns the edge that was removed, or None if no such edge was found.</p></div>
 </summary>
 <pre><code class="python">def dragEnterEvent(self, event):
     package = event.mimeData()
-    event.setAccepted(
-        package.hasFormat(signal.Toolbox.DragMimeType) or
-        package.hasFormat(Connection.EdgeDragMimeType)
-    )</code></pre>
+
+    # Form a list of accepted formats. Accepted formats include all format with custom drop functions, as well as
+    # Connection.EdgeDragMimeType
+    accepted_formats = (
+        list(self._custom_drop_events.keys()) + 
+        [Connection.EdgeDragMimeType]
+    )
+    
+    # If any of the accepted_formats is present in package.formats(), accept the event.
+    for format in package.formats():
+        if format in accepted_formats:
+            event.accept()
+            break</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.dragMoveEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.dragMoveEvent"><code class="name flex">
 <span>def <span class="ident">dragMoveEvent</span></span>(<span>self, event)</span>
 </code></dt>
 <dd>
@@ -1004,7 +1084,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></div>
             self._dragging_edge.setTargetPos(event.scenePos())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.dropEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.dropEvent"><code class="name flex">
 <span>def <span class="ident">dropEvent</span></span>(<span>self, event)</span>
 </code></dt>
 <dd>
@@ -1016,21 +1096,15 @@ Returns the edge that was removed, or None if no such edge was found.</p></div>
 <pre><code class="python">def dropEvent(self, event):
     package = event.mimeData()
 
-    if package.hasFormat(signal.Toolbox.DragMimeType):
-        node = mime.load(package, signal.Toolbox.DragMimeType, hooks=hooks.qt)
+    for format in self._custom_drop_events.keys():
+        if package.hasFormat(format):
+            self._custom_drop_events[format](scheme=self, event=event)
 
-        pos = event.scenePos() - QPointF(
-            node.boundingRect().size().width()/2,
-            node.boundingRect().size().height()/2
-        )
-        node.setPos(pos)
-        self.addItem(node)
-    else:
-        super().dropEvent(event)</code></pre>
+    super().dropEvent(event)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.edgeDragStart"><code class="name flex">
-<span>def <span class="ident">edgeDragStart</span></span>(<span>self, connection: <a title="nfb_studio.widgets.signal.scheme.connection.connection.Connection" href="connection/connection.html#nfb_studio.widgets.signal.scheme.connection.connection.Connection">Connection</a>)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart"><code class="name flex">
+<span>def <span class="ident">edgeDragStart</span></span>(<span>self, connection: <a title="nfb_studio.widgets.scheme.node.connection.connection.Connection" href="node/connection/connection.html#nfb_studio.widgets.scheme.node.connection.connection.Connection">Connection</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Triggers a start to an edge drawing mode.<br>
@@ -1053,7 +1127,7 @@ created here and updated with mouse movements in dragMoveEvent.</p></div>
     super().addItem(self._dragging_edge)  # Edge is present in the scene, but not in the graph.</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.edgeDragStop"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop"><code class="name flex">
 <span>def <span class="ident">edgeDragStop</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1075,8 +1149,8 @@ successful connection.</p></div>
     self._dragging_edge = None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.extract"><code class="name flex">
-<span>def <span class="ident">extract</span></span>(<span>self, other: <a title="nfb_studio.widgets.signal.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.signal.scheme.graph.Graph">Graph</a>)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.extract"><code class="name flex">
+<span>def <span class="ident">extract</span></span>(<span>self, other: <a title="nfb_studio.widgets.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.scheme.graph.Graph">Graph</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Update the scheme, removing elements from a graph.</p>
@@ -1097,8 +1171,8 @@ successful connection.</p></div>
         self.removeItem(node)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.findNode"><code class="name flex">
-<span>def <span class="ident">findNode</span></span>(<span>self, node_id: int) -> typing.Union[<a title="nfb_studio.widgets.signal.scheme.node.Node" href="node.html#nfb_studio.widgets.signal.scheme.node.Node">Node</a>, NoneType]</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.findNode"><code class="name flex">
+<span>def <span class="ident">findNode</span></span>(<span>self, node_id: int) -> typing.Union[<a title="nfb_studio.widgets.scheme.node.node.Node" href="node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a>, NoneType]</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1106,11 +1180,11 @@ successful connection.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def findNode(self, node_id: int) -&gt; Union[Node, None]:
+<pre><code class="python">def findNode(self, node_id: int) -&gt; Union[Node, None]:  # FIXME: Where is this used? What is the node_id?
     return self.graph.findNode(node_id)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.hasEdgeDrag"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag"><code class="name flex">
 <span>def <span class="ident">hasEdgeDrag</span></span>(<span>self) -> bool</span>
 </code></dt>
 <dd>
@@ -1124,7 +1198,7 @@ successful connection.</p></div>
     return self._dragging_edge is not None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.keyPressEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.keyPressEvent"><code class="name flex">
 <span>def <span class="ident">keyPressEvent</span></span>(<span>self, event)</span>
 </code></dt>
 <dd>
@@ -1143,7 +1217,7 @@ successful connection.</p></div>
     super().keyPressEvent(event)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.keyReleaseEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.keyReleaseEvent"><code class="name flex">
 <span>def <span class="ident">keyReleaseEvent</span></span>(<span>self, event)</span>
 </code></dt>
 <dd>
@@ -1162,8 +1236,8 @@ successful connection.</p></div>
     super().keyReleaseEvent(event)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.merge"><code class="name flex">
-<span>def <span class="ident">merge</span></span>(<span>self, other: <a title="nfb_studio.widgets.signal.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.signal.scheme.graph.Graph">Graph</a>)</span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.merge"><code class="name flex">
+<span>def <span class="ident">merge</span></span>(<span>self, other: <a title="nfb_studio.widgets.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.scheme.graph.Graph">Graph</a>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Update the scheme, adding elements from a graph.</p></div>
@@ -1181,7 +1255,7 @@ successful connection.</p></div>
         super().addItem(edge)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.paletteChange"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.paletteChange"><code class="name flex">
 <span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1194,7 +1268,7 @@ successful connection.</p></div>
     super().setBackgroundBrush(self.schemePalette().background())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.pasteEvent"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent"><code class="name flex">
 <span>def <span class="ident">pasteEvent</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1219,7 +1293,7 @@ successful connection.</p></div>
         self.advancePastePos()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.removeItem"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.removeItem"><code class="name flex">
 <span>def <span class="ident">removeItem</span></span>(<span>self, item: PySide2.QtWidgets.QGraphicsItem)</span>
 </code></dt>
 <dd>
@@ -1250,7 +1324,7 @@ successful connection.</p></div>
     self.graph.remove(item)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.schemePalette"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.schemePalette"><code class="name flex">
 <span>def <span class="ident">schemePalette</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1263,7 +1337,7 @@ successful connection.</p></div>
     return self._palette</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.schemeStyle"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle"><code class="name flex">
 <span>def <span class="ident">schemeStyle</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1276,7 +1350,7 @@ successful connection.</p></div>
     return self._style</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.selectAll"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.selectAll"><code class="name flex">
 <span>def <span class="ident">selectAll</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1289,8 +1363,8 @@ successful connection.</p></div>
     self.graph.selectAll()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.selection"><code class="name flex">
-<span>def <span class="ident">selection</span></span>(<span>self) -> <a title="nfb_studio.widgets.signal.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.signal.scheme.graph.Graph">Graph</a></span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.selection"><code class="name flex">
+<span>def <span class="ident">selection</span></span>(<span>self) -> <a title="nfb_studio.widgets.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.scheme.graph.Graph">Graph</a></span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1302,7 +1376,7 @@ successful connection.</p></div>
     return self.graph.selection()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.serialize"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
 </code></dt>
 <dd>
@@ -1315,7 +1389,35 @@ successful connection.</p></div>
     return self.graph.serialize()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.setPalette"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.setCustomDropEvent"><code class="name flex">
+<span>def <span class="ident">setCustomDropEvent</span></span>(<span>self, format, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set a custom drop event for a particular MIME type (format).
+Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
+If event is None, the format is instead removed from the list of accepted formats.
+If not None, event should be a function accepting two keyword arguments:
+- scheme, which will contain this scheme
+- event, which will contain the event that is being dropped</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setCustomDropEvent(self, format, event):
+    &#34;&#34;&#34;Set a custom drop event for a particular MIME type (format).
+    Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
+    If event is None, the format is instead removed from the list of accepted formats.
+    If not None, event should be a function accepting two keyword arguments:
+    - scheme, which will contain this scheme
+    - event, which will contain the event that is being dropped
+    &#34;&#34;&#34;
+    if event is None:
+        self._custom_drop_events.pop(format)
+    else:
+        self._custom_drop_events[format] = event</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.setPalette"><code class="name flex">
 <span>def <span class="ident">setPalette</span></span>(<span>self, palette)</span>
 </code></dt>
 <dd>
@@ -1329,7 +1431,7 @@ successful connection.</p></div>
     self.paletteChange()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.setStyle"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.setStyle"><code class="name flex">
 <span>def <span class="ident">setStyle</span></span>(<span>self, style)</span>
 </code></dt>
 <dd>
@@ -1343,7 +1445,7 @@ successful connection.</p></div>
     self.styleChange()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.styleChange"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.styleChange"><code class="name flex">
 <span>def <span class="ident">styleChange</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -1356,8 +1458,31 @@ successful connection.</p></div>
     pass</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal.scheme.scheme.Scheme.wideSelection"><code class="name flex">
-<span>def <span class="ident">wideSelection</span></span>(<span>self) -> <a title="nfb_studio.widgets.signal.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.signal.scheme.graph.Graph">Graph</a></span>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.view"><code class="name flex">
+<span>def <span class="ident">view</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a Scheme.View, suitable for displaying contents of the scheme.
+Note that only one view can exist for a given scheme. This function will construct the widget when it's first
+called, and always return this widget.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def view(self):
+    &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.
+    Note that only one view can exist for a given scheme. This function will construct the widget when it&#39;s first
+    called, and always return this widget.
+    &#34;&#34;&#34;
+    if self._view is None:
+        self._view = self.View()
+        self._view.setScene(self)
+
+    return self._view</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.wideSelection"><code class="name flex">
+<span>def <span class="ident">wideSelection</span></span>(<span>self) -> <a title="nfb_studio.widgets.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.scheme.graph.Graph">Graph</a></span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1382,51 +1507,53 @@ successful connection.</p></div>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.signal.scheme" href="index.html">nfb_studio.widgets.signal.scheme</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme" href="index.html">nfb_studio.widgets.scheme</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme">Scheme</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.scheme.scheme.Scheme" href="#nfb_studio.widgets.scheme.scheme.Scheme">Scheme</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.ClipboardMimeType" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.ClipboardMimeType">ClipboardMimeType</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.View" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.View">View</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.addItem" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.addItem">addItem</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.advancePastePos" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.advancePastePos">advancePastePos</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.clear" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.clear">clear</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.clipboardSelection" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.clipboardSelection">clipboardSelection</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.connect_nodes" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.connect_nodes">connect_nodes</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.copyEvent" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.copyEvent">copyEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.cutEvent" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.cutEvent">cutEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.deleteEvent" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.deleteEvent">deleteEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.deserialize" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.disconnect_nodes" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.disconnect_nodes">disconnect_nodes</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.dragEnterEvent" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.dragEnterEvent">dragEnterEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.dragMoveEvent" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.dragMoveEvent">dragMoveEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.dropEvent" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.dropEvent">dropEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.edgeDragStart" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.edgeDragStart">edgeDragStart</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.edgeDragStop" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.edgeDragStop">edgeDragStop</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.extract" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.extract">extract</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.findNode" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.findNode">findNode</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.hasEdgeDrag" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.hasEdgeDrag">hasEdgeDrag</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.keyPressEvent" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.keyPressEvent">keyPressEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.keyReleaseEvent" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.keyReleaseEvent">keyReleaseEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.merge" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.merge">merge</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.paletteChange" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.paletteChange">paletteChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.pasteEvent" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.pasteEvent">pasteEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.paste_pos" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.paste_pos">paste_pos</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.removeItem" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.removeItem">removeItem</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.schemePalette" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.schemePalette">schemePalette</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.schemeStyle" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.schemeStyle">schemeStyle</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.selectAll" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.selectAll">selectAll</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.selection" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.selection">selection</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.serialize" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.serialize">serialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.setPalette" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.setPalette">setPalette</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.setStyle" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.setStyle">setStyle</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.staticMetaObject" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.staticMetaObject">staticMetaObject</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.styleChange" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.styleChange">styleChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal.scheme.scheme.Scheme.wideSelection" href="#nfb_studio.widgets.signal.scheme.scheme.Scheme.wideSelection">wideSelection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.ClipboardMimeType" href="#nfb_studio.widgets.scheme.scheme.Scheme.ClipboardMimeType">ClipboardMimeType</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.View" href="#nfb_studio.widgets.scheme.scheme.Scheme.View">View</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.addItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.addItem">addItem</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.advancePastePos" href="#nfb_studio.widgets.scheme.scheme.Scheme.advancePastePos">advancePastePos</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.clear" href="#nfb_studio.widgets.scheme.scheme.Scheme.clear">clear</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.clipboardSelection" href="#nfb_studio.widgets.scheme.scheme.Scheme.clipboardSelection">clipboardSelection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.connect_nodes">connect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.copyEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.copyEvent">copyEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.cutEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.cutEvent">cutEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deleteEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.deleteEvent">deleteEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.deserialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes" href="#nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes">disconnect_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.dragEnterEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.dragEnterEvent">dragEnterEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.dragMoveEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.dragMoveEvent">dragMoveEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.dropEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.dropEvent">dropEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart" href="#nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart">edgeDragStart</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop" href="#nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop">edgeDragStop</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.extract" href="#nfb_studio.widgets.scheme.scheme.Scheme.extract">extract</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.findNode" href="#nfb_studio.widgets.scheme.scheme.Scheme.findNode">findNode</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag" href="#nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag">hasEdgeDrag</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.keyPressEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.keyPressEvent">keyPressEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.keyReleaseEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.keyReleaseEvent">keyReleaseEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.merge" href="#nfb_studio.widgets.scheme.scheme.Scheme.merge">merge</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.paletteChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.paletteChange">paletteChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.pasteEvent">pasteEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.paste_pos" href="#nfb_studio.widgets.scheme.scheme.Scheme.paste_pos">paste_pos</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.removeItem" href="#nfb_studio.widgets.scheme.scheme.Scheme.removeItem">removeItem</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemePalette" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemePalette">schemePalette</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle" href="#nfb_studio.widgets.scheme.scheme.Scheme.schemeStyle">schemeStyle</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.selectAll" href="#nfb_studio.widgets.scheme.scheme.Scheme.selectAll">selectAll</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.selection" href="#nfb_studio.widgets.scheme.scheme.Scheme.selection">selection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.serialize" href="#nfb_studio.widgets.scheme.scheme.Scheme.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.setCustomDropEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.setCustomDropEvent">setCustomDropEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.setPalette" href="#nfb_studio.widgets.scheme.scheme.Scheme.setPalette">setPalette</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.setStyle" href="#nfb_studio.widgets.scheme.scheme.Scheme.setStyle">setStyle</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject" href="#nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.styleChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.styleChange">styleChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.view" href="#nfb_studio.widgets.scheme.scheme.Scheme.view">view</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.wideSelection" href="#nfb_studio.widgets.scheme.scheme.Scheme.wideSelection">wideSelection</a></code></li>
 </ul>
 </li>
 </ul>
