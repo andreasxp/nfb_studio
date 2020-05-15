@@ -37,19 +37,24 @@ class EnvelopeDetector(Node):
         def __init__(self, parent=None):
             super().__init__(parent)
 
-            self.fSmoothingFactor_label = QLabel(&#34;fSmoothingFactor&#34;)
-            self.fSmoothingFactor_input = QDoubleSpinBox()
-            self.fSmoothingFactor_input.setValue(0)
-            self.fSmoothingFactor_input.setMinimum(0)
-            self.fSmoothingFactor_input.setMaximum(1)
-            self.fSmoothingFactor_input.setSingleStep(0.1)
+            self.smoothing_factor = QDoubleSpinBox()
+            self.smoothing_factor.setValue(0)
+            self.smoothing_factor.setMinimum(0)
+            self.smoothing_factor.setMaximum(1)
+            self.smoothing_factor.setSingleStep(0.1)
 
-            form = QFormLayout()
-            form.addRow(self.fSmoothingFactor_label, self.fSmoothingFactor_input)
-            self.setLayout(form)
+            self.method = QComboBox()
+            self.method.addItem(&#34;Rectification&#34;)
+            self.method.addItem(&#34;Fourier Transform&#34;)
+            self.method.addItem(&#34;Hilbert Transform&#34;)
+            self.method.addItem(&#34;cFIR&#34;)
 
-            # Disallow the widget window from expanding past the form&#39;s recommended size
-            self.setMaximumHeight(form.sizeHint().height())
+            layout = QFormLayout()
+            self.setLayout(layout)
+
+            layout.addRow(&#34;Smoothing factor&#34;, self.smoothing_factor)
+            layout.addRow(&#34;Method&#34;, self.method)
+
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -87,19 +92,24 @@ class EnvelopeDetector(Node):
         def __init__(self, parent=None):
             super().__init__(parent)
 
-            self.fSmoothingFactor_label = QLabel(&#34;fSmoothingFactor&#34;)
-            self.fSmoothingFactor_input = QDoubleSpinBox()
-            self.fSmoothingFactor_input.setValue(0)
-            self.fSmoothingFactor_input.setMinimum(0)
-            self.fSmoothingFactor_input.setMaximum(1)
-            self.fSmoothingFactor_input.setSingleStep(0.1)
+            self.smoothing_factor = QDoubleSpinBox()
+            self.smoothing_factor.setValue(0)
+            self.smoothing_factor.setMinimum(0)
+            self.smoothing_factor.setMaximum(1)
+            self.smoothing_factor.setSingleStep(0.1)
 
-            form = QFormLayout()
-            form.addRow(self.fSmoothingFactor_label, self.fSmoothingFactor_input)
-            self.setLayout(form)
+            self.method = QComboBox()
+            self.method.addItem(&#34;Rectification&#34;)
+            self.method.addItem(&#34;Fourier Transform&#34;)
+            self.method.addItem(&#34;Hilbert Transform&#34;)
+            self.method.addItem(&#34;cFIR&#34;)
 
-            # Disallow the widget window from expanding past the form&#39;s recommended size
-            self.setMaximumHeight(form.sizeHint().height())
+            layout = QFormLayout()
+            self.setLayout(layout)
+
+            layout.addRow(&#34;Smoothing factor&#34;, self.smoothing_factor)
+            layout.addRow(&#34;Method&#34;, self.method)
+
 
     def __init__(self, parent=None):
         super().__init__(parent)

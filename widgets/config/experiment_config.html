@@ -138,8 +138,6 @@ class ExperimentConfig(QWidget):
         self.show_proto_rectangle = QCheckBox()
         self.show_notch_filters    = QCheckBox()
 
-        self.sequence = QLineEdit()
-
         # Adding properties to the widget ------------------------------------------------------------------------------
         layout.addRow(&#34;Name&#34;, self.name)
         layout.addRow(&#34;Inlet&#34;, self.inlet_config)
@@ -153,7 +151,6 @@ class ExperimentConfig(QWidget):
         layout.addRow(&#34;Reference sub&#34;, self.reference_sub)
         layout.addRow(&#34;Show proto rectangle&#34;, self.show_proto_rectangle)
         layout.addRow(&#34;Show notch filters&#34;, self.show_notch_filters)
-        layout.addRow(&#34;Sequence&#34;, self.sequence)
 
     def on_prefilterBandLow_toggled(self):
         if self.prefilterBandLow_enable.isChecked():
@@ -315,8 +312,6 @@ class ExperimentConfig(QWidget):
         self.show_proto_rectangle = QCheckBox()
         self.show_notch_filters    = QCheckBox()
 
-        self.sequence = QLineEdit()
-
         # Adding properties to the widget ------------------------------------------------------------------------------
         layout.addRow(&#34;Name&#34;, self.name)
         layout.addRow(&#34;Inlet&#34;, self.inlet_config)
@@ -330,7 +325,6 @@ class ExperimentConfig(QWidget):
         layout.addRow(&#34;Reference sub&#34;, self.reference_sub)
         layout.addRow(&#34;Show proto rectangle&#34;, self.show_proto_rectangle)
         layout.addRow(&#34;Show notch filters&#34;, self.show_notch_filters)
-        layout.addRow(&#34;Sequence&#34;, self.sequence)
 
     def on_prefilterBandLow_toggled(self):
         if self.prefilterBandLow_enable.isChecked():
