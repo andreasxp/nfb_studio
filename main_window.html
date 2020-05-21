@@ -208,7 +208,8 @@ class MainWindow(QMainWindow):
         self.experiment.show_notch_filters = self.experiment_config.show_notch_filters.isChecked()
 
         # --------------------------------------------------------------------------------------------------------------
-        print(self.experiment.export())</code></pre>
+        with open(&#34;_temp_experiment.xml&#34;, &#34;w&#34;) as f:
+            f.write(self.experiment.export())</code></pre>
 </details>
 </section>
 <section>
@@ -398,7 +399,8 @@ class MainWindow(QMainWindow):
         self.experiment.show_notch_filters = self.experiment_config.show_notch_filters.isChecked()
 
         # --------------------------------------------------------------------------------------------------------------
-        print(self.experiment.export())</code></pre>
+        with open(&#34;_temp_experiment.xml&#34;, &#34;w&#34;) as f:
+            f.write(self.experiment.export())</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -541,7 +543,8 @@ class MainWindow(QMainWindow):
     self.experiment.show_notch_filters = self.experiment_config.show_notch_filters.isChecked()
 
     # --------------------------------------------------------------------------------------------------------------
-    print(self.experiment.export())</code></pre>
+    with open(&#34;_temp_experiment.xml&#34;, &#34;w&#34;) as f:
+        f.write(self.experiment.export())</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.main_window.MainWindow.setCurrentIndex"><code class="name flex">
