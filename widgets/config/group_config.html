@@ -26,23 +26,20 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Config widget for a group of blocks.&#34;&#34;&#34;
-import itertools
 from PySide2.QtWidgets import QWidget, QFormLayout, QLabel, QLineEdit, QCheckBox
 
 
 class GroupConfig(QWidget):
     &#34;&#34;&#34;Config widget for a group of blocks.&#34;&#34;&#34;
-    newid = itertools.count()
 
-    def __init__(self, group, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         layout = QFormLayout()
         self.setLayout(layout)
 
-        self.data = group
+        self._model = None
 
-        self.name = QLabel(&#34;Group&#34; + str(next(self.newid)))
-        self.data.name = self.name.text()
+        self.name = QLabel()
 
         self.blocks = QLineEdit()
         self.repeats = QLineEdit()
@@ -51,7 +48,31 @@ class GroupConfig(QWidget):
         layout.addRow(&#34;Name&#34;, self.name)
         layout.addRow(&#34;Blocks&#34;, self.blocks)
         layout.addRow(&#34;Repeats&#34;, self.repeats)
-        layout.addRow(&#34;Random order&#34;, self.random_order)</code></pre>
+        layout.addRow(&#34;Random order&#34;, self.random_order)
+
+    def model(self):
+        return self._model
+    
+    def setModel(self, group, /):
+        self._model = group
+        group._view = self
+        self._model.sync()
+
+    def sync(self):
+        &#34;&#34;&#34;Sync data from this view to the group model.
+        &#34;Sync&#34; in this context means one way copy of data from self to model. A similarly named function in the group
+        copies data the opposite way. Use one or the other depending on where data was changed.
+        &#34;&#34;&#34;
+        group = self.model()
+
+        group.name = self.name.text()
+        group.random_order = self.random_order.isChecked()
+        if self.blocks.text() == &#34;&#34;:
+            group.blocks = []
+            group.repeats = []
+        else:
+            group.blocks = self.blocks.text().split(&#34; &#34;)
+            group.repeats = [int(number) for number in self.repeats.text().split(&#34; &#34;)]</code></pre>
 </details>
 </section>
 <section>
@@ -65,7 +86,7 @@ class GroupConfig(QWidget):
 <dl>
 <dt id="nfb_studio.widgets.config.group_config.GroupConfig"><code class="flex name class">
 <span>class <span class="ident">GroupConfig</span></span>
-<span>(</span><span>group, parent=None)</span>
+<span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Config widget for a group of blocks.</p></div>
@@ -75,17 +96,15 @@ class GroupConfig(QWidget):
 </summary>
 <pre><code class="python">class GroupConfig(QWidget):
     &#34;&#34;&#34;Config widget for a group of blocks.&#34;&#34;&#34;
-    newid = itertools.count()
 
-    def __init__(self, group, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         layout = QFormLayout()
         self.setLayout(layout)
 
-        self.data = group
+        self._model = None
 
-        self.name = QLabel(&#34;Group&#34; + str(next(self.newid)))
-        self.data.name = self.name.text()
+        self.name = QLabel()
 
         self.blocks = QLineEdit()
         self.repeats = QLineEdit()
@@ -94,7 +113,31 @@ class GroupConfig(QWidget):
         layout.addRow(&#34;Name&#34;, self.name)
         layout.addRow(&#34;Blocks&#34;, self.blocks)
         layout.addRow(&#34;Repeats&#34;, self.repeats)
-        layout.addRow(&#34;Random order&#34;, self.random_order)</code></pre>
+        layout.addRow(&#34;Random order&#34;, self.random_order)
+
+    def model(self):
+        return self._model
+    
+    def setModel(self, group, /):
+        self._model = group
+        group._view = self
+        self._model.sync()
+
+    def sync(self):
+        &#34;&#34;&#34;Sync data from this view to the group model.
+        &#34;Sync&#34; in this context means one way copy of data from self to model. A similarly named function in the group
+        copies data the opposite way. Use one or the other depending on where data was changed.
+        &#34;&#34;&#34;
+        group = self.model()
+
+        group.name = self.name.text()
+        group.random_order = self.random_order.isChecked()
+        if self.blocks.text() == &#34;&#34;:
+            group.blocks = []
+            group.repeats = []
+        else:
+            group.blocks = self.blocks.text().split(&#34; &#34;)
+            group.repeats = [int(number) for number in self.repeats.text().split(&#34; &#34;)]</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -105,13 +148,68 @@ class GroupConfig(QWidget):
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.config.group_config.GroupConfig.newid"><code class="name">var <span class="ident">newid</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
 <dt id="nfb_studio.widgets.config.group_config.GroupConfig.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.config.group_config.GroupConfig.model"><code class="name flex">
+<span>def <span class="ident">model</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def model(self):
+    return self._model</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.config.group_config.GroupConfig.setModel"><code class="name flex">
+<span>def <span class="ident">setModel</span></span>(<span>self, group)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setModel(self, group, /):
+    self._model = group
+    group._view = self
+    self._model.sync()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.config.group_config.GroupConfig.sync"><code class="name flex">
+<span>def <span class="ident">sync</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sync data from this view to the group model.
+"Sync" in this context means one way copy of data from self to model. A similarly named function in the group
+copies data the opposite way. Use one or the other depending on where data was changed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sync(self):
+    &#34;&#34;&#34;Sync data from this view to the group model.
+    &#34;Sync&#34; in this context means one way copy of data from self to model. A similarly named function in the group
+    copies data the opposite way. Use one or the other depending on where data was changed.
+    &#34;&#34;&#34;
+    group = self.model()
+
+    group.name = self.name.text()
+    group.random_order = self.random_order.isChecked()
+    if self.blocks.text() == &#34;&#34;:
+        group.blocks = []
+        group.repeats = []
+    else:
+        group.blocks = self.blocks.text().split(&#34; &#34;)
+        group.repeats = [int(number) for number in self.repeats.text().split(&#34; &#34;)]</code></pre>
+</details>
 </dd>
 </dl>
 </dd>
@@ -134,8 +232,10 @@ class GroupConfig(QWidget):
 <li>
 <h4><code><a title="nfb_studio.widgets.config.group_config.GroupConfig" href="#nfb_studio.widgets.config.group_config.GroupConfig">GroupConfig</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.widgets.config.group_config.GroupConfig.newid" href="#nfb_studio.widgets.config.group_config.GroupConfig.newid">newid</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.group_config.GroupConfig.model" href="#nfb_studio.widgets.config.group_config.GroupConfig.model">model</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.group_config.GroupConfig.setModel" href="#nfb_studio.widgets.config.group_config.GroupConfig.setModel">setModel</a></code></li>
 <li><code><a title="nfb_studio.widgets.config.group_config.GroupConfig.staticMetaObject" href="#nfb_studio.widgets.config.group_config.GroupConfig.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.group_config.GroupConfig.sync" href="#nfb_studio.widgets.config.group_config.GroupConfig.sync">sync</a></code></li>
 </ul>
 </li>
 </ul>

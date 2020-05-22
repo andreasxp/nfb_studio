@@ -30,40 +30,86 @@ import sys
 from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QLineEdit, QDoubleSpinBox
 
 from ..scheme import Node, Input, Output, DataType
+from .signal_node import SignalNode
 
 
-class Standardise(Node):
-    class Config(QWidget):
+class Standardise(SignalNode):
+    class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
             # Add a new layout
-            self.fAverage_label = QLabel(&#34;fAverage&#34;)
-            self.fAverage_input = QDoubleSpinBox()
-            self.fAverage_input.setMaximum(sys.float_info.max)
+            self.average = QDoubleSpinBox()
+            self.average.setMaximum(sys.float_info.max)
 
-            self.fStdDev_label = QLabel(&#34;fStdDev&#34;)
-            self.fStdDev_input = QDoubleSpinBox()
-            self.fStdDev_input.setValue(1)
-            self.fStdDev_input.setMaximum(sys.float_info.max)
+            self.standard_deviation = QDoubleSpinBox()
+            self.standard_deviation.setMaximum(sys.float_info.max)
 
-            form = QFormLayout()
-            form.addRow(self.fAverage_label, self.fAverage_input)
-            form.addRow(self.fStdDev_label, self.fStdDev_input)
-            self.setLayout(form)
+            layout = QFormLayout()
+            self.setLayout(layout)
 
-            # Disallow the widget window from expanding past the form&#39;s recommended size
-            self.setMaximumHeight(form.sizeHint().height())
+            layout.addRow(&#34;Average&#34;, self.average)
+            layout.addRow(&#34;Std. Deviation&#34;, self.standard_deviation)
+        
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+
+            n._average = self.average.value()
+            n._standard_deviation = self.standard_deviation.value()
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
         
         self.setTitle(&#34;Standardise&#34;)
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self.setConfigWidget(self.Config())</code></pre>
+        self._average = 0
+        self._standard_deviation = 1
+        self.sync()
+    
+    def average(self):
+        return self._average
+    
+    def standardDeviation(self):
+        return self._standard_deviation
+    
+    def setAverage(self, value, /):
+        self._average = value
+        self.sync()
+    
+    def setStandardDeviation(self, value, /):
+        self._standard_deviation = value
+        self.sync()
+
+    def sync(self):
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        w.average.setValue(self.average())
+        w.standard_deviation.setValue(self.standardDeviation())
+
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        signal[&#34;fAverage&#34;] = self.average()
+        signal[&#34;fStdDev&#34;] = self.standardDeviation()
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;average&#34;] = self.average()
+        data[&#34;standard_deviation&#34;] = self.standardDeviation()
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+
+        self.setAverage(data[&#34;average&#34;])
+        self.setStandardDeviation(data[&#34;standard_deviation&#34;])</code></pre>
 </details>
 </section>
 <section>
@@ -86,65 +132,212 @@ class Standardise(Node):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Standardise(Node):
-    class Config(QWidget):
+<pre><code class="python">class Standardise(SignalNode):
+    class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
             # Add a new layout
-            self.fAverage_label = QLabel(&#34;fAverage&#34;)
-            self.fAverage_input = QDoubleSpinBox()
-            self.fAverage_input.setMaximum(sys.float_info.max)
+            self.average = QDoubleSpinBox()
+            self.average.setMaximum(sys.float_info.max)
 
-            self.fStdDev_label = QLabel(&#34;fStdDev&#34;)
-            self.fStdDev_input = QDoubleSpinBox()
-            self.fStdDev_input.setValue(1)
-            self.fStdDev_input.setMaximum(sys.float_info.max)
+            self.standard_deviation = QDoubleSpinBox()
+            self.standard_deviation.setMaximum(sys.float_info.max)
 
-            form = QFormLayout()
-            form.addRow(self.fAverage_label, self.fAverage_input)
-            form.addRow(self.fStdDev_label, self.fStdDev_input)
-            self.setLayout(form)
+            layout = QFormLayout()
+            self.setLayout(layout)
 
-            # Disallow the widget window from expanding past the form&#39;s recommended size
-            self.setMaximumHeight(form.sizeHint().height())
+            layout.addRow(&#34;Average&#34;, self.average)
+            layout.addRow(&#34;Std. Deviation&#34;, self.standard_deviation)
+        
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+
+            n._average = self.average.value()
+            n._standard_deviation = self.standard_deviation.value()
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
         
         self.setTitle(&#34;Standardise&#34;)
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self.setConfigWidget(self.Config())</code></pre>
+        self._average = 0
+        self._standard_deviation = 1
+        self.sync()
+    
+    def average(self):
+        return self._average
+    
+    def standardDeviation(self):
+        return self._standard_deviation
+    
+    def setAverage(self, value, /):
+        self._average = value
+        self.sync()
+    
+    def setStandardDeviation(self, value, /):
+        self._standard_deviation = value
+        self.sync()
+
+    def sync(self):
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        w.average.setValue(self.average())
+        w.standard_deviation.setValue(self.standardDeviation())
+
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        signal[&#34;fAverage&#34;] = self.average()
+        signal[&#34;fStdDev&#34;] = self.standardDeviation()
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;average&#34;] = self.average()
+        data[&#34;standard_deviation&#34;] = self.standardDeviation()
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+
+        self.setAverage(data[&#34;average&#34;])
+        self.setStandardDeviation(data[&#34;standard_deviation&#34;])</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></li>
 <li><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></li>
 <li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
-<h3>Class variables</h3>
+<h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.Config"><code class="name">var <span class="ident">Config</span></code></dt>
+<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.add_nfb_export_data"><code class="name flex">
+<span>def <span class="ident">add_nfb_export_data</span></span>(<span>self, signal: dict)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Config widget displayed for LSLInput.</p></div>
+<div class="desc"><p>Add this node's data to the dict representation of the signal.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_nfb_export_data(self, signal: dict):
+    &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+    signal[&#34;fAverage&#34;] = self.average()
+    signal[&#34;fStdDev&#34;] = self.standardDeviation()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.average"><code class="name flex">
+<span>def <span class="ident">average</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def average(self):
+    return self._average</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize(self, data: dict):
+    super().deserialize(data)
+
+    self.setAverage(data[&#34;average&#34;])
+    self.setStandardDeviation(data[&#34;standard_deviation&#34;])</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    data = super().serialize()
+
+    data[&#34;average&#34;] = self.average()
+    data[&#34;standard_deviation&#34;] = self.standardDeviation()
+    return data</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.setAverage"><code class="name flex">
+<span>def <span class="ident">setAverage</span></span>(<span>self, value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setAverage(self, value, /):
+    self._average = value
+    self.sync()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.setStandardDeviation"><code class="name flex">
+<span>def <span class="ident">setStandardDeviation</span></span>(<span>self, value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setStandardDeviation(self, value, /):
+    self._standard_deviation = value
+    self.sync()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.standardDeviation"><code class="name flex">
+<span>def <span class="ident">standardDeviation</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def standardDeviation(self):
+    return self._standard_deviation</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config">Config</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget">hasConfigWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync">sync</a></code></li>
 </ul>
 </li>
 </ul>
@@ -168,7 +361,13 @@ class Standardise(Node):
 <li>
 <h4><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise">Standardise</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.Config" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.Config">Config</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.add_nfb_export_data">add_nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.average" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.average">average</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.deserialize" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.serialize" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.setAverage" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.setAverage">setAverage</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.setStandardDeviation" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.setStandardDeviation">setStandardDeviation</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.standardDeviation" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.standardDeviation">standardDeviation</a></code></li>
 </ul>
 </li>
 </ul>

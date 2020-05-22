@@ -24,15 +24,18 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from PySide2.QtCore import Qt, QModelIndex
-from PySide2.QtWidgets import QMainWindow, QDockWidget, QStackedWidget, QAction
+<pre><code class="python">import os
+
+from PySide2.QtCore import Qt, QModelIndex
+from PySide2.QtWidgets import QMainWindow, QDockWidget, QStackedWidget, QAction, QFileDialog
 
 from nfb_studio.util.qt.tree_model import TreeModelItem
 
 from .experiment import Experiment
 from .widgets.scheme import SchemeEditor
 from .property_tree import PropertyTree
-from .widgets.config import BlockConfig, GroupConfig, ExperimentConfig
+from .widgets.config import BlockConfig, GroupConfig, GeneralConfig
+from .experiment_view import ExperimentView
 from .block import Block
 from .group import Group
 from .widgets.signal_nodes import *
@@ -43,173 +46,71 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.experiment = Experiment()
-
-        # Property tree ------------------------------------------------------------------------------------------------
-        self.property_tree = PropertyTree()
-        self.property_tree_view = self.property_tree.getView()
-        self.property_tree_view.clicked.connect(self.setCurrentIndex)
-
-        self.property_tree_dock = QDockWidget(&#34;Properties&#34;, self)
-        self.property_tree_dock.setWidget(self.property_tree_view)
-        self.property_tree_dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        self.property_tree_dock.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
-        self.addDockWidget(Qt.LeftDockWidgetArea, self.property_tree_dock)
-
-        # Editing widgets ----------------------------------------------------------------------------------------------
-        self.experiment_config = ExperimentConfig(self.experiment)
-        
-        self.signal_editor = SchemeEditor()
-        self.signal_editor.setScheme(self.experiment.signal_scheme)
-        self.signal_editor.toolbox().addItem(&#34;LSL Input&#34;, LSLInput())
-        self.signal_editor.toolbox().addItem(&#34;Spatial Filter&#34;, SpatialFilter())
-        self.signal_editor.toolbox().addItem(&#34;Bandpass Filter&#34;, BandpassFilter())
-        self.signal_editor.toolbox().addItem(&#34;Envelope Detector&#34;, EnvelopeDetector())
-        self.signal_editor.toolbox().addItem(&#34;Standardise&#34;, Standardise())
-        self.signal_editor.toolbox().addItem(&#34;Signal Export&#34;, DerivedSignalExport())
-
-        self.block_stack = QStackedWidget()
-        self.group_stack = QStackedWidget()
-
-        # Sequence editor ----------------------------------------------------------------------------------------------
-        self.sequence_editor = SchemeEditor()
-        self.sequence_editor.setScheme(self.experiment.sequence_scheme)
-
-        # Central widget -----------------------------------------------------------------------------------------------
-        self.central_widget = QStackedWidget()
-        self.setCentralWidget(self.central_widget)
-        self.central_widget.addWidget(self.experiment_config)
-        self.central_widget.addWidget(self.signal_editor)
-        self.central_widget.addWidget(self.block_stack)
-        self.central_widget.addWidget(self.group_stack)
-        self.central_widget.addWidget(self.sequence_editor)
-
-        # Signals ------------------------------------------------------------------------------------------------------
-        self.property_tree_view.blocktree_menu_add_action.triggered.connect(self.addBlock)
-        self.property_tree_view.grouptree_menu_add_action.triggered.connect(self.addGroup)
+        self._experiment = None
+        self.setExperiment(Experiment())
 
         # Menu bar -----------------------------------------------------------------------------------------------------
         menubar = self.menuBar()
         filemenu = menubar.addMenu(&#34;File&#34;)
+
+        open = filemenu.addAction(&#34;Open&#34;)
+        open.triggered.connect(self.load)
+
+        save = filemenu.addAction(&#34;Save As...&#34;)
+        save.triggered.connect(self.save)
+
         export = filemenu.addAction(&#34;Export&#34;)
         export.triggered.connect(self.export)
 
-    def setCurrentIndex(self, index: QModelIndex):
-        &#34;&#34;&#34;Set central widget in the main window to display config info for item at `index` in the property tree.&#34;&#34;&#34;
-        self.property_tree_view.setCurrentIndex(index)
+    def experiment(self):
+        return self._experiment
 
-        item = self.property_tree.item(index)
-        
-        if item is self.property_tree.general_item:
-            self.central_widget.setCurrentIndex(0)
-        if item is self.property_tree.signals_item:
-            self.central_widget.setCurrentIndex(1)
-        elif item.parent() is self.property_tree.blocks_item:
-            self.central_widget.setCurrentIndex(2)
-            self.block_stack.setCurrentIndex(index.row())
-        elif item.parent() is self.property_tree.groups_item:
-            self.central_widget.setCurrentIndex(3)
-            self.group_stack.setCurrentIndex(index.row())
-        elif item is self.property_tree.sequence_item:
-            self.central_widget.setCurrentIndex(4)
+    def setExperiment(self, experiment):
+        self._experiment = experiment
+        experiment_view = ExperimentView()
+        self._experiment.setView(experiment_view)
 
-    def addBlock(self):
-        block = Block()
-        block_config = BlockConfig(block)
-
-        self.experiment.blocks.add(block)
-
-        tree_item = TreeModelItem()
-        tree_item.setText(block.name)
-        self.property_tree.blocks_item.addItem(tree_item)
-
-        self.block_stack.addWidget(block_config)
-
-        block_node = BlockNode()
-        block_node.setTitle(block.name)
-        self.sequence_editor.toolbox().addItem(block.name, block_node)
-    
-    def addGroup(self):
-        group = Group()
-        group_config = GroupConfig(group)
-
-        self.experiment.groups.add(group)
-
-        tree_item = TreeModelItem()
-        tree_item.setText(group.name)
-        self.property_tree.groups_item.addItem(tree_item)
-
-        self.group_stack.addWidget(group_config)
-
-        group_node = GroupNode()
-        group_node.setTitle(group.name)
-        self.sequence_editor.toolbox().addItem(group.name, group_node)
+        self.setCentralWidget(experiment_view)
 
     def export(self):
-        # For each block, write it&#39;s data to the experiment ------------------------------------------------------------
-        for i in range(self.block_stack.count()):
-            block_config: BlockConfig = self.block_stack.widget(i)
-            block: Block = block_config.data
+        self.experiment.view().sync()
+        data = self.experiment.export()
 
-            block.duration = block_config.duration.value()
-            block.feedback_source = block_config.feedback_source.text()
-            block.feedback_type = block_config.feedback_type.currentText()
-            block.random_bound = block_config.random_bound.currentText()
-            block.video_path = block_config.video_path.text()
-            block.mock_signal_path = block_config.mock_signal_path.text()
-            block.mock_signal_dataset = block_config.mock_signal_dataset.text()
-            block.mock_previous = block_config.mock_previous.value()
-            block.mock_previous_reverse = block_config.mock_previous_reverse.isChecked()
-            block.mock_previous_random = block_config.mock_previous_random.isChecked()
-            block.start_data_driven_filter_designer = block_config.start_data_driven_filter_designer.isChecked()
-            block.pause = block_config.pause.isChecked()
-            block.beep = block_config.beep.isChecked()
-            block.update_statistics = block_config.update_statistics.isChecked()
-        
-        # For each group, write its data to the experiment -------------------------------------------------------------
-        for i in range(self.group_stack.count()):
-            group_config: GroupConfig = self.group_stack.widget(i)
-            group: Group = group_config.data
+        file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
+        if file_path == &#34;&#34;:
+            return
 
-            group.name = group_config.name.text()
-            group.random_order = group_config.random_order.isChecked()
-            if group_config.blocks.text() == &#34;&#34;:
-                group.blocks = []
-                group.repeats = []
-            else:
-                group.blocks = group_config.blocks.text().split(&#34; &#34;)
-                group.repeats = [int(number) for number in group_config.repeats.text().split(&#34; &#34;)]
+        if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
+            file_path = file_path + &#34;.xml&#34;
 
-        # Write general experiment data --------------------------------------------------------------------------------
-        self.experiment.name = self.experiment_config.name.text()
-        self.experiment.inlet = self.experiment_config.inlet_type_export_values[self.experiment_config.inlet_type_selector.currentText()]
-        self.experiment.lsl_stream_name = self.experiment_config.lsl_stream_name.currentText()
-        self.experiment.raw_data_path = self.experiment_config.lsl_filename.text()
-        self.experiment.hostname_port = self.experiment_config.hostname_port.text()
-        self.experiment.dc = self.experiment_config.dc.isChecked()
-        
-        if self.experiment_config.prefilterBandLow_enable.isChecked():
-            prefilterBandLow = self.experiment_config.prefilterBandLow_input.value()
-        else:
-            prefilterBandLow = None
-        
-        if self.experiment_config.prefilterBandHigh_enable.isChecked():
-            prefilterBandHigh = self.experiment_config.prefilterBandHigh_input.value()
-        else:
-            prefilterBandHigh = None
-        
-        self.experiment.prefilter_band = (prefilterBandLow, prefilterBandHigh)
-        self.experiment.plot_raw = self.experiment_config.plot_raw.isChecked()
-        self.experiment.plot_signals = self.experiment_config.plot_signals.isChecked()
-        self.experiment.show_subject_window = self.experiment_config.show_subject_window.isChecked()
-        self.experiment.discard_channels = self.experiment_config.discard_channels.text()
-        self.experiment.reference_sub = self.experiment_config.reference_sub.text()
-        self.experiment.show_proto_rectangle = self.experiment_config.show_proto_rectangle.isChecked()
-        self.experiment.show_notch_filters = self.experiment_config.show_notch_filters.isChecked()
+        with open(file_path, &#34;w&#34;) as file:
+            file.write(data)
 
-        # --------------------------------------------------------------------------------------------------------------
-        with open(&#34;_temp_experiment.xml&#34;, &#34;w&#34;) as f:
-            f.write(self.experiment.export())</code></pre>
+    def save(self):
+        self.experiment.view().sync()
+        data = self.experiment.save()
+        
+        file_path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.exp)&#34;)[0]
+        if file_path == &#34;&#34;:
+            return
+
+        if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
+            file_path = file_path + &#34;.exp&#34;
+
+        with open(file_path, &#34;w&#34;) as file:
+            file.write(data)
+
+    def load(self):
+        file_path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.exp)&#34;)[0]
+        if file_path == &#34;&#34;:
+            return
+
+        with open(file_path) as file:
+            data = file.read()
+        
+        ex = Experiment()
+        ex.load(data)
+        self.setExperiment(ex)</code></pre>
 </details>
 </section>
 <section>
@@ -234,173 +135,71 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.experiment = Experiment()
-
-        # Property tree ------------------------------------------------------------------------------------------------
-        self.property_tree = PropertyTree()
-        self.property_tree_view = self.property_tree.getView()
-        self.property_tree_view.clicked.connect(self.setCurrentIndex)
-
-        self.property_tree_dock = QDockWidget(&#34;Properties&#34;, self)
-        self.property_tree_dock.setWidget(self.property_tree_view)
-        self.property_tree_dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        self.property_tree_dock.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
-        self.addDockWidget(Qt.LeftDockWidgetArea, self.property_tree_dock)
-
-        # Editing widgets ----------------------------------------------------------------------------------------------
-        self.experiment_config = ExperimentConfig(self.experiment)
-        
-        self.signal_editor = SchemeEditor()
-        self.signal_editor.setScheme(self.experiment.signal_scheme)
-        self.signal_editor.toolbox().addItem(&#34;LSL Input&#34;, LSLInput())
-        self.signal_editor.toolbox().addItem(&#34;Spatial Filter&#34;, SpatialFilter())
-        self.signal_editor.toolbox().addItem(&#34;Bandpass Filter&#34;, BandpassFilter())
-        self.signal_editor.toolbox().addItem(&#34;Envelope Detector&#34;, EnvelopeDetector())
-        self.signal_editor.toolbox().addItem(&#34;Standardise&#34;, Standardise())
-        self.signal_editor.toolbox().addItem(&#34;Signal Export&#34;, DerivedSignalExport())
-
-        self.block_stack = QStackedWidget()
-        self.group_stack = QStackedWidget()
-
-        # Sequence editor ----------------------------------------------------------------------------------------------
-        self.sequence_editor = SchemeEditor()
-        self.sequence_editor.setScheme(self.experiment.sequence_scheme)
-
-        # Central widget -----------------------------------------------------------------------------------------------
-        self.central_widget = QStackedWidget()
-        self.setCentralWidget(self.central_widget)
-        self.central_widget.addWidget(self.experiment_config)
-        self.central_widget.addWidget(self.signal_editor)
-        self.central_widget.addWidget(self.block_stack)
-        self.central_widget.addWidget(self.group_stack)
-        self.central_widget.addWidget(self.sequence_editor)
-
-        # Signals ------------------------------------------------------------------------------------------------------
-        self.property_tree_view.blocktree_menu_add_action.triggered.connect(self.addBlock)
-        self.property_tree_view.grouptree_menu_add_action.triggered.connect(self.addGroup)
+        self._experiment = None
+        self.setExperiment(Experiment())
 
         # Menu bar -----------------------------------------------------------------------------------------------------
         menubar = self.menuBar()
         filemenu = menubar.addMenu(&#34;File&#34;)
+
+        open = filemenu.addAction(&#34;Open&#34;)
+        open.triggered.connect(self.load)
+
+        save = filemenu.addAction(&#34;Save As...&#34;)
+        save.triggered.connect(self.save)
+
         export = filemenu.addAction(&#34;Export&#34;)
         export.triggered.connect(self.export)
 
-    def setCurrentIndex(self, index: QModelIndex):
-        &#34;&#34;&#34;Set central widget in the main window to display config info for item at `index` in the property tree.&#34;&#34;&#34;
-        self.property_tree_view.setCurrentIndex(index)
+    def experiment(self):
+        return self._experiment
 
-        item = self.property_tree.item(index)
-        
-        if item is self.property_tree.general_item:
-            self.central_widget.setCurrentIndex(0)
-        if item is self.property_tree.signals_item:
-            self.central_widget.setCurrentIndex(1)
-        elif item.parent() is self.property_tree.blocks_item:
-            self.central_widget.setCurrentIndex(2)
-            self.block_stack.setCurrentIndex(index.row())
-        elif item.parent() is self.property_tree.groups_item:
-            self.central_widget.setCurrentIndex(3)
-            self.group_stack.setCurrentIndex(index.row())
-        elif item is self.property_tree.sequence_item:
-            self.central_widget.setCurrentIndex(4)
+    def setExperiment(self, experiment):
+        self._experiment = experiment
+        experiment_view = ExperimentView()
+        self._experiment.setView(experiment_view)
 
-    def addBlock(self):
-        block = Block()
-        block_config = BlockConfig(block)
-
-        self.experiment.blocks.add(block)
-
-        tree_item = TreeModelItem()
-        tree_item.setText(block.name)
-        self.property_tree.blocks_item.addItem(tree_item)
-
-        self.block_stack.addWidget(block_config)
-
-        block_node = BlockNode()
-        block_node.setTitle(block.name)
-        self.sequence_editor.toolbox().addItem(block.name, block_node)
-    
-    def addGroup(self):
-        group = Group()
-        group_config = GroupConfig(group)
-
-        self.experiment.groups.add(group)
-
-        tree_item = TreeModelItem()
-        tree_item.setText(group.name)
-        self.property_tree.groups_item.addItem(tree_item)
-
-        self.group_stack.addWidget(group_config)
-
-        group_node = GroupNode()
-        group_node.setTitle(group.name)
-        self.sequence_editor.toolbox().addItem(group.name, group_node)
+        self.setCentralWidget(experiment_view)
 
     def export(self):
-        # For each block, write it&#39;s data to the experiment ------------------------------------------------------------
-        for i in range(self.block_stack.count()):
-            block_config: BlockConfig = self.block_stack.widget(i)
-            block: Block = block_config.data
+        self.experiment.view().sync()
+        data = self.experiment.export()
 
-            block.duration = block_config.duration.value()
-            block.feedback_source = block_config.feedback_source.text()
-            block.feedback_type = block_config.feedback_type.currentText()
-            block.random_bound = block_config.random_bound.currentText()
-            block.video_path = block_config.video_path.text()
-            block.mock_signal_path = block_config.mock_signal_path.text()
-            block.mock_signal_dataset = block_config.mock_signal_dataset.text()
-            block.mock_previous = block_config.mock_previous.value()
-            block.mock_previous_reverse = block_config.mock_previous_reverse.isChecked()
-            block.mock_previous_random = block_config.mock_previous_random.isChecked()
-            block.start_data_driven_filter_designer = block_config.start_data_driven_filter_designer.isChecked()
-            block.pause = block_config.pause.isChecked()
-            block.beep = block_config.beep.isChecked()
-            block.update_statistics = block_config.update_statistics.isChecked()
-        
-        # For each group, write its data to the experiment -------------------------------------------------------------
-        for i in range(self.group_stack.count()):
-            group_config: GroupConfig = self.group_stack.widget(i)
-            group: Group = group_config.data
+        file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
+        if file_path == &#34;&#34;:
+            return
 
-            group.name = group_config.name.text()
-            group.random_order = group_config.random_order.isChecked()
-            if group_config.blocks.text() == &#34;&#34;:
-                group.blocks = []
-                group.repeats = []
-            else:
-                group.blocks = group_config.blocks.text().split(&#34; &#34;)
-                group.repeats = [int(number) for number in group_config.repeats.text().split(&#34; &#34;)]
+        if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
+            file_path = file_path + &#34;.xml&#34;
 
-        # Write general experiment data --------------------------------------------------------------------------------
-        self.experiment.name = self.experiment_config.name.text()
-        self.experiment.inlet = self.experiment_config.inlet_type_export_values[self.experiment_config.inlet_type_selector.currentText()]
-        self.experiment.lsl_stream_name = self.experiment_config.lsl_stream_name.currentText()
-        self.experiment.raw_data_path = self.experiment_config.lsl_filename.text()
-        self.experiment.hostname_port = self.experiment_config.hostname_port.text()
-        self.experiment.dc = self.experiment_config.dc.isChecked()
-        
-        if self.experiment_config.prefilterBandLow_enable.isChecked():
-            prefilterBandLow = self.experiment_config.prefilterBandLow_input.value()
-        else:
-            prefilterBandLow = None
-        
-        if self.experiment_config.prefilterBandHigh_enable.isChecked():
-            prefilterBandHigh = self.experiment_config.prefilterBandHigh_input.value()
-        else:
-            prefilterBandHigh = None
-        
-        self.experiment.prefilter_band = (prefilterBandLow, prefilterBandHigh)
-        self.experiment.plot_raw = self.experiment_config.plot_raw.isChecked()
-        self.experiment.plot_signals = self.experiment_config.plot_signals.isChecked()
-        self.experiment.show_subject_window = self.experiment_config.show_subject_window.isChecked()
-        self.experiment.discard_channels = self.experiment_config.discard_channels.text()
-        self.experiment.reference_sub = self.experiment_config.reference_sub.text()
-        self.experiment.show_proto_rectangle = self.experiment_config.show_proto_rectangle.isChecked()
-        self.experiment.show_notch_filters = self.experiment_config.show_notch_filters.isChecked()
+        with open(file_path, &#34;w&#34;) as file:
+            file.write(data)
 
-        # --------------------------------------------------------------------------------------------------------------
-        with open(&#34;_temp_experiment.xml&#34;, &#34;w&#34;) as f:
-            f.write(self.experiment.export())</code></pre>
+    def save(self):
+        self.experiment.view().sync()
+        data = self.experiment.save()
+        
+        file_path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.exp)&#34;)[0]
+        if file_path == &#34;&#34;:
+            return
+
+        if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
+            file_path = file_path + &#34;.exp&#34;
+
+        with open(file_path, &#34;w&#34;) as file:
+            file.write(data)
+
+    def load(self):
+        file_path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.exp)&#34;)[0]
+        if file_path == &#34;&#34;:
+            return
+
+        with open(file_path) as file:
+            data = file.read()
+        
+        ex = Experiment()
+        ex.load(data)
+        self.setExperiment(ex)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -419,8 +218,8 @@ class MainWindow(QMainWindow):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.main_window.MainWindow.addBlock"><code class="name flex">
-<span>def <span class="ident">addBlock</span></span>(<span>self)</span>
+<dt id="nfb_studio.main_window.MainWindow.experiment"><code class="name flex">
+<span>def <span class="ident">experiment</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -428,47 +227,8 @@ class MainWindow(QMainWindow):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def addBlock(self):
-    block = Block()
-    block_config = BlockConfig(block)
-
-    self.experiment.blocks.add(block)
-
-    tree_item = TreeModelItem()
-    tree_item.setText(block.name)
-    self.property_tree.blocks_item.addItem(tree_item)
-
-    self.block_stack.addWidget(block_config)
-
-    block_node = BlockNode()
-    block_node.setTitle(block.name)
-    self.sequence_editor.toolbox().addItem(block.name, block_node)</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.main_window.MainWindow.addGroup"><code class="name flex">
-<span>def <span class="ident">addGroup</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def addGroup(self):
-    group = Group()
-    group_config = GroupConfig(group)
-
-    self.experiment.groups.add(group)
-
-    tree_item = TreeModelItem()
-    tree_item.setText(group.name)
-    self.property_tree.groups_item.addItem(tree_item)
-
-    self.group_stack.addWidget(group_config)
-
-    group_node = GroupNode()
-    group_node.setTitle(group.name)
-    self.sequence_editor.toolbox().addItem(group.name, group_node)</code></pre>
+<pre><code class="python">def experiment(self):
+    return self._experiment</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.main_window.MainWindow.export"><code class="name flex">
@@ -481,99 +241,81 @@ class MainWindow(QMainWindow):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def export(self):
-    # For each block, write it&#39;s data to the experiment ------------------------------------------------------------
-    for i in range(self.block_stack.count()):
-        block_config: BlockConfig = self.block_stack.widget(i)
-        block: Block = block_config.data
+    self.experiment.view().sync()
+    data = self.experiment.export()
 
-        block.duration = block_config.duration.value()
-        block.feedback_source = block_config.feedback_source.text()
-        block.feedback_type = block_config.feedback_type.currentText()
-        block.random_bound = block_config.random_bound.currentText()
-        block.video_path = block_config.video_path.text()
-        block.mock_signal_path = block_config.mock_signal_path.text()
-        block.mock_signal_dataset = block_config.mock_signal_dataset.text()
-        block.mock_previous = block_config.mock_previous.value()
-        block.mock_previous_reverse = block_config.mock_previous_reverse.isChecked()
-        block.mock_previous_random = block_config.mock_previous_random.isChecked()
-        block.start_data_driven_filter_designer = block_config.start_data_driven_filter_designer.isChecked()
-        block.pause = block_config.pause.isChecked()
-        block.beep = block_config.beep.isChecked()
-        block.update_statistics = block_config.update_statistics.isChecked()
-    
-    # For each group, write its data to the experiment -------------------------------------------------------------
-    for i in range(self.group_stack.count()):
-        group_config: GroupConfig = self.group_stack.widget(i)
-        group: Group = group_config.data
+    file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
+    if file_path == &#34;&#34;:
+        return
 
-        group.name = group_config.name.text()
-        group.random_order = group_config.random_order.isChecked()
-        if group_config.blocks.text() == &#34;&#34;:
-            group.blocks = []
-            group.repeats = []
-        else:
-            group.blocks = group_config.blocks.text().split(&#34; &#34;)
-            group.repeats = [int(number) for number in group_config.repeats.text().split(&#34; &#34;)]
+    if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
+        file_path = file_path + &#34;.xml&#34;
 
-    # Write general experiment data --------------------------------------------------------------------------------
-    self.experiment.name = self.experiment_config.name.text()
-    self.experiment.inlet = self.experiment_config.inlet_type_export_values[self.experiment_config.inlet_type_selector.currentText()]
-    self.experiment.lsl_stream_name = self.experiment_config.lsl_stream_name.currentText()
-    self.experiment.raw_data_path = self.experiment_config.lsl_filename.text()
-    self.experiment.hostname_port = self.experiment_config.hostname_port.text()
-    self.experiment.dc = self.experiment_config.dc.isChecked()
-    
-    if self.experiment_config.prefilterBandLow_enable.isChecked():
-        prefilterBandLow = self.experiment_config.prefilterBandLow_input.value()
-    else:
-        prefilterBandLow = None
-    
-    if self.experiment_config.prefilterBandHigh_enable.isChecked():
-        prefilterBandHigh = self.experiment_config.prefilterBandHigh_input.value()
-    else:
-        prefilterBandHigh = None
-    
-    self.experiment.prefilter_band = (prefilterBandLow, prefilterBandHigh)
-    self.experiment.plot_raw = self.experiment_config.plot_raw.isChecked()
-    self.experiment.plot_signals = self.experiment_config.plot_signals.isChecked()
-    self.experiment.show_subject_window = self.experiment_config.show_subject_window.isChecked()
-    self.experiment.discard_channels = self.experiment_config.discard_channels.text()
-    self.experiment.reference_sub = self.experiment_config.reference_sub.text()
-    self.experiment.show_proto_rectangle = self.experiment_config.show_proto_rectangle.isChecked()
-    self.experiment.show_notch_filters = self.experiment_config.show_notch_filters.isChecked()
-
-    # --------------------------------------------------------------------------------------------------------------
-    with open(&#34;_temp_experiment.xml&#34;, &#34;w&#34;) as f:
-        f.write(self.experiment.export())</code></pre>
+    with open(file_path, &#34;w&#34;) as file:
+        file.write(data)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.main_window.MainWindow.setCurrentIndex"><code class="name flex">
-<span>def <span class="ident">setCurrentIndex</span></span>(<span>self, index: PySide2.QtCore.QModelIndex)</span>
+<dt id="nfb_studio.main_window.MainWindow.load"><code class="name flex">
+<span>def <span class="ident">load</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Set central widget in the main window to display config info for item at <code>index</code> in the property tree.</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setCurrentIndex(self, index: QModelIndex):
-    &#34;&#34;&#34;Set central widget in the main window to display config info for item at `index` in the property tree.&#34;&#34;&#34;
-    self.property_tree_view.setCurrentIndex(index)
+<pre><code class="python">def load(self):
+    file_path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.exp)&#34;)[0]
+    if file_path == &#34;&#34;:
+        return
 
-    item = self.property_tree.item(index)
+    with open(file_path) as file:
+        data = file.read()
     
-    if item is self.property_tree.general_item:
-        self.central_widget.setCurrentIndex(0)
-    if item is self.property_tree.signals_item:
-        self.central_widget.setCurrentIndex(1)
-    elif item.parent() is self.property_tree.blocks_item:
-        self.central_widget.setCurrentIndex(2)
-        self.block_stack.setCurrentIndex(index.row())
-    elif item.parent() is self.property_tree.groups_item:
-        self.central_widget.setCurrentIndex(3)
-        self.group_stack.setCurrentIndex(index.row())
-    elif item is self.property_tree.sequence_item:
-        self.central_widget.setCurrentIndex(4)</code></pre>
+    ex = Experiment()
+    ex.load(data)
+    self.setExperiment(ex)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.save"><code class="name flex">
+<span>def <span class="ident">save</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save(self):
+    self.experiment.view().sync()
+    data = self.experiment.save()
+    
+    file_path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.exp)&#34;)[0]
+    if file_path == &#34;&#34;:
+        return
+
+    if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
+        file_path = file_path + &#34;.exp&#34;
+
+    with open(file_path, &#34;w&#34;) as file:
+        file.write(data)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.setExperiment"><code class="name flex">
+<span>def <span class="ident">setExperiment</span></span>(<span>self, experiment)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setExperiment(self, experiment):
+    self._experiment = experiment
+    experiment_view = ExperimentView()
+    self._experiment.setView(experiment_view)
+
+    self.setCentralWidget(experiment_view)</code></pre>
 </details>
 </dd>
 </dl>
@@ -596,11 +338,12 @@ class MainWindow(QMainWindow):
 <ul>
 <li>
 <h4><code><a title="nfb_studio.main_window.MainWindow" href="#nfb_studio.main_window.MainWindow">MainWindow</a></code></h4>
-<ul class="">
-<li><code><a title="nfb_studio.main_window.MainWindow.addBlock" href="#nfb_studio.main_window.MainWindow.addBlock">addBlock</a></code></li>
-<li><code><a title="nfb_studio.main_window.MainWindow.addGroup" href="#nfb_studio.main_window.MainWindow.addGroup">addGroup</a></code></li>
+<ul class="two-column">
+<li><code><a title="nfb_studio.main_window.MainWindow.experiment" href="#nfb_studio.main_window.MainWindow.experiment">experiment</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.export" href="#nfb_studio.main_window.MainWindow.export">export</a></code></li>
-<li><code><a title="nfb_studio.main_window.MainWindow.setCurrentIndex" href="#nfb_studio.main_window.MainWindow.setCurrentIndex">setCurrentIndex</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.load" href="#nfb_studio.main_window.MainWindow.load">load</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.save" href="#nfb_studio.main_window.MainWindow.save">save</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.setExperiment" href="#nfb_studio.main_window.MainWindow.setExperiment">setExperiment</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.staticMetaObject" href="#nfb_studio.main_window.MainWindow.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
 </li>

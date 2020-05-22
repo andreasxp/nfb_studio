@@ -26,9 +26,11 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;NFB main source signal.&#34;&#34;&#34;
-from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QFrame
 
 from ..scheme import Node, Output, DataType
+from .signal_node import SignalNode
 
 
 class LSLDataSource:
@@ -38,30 +40,37 @@ class LSLDataSource:
         self.frequency = frequency
 
 
-class LSLInput(Node):
+class LSLInput(SignalNode):
     &#34;&#34;&#34;NFB main source signal.&#34;&#34;&#34;
     data_sources = [
         LSLDataSource(&#34;NVX136_Data&#34;, 32, 500),
         LSLDataSource(&#34;Mitsar&#34;, 30, 250),
     ]
 
-    class Config(QWidget):
+    class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
-            self.input = QComboBox()
-            for data_source in LSLInput.data_sources:
-                self.input.addItem(data_source.name)
-            self.input.currentTextChanged.connect(self.adjust)
+            self.data_source = QComboBox()
+            for source in LSLInput.data_sources:
+                self.data_source.addItem(source.name)
+            self.data_source.currentTextChanged.connect(self.adjust)
 
             self.channel_count = QLabel()
+            self.channel_count.setFrameStyle(QFrame.Panel | QFrame.Sunken)
+            self.channel_count.setAlignment(Qt.AlignCenter)
+            self.channel_count.setMargin(5)
+
             self.frequency = QLabel()
+            self.frequency.setFrameStyle(QFrame.Panel | QFrame.Sunken)
+            self.frequency.setAlignment(Qt.AlignCenter)
+            self.frequency.setMargin(5)
 
             layout = QFormLayout()
             self.setLayout(layout)
 
-            layout.addRow(&#34;Data source:&#34;, self.input)
+            layout.addRow(&#34;Data source:&#34;, self.data_source)
             layout.addRow(&#34;Channel count:&#34;, self.channel_count)
             layout.addRow(&#34;Frequency:&#34;, self.frequency)
 
@@ -69,9 +78,12 @@ class LSLInput(Node):
 
         def adjust(self):
             &#34;&#34;&#34;Adjust displayed values after a change.&#34;&#34;&#34;
+            # Sync changes with the node
+            self.sync()
+
             # Find the data_source with the selected name
             for data_source in LSLInput.data_sources:
-                if data_source.name == self.input.currentText():
+                if data_source.name == self.data_source.currentText():
                     break
             else:
                 data_source = None
@@ -80,12 +92,51 @@ class LSLInput(Node):
             self.channel_count.setText(str(data_source.channel_count))
             self.frequency.setText(str(data_source.frequency))
 
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+            
+            n._data_source = self.data_source.currentText()
+
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
 
         self.setTitle(&#34;LSL Input&#34;)
         self.addOutput(Output(&#34;LSL data stream&#34;, DataType.Unknown))
-        self.setConfigWidget(self.Config())</code></pre>
+        
+        self._data_source = self.data_sources[0].name
+        self.sync()
+
+    def dataSource(self):
+        return self._data_source
+    
+    def setDataSource(self, source: str, /):
+        # TODO: Perform a check that this data source exists
+        self._data_source = source
+        self.sync()
+
+    def sync(self):
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        w.data_source.setCurrentText(self.dataSource())
+
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        pass
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;data_source&#34;] = self.dataSource()
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+
+        self.setDataSource(data[&#34;data_source&#34;])</code></pre>
 </details>
 </section>
 <section>
@@ -124,30 +175,37 @@ class LSLInput(Node):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class LSLInput(Node):
+<pre><code class="python">class LSLInput(SignalNode):
     &#34;&#34;&#34;NFB main source signal.&#34;&#34;&#34;
     data_sources = [
         LSLDataSource(&#34;NVX136_Data&#34;, 32, 500),
         LSLDataSource(&#34;Mitsar&#34;, 30, 250),
     ]
 
-    class Config(QWidget):
+    class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
-            self.input = QComboBox()
-            for data_source in LSLInput.data_sources:
-                self.input.addItem(data_source.name)
-            self.input.currentTextChanged.connect(self.adjust)
+            self.data_source = QComboBox()
+            for source in LSLInput.data_sources:
+                self.data_source.addItem(source.name)
+            self.data_source.currentTextChanged.connect(self.adjust)
 
             self.channel_count = QLabel()
+            self.channel_count.setFrameStyle(QFrame.Panel | QFrame.Sunken)
+            self.channel_count.setAlignment(Qt.AlignCenter)
+            self.channel_count.setMargin(5)
+
             self.frequency = QLabel()
+            self.frequency.setFrameStyle(QFrame.Panel | QFrame.Sunken)
+            self.frequency.setAlignment(Qt.AlignCenter)
+            self.frequency.setMargin(5)
 
             layout = QFormLayout()
             self.setLayout(layout)
 
-            layout.addRow(&#34;Data source:&#34;, self.input)
+            layout.addRow(&#34;Data source:&#34;, self.data_source)
             layout.addRow(&#34;Channel count:&#34;, self.channel_count)
             layout.addRow(&#34;Frequency:&#34;, self.frequency)
 
@@ -155,9 +213,12 @@ class LSLInput(Node):
 
         def adjust(self):
             &#34;&#34;&#34;Adjust displayed values after a change.&#34;&#34;&#34;
+            # Sync changes with the node
+            self.sync()
+
             # Find the data_source with the selected name
             for data_source in LSLInput.data_sources:
-                if data_source.name == self.input.currentText():
+                if data_source.name == self.data_source.currentText():
                     break
             else:
                 data_source = None
@@ -166,15 +227,55 @@ class LSLInput(Node):
             self.channel_count.setText(str(data_source.channel_count))
             self.frequency.setText(str(data_source.frequency))
 
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+            
+            n._data_source = self.data_source.currentText()
+
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
 
         self.setTitle(&#34;LSL Input&#34;)
         self.addOutput(Output(&#34;LSL data stream&#34;, DataType.Unknown))
-        self.setConfigWidget(self.Config())</code></pre>
+        
+        self._data_source = self.data_sources[0].name
+        self.sync()
+
+    def dataSource(self):
+        return self._data_source
+    
+    def setDataSource(self, source: str, /):
+        # TODO: Perform a check that this data source exists
+        self._data_source = source
+        self.sync()
+
+    def sync(self):
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        w.data_source.setCurrentText(self.dataSource())
+
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        pass
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;data_source&#34;] = self.dataSource()
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+
+        self.setDataSource(data[&#34;data_source&#34;])</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></li>
 <li><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></li>
 <li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
@@ -182,27 +283,102 @@ class LSLInput(Node):
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.Config"><code class="name">var <span class="ident">Config</span></code></dt>
-<dd>
-<div class="desc"><p>Config widget displayed for LSLInput.</p></div>
-</dd>
 <dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.data_sources"><code class="name">var <span class="ident">data_sources</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
+<h3>Methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.add_nfb_export_data"><code class="name flex">
+<span>def <span class="ident">add_nfb_export_data</span></span>(<span>self, signal: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add this node's data to the dict representation of the signal.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_nfb_export_data(self, signal: dict):
+    &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.dataSource"><code class="name flex">
+<span>def <span class="ident">dataSource</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dataSource(self):
+    return self._data_source</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize(self, data: dict):
+    super().deserialize(data)
+
+    self.setDataSource(data[&#34;data_source&#34;])</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    data = super().serialize()
+
+    data[&#34;data_source&#34;] = self.dataSource()
+    return data</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.setDataSource"><code class="name flex">
+<span>def <span class="ident">setDataSource</span></span>(<span>self, source: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setDataSource(self, source: str, /):
+    # TODO: Perform a check that this data source exists
+    self._data_source = source
+    self.sync()</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config">Config</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget">hasConfigWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync">sync</a></code></li>
 </ul>
 </li>
 </ul>
@@ -228,9 +404,13 @@ class LSLInput(Node):
 </li>
 <li>
 <h4><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput">LSLInput</a></code></h4>
-<ul class="">
-<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.Config" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.Config">Config</a></code></li>
+<ul class="two-column">
+<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.add_nfb_export_data">add_nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.dataSource" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.dataSource">dataSource</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.data_sources" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.data_sources">data_sources</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.deserialize" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.serialize" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.setDataSource" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.setDataSource">setDataSource</a></code></li>
 </ul>
 </li>
 </ul>

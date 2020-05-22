@@ -26,6 +26,7 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;NFB Experiment block.&#34;&#34;&#34;
+import itertools
 from enum import Enum, auto
 
 from PySide2.QtCore import QObject, Signal
@@ -35,32 +36,17 @@ class Block(QObject):
     &#34;&#34;&#34;A single step of an experiment.
     Experiment consists of a sequence of blocks and block groups that are executed in some order.
     &#34;&#34;&#34;
-
-    FeedbackSourceAll = object()
-    &#34;&#34;&#34;A sentinel object marking that self.feedback_source is all sources.&#34;&#34;&#34;
-
-    class FeedbackType(Enum):
-        &#34;&#34;&#34;Possible values for self.feedback_type.&#34;&#34;&#34;
-        Baseline = 0
-        Feedback = auto()
-    
-    class RandomBound(Enum):
-        &#34;&#34;&#34;Possible values for self.random_bound.&#34;&#34;&#34;
-        SimCircle = 0
-        RandomCircle = auto()
-        Bar = auto()
-
-    attrchanged = Signal(str)
+    newid = itertools.count()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         
         # General ------------------------------------------------------------------------------------------------------
-        self.name = &#34;Block&#34;
+        self.name = &#34;Block&#34; + str(next(self.newid))
         self.duration = 10.0
-        self.feedback_source = self.FeedbackSourceAll
-        self.feedback_type = self.FeedbackType.Baseline
-        self.random_bound = self.RandomBound.SimCircle
+        self.feedback_source = &#34;All&#34;
+        self.feedback_type = &#34;Baseline&#34;
+        self.random_bound = &#34;SimCircle&#34;
         self.video_path = &#34;&#34;
 
         # Mock signal --------------------------------------------------------------------------------------------------
@@ -75,7 +61,38 @@ class Block(QObject):
         self.pause = False
         self.beep = False
         self.update_statistics = False
+
+        # --------------------------------------------------------------------------------------------------------------
+        self._view = None
     
+    def view(self):
+        &#34;&#34;&#34;Return the view (config widget) for this block.&#34;&#34;&#34;
+        return self._view
+
+    def setView(self, view, /):
+        view.setModel(self)
+
+    def sync(self):
+        view = self.view()
+        if view is None:
+            return
+        
+        view.name.setText(self.name)
+        view.duration.setValue(self.duration)
+        view.feedback_source.setText(self.feedback_source)
+        view.feedback_type.setCurrentText(self.feedback_type)
+        view.mock_signal_path.setText(self.mock_signal_path)
+        view.mock_signal_dataset.setText(self.mock_signal_dataset)
+        view.mock_previous.setValue(self.mock_previous)
+        view.mock_previous_reverse.setChecked(self.mock_previous_reverse)
+        view.mock_previous_random.setChecked(self.mock_previous_random)
+        view.pause.setChecked(self.pause)
+        view.beep.setChecked(self.beep)
+        view.start_data_driven_filter_designer.setChecked(self.start_data_driven_filter_designer)
+        view.update_statistics.setChecked(self.update_statistics)
+        view.random_bound.setCurrentText(self.random_bound)
+        view.video_path.setText(self.video_path)
+
     def nfb_export_data(self) -&gt; dict:
         &#34;&#34;&#34;Export this block into a dict to be encoded as XML for NFBLab.
         Bool items are written as-is. The encoder is responsible for converting them into int format.
@@ -110,6 +127,46 @@ class Block(QObject):
 
         return data
     
+    def serialize(self) -&gt; dict:
+        return {
+            &#34;name&#34;: self.name,
+            &#34;duration&#34;: self.duration,
+            &#34;feedback_source&#34;: self.feedback_source,
+            &#34;feedback_type&#34;: self.feedback_type,
+            &#34;random_bound&#34;: self.random_bound,
+            &#34;video_path&#34;: self.video_path,
+
+            &#34;mock_signal_path&#34;: self.mock_signal_path,
+            &#34;mock_signal_dataset&#34;: self.mock_signal_dataset,
+            &#34;mock_previous&#34;: self.mock_previous,
+            &#34;mock_previous_reverse&#34;: self.mock_previous_reverse,
+            &#34;mock_previous_random&#34;: self.mock_previous_random,
+
+            &#34;start_data_driven_filter_designer&#34;: self.start_data_driven_filter_designer,
+            &#34;pause&#34;: self.pause,
+            &#34;beep&#34;: self.beep,
+            &#34;update_statistics&#34;: self.update_statistics,
+        }
+
+    def deserialize(self, data: dict):
+        self.name = data[&#34;name&#34;]
+        self.duration = data[&#34;duration&#34;]
+        self.feedback_source = data[&#34;feedback_source&#34;]
+        self.feedback_type = data[&#34;feedback_type&#34;]
+        self.random_bound = data[&#34;random_bound&#34;]
+        self.video_path = data[&#34;video_path&#34;]
+
+        self.mock_signal_path = data[&#34;mock_signal_path&#34;]
+        self.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
+        self.mock_previous = data[&#34;mock_previous&#34;]
+        self.mock_previous_reverse = data[&#34;mock_previous_reverse&#34;]
+        self.mock_previous_random = data[&#34;mock_previous_random&#34;]
+
+        self.start_data_driven_filter_designer = data[&#34;start_data_driven_filter_designer&#34;]
+        self.pause = data[&#34;pause&#34;]
+        self.beep = data[&#34;beep&#34;]
+        self.update_statistics = data[&#34;update_statistics&#34;]
+
     def nfb_import_data(self, data: dict):
         &#34;&#34;&#34;Import this block from a dict from NFBLab.
         Since the XML file stores everything as a string, this function is responsible for converting items to their
@@ -157,32 +214,17 @@ Experiment consists of a sequence of blocks and block groups that are executed i
     &#34;&#34;&#34;A single step of an experiment.
     Experiment consists of a sequence of blocks and block groups that are executed in some order.
     &#34;&#34;&#34;
-
-    FeedbackSourceAll = object()
-    &#34;&#34;&#34;A sentinel object marking that self.feedback_source is all sources.&#34;&#34;&#34;
-
-    class FeedbackType(Enum):
-        &#34;&#34;&#34;Possible values for self.feedback_type.&#34;&#34;&#34;
-        Baseline = 0
-        Feedback = auto()
-    
-    class RandomBound(Enum):
-        &#34;&#34;&#34;Possible values for self.random_bound.&#34;&#34;&#34;
-        SimCircle = 0
-        RandomCircle = auto()
-        Bar = auto()
-
-    attrchanged = Signal(str)
+    newid = itertools.count()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         
         # General ------------------------------------------------------------------------------------------------------
-        self.name = &#34;Block&#34;
+        self.name = &#34;Block&#34; + str(next(self.newid))
         self.duration = 10.0
-        self.feedback_source = self.FeedbackSourceAll
-        self.feedback_type = self.FeedbackType.Baseline
-        self.random_bound = self.RandomBound.SimCircle
+        self.feedback_source = &#34;All&#34;
+        self.feedback_type = &#34;Baseline&#34;
+        self.random_bound = &#34;SimCircle&#34;
         self.video_path = &#34;&#34;
 
         # Mock signal --------------------------------------------------------------------------------------------------
@@ -197,7 +239,38 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         self.pause = False
         self.beep = False
         self.update_statistics = False
+
+        # --------------------------------------------------------------------------------------------------------------
+        self._view = None
     
+    def view(self):
+        &#34;&#34;&#34;Return the view (config widget) for this block.&#34;&#34;&#34;
+        return self._view
+
+    def setView(self, view, /):
+        view.setModel(self)
+
+    def sync(self):
+        view = self.view()
+        if view is None:
+            return
+        
+        view.name.setText(self.name)
+        view.duration.setValue(self.duration)
+        view.feedback_source.setText(self.feedback_source)
+        view.feedback_type.setCurrentText(self.feedback_type)
+        view.mock_signal_path.setText(self.mock_signal_path)
+        view.mock_signal_dataset.setText(self.mock_signal_dataset)
+        view.mock_previous.setValue(self.mock_previous)
+        view.mock_previous_reverse.setChecked(self.mock_previous_reverse)
+        view.mock_previous_random.setChecked(self.mock_previous_random)
+        view.pause.setChecked(self.pause)
+        view.beep.setChecked(self.beep)
+        view.start_data_driven_filter_designer.setChecked(self.start_data_driven_filter_designer)
+        view.update_statistics.setChecked(self.update_statistics)
+        view.random_bound.setCurrentText(self.random_bound)
+        view.video_path.setText(self.video_path)
+
     def nfb_export_data(self) -&gt; dict:
         &#34;&#34;&#34;Export this block into a dict to be encoded as XML for NFBLab.
         Bool items are written as-is. The encoder is responsible for converting them into int format.
@@ -232,6 +305,46 @@ Experiment consists of a sequence of blocks and block groups that are executed i
 
         return data
     
+    def serialize(self) -&gt; dict:
+        return {
+            &#34;name&#34;: self.name,
+            &#34;duration&#34;: self.duration,
+            &#34;feedback_source&#34;: self.feedback_source,
+            &#34;feedback_type&#34;: self.feedback_type,
+            &#34;random_bound&#34;: self.random_bound,
+            &#34;video_path&#34;: self.video_path,
+
+            &#34;mock_signal_path&#34;: self.mock_signal_path,
+            &#34;mock_signal_dataset&#34;: self.mock_signal_dataset,
+            &#34;mock_previous&#34;: self.mock_previous,
+            &#34;mock_previous_reverse&#34;: self.mock_previous_reverse,
+            &#34;mock_previous_random&#34;: self.mock_previous_random,
+
+            &#34;start_data_driven_filter_designer&#34;: self.start_data_driven_filter_designer,
+            &#34;pause&#34;: self.pause,
+            &#34;beep&#34;: self.beep,
+            &#34;update_statistics&#34;: self.update_statistics,
+        }
+
+    def deserialize(self, data: dict):
+        self.name = data[&#34;name&#34;]
+        self.duration = data[&#34;duration&#34;]
+        self.feedback_source = data[&#34;feedback_source&#34;]
+        self.feedback_type = data[&#34;feedback_type&#34;]
+        self.random_bound = data[&#34;random_bound&#34;]
+        self.video_path = data[&#34;video_path&#34;]
+
+        self.mock_signal_path = data[&#34;mock_signal_path&#34;]
+        self.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
+        self.mock_previous = data[&#34;mock_previous&#34;]
+        self.mock_previous_reverse = data[&#34;mock_previous_reverse&#34;]
+        self.mock_previous_random = data[&#34;mock_previous_random&#34;]
+
+        self.start_data_driven_filter_designer = data[&#34;start_data_driven_filter_designer&#34;]
+        self.pause = data[&#34;pause&#34;]
+        self.beep = data[&#34;beep&#34;]
+        self.update_statistics = data[&#34;update_statistics&#34;]
+
     def nfb_import_data(self, data: dict):
         &#34;&#34;&#34;Import this block from a dict from NFBLab.
         Since the XML file stores everything as a string, this function is responsible for converting items to their
@@ -261,19 +374,7 @@ Experiment consists of a sequence of blocks and block groups that are executed i
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.block.Block.FeedbackSourceAll"><code class="name">var <span class="ident">FeedbackSourceAll</span></code></dt>
-<dd>
-<div class="desc"><p>A sentinel object marking that self.feedback_source is all sources.</p></div>
-</dd>
-<dt id="nfb_studio.block.Block.FeedbackType"><code class="name">var <span class="ident">FeedbackType</span></code></dt>
-<dd>
-<div class="desc"><p>Possible values for self.feedback_type.</p></div>
-</dd>
-<dt id="nfb_studio.block.Block.RandomBound"><code class="name">var <span class="ident">RandomBound</span></code></dt>
-<dd>
-<div class="desc"><p>Possible values for self.random_bound.</p></div>
-</dd>
-<dt id="nfb_studio.block.Block.attrchanged"><code class="name">var <span class="ident">attrchanged</span></code></dt>
+<dt id="nfb_studio.block.Block.newid"><code class="name">var <span class="ident">newid</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -284,6 +385,35 @@ Experiment consists of a sequence of blocks and block groups that are executed i
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="nfb_studio.block.Block.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize(self, data: dict):
+    self.name = data[&#34;name&#34;]
+    self.duration = data[&#34;duration&#34;]
+    self.feedback_source = data[&#34;feedback_source&#34;]
+    self.feedback_type = data[&#34;feedback_type&#34;]
+    self.random_bound = data[&#34;random_bound&#34;]
+    self.video_path = data[&#34;video_path&#34;]
+
+    self.mock_signal_path = data[&#34;mock_signal_path&#34;]
+    self.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
+    self.mock_previous = data[&#34;mock_previous&#34;]
+    self.mock_previous_reverse = data[&#34;mock_previous_reverse&#34;]
+    self.mock_previous_random = data[&#34;mock_previous_random&#34;]
+
+    self.start_data_driven_filter_designer = data[&#34;start_data_driven_filter_designer&#34;]
+    self.pause = data[&#34;pause&#34;]
+    self.beep = data[&#34;beep&#34;]
+    self.update_statistics = data[&#34;update_statistics&#34;]</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.block.Block.nfb_export_data"><code class="name flex">
 <span>def <span class="ident">nfb_export_data</span></span>(<span>self) -> dict</span>
 </code></dt>
@@ -363,6 +493,95 @@ proper types.</p></div>
     self.video_path = data[&#34;sVideoPath&#34;]</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.block.Block.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    return {
+        &#34;name&#34;: self.name,
+        &#34;duration&#34;: self.duration,
+        &#34;feedback_source&#34;: self.feedback_source,
+        &#34;feedback_type&#34;: self.feedback_type,
+        &#34;random_bound&#34;: self.random_bound,
+        &#34;video_path&#34;: self.video_path,
+
+        &#34;mock_signal_path&#34;: self.mock_signal_path,
+        &#34;mock_signal_dataset&#34;: self.mock_signal_dataset,
+        &#34;mock_previous&#34;: self.mock_previous,
+        &#34;mock_previous_reverse&#34;: self.mock_previous_reverse,
+        &#34;mock_previous_random&#34;: self.mock_previous_random,
+
+        &#34;start_data_driven_filter_designer&#34;: self.start_data_driven_filter_designer,
+        &#34;pause&#34;: self.pause,
+        &#34;beep&#34;: self.beep,
+        &#34;update_statistics&#34;: self.update_statistics,
+    }</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.block.Block.setView"><code class="name flex">
+<span>def <span class="ident">setView</span></span>(<span>self, view)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setView(self, view, /):
+    view.setModel(self)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.block.Block.sync"><code class="name flex">
+<span>def <span class="ident">sync</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sync(self):
+    view = self.view()
+    if view is None:
+        return
+    
+    view.name.setText(self.name)
+    view.duration.setValue(self.duration)
+    view.feedback_source.setText(self.feedback_source)
+    view.feedback_type.setCurrentText(self.feedback_type)
+    view.mock_signal_path.setText(self.mock_signal_path)
+    view.mock_signal_dataset.setText(self.mock_signal_dataset)
+    view.mock_previous.setValue(self.mock_previous)
+    view.mock_previous_reverse.setChecked(self.mock_previous_reverse)
+    view.mock_previous_random.setChecked(self.mock_previous_random)
+    view.pause.setChecked(self.pause)
+    view.beep.setChecked(self.beep)
+    view.start_data_driven_filter_designer.setChecked(self.start_data_driven_filter_designer)
+    view.update_statistics.setChecked(self.update_statistics)
+    view.random_bound.setCurrentText(self.random_bound)
+    view.video_path.setText(self.video_path)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.block.Block.view"><code class="name flex">
+<span>def <span class="ident">view</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the view (config widget) for this block.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def view(self):
+    &#34;&#34;&#34;Return the view (config widget) for this block.&#34;&#34;&#34;
+    return self._view</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -384,13 +603,15 @@ proper types.</p></div>
 <li>
 <h4><code><a title="nfb_studio.block.Block" href="#nfb_studio.block.Block">Block</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.block.Block.FeedbackSourceAll" href="#nfb_studio.block.Block.FeedbackSourceAll">FeedbackSourceAll</a></code></li>
-<li><code><a title="nfb_studio.block.Block.FeedbackType" href="#nfb_studio.block.Block.FeedbackType">FeedbackType</a></code></li>
-<li><code><a title="nfb_studio.block.Block.RandomBound" href="#nfb_studio.block.Block.RandomBound">RandomBound</a></code></li>
-<li><code><a title="nfb_studio.block.Block.attrchanged" href="#nfb_studio.block.Block.attrchanged">attrchanged</a></code></li>
+<li><code><a title="nfb_studio.block.Block.deserialize" href="#nfb_studio.block.Block.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.block.Block.newid" href="#nfb_studio.block.Block.newid">newid</a></code></li>
 <li><code><a title="nfb_studio.block.Block.nfb_export_data" href="#nfb_studio.block.Block.nfb_export_data">nfb_export_data</a></code></li>
 <li><code><a title="nfb_studio.block.Block.nfb_import_data" href="#nfb_studio.block.Block.nfb_import_data">nfb_import_data</a></code></li>
+<li><code><a title="nfb_studio.block.Block.serialize" href="#nfb_studio.block.Block.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.block.Block.setView" href="#nfb_studio.block.Block.setView">setView</a></code></li>
 <li><code><a title="nfb_studio.block.Block.staticMetaObject" href="#nfb_studio.block.Block.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.block.Block.sync" href="#nfb_studio.block.Block.sync">sync</a></code></li>
+<li><code><a title="nfb_studio.block.Block.view" href="#nfb_studio.block.Block.view">view</a></code></li>
 </ul>
 </li>
 </ul>

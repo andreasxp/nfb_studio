@@ -29,19 +29,20 @@
 from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QLineEdit, QDoubleSpinBox
 
 from ..scheme import Node, Input, Output, DataType
+from .signal_node import SignalNode
 
 
-class EnvelopeDetector(Node):
-    class Config(QWidget):
+class EnvelopeDetector(SignalNode):
+    class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
             self.smoothing_factor = QDoubleSpinBox()
-            self.smoothing_factor.setValue(0)
             self.smoothing_factor.setMinimum(0)
             self.smoothing_factor.setMaximum(1)
             self.smoothing_factor.setSingleStep(0.1)
+            self.smoothing_factor.setPrefix(&#34;x&#34;)
 
             self.method = QComboBox()
             self.method.addItem(&#34;Rectification&#34;)
@@ -55,15 +56,64 @@ class EnvelopeDetector(Node):
             layout.addRow(&#34;Smoothing factor&#34;, self.smoothing_factor)
             layout.addRow(&#34;Method&#34;, self.method)
 
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+            
+            n._smoothing_factor = self.smoothing_factor.value()
+            n._method = self.method.currentText()
+
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
 
         self.setTitle(&#34;Envelope Detector&#34;)
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self.setConfigWidget(self.Config())</code></pre>
+        self._smoothing_factor = 0  # TODO: Is this the correct default value?
+        self._method = &#34;Rectification&#34;
+
+    def smoothingFactor(self) -&gt; float:
+        return self._smoothing_factor
+    
+    def setSmoothingFactor(self, factor: float, /):
+        self._smoothing_factor = factor
+        self.sync()
+    
+    def method(self) -&gt; str:
+        return self._method
+    
+    def setMethod(self, method: str, /):
+        self._method = method
+        self.sync()
+    
+    def sync(self):
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        w.smoothing_factor.setValue(self.smoothingFactor())
+        w.method.setCurrentText(self.method())
+
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        signal[&#34;fSmoothingFactor&#34;] = self.smoothingFactor()
+        signal[&#34;method&#34;] = self.method()
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;smoothing_factor&#34;] = self.smoothingFactor()
+        data[&#34;method&#34;] = self.method()
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+
+        self.setSmoothingFactor(data[&#34;smoothing_factor&#34;])
+        self.setMethod(data[&#34;method&#34;])</code></pre>
 </details>
 </section>
 <section>
@@ -86,17 +136,17 @@ class EnvelopeDetector(Node):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class EnvelopeDetector(Node):
-    class Config(QWidget):
+<pre><code class="python">class EnvelopeDetector(SignalNode):
+    class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
             self.smoothing_factor = QDoubleSpinBox()
-            self.smoothing_factor.setValue(0)
             self.smoothing_factor.setMinimum(0)
             self.smoothing_factor.setMaximum(1)
             self.smoothing_factor.setSingleStep(0.1)
+            self.smoothing_factor.setPrefix(&#34;x&#34;)
 
             self.method = QComboBox()
             self.method.addItem(&#34;Rectification&#34;)
@@ -110,42 +160,193 @@ class EnvelopeDetector(Node):
             layout.addRow(&#34;Smoothing factor&#34;, self.smoothing_factor)
             layout.addRow(&#34;Method&#34;, self.method)
 
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+            
+            n._smoothing_factor = self.smoothing_factor.value()
+            n._method = self.method.currentText()
+
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
 
         self.setTitle(&#34;Envelope Detector&#34;)
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self.setConfigWidget(self.Config())</code></pre>
+        self._smoothing_factor = 0  # TODO: Is this the correct default value?
+        self._method = &#34;Rectification&#34;
+
+    def smoothingFactor(self) -&gt; float:
+        return self._smoothing_factor
+    
+    def setSmoothingFactor(self, factor: float, /):
+        self._smoothing_factor = factor
+        self.sync()
+    
+    def method(self) -&gt; str:
+        return self._method
+    
+    def setMethod(self, method: str, /):
+        self._method = method
+        self.sync()
+    
+    def sync(self):
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        w.smoothing_factor.setValue(self.smoothingFactor())
+        w.method.setCurrentText(self.method())
+
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        signal[&#34;fSmoothingFactor&#34;] = self.smoothingFactor()
+        signal[&#34;method&#34;] = self.method()
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;smoothing_factor&#34;] = self.smoothingFactor()
+        data[&#34;method&#34;] = self.method()
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+
+        self.setSmoothingFactor(data[&#34;smoothing_factor&#34;])
+        self.setMethod(data[&#34;method&#34;])</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></li>
 <li><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></li>
 <li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
-<h3>Class variables</h3>
+<h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.Config"><code class="name">var <span class="ident">Config</span></code></dt>
+<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.add_nfb_export_data"><code class="name flex">
+<span>def <span class="ident">add_nfb_export_data</span></span>(<span>self, signal: dict)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Config widget displayed for LSLInput.</p></div>
+<div class="desc"><p>Add this node's data to the dict representation of the signal.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_nfb_export_data(self, signal: dict):
+    &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+    signal[&#34;fSmoothingFactor&#34;] = self.smoothingFactor()
+    signal[&#34;method&#34;] = self.method()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize(self, data: dict):
+    super().deserialize(data)
+
+    self.setSmoothingFactor(data[&#34;smoothing_factor&#34;])
+    self.setMethod(data[&#34;method&#34;])</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.method"><code class="name flex">
+<span>def <span class="ident">method</span></span>(<span>self) -> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def method(self) -&gt; str:
+    return self._method</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    data = super().serialize()
+
+    data[&#34;smoothing_factor&#34;] = self.smoothingFactor()
+    data[&#34;method&#34;] = self.method()
+    return data</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.setMethod"><code class="name flex">
+<span>def <span class="ident">setMethod</span></span>(<span>self, method: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setMethod(self, method: str, /):
+    self._method = method
+    self.sync()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.setSmoothingFactor"><code class="name flex">
+<span>def <span class="ident">setSmoothingFactor</span></span>(<span>self, factor: float)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setSmoothingFactor(self, factor: float, /):
+    self._smoothing_factor = factor
+    self.sync()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.smoothingFactor"><code class="name flex">
+<span>def <span class="ident">smoothingFactor</span></span>(<span>self) -> float</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def smoothingFactor(self) -&gt; float:
+    return self._smoothing_factor</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config">Config</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget">hasConfigWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync">sync</a></code></li>
 </ul>
 </li>
 </ul>
@@ -168,8 +369,14 @@ class EnvelopeDetector(Node):
 <ul>
 <li>
 <h4><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector">EnvelopeDetector</a></code></h4>
-<ul class="">
-<li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.Config" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.Config">Config</a></code></li>
+<ul class="two-column">
+<li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.add_nfb_export_data">add_nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.deserialize" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.method" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.method">method</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.serialize" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.setMethod" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.setMethod">setMethod</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.setSmoothingFactor" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.setSmoothingFactor">setSmoothingFactor</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.smoothingFactor" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.smoothingFactor">smoothingFactor</a></code></li>
 </ul>
 </li>
 </ul>

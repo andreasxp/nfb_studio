@@ -29,13 +29,14 @@
 from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QLineEdit, QCheckBox, QDoubleSpinBox, QHBoxLayout
 
 from ..scheme import Node, Input, Output, DataType
+from .signal_node import SignalNode
 
 
-class BandpassFilter(Node):
-    class Config(QWidget):
-        &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
+class BandpassFilter(SignalNode):
+    class Config(SignalNode.Config):
+        &#34;&#34;&#34;Config widget displayed for BandpassFilter.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
             # Upper bound ----------------------------------------------------------------------------------------------
             self.lower_bound_enable = QCheckBox()
@@ -46,7 +47,7 @@ class BandpassFilter(Node):
             self.lower_bound.valueChanged.connect(self.adjust)
             self.lower_bound.setMinimum(0)
             self.lower_bound.setMaximum(250)
-            self.lower_bound.setValue(0)
+            self.lower_bound.setSuffix(&#34;Hz&#34;)
 
             layout = QHBoxLayout()
             lower_bound_widget = QWidget()
@@ -61,8 +62,9 @@ class BandpassFilter(Node):
 
             self.upper_bound = QDoubleSpinBox()
             self.upper_bound.valueChanged.connect(self.adjust)
+            self.lower_bound.setMinimum(0)
             self.upper_bound.setMaximum(250)
-            self.upper_bound.setValue(0)
+            self.upper_bound.setSuffix(&#34;Hz&#34;)
 
             layout = QHBoxLayout()
             upper_bound_widget = QWidget()
@@ -76,24 +78,26 @@ class BandpassFilter(Node):
             layout.addRow(&#34;Upper bound&#34;, upper_bound_widget)
             self.setLayout(layout)
 
-        def bounds(self) -&gt; tuple:
-            &#34;&#34;&#34;Return both lower and upper bounds as a tuple.  
-            If a bound is disabled, tuple will contain None instead of that bound.
-            &#34;&#34;&#34;
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+            
             if self.lower_bound_enable.isChecked():
-                lower_bound_value = self.lower_bound.value()
+                # Value is set direcly to a private field to prevent n.sync() from being called.
+                n._lower_bound = self.lower_bound.value()
             else:
-                lower_bound_value = None
+                n._lower_bound = None
             
             if self.upper_bound_enable.isChecked():
-                upper_bound_value = self.upper_bound.value()
+                n._upper_bound = self.upper_bound.value()
             else:
-                upper_bound_value = None
-            
-            return (lower_bound_value, upper_bound_value)
+                n._upper_bound = None
 
         def adjust(self):
             &#34;&#34;&#34;Adjust displayed values and limits in response to changes.&#34;&#34;&#34;
+            # Propagate changes to the node
+            self.sync()
             
             # Enable spinbox widgets based on their checkbox
             self.lower_bound.setEnabled(self.lower_bound_enable.isChecked())
@@ -106,25 +110,74 @@ class BandpassFilter(Node):
                 self.upper_bound.setMinimum(0)
             
             if self.upper_bound_enable.isChecked():
-                self.lower_bound.setMinimum(self.upper_bound.value())
+                self.lower_bound.setMaximum(self.upper_bound.value())
             else:
                 self.lower_bound.setMaximum(250)
 
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
 
         self.setTitle(&#34;Bandpass Filter&#34;)
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self.setConfigWidget(self.Config())
+        self._lower_bound = 0
+        self._upper_bound = 250
+        self.sync()
+    
+    def lowerBound(self):
+        return self._lower_bound
+    
+    def upperBound(self):
+        return self._upper_bound
+    
+    def setLowerBound(self, value, /):
+        self._lower_bound = value
+        self.sync()
+    
+    def setUpperBound(self, value, /):
+        self._upper_bound = value
+        self.sync()
+    
+    def sync(self):
+        # Nodes create their config widget on demand. To not create a config widget just for syncing to it, a check is
+        # performed.
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        
+        if self.upperBound() is None:
+            w.upper_bound_enable.setChecked(False)
+        else:
+            w.upper_bound_enable.setChecked(True)
+            w.upper_bound.setValue(self.upperBound())
+        
+        if self.lowerBound() is None:
+            w.lower_bound_enable.setChecked(False)
+        else:
+            w.lower_bound_enable.setChecked(True)
+            w.lower_bound.setValue(self.lowerBound())
 
-    def bounds(self) -&gt; tuple:
-        &#34;&#34;&#34;Return both lower and upper bounds as a tuple.  
-        If a bound is disabled, tuple will contain None instead of that bound.
-        &#34;&#34;&#34;
-        return self.configWidget().bounds()</code></pre>
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        signal[&#34;fBandpassLowHz&#34;] = self.lowerBound()
+        signal[&#34;fBandpassHighHz&#34;] = self.upperBound()
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;lower_bound&#34;] = self.lowerBound()
+        data[&#34;upper_bound&#34;] = self.upperBound()
+
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+        
+        self.setLowerBound(data[&#34;lower_bound&#34;])
+        self.setUpperBound(data[&#34;upper_bound&#34;])</code></pre>
 </details>
 </section>
 <section>
@@ -147,11 +200,11 @@ class BandpassFilter(Node):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class BandpassFilter(Node):
-    class Config(QWidget):
-        &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
+<pre><code class="python">class BandpassFilter(SignalNode):
+    class Config(SignalNode.Config):
+        &#34;&#34;&#34;Config widget displayed for BandpassFilter.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
             # Upper bound ----------------------------------------------------------------------------------------------
             self.lower_bound_enable = QCheckBox()
@@ -162,7 +215,7 @@ class BandpassFilter(Node):
             self.lower_bound.valueChanged.connect(self.adjust)
             self.lower_bound.setMinimum(0)
             self.lower_bound.setMaximum(250)
-            self.lower_bound.setValue(0)
+            self.lower_bound.setSuffix(&#34;Hz&#34;)
 
             layout = QHBoxLayout()
             lower_bound_widget = QWidget()
@@ -177,8 +230,9 @@ class BandpassFilter(Node):
 
             self.upper_bound = QDoubleSpinBox()
             self.upper_bound.valueChanged.connect(self.adjust)
+            self.lower_bound.setMinimum(0)
             self.upper_bound.setMaximum(250)
-            self.upper_bound.setValue(0)
+            self.upper_bound.setSuffix(&#34;Hz&#34;)
 
             layout = QHBoxLayout()
             upper_bound_widget = QWidget()
@@ -192,24 +246,26 @@ class BandpassFilter(Node):
             layout.addRow(&#34;Upper bound&#34;, upper_bound_widget)
             self.setLayout(layout)
 
-        def bounds(self) -&gt; tuple:
-            &#34;&#34;&#34;Return both lower and upper bounds as a tuple.  
-            If a bound is disabled, tuple will contain None instead of that bound.
-            &#34;&#34;&#34;
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+            
             if self.lower_bound_enable.isChecked():
-                lower_bound_value = self.lower_bound.value()
+                # Value is set direcly to a private field to prevent n.sync() from being called.
+                n._lower_bound = self.lower_bound.value()
             else:
-                lower_bound_value = None
+                n._lower_bound = None
             
             if self.upper_bound_enable.isChecked():
-                upper_bound_value = self.upper_bound.value()
+                n._upper_bound = self.upper_bound.value()
             else:
-                upper_bound_value = None
-            
-            return (lower_bound_value, upper_bound_value)
+                n._upper_bound = None
 
         def adjust(self):
             &#34;&#34;&#34;Adjust displayed values and limits in response to changes.&#34;&#34;&#34;
+            # Propagate changes to the node
+            self.sync()
             
             # Enable spinbox widgets based on their checkbox
             self.lower_bound.setEnabled(self.lower_bound_enable.isChecked())
@@ -222,72 +278,204 @@ class BandpassFilter(Node):
                 self.upper_bound.setMinimum(0)
             
             if self.upper_bound_enable.isChecked():
-                self.lower_bound.setMinimum(self.upper_bound.value())
+                self.lower_bound.setMaximum(self.upper_bound.value())
             else:
                 self.lower_bound.setMaximum(250)
 
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
 
         self.setTitle(&#34;Bandpass Filter&#34;)
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self.setConfigWidget(self.Config())
+        self._lower_bound = 0
+        self._upper_bound = 250
+        self.sync()
+    
+    def lowerBound(self):
+        return self._lower_bound
+    
+    def upperBound(self):
+        return self._upper_bound
+    
+    def setLowerBound(self, value, /):
+        self._lower_bound = value
+        self.sync()
+    
+    def setUpperBound(self, value, /):
+        self._upper_bound = value
+        self.sync()
+    
+    def sync(self):
+        # Nodes create their config widget on demand. To not create a config widget just for syncing to it, a check is
+        # performed.
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        
+        if self.upperBound() is None:
+            w.upper_bound_enable.setChecked(False)
+        else:
+            w.upper_bound_enable.setChecked(True)
+            w.upper_bound.setValue(self.upperBound())
+        
+        if self.lowerBound() is None:
+            w.lower_bound_enable.setChecked(False)
+        else:
+            w.lower_bound_enable.setChecked(True)
+            w.lower_bound.setValue(self.lowerBound())
 
-    def bounds(self) -&gt; tuple:
-        &#34;&#34;&#34;Return both lower and upper bounds as a tuple.  
-        If a bound is disabled, tuple will contain None instead of that bound.
-        &#34;&#34;&#34;
-        return self.configWidget().bounds()</code></pre>
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        signal[&#34;fBandpassLowHz&#34;] = self.lowerBound()
+        signal[&#34;fBandpassHighHz&#34;] = self.upperBound()
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;lower_bound&#34;] = self.lowerBound()
+        data[&#34;upper_bound&#34;] = self.upperBound()
+
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+        
+        self.setLowerBound(data[&#34;lower_bound&#34;])
+        self.setUpperBound(data[&#34;upper_bound&#34;])</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></li>
 <li><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></li>
 <li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.Config"><code class="name">var <span class="ident">Config</span></code></dt>
-<dd>
-<div class="desc"><p>Config widget displayed for LSLInput.</p></div>
-</dd>
-</dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.bounds"><code class="name flex">
-<span>def <span class="ident">bounds</span></span>(<span>self) -> tuple</span>
+<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.add_nfb_export_data"><code class="name flex">
+<span>def <span class="ident">add_nfb_export_data</span></span>(<span>self, signal: dict)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return both lower and upper bounds as a tuple.<br>
-If a bound is disabled, tuple will contain None instead of that bound.</p></div>
+<div class="desc"><p>Add this node's data to the dict representation of the signal.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def bounds(self) -&gt; tuple:
-    &#34;&#34;&#34;Return both lower and upper bounds as a tuple.  
-    If a bound is disabled, tuple will contain None instead of that bound.
-    &#34;&#34;&#34;
-    return self.configWidget().bounds()</code></pre>
+<pre><code class="python">def add_nfb_export_data(self, signal: dict):
+    &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+    signal[&#34;fBandpassLowHz&#34;] = self.lowerBound()
+    signal[&#34;fBandpassHighHz&#34;] = self.upperBound()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize(self, data: dict):
+    super().deserialize(data)
+    
+    self.setLowerBound(data[&#34;lower_bound&#34;])
+    self.setUpperBound(data[&#34;upper_bound&#34;])</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.lowerBound"><code class="name flex">
+<span>def <span class="ident">lowerBound</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lowerBound(self):
+    return self._lower_bound</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    data = super().serialize()
+
+    data[&#34;lower_bound&#34;] = self.lowerBound()
+    data[&#34;upper_bound&#34;] = self.upperBound()
+
+    return data</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.setLowerBound"><code class="name flex">
+<span>def <span class="ident">setLowerBound</span></span>(<span>self, value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setLowerBound(self, value, /):
+    self._lower_bound = value
+    self.sync()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.setUpperBound"><code class="name flex">
+<span>def <span class="ident">setUpperBound</span></span>(<span>self, value)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setUpperBound(self, value, /):
+    self._upper_bound = value
+    self.sync()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.upperBound"><code class="name flex">
+<span>def <span class="ident">upperBound</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def upperBound(self):
+    return self._upper_bound</code></pre>
 </details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config">Config</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget">hasConfigWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync">sync</a></code></li>
 </ul>
 </li>
 </ul>
@@ -310,9 +498,14 @@ If a bound is disabled, tuple will contain None instead of that bound.</p></div>
 <ul>
 <li>
 <h4><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter">BandpassFilter</a></code></h4>
-<ul class="">
-<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.Config" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.Config">Config</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.bounds" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.bounds">bounds</a></code></li>
+<ul class="two-column">
+<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.add_nfb_export_data">add_nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.deserialize" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.lowerBound" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.lowerBound">lowerBound</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.serialize" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.setLowerBound" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.setLowerBound">setLowerBound</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.setUpperBound" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.setUpperBound">setUpperBound</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.upperBound" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.upperBound">upperBound</a></code></li>
 </ul>
 </li>
 </ul>

@@ -26,31 +26,70 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;NFB main source signal.&#34;&#34;&#34;
-from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QLineEdit
+from PySide2.QtWidgets import QWidget, QFormLayout, QLineEdit
 
 from ..scheme import Node, Input, Output, DataType
+from .signal_node import SignalNode
 
 
-class DerivedSignalExport(Node):
-    class Config(QWidget):
+class DerivedSignalExport(SignalNode):
+    class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
-            self.signalName_input = QLineEdit()
+            self.signal_name = QLineEdit(&#34;Signal&#34;)
+            self.signal_name.editingFinished.connect(self.sync)
 
-            form = QFormLayout()
-            form.addRow(&#34;Signal name&#34;, self.signalName_input)
-            self.setLayout(form)
+            layout = QFormLayout()
+            self.setLayout(layout)
+            layout.addRow(&#34;Signal name&#34;, self.signal_name)
+        
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+            
+            n._signal_name = self.signal_name.text()
+    
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
 
         self.setTitle(&#34;Derived Signal Export&#34;)
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self.setConfigWidget(self.Config())</code></pre>
+        self._signal_name = &#34;Signal&#34;
+        self.sync()
+
+    def signalName(self) -&gt; str:
+        return self._signal_name
+
+    def setSignalName(self, name: str, /):
+        self._signal_name = name
+        self.sync()
+    
+    def sync(self):
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        w.signal_name.setText(self.signalName())
+
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        signal[&#34;sSignalName&#34;] = self.signalName()
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;signal_name&#34;] = self.signalName()
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+        self.setSignalName(data[&#34;signal_name&#34;])</code></pre>
 </details>
 </section>
 <section>
@@ -73,53 +112,162 @@ class DerivedSignalExport(Node):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class DerivedSignalExport(Node):
-    class Config(QWidget):
+<pre><code class="python">class DerivedSignalExport(SignalNode):
+    class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
-            self.signalName_input = QLineEdit()
+            self.signal_name = QLineEdit(&#34;Signal&#34;)
+            self.signal_name.editingFinished.connect(self.sync)
 
-            form = QFormLayout()
-            form.addRow(&#34;Signal name&#34;, self.signalName_input)
-            self.setLayout(form)
+            layout = QFormLayout()
+            self.setLayout(layout)
+            layout.addRow(&#34;Signal name&#34;, self.signal_name)
+        
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+            
+            n._signal_name = self.signal_name.text()
+    
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
 
         self.setTitle(&#34;Derived Signal Export&#34;)
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self.setConfigWidget(self.Config())</code></pre>
+        self._signal_name = &#34;Signal&#34;
+        self.sync()
+
+    def signalName(self) -&gt; str:
+        return self._signal_name
+
+    def setSignalName(self, name: str, /):
+        self._signal_name = name
+        self.sync()
+    
+    def sync(self):
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        w.signal_name.setText(self.signalName())
+
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        signal[&#34;sSignalName&#34;] = self.signalName()
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;signal_name&#34;] = self.signalName()
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+        self.setSignalName(data[&#34;signal_name&#34;])</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></li>
 <li><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></li>
 <li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
-<h3>Class variables</h3>
+<h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.Config"><code class="name">var <span class="ident">Config</span></code></dt>
+<dt id="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.add_nfb_export_data"><code class="name flex">
+<span>def <span class="ident">add_nfb_export_data</span></span>(<span>self, signal: dict)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Config widget displayed for LSLInput.</p></div>
+<div class="desc"><p>Add this node's data to the dict representation of the signal.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_nfb_export_data(self, signal: dict):
+    &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+    signal[&#34;sSignalName&#34;] = self.signalName()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize(self, data: dict):
+    super().deserialize(data)
+    self.setSignalName(data[&#34;signal_name&#34;])</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    data = super().serialize()
+
+    data[&#34;signal_name&#34;] = self.signalName()
+    return data</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.setSignalName"><code class="name flex">
+<span>def <span class="ident">setSignalName</span></span>(<span>self, name: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setSignalName(self, name: str, /):
+    self._signal_name = name
+    self.sync()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.signalName"><code class="name flex">
+<span>def <span class="ident">signalName</span></span>(<span>self) -> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def signalName(self) -&gt; str:
+    return self._signal_name</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config">Config</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget">hasConfigWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync">sync</a></code></li>
 </ul>
 </li>
 </ul>
@@ -143,7 +291,11 @@ class DerivedSignalExport(Node):
 <li>
 <h4><code><a title="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport" href="#nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport">DerivedSignalExport</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.Config" href="#nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.Config">Config</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.add_nfb_export_data">add_nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.deserialize" href="#nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.serialize" href="#nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.setSignalName" href="#nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.setSignalName">setSignalName</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.signalName" href="#nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport.signalName">signalName</a></code></li>
 </ul>
 </li>
 </ul>

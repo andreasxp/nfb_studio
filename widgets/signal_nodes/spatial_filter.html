@@ -29,13 +29,14 @@
 from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QLineEdit
 
 from ..scheme import Node, Input, Output, DataType
+from .signal_node import SignalNode
 
 
-class SpatialFilter(Node):
-    class Config(QWidget):
+class SpatialFilter(SignalNode):
+    class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
             self.matrix_path = QLineEdit()
 
@@ -43,15 +44,52 @@ class SpatialFilter(Node):
             self.setLayout(layout)
 
             layout.addRow(&#34;Matrix path&#34;, self.matrix_path)
+        
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+            
+            n._matrix_path = self.matrix_path.text()
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
 
         self.setTitle(&#34;Spatial Filter&#34;)
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self.setConfigWidget(self.Config())</code></pre>
+        self._matrix_path = &#34;&#34;
+        self.sync()
+
+    def matrixPath(self) -&gt; str:
+        return self._matrix_path
+    
+    def setMatrixPath(self, matrix_path: str, /):
+        self._matrix_path = matrix_path
+        self.sync()
+
+    def sync(self):
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        w.matrix_path.setText(self.matrixPath())
+
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        signal[&#34;SpatialFilterMatrix&#34;] = self.matrixPath()
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;matrix_path&#34;] = self.matrixPath()
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+
+        self.setMatrixPath(data[&#34;matrix_path&#34;])</code></pre>
 </details>
 </section>
 <section>
@@ -74,11 +112,11 @@ class SpatialFilter(Node):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class SpatialFilter(Node):
-    class Config(QWidget):
+<pre><code class="python">class SpatialFilter(SignalNode):
+    class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
-            super().__init__(parent)
+            super().__init__(parent=parent)
 
             self.matrix_path = QLineEdit()
 
@@ -86,42 +124,151 @@ class SpatialFilter(Node):
             self.setLayout(layout)
 
             layout.addRow(&#34;Matrix path&#34;, self.matrix_path)
+        
+        def sync(self):
+            n = self.node()
+            if n is None:
+                return
+            
+            n._matrix_path = self.matrix_path.text()
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
 
         self.setTitle(&#34;Spatial Filter&#34;)
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self.setConfigWidget(self.Config())</code></pre>
+        self._matrix_path = &#34;&#34;
+        self.sync()
+
+    def matrixPath(self) -&gt; str:
+        return self._matrix_path
+    
+    def setMatrixPath(self, matrix_path: str, /):
+        self._matrix_path = matrix_path
+        self.sync()
+
+    def sync(self):
+        if not self.hasConfigWidget():
+            return
+        
+        w = self.configWidget()
+        w.matrix_path.setText(self.matrixPath())
+
+    def add_nfb_export_data(self, signal: dict):
+        &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+        signal[&#34;SpatialFilterMatrix&#34;] = self.matrixPath()
+    
+    def serialize(self) -&gt; dict:
+        data = super().serialize()
+
+        data[&#34;matrix_path&#34;] = self.matrixPath()
+        return data
+    
+    def deserialize(self, data: dict):
+        super().deserialize(data)
+
+        self.setMatrixPath(data[&#34;matrix_path&#34;])</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
+<li><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></li>
 <li><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></li>
 <li><a title="nfb_studio.widgets.scheme.scheme_item.SchemeItem" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem">SchemeItem</a></li>
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
-<h3>Class variables</h3>
+<h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.Config"><code class="name">var <span class="ident">Config</span></code></dt>
+<dt id="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.add_nfb_export_data"><code class="name flex">
+<span>def <span class="ident">add_nfb_export_data</span></span>(<span>self, signal: dict)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Config widget displayed for LSLInput.</p></div>
+<div class="desc"><p>Add this node's data to the dict representation of the signal.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_nfb_export_data(self, signal: dict):
+    &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
+    signal[&#34;SpatialFilterMatrix&#34;] = self.matrixPath()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize(self, data: dict):
+    super().deserialize(data)
+
+    self.setMatrixPath(data[&#34;matrix_path&#34;])</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.matrixPath"><code class="name flex">
+<span>def <span class="ident">matrixPath</span></span>(<span>self) -> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def matrixPath(self) -&gt; str:
+    return self._matrix_path</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    data = super().serialize()
+
+    data[&#34;matrix_path&#34;] = self.matrixPath()
+    return data</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.setMatrixPath"><code class="name flex">
+<span>def <span class="ident">setMatrixPath</span></span>(<span>self, matrix_path: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setMatrixPath(self, matrix_path: str, /):
+    self._matrix_path = matrix_path
+    self.sync()</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.widgets.scheme.node.node.Node" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a></b></code>:
+<li><code><b><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.node.node.Node.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config">Config</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.boundingRect" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.configWidget" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.configWidget">configWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget">hasConfigWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.itemChange" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.itemChange">itemChange</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.mouseDoubleClickEvent" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.mouseDoubleClickEvent">mouseDoubleClickEvent</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.paint" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.paint">paint</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.position" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.position">position</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.setPosition" href="../scheme/scheme_item.html#nfb_studio.widgets.scheme.scheme_item.SchemeItem.setPosition">setPosition</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.shape" href="../scheme/node/node.html#nfb_studio.widgets.scheme.node.node.Node.shape">shape</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync" href="signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync">sync</a></code></li>
 </ul>
 </li>
 </ul>
@@ -145,7 +292,11 @@ class SpatialFilter(Node):
 <li>
 <h4><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter">SpatialFilter</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.Config" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.Config">Config</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.add_nfb_export_data">add_nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.deserialize" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.matrixPath" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.matrixPath">matrixPath</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.serialize" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.setMatrixPath" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.setMatrixPath">setMatrixPath</a></code></li>
 </ul>
 </li>
 </ul>

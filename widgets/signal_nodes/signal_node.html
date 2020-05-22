@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets.sequence_nodes.group_node API documentation</title>
+<title>nfb_studio.widgets.signal_nodes.signal_node API documentation</title>
 <meta name="description" content="NFB main source signal." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.sequence_nodes.group_node</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.signal_nodes.signal_node</code></h1>
 </header>
 <section id="section-intro">
 <p>NFB main source signal.</p>
@@ -26,26 +26,62 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;NFB main source signal.&#34;&#34;&#34;
-from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QLineEdit
+from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QLineEdit, QCheckBox, QDoubleSpinBox, QHBoxLayout
 
 from ..scheme import Node, Input, Output, DataType
 
 
-class GroupNode(Node):
+class SignalNode(Node):
+    class Config(QWidget):
+        &#34;&#34;&#34;Config widget displayed for a signal node.&#34;&#34;&#34;
+        def __init__(self, parent=None):
+            super().__init__(parent=parent)
+
+            self._node = None
+
+        def setNode(self, node):
+            self._node = node
+            self._node.sync()
+        
+        def node(self):
+            return self._node
+        
+        def sync(self):
+            &#34;&#34;&#34;Sync data in this widget to the data in the node.
+            &#34;Sync&#34; in this context means one-way copy from self to node. A similarly named function in the
+            node copies data the other way. Call one or the other depending on where the data was changed.
+            &#34;&#34;&#34;
+            pass
+
+
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
+        
+    def configWidget(self):
+        w = super().configWidget()
 
-        self.setTitle(&#34;Group&#34;)
-        self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
-        self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
+        if w is not None:
+            return w
+        
+        w = self.Config()
+        w.setNode(self)
 
-        #self.setConfigWidget(self.Config())
+        self.setConfigWidget(w)
+        return w
 
-    def serialize(self) -&gt; dict:
-        return super().serialize()
-    
-    def deserialize(self, data: dict):
-        super().deserialize(data)</code></pre>
+    def hasConfigWidget(self):
+        &#34;&#34;&#34;Since nodes generate a config widget on demand, this internal function checks if one has already been
+        generated.
+        &#34;&#34;&#34;
+        return super().configWidget() is not None
+
+    def sync(self):
+        &#34;&#34;&#34;Sync data in this node to the data in the config widget.
+        &#34;Sync&#34; in this context means one-way copy from self to configWidget. A similarly named function in the
+        configWidget copies data the other way. Call one or the other depending on where the data was changed.
+        This function is also called automatically when the configWidget is first created.
+        &#34;&#34;&#34;
+        pass</code></pre>
 </details>
 </section>
 <section>
@@ -57,8 +93,8 @@ class GroupNode(Node):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.sequence_nodes.group_node.GroupNode"><code class="flex name class">
-<span>class <span class="ident">GroupNode</span></span>
+<dt id="nfb_studio.widgets.signal_nodes.signal_node.SignalNode"><code class="flex name class">
+<span>class <span class="ident">SignalNode</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
@@ -68,21 +104,57 @@ class GroupNode(Node):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class GroupNode(Node):
+<pre><code class="python">class SignalNode(Node):
+    class Config(QWidget):
+        &#34;&#34;&#34;Config widget displayed for a signal node.&#34;&#34;&#34;
+        def __init__(self, parent=None):
+            super().__init__(parent=parent)
+
+            self._node = None
+
+        def setNode(self, node):
+            self._node = node
+            self._node.sync()
+        
+        def node(self):
+            return self._node
+        
+        def sync(self):
+            &#34;&#34;&#34;Sync data in this widget to the data in the node.
+            &#34;Sync&#34; in this context means one-way copy from self to node. A similarly named function in the
+            node copies data the other way. Call one or the other depending on where the data was changed.
+            &#34;&#34;&#34;
+            pass
+
+
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__(parent=parent)
+        
+    def configWidget(self):
+        w = super().configWidget()
 
-        self.setTitle(&#34;Group&#34;)
-        self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
-        self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
+        if w is not None:
+            return w
+        
+        w = self.Config()
+        w.setNode(self)
 
-        #self.setConfigWidget(self.Config())
+        self.setConfigWidget(w)
+        return w
 
-    def serialize(self) -&gt; dict:
-        return super().serialize()
-    
-    def deserialize(self, data: dict):
-        super().deserialize(data)</code></pre>
+    def hasConfigWidget(self):
+        &#34;&#34;&#34;Since nodes generate a config widget on demand, this internal function checks if one has already been
+        generated.
+        &#34;&#34;&#34;
+        return super().configWidget() is not None
+
+    def sync(self):
+        &#34;&#34;&#34;Sync data in this node to the data in the config widget.
+        &#34;Sync&#34; in this context means one-way copy from self to configWidget. A similarly named function in the
+        configWidget copies data the other way. Call one or the other depending on where the data was changed.
+        This function is also called automatically when the configWidget is first created.
+        &#34;&#34;&#34;
+        pass</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -91,32 +163,60 @@ class GroupNode(Node):
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter" href="bandpass_filter.html#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter">BandpassFilter</a></li>
+<li><a title="nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport" href="derived_signal_export.html#nfb_studio.widgets.signal_nodes.derived_signal_export.DerivedSignalExport">DerivedSignalExport</a></li>
+<li><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector" href="envelope_detector.html#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector">EnvelopeDetector</a></li>
+<li><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput" href="lsl_input.html#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput">LSLInput</a></li>
+<li><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter" href="spatial_filter.html#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter">SpatialFilter</a></li>
+<li><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise" href="standardise.html#nfb_studio.widgets.signal_nodes.standardise.Standardise">Standardise</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config"><code class="name">var <span class="ident">Config</span></code></dt>
+<dd>
+<div class="desc"><p>Config widget displayed for a signal node.</p></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.sequence_nodes.group_node.GroupNode.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+<dt id="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget"><code class="name flex">
+<span>def <span class="ident">hasConfigWidget</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Since nodes generate a config widget on demand, this internal function checks if one has already been
+generated.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    super().deserialize(data)</code></pre>
+<pre><code class="python">def hasConfigWidget(self):
+    &#34;&#34;&#34;Since nodes generate a config widget on demand, this internal function checks if one has already been
+    generated.
+    &#34;&#34;&#34;
+    return super().configWidget() is not None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.sequence_nodes.group_node.GroupNode.serialize"><code class="name flex">
-<span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
+<dt id="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync"><code class="name flex">
+<span>def <span class="ident">sync</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Sync data in this node to the data in the config widget.
+"Sync" in this context means one-way copy from self to configWidget. A similarly named function in the
+configWidget copies data the other way. Call one or the other depending on where the data was changed.
+This function is also called automatically when the configWidget is first created.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def serialize(self) -&gt; dict:
-    return super().serialize()</code></pre>
+<pre><code class="python">def sync(self):
+    &#34;&#34;&#34;Sync data in this node to the data in the config widget.
+    &#34;Sync&#34; in this context means one-way copy from self to configWidget. A similarly named function in the
+    configWidget copies data the other way. Call one or the other depending on where the data was changed.
+    This function is also called automatically when the configWidget is first created.
+    &#34;&#34;&#34;
+    pass</code></pre>
 </details>
 </dd>
 </dl>
@@ -147,16 +247,17 @@ class GroupNode(Node):
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.sequence_nodes" href="index.html">nfb_studio.widgets.sequence_nodes</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes" href="index.html">nfb_studio.widgets.signal_nodes</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.sequence_nodes.group_node.GroupNode" href="#nfb_studio.widgets.sequence_nodes.group_node.GroupNode">GroupNode</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.widgets.sequence_nodes.group_node.GroupNode.deserialize" href="#nfb_studio.widgets.sequence_nodes.group_node.GroupNode.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.sequence_nodes.group_node.GroupNode.serialize" href="#nfb_studio.widgets.sequence_nodes.group_node.GroupNode.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config" href="#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.Config">Config</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget" href="#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.hasConfigWidget">hasConfigWidget</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync" href="#nfb_studio.widgets.signal_nodes.signal_node.SignalNode.sync">sync</a></code></li>
 </ul>
 </li>
 </ul>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets.config.experiment_config API documentation</title>
+<title>nfb_studio.widgets.config.general_config API documentation</title>
 <meta name="description" content="Config widget for general properties of an experiment." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.config.experiment_config</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.config.general_config</code></h1>
 </header>
 <section id="section-intro">
 <p>Config widget for general properties of an experiment.</p>
@@ -30,7 +30,7 @@ from PySide2.QtWidgets import QWidget, QFormLayout, QLabel, QComboBox, QLineEdit
 from nfb_studio.util.qt import StackedDictWidget
 
 
-class ExperimentConfig(QWidget):
+class GeneralConfig(QWidget):
     &#34;&#34;&#34;Config widget for general properties of an experiment.&#34;&#34;&#34;
 
     inlet_type_export_values = {
@@ -41,12 +41,10 @@ class ExperimentConfig(QWidget):
     }
     inlet_type_import_values = {v: k for k, v in inlet_type_export_values.items()}
 
-    def __init__(self, experiment, parent=None):
-        super().__init__(parent)
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
         layout = QFormLayout()
         self.setLayout(layout)
-
-        self.data = experiment
 
         self.name = QLineEdit()
 
@@ -91,11 +89,11 @@ class ExperimentConfig(QWidget):
         self.prefilterBandHigh_rwidget.layout().addWidget(self.prefilterBandHigh_input)
 
         # Inlet selection ----------------------------------------------------------------------------------------------
-        self.inlet_type_selector = QComboBox()
-        self.inlet_type_selector.addItem(&#34;LSL stream&#34;)
-        self.inlet_type_selector.addItem(&#34;LSL file stream&#34;)
-        self.inlet_type_selector.addItem(&#34;LSL generator&#34;)
-        self.inlet_type_selector.addItem(&#34;Field trip buffer&#34;)
+        self.inlet_type = QComboBox()
+        self.inlet_type.addItem(&#34;LSL stream&#34;)
+        self.inlet_type.addItem(&#34;LSL file stream&#34;)
+        self.inlet_type.addItem(&#34;LSL generator&#34;)
+        self.inlet_type.addItem(&#34;Field trip buffer&#34;)
 
         self.lsl_stream_name = QComboBox()
         self.lsl_stream_name.addItem(&#34;NVX136_Data&#34;)
@@ -112,13 +110,13 @@ class ExperimentConfig(QWidget):
         self.inlet_params.addWidget(&#34;Field trip buffer&#34;, self.hostname_port)
         # TODO: LSL generator is not reflected in the exported file, even when selected.
 
-        self.inlet_type_selector.currentTextChanged.connect(self.inlet_params.setCurrentKey)
+        self.inlet_type.currentTextChanged.connect(self.inlet_params.setCurrentKey)
 
         self.inlet_config = QWidget()
         self.inlet_config.setContentsMargins(0, 0, 0, 0)
         inlet_layout = QHBoxLayout()
         inlet_layout.setContentsMargins(0, 0, 0, 0)
-        inlet_layout.addWidget(self.inlet_type_selector)
+        inlet_layout.addWidget(self.inlet_type)
         inlet_layout.addWidget(self.inlet_params)
         self.inlet_config.setLayout(inlet_layout)
 
@@ -151,6 +149,34 @@ class ExperimentConfig(QWidget):
         layout.addRow(&#34;Reference sub&#34;, self.reference_sub)
         layout.addRow(&#34;Show proto rectangle&#34;, self.show_proto_rectangle)
         layout.addRow(&#34;Show notch filters&#34;, self.show_notch_filters)
+    
+    def sync_to(self, ex, /):
+        ex.name = self.name.text()
+        ex.inlet = self.inlet_type_export_values[self.inlet_type.currentText()]
+        ex.lsl_stream_name = self.lsl_stream_name.currentText()
+        ex.raw_data_path = self.lsl_filename.text()
+        ex.hostname_port = self.hostname_port.text()
+        ex.dc = self.dc.isChecked()
+        
+        if self.prefilterBandLow_enable.isChecked():
+            prefilterBandLow = self.prefilterBandLow_input.value()
+        else:
+            prefilterBandLow = None
+        
+        if self.prefilterBandHigh_enable.isChecked():
+            prefilterBandHigh = self.prefilterBandHigh_input.value()
+        else:
+            prefilterBandHigh = None
+        
+        ex.prefilter_band = (prefilterBandLow, prefilterBandHigh)
+        ex.plot_raw = self.plot_raw.isChecked()
+        ex.plot_signals = self.plot_signals.isChecked()
+        ex.show_subject_window = self.show_subject_window.isChecked()
+        ex.discard_channels = self.discard_channels.text()
+        ex.reference_sub = self.reference_sub.text()
+        ex.show_proto_rectangle = self.show_proto_rectangle.isChecked()
+        ex.show_notch_filters = self.show_notch_filters.isChecked()
+
 
     def on_prefilterBandLow_toggled(self):
         if self.prefilterBandLow_enable.isChecked():
@@ -194,9 +220,9 @@ class ExperimentConfig(QWidget):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.config.experiment_config.ExperimentConfig"><code class="flex name class">
-<span>class <span class="ident">ExperimentConfig</span></span>
-<span>(</span><span>experiment, parent=None)</span>
+<dt id="nfb_studio.widgets.config.general_config.GeneralConfig"><code class="flex name class">
+<span>class <span class="ident">GeneralConfig</span></span>
+<span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Config widget for general properties of an experiment.</p></div>
@@ -204,7 +230,7 @@ class ExperimentConfig(QWidget):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class ExperimentConfig(QWidget):
+<pre><code class="python">class GeneralConfig(QWidget):
     &#34;&#34;&#34;Config widget for general properties of an experiment.&#34;&#34;&#34;
 
     inlet_type_export_values = {
@@ -215,12 +241,10 @@ class ExperimentConfig(QWidget):
     }
     inlet_type_import_values = {v: k for k, v in inlet_type_export_values.items()}
 
-    def __init__(self, experiment, parent=None):
-        super().__init__(parent)
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
         layout = QFormLayout()
         self.setLayout(layout)
-
-        self.data = experiment
 
         self.name = QLineEdit()
 
@@ -265,11 +289,11 @@ class ExperimentConfig(QWidget):
         self.prefilterBandHigh_rwidget.layout().addWidget(self.prefilterBandHigh_input)
 
         # Inlet selection ----------------------------------------------------------------------------------------------
-        self.inlet_type_selector = QComboBox()
-        self.inlet_type_selector.addItem(&#34;LSL stream&#34;)
-        self.inlet_type_selector.addItem(&#34;LSL file stream&#34;)
-        self.inlet_type_selector.addItem(&#34;LSL generator&#34;)
-        self.inlet_type_selector.addItem(&#34;Field trip buffer&#34;)
+        self.inlet_type = QComboBox()
+        self.inlet_type.addItem(&#34;LSL stream&#34;)
+        self.inlet_type.addItem(&#34;LSL file stream&#34;)
+        self.inlet_type.addItem(&#34;LSL generator&#34;)
+        self.inlet_type.addItem(&#34;Field trip buffer&#34;)
 
         self.lsl_stream_name = QComboBox()
         self.lsl_stream_name.addItem(&#34;NVX136_Data&#34;)
@@ -286,13 +310,13 @@ class ExperimentConfig(QWidget):
         self.inlet_params.addWidget(&#34;Field trip buffer&#34;, self.hostname_port)
         # TODO: LSL generator is not reflected in the exported file, even when selected.
 
-        self.inlet_type_selector.currentTextChanged.connect(self.inlet_params.setCurrentKey)
+        self.inlet_type.currentTextChanged.connect(self.inlet_params.setCurrentKey)
 
         self.inlet_config = QWidget()
         self.inlet_config.setContentsMargins(0, 0, 0, 0)
         inlet_layout = QHBoxLayout()
         inlet_layout.setContentsMargins(0, 0, 0, 0)
-        inlet_layout.addWidget(self.inlet_type_selector)
+        inlet_layout.addWidget(self.inlet_type)
         inlet_layout.addWidget(self.inlet_params)
         self.inlet_config.setLayout(inlet_layout)
 
@@ -325,6 +349,34 @@ class ExperimentConfig(QWidget):
         layout.addRow(&#34;Reference sub&#34;, self.reference_sub)
         layout.addRow(&#34;Show proto rectangle&#34;, self.show_proto_rectangle)
         layout.addRow(&#34;Show notch filters&#34;, self.show_notch_filters)
+    
+    def sync_to(self, ex, /):
+        ex.name = self.name.text()
+        ex.inlet = self.inlet_type_export_values[self.inlet_type.currentText()]
+        ex.lsl_stream_name = self.lsl_stream_name.currentText()
+        ex.raw_data_path = self.lsl_filename.text()
+        ex.hostname_port = self.hostname_port.text()
+        ex.dc = self.dc.isChecked()
+        
+        if self.prefilterBandLow_enable.isChecked():
+            prefilterBandLow = self.prefilterBandLow_input.value()
+        else:
+            prefilterBandLow = None
+        
+        if self.prefilterBandHigh_enable.isChecked():
+            prefilterBandHigh = self.prefilterBandHigh_input.value()
+        else:
+            prefilterBandHigh = None
+        
+        ex.prefilter_band = (prefilterBandLow, prefilterBandHigh)
+        ex.plot_raw = self.plot_raw.isChecked()
+        ex.plot_signals = self.plot_signals.isChecked()
+        ex.show_subject_window = self.show_subject_window.isChecked()
+        ex.discard_channels = self.discard_channels.text()
+        ex.reference_sub = self.reference_sub.text()
+        ex.show_proto_rectangle = self.show_proto_rectangle.isChecked()
+        ex.show_notch_filters = self.show_notch_filters.isChecked()
+
 
     def on_prefilterBandLow_toggled(self):
         if self.prefilterBandLow_enable.isChecked():
@@ -367,22 +419,22 @@ class ExperimentConfig(QWidget):
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.config.experiment_config.ExperimentConfig.inlet_type_export_values"><code class="name">var <span class="ident">inlet_type_export_values</span></code></dt>
+<dt id="nfb_studio.widgets.config.general_config.GeneralConfig.inlet_type_export_values"><code class="name">var <span class="ident">inlet_type_export_values</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.widgets.config.experiment_config.ExperimentConfig.inlet_type_import_values"><code class="name">var <span class="ident">inlet_type_import_values</span></code></dt>
+<dt id="nfb_studio.widgets.config.general_config.GeneralConfig.inlet_type_import_values"><code class="name">var <span class="ident">inlet_type_import_values</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.widgets.config.experiment_config.ExperimentConfig.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dt id="nfb_studio.widgets.config.general_config.GeneralConfig.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandHigh_changed"><code class="name flex">
+<dt id="nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandHigh_changed"><code class="name flex">
 <span>def <span class="ident">on_prefilterBandHigh_changed</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -396,7 +448,7 @@ class ExperimentConfig(QWidget):
     self.prefilterBandLow_input.setMaximum(self.prefilterBandHigh_input.value())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandHigh_toggled"><code class="name flex">
+<dt id="nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandHigh_toggled"><code class="name flex">
 <span>def <span class="ident">on_prefilterBandHigh_toggled</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -418,7 +470,7 @@ class ExperimentConfig(QWidget):
         self.prefilterBandLow_input.setMaximum(10000)  # TODO: add proper value</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandLow_changed"><code class="name flex">
+<dt id="nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandLow_changed"><code class="name flex">
 <span>def <span class="ident">on_prefilterBandLow_changed</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -432,7 +484,7 @@ class ExperimentConfig(QWidget):
     self.prefilterBandHigh_input.setMinimum(self.prefilterBandLow_input.value())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandLow_toggled"><code class="name flex">
+<dt id="nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandLow_toggled"><code class="name flex">
 <span>def <span class="ident">on_prefilterBandLow_toggled</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -454,6 +506,43 @@ class ExperimentConfig(QWidget):
         self.prefilterBandHigh_input.setMinimum(0)</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.config.general_config.GeneralConfig.sync_to"><code class="name flex">
+<span>def <span class="ident">sync_to</span></span>(<span>self, ex)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sync_to(self, ex, /):
+    ex.name = self.name.text()
+    ex.inlet = self.inlet_type_export_values[self.inlet_type.currentText()]
+    ex.lsl_stream_name = self.lsl_stream_name.currentText()
+    ex.raw_data_path = self.lsl_filename.text()
+    ex.hostname_port = self.hostname_port.text()
+    ex.dc = self.dc.isChecked()
+    
+    if self.prefilterBandLow_enable.isChecked():
+        prefilterBandLow = self.prefilterBandLow_input.value()
+    else:
+        prefilterBandLow = None
+    
+    if self.prefilterBandHigh_enable.isChecked():
+        prefilterBandHigh = self.prefilterBandHigh_input.value()
+    else:
+        prefilterBandHigh = None
+    
+    ex.prefilter_band = (prefilterBandLow, prefilterBandHigh)
+    ex.plot_raw = self.plot_raw.isChecked()
+    ex.plot_signals = self.plot_signals.isChecked()
+    ex.show_subject_window = self.show_subject_window.isChecked()
+    ex.discard_channels = self.discard_channels.text()
+    ex.reference_sub = self.reference_sub.text()
+    ex.show_proto_rectangle = self.show_proto_rectangle.isChecked()
+    ex.show_notch_filters = self.show_notch_filters.isChecked()</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -473,15 +562,16 @@ class ExperimentConfig(QWidget):
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.config.experiment_config.ExperimentConfig" href="#nfb_studio.widgets.config.experiment_config.ExperimentConfig">ExperimentConfig</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.config.general_config.GeneralConfig" href="#nfb_studio.widgets.config.general_config.GeneralConfig">GeneralConfig</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.widgets.config.experiment_config.ExperimentConfig.inlet_type_export_values" href="#nfb_studio.widgets.config.experiment_config.ExperimentConfig.inlet_type_export_values">inlet_type_export_values</a></code></li>
-<li><code><a title="nfb_studio.widgets.config.experiment_config.ExperimentConfig.inlet_type_import_values" href="#nfb_studio.widgets.config.experiment_config.ExperimentConfig.inlet_type_import_values">inlet_type_import_values</a></code></li>
-<li><code><a title="nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandHigh_changed" href="#nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandHigh_changed">on_prefilterBandHigh_changed</a></code></li>
-<li><code><a title="nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandHigh_toggled" href="#nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandHigh_toggled">on_prefilterBandHigh_toggled</a></code></li>
-<li><code><a title="nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandLow_changed" href="#nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandLow_changed">on_prefilterBandLow_changed</a></code></li>
-<li><code><a title="nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandLow_toggled" href="#nfb_studio.widgets.config.experiment_config.ExperimentConfig.on_prefilterBandLow_toggled">on_prefilterBandLow_toggled</a></code></li>
-<li><code><a title="nfb_studio.widgets.config.experiment_config.ExperimentConfig.staticMetaObject" href="#nfb_studio.widgets.config.experiment_config.ExperimentConfig.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.general_config.GeneralConfig.inlet_type_export_values" href="#nfb_studio.widgets.config.general_config.GeneralConfig.inlet_type_export_values">inlet_type_export_values</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.general_config.GeneralConfig.inlet_type_import_values" href="#nfb_studio.widgets.config.general_config.GeneralConfig.inlet_type_import_values">inlet_type_import_values</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandHigh_changed" href="#nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandHigh_changed">on_prefilterBandHigh_changed</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandHigh_toggled" href="#nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandHigh_toggled">on_prefilterBandHigh_toggled</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandLow_changed" href="#nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandLow_changed">on_prefilterBandLow_changed</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandLow_toggled" href="#nfb_studio.widgets.config.general_config.GeneralConfig.on_prefilterBandLow_toggled">on_prefilterBandLow_toggled</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.general_config.GeneralConfig.staticMetaObject" href="#nfb_studio.widgets.config.general_config.GeneralConfig.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.widgets.config.general_config.GeneralConfig.sync_to" href="#nfb_studio.widgets.config.general_config.GeneralConfig.sync_to">sync_to</a></code></li>
 </ul>
 </li>
 </ul>
