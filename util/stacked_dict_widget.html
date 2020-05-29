@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.util.qt.stacked_dict_widget API documentation</title>
+<title>nfb_studio.util.stacked_dict_widget API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.util.qt.stacked_dict_widget</code></h1>
+<h1 class="title">Module <code>nfb_studio.util.stacked_dict_widget</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -101,7 +101,7 @@ class StackedDictWidget(QStackedWidget):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget"><code class="flex name class">
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget"><code class="flex name class">
 <span>class <span class="ident">StackedDictWidget</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
@@ -185,22 +185,22 @@ class StackedDictWidget(QStackedWidget):
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.currentChanged"><code class="name">var <span class="ident">currentChanged</span></code></dt>
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.currentChanged"><code class="name">var <span class="ident">currentChanged</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.widgetRemoved"><code class="name">var <span class="ident">widgetRemoved</span></code></dt>
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.widgetRemoved"><code class="name">var <span class="ident">widgetRemoved</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.addWidget"><code class="name flex">
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.addWidget"><code class="name flex">
 <span>def <span class="ident">addWidget</span></span>(<span>self, key, widget: PySide2.QtWidgets.QWidget)</span>
 </code></dt>
 <dd>
@@ -225,7 +225,7 @@ class StackedDictWidget(QStackedWidget):
     self._widgets[key] = widget</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.currentKey"><code class="name flex">
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.currentKey"><code class="name flex">
 <span>def <span class="ident">currentKey</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -238,7 +238,7 @@ class StackedDictWidget(QStackedWidget):
     return self.keyOf(self.currentWidget())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keyOf"><code class="name flex">
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.keyOf"><code class="name flex">
 <span>def <span class="ident">keyOf</span></span>(<span>self, widget)</span>
 </code></dt>
 <dd>
@@ -255,7 +255,7 @@ class StackedDictWidget(QStackedWidget):
     return None</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keys"><code class="name flex">
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.keys"><code class="name flex">
 <span>def <span class="ident">keys</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -268,7 +268,7 @@ class StackedDictWidget(QStackedWidget):
     return self._widgets.keys()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.removeWidget"><code class="name flex">
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.removeWidget"><code class="name flex">
 <span>def <span class="ident">removeWidget</span></span>(<span>self, key)</span>
 </code></dt>
 <dd>
@@ -289,7 +289,7 @@ class StackedDictWidget(QStackedWidget):
     return widget</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.setCurrentKey"><code class="name flex">
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.setCurrentKey"><code class="name flex">
 <span>def <span class="ident">setCurrentKey</span></span>(<span>self, key)</span>
 </code></dt>
 <dd>
@@ -302,7 +302,7 @@ class StackedDictWidget(QStackedWidget):
     self.setCurrentWidget(self.widget(key))</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.setCurrentWidget"><code class="name flex">
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.setCurrentWidget"><code class="name flex">
 <span>def <span class="ident">setCurrentWidget</span></span>(<span>self, widget)</span>
 </code></dt>
 <dd>
@@ -320,7 +320,7 @@ class StackedDictWidget(QStackedWidget):
     super().setCurrentWidget(widget)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.widget"><code class="name flex">
+<dt id="nfb_studio.util.stacked_dict_widget.StackedDictWidget.widget"><code class="name flex">
 <span>def <span class="ident">widget</span></span>(<span>self, key)</span>
 </code></dt>
 <dd>
@@ -346,25 +346,25 @@ class StackedDictWidget(QStackedWidget):
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.util.qt" href="index.html">nfb_studio.util.qt</a></code></li>
+<li><code><a title="nfb_studio.util" href="index.html">nfb_studio.util</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget">StackedDictWidget</a></code></h4>
+<h4><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget">StackedDictWidget</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.addWidget" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.addWidget">addWidget</a></code></li>
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.currentChanged" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.currentChanged">currentChanged</a></code></li>
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.currentKey" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.currentKey">currentKey</a></code></li>
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keyOf" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keyOf">keyOf</a></code></li>
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keys" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keys">keys</a></code></li>
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.removeWidget" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.removeWidget">removeWidget</a></code></li>
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.setCurrentKey" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.setCurrentKey">setCurrentKey</a></code></li>
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.setCurrentWidget" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.setCurrentWidget">setCurrentWidget</a></code></li>
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.staticMetaObject" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.staticMetaObject">staticMetaObject</a></code></li>
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.widget" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.widget">widget</a></code></li>
-<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.widgetRemoved" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.widgetRemoved">widgetRemoved</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.addWidget" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.addWidget">addWidget</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.currentChanged" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.currentChanged">currentChanged</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.currentKey" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.currentKey">currentKey</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.keyOf" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.keyOf">keyOf</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.keys" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.keys">keys</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.removeWidget" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.removeWidget">removeWidget</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.setCurrentKey" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.setCurrentKey">setCurrentKey</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.setCurrentWidget" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.setCurrentWidget">setCurrentWidget</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.staticMetaObject" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.widget" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.widget">widget</a></code></li>
+<li><code><a title="nfb_studio.util.stacked_dict_widget.StackedDictWidget.widgetRemoved" href="#nfb_studio.util.stacked_dict_widget.StackedDictWidget.widgetRemoved">widgetRemoved</a></code></li>
 </ul>
 </li>
 </ul>
