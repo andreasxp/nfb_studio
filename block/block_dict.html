@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets API documentation</title>
-<meta name="description" content="nfb_studio.widgets" />
+<title>nfb_studio.block.block_dict API documentation</title>
+<meta name="description" content="Internally used dictionary for blocks." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,40 +17,124 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets</code></h1>
+<h1 class="title">Module <code>nfb_studio.block.block_dict</code></h1>
 </header>
 <section id="section-intro">
-<p>nfb_studio.widgets</p>
+<p>Internally used dictionary for blocks.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;nfb_studio.widgets&#34;&#34;&#34;</code></pre>
+<pre><code class="python">&#34;&#34;&#34;Internally used dictionary for blocks.&#34;&#34;&#34;
+from nfb_studio.util.qt.tree_model import TreeModelItem
+from nfb_studio.item_dict import ItemDict
+from nfb_studio.widgets.sequence_nodes import BlockNode
+
+from .block import Block
+from .block_view import BlockView
+
+
+class BlockDict(ItemDict):
+    &#34;&#34;&#34;Internally used dictionary for blocks.
+    This dictionary also contains some logic related to naming new blocks.
+    &#34;&#34;&#34;
+    stored_cls = Block
+
+&#39;&#39;&#39;    def updateView(self, key):
+        &#34;&#34;&#34;Update the experiment view about an added/deleted item.&#34;&#34;&#34;
+        if self.experiment() is None or self.experiment().view() is None:
+            return
+        
+        view = self._experiment.view()
+
+        print(list(self.keys()))
+        if key in self:
+            # Item was added
+            tree_item = TreeModelItem()
+            tree_item.setText(key)
+            view.property_tree.blocks_item.addItem(tree_item)
+            
+            block_view = BlockView()
+            block_view.setModel(self[key])
+            view.blocks.addWidget(key, block_view)
+
+            node = BlockNode()
+            node.setTitle(key)
+            view.sequence_editor.toolbox().addItem(key, node)
+
+            print(&#34;Added &#34; + key)
+        else:
+            # Item was removed
+            for i in range(view.property_tree.blocks_item.childrenCount()):
+                item = view.property_tree.blocks_item.item(i)
+                if item.text() == key:
+                    view.property_tree.blocks_item.removeItem(i)
+                    break
+
+            view.blocks.removeWidget(key)
+            view.sequence_editor.toolbox().removeItem(key)
+
+            print(&#34;Removed &#34; + key)
+&#39;&#39;&#39;</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt><code class="name"><a title="nfb_studio.widgets.scheme" href="scheme/index.html">nfb_studio.widgets.scheme</a></code></dt>
+<dt id="nfb_studio.block.block_dict.BlockDict"><code class="flex name class">
+<span>class <span class="ident">BlockDict</span></span>
+</code></dt>
 <dd>
-<div class="desc"><p>A collection of widgets that are used to represent the signal editing experience in NFB studio.
-SchemeEditor is the main widget that contains the node …</p></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.widgets.sequence_nodes" href="sequence_nodes/index.html">nfb_studio.widgets.sequence_nodes</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.widgets.signal_nodes" href="signal_nodes/index.html">nfb_studio.widgets.signal_nodes</a></code></dt>
+<div class="desc"><p>Internally used dictionary for blocks.
+This dictionary also contains some logic related to naming new blocks.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockDict(ItemDict):
+    &#34;&#34;&#34;Internally used dictionary for blocks.
+    This dictionary also contains some logic related to naming new blocks.
+    &#34;&#34;&#34;
+    stored_cls = Block</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="nfb_studio.item_dict.ItemDict" href="../item_dict.html#nfb_studio.item_dict.ItemDict">ItemDict</a></li>
+<li>PySide2.QtCore.QObject</li>
+<li>Shiboken.Object</li>
+<li>collections.abc.MutableMapping</li>
+<li>collections.abc.Mapping</li>
+<li>collections.abc.Collection</li>
+<li>collections.abc.Sized</li>
+<li>collections.abc.Iterable</li>
+<li>collections.abc.Container</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.block.block_dict.BlockDict.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="nfb_studio.item_dict.ItemDict" href="../item_dict.html#nfb_studio.item_dict.ItemDict">ItemDict</a></b></code>:
+<ul class="hlist">
+<li><code><a title="nfb_studio.item_dict.ItemDict.getName" href="../item_dict.html#nfb_studio.item_dict.ItemDict.getName">getName</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.isAcceptedName" href="../item_dict.html#nfb_studio.item_dict.ItemDict.isAcceptedName">isAcceptedName</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.rename" href="../item_dict.html#nfb_studio.item_dict.ItemDict.rename">rename</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.stored_cls" href="../item_dict.html#nfb_studio.item_dict.ItemDict.stored_cls">stored_cls</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -61,14 +145,17 @@ SchemeEditor is the main widget that contains the node …</p></div>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio" href="../index.html">nfb_studio</a></code></li>
+<li><code><a title="nfb_studio.block" href="index.html">nfb_studio.block</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.scheme" href="scheme/index.html">nfb_studio.widgets.scheme</a></code></li>
-<li><code><a title="nfb_studio.widgets.sequence_nodes" href="sequence_nodes/index.html">nfb_studio.widgets.sequence_nodes</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal_nodes" href="signal_nodes/index.html">nfb_studio.widgets.signal_nodes</a></code></li>
+<li>
+<h4><code><a title="nfb_studio.block.block_dict.BlockDict" href="#nfb_studio.block.block_dict.BlockDict">BlockDict</a></code></h4>
+<ul class="">
+<li><code><a title="nfb_studio.block.block_dict.BlockDict.staticMetaObject" href="#nfb_studio.block.block_dict.BlockDict.staticMetaObject">staticMetaObject</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.block API documentation</title>
+<title>nfb_studio.block.block API documentation</title>
 <meta name="description" content="NFB Experiment block." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.block</code></h1>
+<h1 class="title">Module <code>nfb_studio.block.block</code></h1>
 </header>
 <section id="section-intro">
 <p>NFB Experiment block.</p>
@@ -26,7 +26,6 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;NFB Experiment block.&#34;&#34;&#34;
-import itertools
 from enum import Enum, auto
 
 from PySide2.QtCore import QObject, Signal
@@ -36,13 +35,10 @@ class Block(QObject):
     &#34;&#34;&#34;A single step of an experiment.
     Experiment consists of a sequence of blocks and block groups that are executed in some order.
     &#34;&#34;&#34;
-    newid = itertools.count()
-
     def __init__(self, parent=None):
         super().__init__(parent)
         
         # General ------------------------------------------------------------------------------------------------------
-        self.name = &#34;Block&#34; + str(next(self.newid))
         self.duration = 10.0
         self.feedback_source = &#34;All&#34;
         self.feedback_type = &#34;Baseline&#34;
@@ -72,12 +68,11 @@ class Block(QObject):
     def setView(self, view, /):
         view.setModel(self)
 
-    def sync(self):
+    def updateView(self):
         view = self.view()
         if view is None:
             return
         
-        view.name.setText(self.name)
         view.duration.setValue(self.duration)
         view.feedback_source.setText(self.feedback_source)
         view.feedback_type.setCurrentText(self.feedback_type)
@@ -99,7 +94,6 @@ class Block(QObject):
         &#34;&#34;&#34;
         data = {}
 
-        data[&#34;sProtocolName&#34;] = self.name
         data[&#34;bUpdateStatistics&#34;] = self.update_statistics
         data[&#34;iDropOutliers&#34;] = 0
         data[&#34;bSSDInTheEnd&#34;] = self.start_data_driven_filter_designer
@@ -129,7 +123,6 @@ class Block(QObject):
     
     def serialize(self) -&gt; dict:
         return {
-            &#34;name&#34;: self.name,
             &#34;duration&#34;: self.duration,
             &#34;feedback_source&#34;: self.feedback_source,
             &#34;feedback_type&#34;: self.feedback_type,
@@ -149,7 +142,6 @@ class Block(QObject):
         }
 
     def deserialize(self, data: dict):
-        self.name = data[&#34;name&#34;]
         self.duration = data[&#34;duration&#34;]
         self.feedback_source = data[&#34;feedback_source&#34;]
         self.feedback_type = data[&#34;feedback_type&#34;]
@@ -172,8 +164,6 @@ class Block(QObject):
         Since the XML file stores everything as a string, this function is responsible for converting items to their
         proper types.
         &#34;&#34;&#34;
-
-        self.name = data[&#34;sProtocolName&#34;]
         self.update_statistics = bool(int(data[&#34;bUpdateStatistics&#34;]))
         self.start_data_driven_filter_designer = bool(int(data[&#34;bSSDInTheEnd&#34;]))
         self.duration = float(data[&#34;fDuration&#34;])
@@ -199,7 +189,7 @@ class Block(QObject):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.block.Block"><code class="flex name class">
+<dt id="nfb_studio.block.block.Block"><code class="flex name class">
 <span>class <span class="ident">Block</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
@@ -214,13 +204,10 @@ Experiment consists of a sequence of blocks and block groups that are executed i
     &#34;&#34;&#34;A single step of an experiment.
     Experiment consists of a sequence of blocks and block groups that are executed in some order.
     &#34;&#34;&#34;
-    newid = itertools.count()
-
     def __init__(self, parent=None):
         super().__init__(parent)
         
         # General ------------------------------------------------------------------------------------------------------
-        self.name = &#34;Block&#34; + str(next(self.newid))
         self.duration = 10.0
         self.feedback_source = &#34;All&#34;
         self.feedback_type = &#34;Baseline&#34;
@@ -250,12 +237,11 @@ Experiment consists of a sequence of blocks and block groups that are executed i
     def setView(self, view, /):
         view.setModel(self)
 
-    def sync(self):
+    def updateView(self):
         view = self.view()
         if view is None:
             return
         
-        view.name.setText(self.name)
         view.duration.setValue(self.duration)
         view.feedback_source.setText(self.feedback_source)
         view.feedback_type.setCurrentText(self.feedback_type)
@@ -277,7 +263,6 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         &#34;&#34;&#34;
         data = {}
 
-        data[&#34;sProtocolName&#34;] = self.name
         data[&#34;bUpdateStatistics&#34;] = self.update_statistics
         data[&#34;iDropOutliers&#34;] = 0
         data[&#34;bSSDInTheEnd&#34;] = self.start_data_driven_filter_designer
@@ -307,7 +292,6 @@ Experiment consists of a sequence of blocks and block groups that are executed i
     
     def serialize(self) -&gt; dict:
         return {
-            &#34;name&#34;: self.name,
             &#34;duration&#34;: self.duration,
             &#34;feedback_source&#34;: self.feedback_source,
             &#34;feedback_type&#34;: self.feedback_type,
@@ -327,7 +311,6 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         }
 
     def deserialize(self, data: dict):
-        self.name = data[&#34;name&#34;]
         self.duration = data[&#34;duration&#34;]
         self.feedback_source = data[&#34;feedback_source&#34;]
         self.feedback_type = data[&#34;feedback_type&#34;]
@@ -350,8 +333,6 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         Since the XML file stores everything as a string, this function is responsible for converting items to their
         proper types.
         &#34;&#34;&#34;
-
-        self.name = data[&#34;sProtocolName&#34;]
         self.update_statistics = bool(int(data[&#34;bUpdateStatistics&#34;]))
         self.start_data_driven_filter_designer = bool(int(data[&#34;bSSDInTheEnd&#34;]))
         self.duration = float(data[&#34;fDuration&#34;])
@@ -374,18 +355,14 @@ Experiment consists of a sequence of blocks and block groups that are executed i
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.block.Block.newid"><code class="name">var <span class="ident">newid</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="nfb_studio.block.Block.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dt id="nfb_studio.block.block.Block.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.block.Block.deserialize"><code class="name flex">
+<dt id="nfb_studio.block.block.Block.deserialize"><code class="name flex">
 <span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
 </code></dt>
 <dd>
@@ -395,7 +372,6 @@ Experiment consists of a sequence of blocks and block groups that are executed i
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def deserialize(self, data: dict):
-    self.name = data[&#34;name&#34;]
     self.duration = data[&#34;duration&#34;]
     self.feedback_source = data[&#34;feedback_source&#34;]
     self.feedback_type = data[&#34;feedback_type&#34;]
@@ -414,7 +390,7 @@ Experiment consists of a sequence of blocks and block groups that are executed i
     self.update_statistics = data[&#34;update_statistics&#34;]</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.block.Block.nfb_export_data"><code class="name flex">
+<dt id="nfb_studio.block.block.Block.nfb_export_data"><code class="name flex">
 <span>def <span class="ident">nfb_export_data</span></span>(<span>self) -> dict</span>
 </code></dt>
 <dd>
@@ -430,7 +406,6 @@ Bool items are written as-is. The encoder is responsible for converting them int
     &#34;&#34;&#34;
     data = {}
 
-    data[&#34;sProtocolName&#34;] = self.name
     data[&#34;bUpdateStatistics&#34;] = self.update_statistics
     data[&#34;iDropOutliers&#34;] = 0
     data[&#34;bSSDInTheEnd&#34;] = self.start_data_driven_filter_designer
@@ -459,7 +434,7 @@ Bool items are written as-is. The encoder is responsible for converting them int
     return data</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.block.Block.nfb_import_data"><code class="name flex">
+<dt id="nfb_studio.block.block.Block.nfb_import_data"><code class="name flex">
 <span>def <span class="ident">nfb_import_data</span></span>(<span>self, data: dict)</span>
 </code></dt>
 <dd>
@@ -475,8 +450,6 @@ proper types.</p></div>
     Since the XML file stores everything as a string, this function is responsible for converting items to their
     proper types.
     &#34;&#34;&#34;
-
-    self.name = data[&#34;sProtocolName&#34;]
     self.update_statistics = bool(int(data[&#34;bUpdateStatistics&#34;]))
     self.start_data_driven_filter_designer = bool(int(data[&#34;bSSDInTheEnd&#34;]))
     self.duration = float(data[&#34;fDuration&#34;])
@@ -493,7 +466,7 @@ proper types.</p></div>
     self.video_path = data[&#34;sVideoPath&#34;]</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.block.Block.serialize"><code class="name flex">
+<dt id="nfb_studio.block.block.Block.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
 </code></dt>
 <dd>
@@ -504,7 +477,6 @@ proper types.</p></div>
 </summary>
 <pre><code class="python">def serialize(self) -&gt; dict:
     return {
-        &#34;name&#34;: self.name,
         &#34;duration&#34;: self.duration,
         &#34;feedback_source&#34;: self.feedback_source,
         &#34;feedback_type&#34;: self.feedback_type,
@@ -524,7 +496,7 @@ proper types.</p></div>
     }</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.block.Block.setView"><code class="name flex">
+<dt id="nfb_studio.block.block.Block.setView"><code class="name flex">
 <span>def <span class="ident">setView</span></span>(<span>self, view)</span>
 </code></dt>
 <dd>
@@ -537,8 +509,8 @@ proper types.</p></div>
     view.setModel(self)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.block.Block.sync"><code class="name flex">
-<span>def <span class="ident">sync</span></span>(<span>self)</span>
+<dt id="nfb_studio.block.block.Block.updateView"><code class="name flex">
+<span>def <span class="ident">updateView</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -546,12 +518,11 @@ proper types.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def sync(self):
+<pre><code class="python">def updateView(self):
     view = self.view()
     if view is None:
         return
     
-    view.name.setText(self.name)
     view.duration.setValue(self.duration)
     view.feedback_source.setText(self.feedback_source)
     view.feedback_type.setCurrentText(self.feedback_type)
@@ -568,7 +539,7 @@ proper types.</p></div>
     view.video_path.setText(self.video_path)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.block.Block.view"><code class="name flex">
+<dt id="nfb_studio.block.block.Block.view"><code class="name flex">
 <span>def <span class="ident">view</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -595,23 +566,22 @@ proper types.</p></div>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio" href="index.html">nfb_studio</a></code></li>
+<li><code><a title="nfb_studio.block" href="index.html">nfb_studio.block</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.block.Block" href="#nfb_studio.block.Block">Block</a></code></h4>
+<h4><code><a title="nfb_studio.block.block.Block" href="#nfb_studio.block.block.Block">Block</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.block.Block.deserialize" href="#nfb_studio.block.Block.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.block.Block.newid" href="#nfb_studio.block.Block.newid">newid</a></code></li>
-<li><code><a title="nfb_studio.block.Block.nfb_export_data" href="#nfb_studio.block.Block.nfb_export_data">nfb_export_data</a></code></li>
-<li><code><a title="nfb_studio.block.Block.nfb_import_data" href="#nfb_studio.block.Block.nfb_import_data">nfb_import_data</a></code></li>
-<li><code><a title="nfb_studio.block.Block.serialize" href="#nfb_studio.block.Block.serialize">serialize</a></code></li>
-<li><code><a title="nfb_studio.block.Block.setView" href="#nfb_studio.block.Block.setView">setView</a></code></li>
-<li><code><a title="nfb_studio.block.Block.staticMetaObject" href="#nfb_studio.block.Block.staticMetaObject">staticMetaObject</a></code></li>
-<li><code><a title="nfb_studio.block.Block.sync" href="#nfb_studio.block.Block.sync">sync</a></code></li>
-<li><code><a title="nfb_studio.block.Block.view" href="#nfb_studio.block.Block.view">view</a></code></li>
+<li><code><a title="nfb_studio.block.block.Block.deserialize" href="#nfb_studio.block.block.Block.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.block.block.Block.nfb_export_data" href="#nfb_studio.block.block.Block.nfb_export_data">nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.block.block.Block.nfb_import_data" href="#nfb_studio.block.block.Block.nfb_import_data">nfb_import_data</a></code></li>
+<li><code><a title="nfb_studio.block.block.Block.serialize" href="#nfb_studio.block.block.Block.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.block.block.Block.setView" href="#nfb_studio.block.block.Block.setView">setView</a></code></li>
+<li><code><a title="nfb_studio.block.block.Block.staticMetaObject" href="#nfb_studio.block.block.Block.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.block.block.Block.updateView" href="#nfb_studio.block.block.Block.updateView">updateView</a></code></li>
+<li><code><a title="nfb_studio.block.block.Block.view" href="#nfb_studio.block.block.Block.view">view</a></code></li>
 </ul>
 </li>
 </ul>

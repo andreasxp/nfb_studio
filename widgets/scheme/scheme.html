@@ -398,18 +398,16 @@ class Scheme(QGraphicsScene):
 
     def deserialize(self, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
-        # Clear --------------------------------------------------------------------------------------------------------
-        for node in self.nodes:
-            self.removeItem(node)
+        self.clear()
 
         # Deserialize as graph -----------------------------------------------------------------------------------------
         self.graph.deserialize(data)
 
         # Bring the scene up to speed ----------------------------------------------------------------------------------
-        for node in self.nodes:
+        for node in self.graph.nodes:
             super().addItem(node)
 
-        for edge in self.edges:
+        for edge in self.graph.edges:
             super().addItem(edge)</code></pre>
 </details>
 </section>
@@ -805,18 +803,16 @@ behave incorrectly.</p>
 
     def deserialize(self, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
-        # Clear --------------------------------------------------------------------------------------------------------
-        for node in self.nodes:
-            self.removeItem(node)
+        self.clear()
 
         # Deserialize as graph -----------------------------------------------------------------------------------------
         self.graph.deserialize(data)
 
         # Bring the scene up to speed ----------------------------------------------------------------------------------
-        for node in self.nodes:
+        for node in self.graph.nodes:
             super().addItem(node)
 
-        for edge in self.edges:
+        for edge in self.graph.edges:
             super().addItem(edge)</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -1001,18 +997,16 @@ This function is usually called when an object has been pasted.</p></div>
 </summary>
 <pre><code class="python">def deserialize(self, data: dict):
     &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
-    # Clear --------------------------------------------------------------------------------------------------------
-    for node in self.nodes:
-        self.removeItem(node)
+    self.clear()
 
     # Deserialize as graph -----------------------------------------------------------------------------------------
     self.graph.deserialize(data)
 
     # Bring the scene up to speed ----------------------------------------------------------------------------------
-    for node in self.nodes:
+    for node in self.graph.nodes:
         super().addItem(node)
 
-    for edge in self.edges:
+    for edge in self.graph.edges:
         super().addItem(edge)</code></pre>
 </details>
 </dd>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.group API documentation</title>
+<title>nfb_studio.group.group API documentation</title>
 <meta name="description" content="NFB block group." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.group</code></h1>
+<h1 class="title">Module <code>nfb_studio.group.group</code></h1>
 </header>
 <section id="section-intro">
 <p>NFB block group.</p>
@@ -26,13 +26,10 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;NFB block group.&#34;&#34;&#34;
-import itertools
 from typing import Union
 from collections.abc import MutableSequence
 
 from PySide2.QtCore import QObject
-
-from .block import Block
 
 
 class GroupMetaclass(type(QObject), type(MutableSequence)):
@@ -47,12 +44,10 @@ class Group(QObject, MutableSequence, metaclass=GroupMetaclass):
     This class contains two lists that are always the same size: a list of blocks, and a list of repeats each block has
     set. This class also is a MutableSequence, which means you can get and set both values at once with the operator[].
     &#34;&#34;&#34;
-    newid = itertools.count()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         
-        self.name = &#34;Group&#34; + str(next(self.newid))
         self.blocks = []
         self.repeats = []
 
@@ -67,14 +62,13 @@ class Group(QObject, MutableSequence, metaclass=GroupMetaclass):
     def setView(self, view, /):
         view.setModel(self)
     
-    def sync(self):
+    def updateView(self):
         view = self.view()
         if view is None:
             return
         
-        view.name.setText(self.name)
-        view.blocks = &#34; &#34;.join(self.blocks)
-        view.repeats = &#34; &#34;.join(self.repeats)
+        view.blocks.setText(&#34; &#34;.join(self.blocks))
+        view.repeats.setText(&#34; &#34;.join([str(x) for x in self.repeats]))
         view.random_order.setChecked(self.random_order)
 
     # MutableSequence method implementations ===========================================================================
@@ -93,11 +87,11 @@ class Group(QObject, MutableSequence, metaclass=GroupMetaclass):
         assert len(self.blocks) == len(self.repeats)
         return len(self.blocks)
     
-    def insert(self, index, value: Union[Block, tuple]):
+    def insert(self, index, value):
         &#34;&#34;&#34;Insert a new item into the group.
         Value can either be a single block or a tuple(block, repeats).
         &#34;&#34;&#34;
-        if isinstance(value, Block):
+        if not isinstance(value, tuple):
             value = (value, 1)
         
         self.blocks.insert(index, value[0])
@@ -105,13 +99,11 @@ class Group(QObject, MutableSequence, metaclass=GroupMetaclass):
 
     def serialize(self) -&gt; dict:
         return {
-            &#34;name&#34;: self.name,
             &#34;blocks&#34;: self.blocks,
             &#34;repeats&#34;: self.repeats,
         }
 
     def deserialize(self, data: dict):
-        self.name = data[&#34;name&#34;]
         self.blocks = data[&#34;blocks&#34;]
         self.repeats = data[&#34;repeats&#34;]
 
@@ -132,7 +124,6 @@ class Group(QObject, MutableSequence, metaclass=GroupMetaclass):
         # Export XML data ----------------------------------------------------------------------------------------------
         data = {}
 
-        data[&#34;sName&#34;] = self.name
         data[&#34;sList&#34;] = &#34; &#34;.join(name_list)
         data[&#34;sNumberList&#34;] = &#34; &#34;.join(str(number) for number in repeat_list)
         data[&#34;bShuffle&#34;] = self.random_order
@@ -145,7 +136,6 @@ class Group(QObject, MutableSequence, metaclass=GroupMetaclass):
         in an invalid state. The caller method is responsible for converting self.blocks from a list of names to a list
         of actual blocks.
         &#34;&#34;&#34;
-        self.name = data[&#34;sName&#34;]
         self.random_order = bool(int(data[&#34;bShuffle&#34;]))
 
         if data[&#34;sList&#34;] is not None:
@@ -162,7 +152,7 @@ class Group(QObject, MutableSequence, metaclass=GroupMetaclass):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.group.Group"><code class="flex name class">
+<dt id="nfb_studio.group.group.Group"><code class="flex name class">
 <span>class <span class="ident">Group</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
@@ -184,12 +174,10 @@ set. This class also is a MutableSequence, which means you can get and set both 
     This class contains two lists that are always the same size: a list of blocks, and a list of repeats each block has
     set. This class also is a MutableSequence, which means you can get and set both values at once with the operator[].
     &#34;&#34;&#34;
-    newid = itertools.count()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         
-        self.name = &#34;Group&#34; + str(next(self.newid))
         self.blocks = []
         self.repeats = []
 
@@ -204,14 +192,13 @@ set. This class also is a MutableSequence, which means you can get and set both 
     def setView(self, view, /):
         view.setModel(self)
     
-    def sync(self):
+    def updateView(self):
         view = self.view()
         if view is None:
             return
         
-        view.name.setText(self.name)
-        view.blocks = &#34; &#34;.join(self.blocks)
-        view.repeats = &#34; &#34;.join(self.repeats)
+        view.blocks.setText(&#34; &#34;.join(self.blocks))
+        view.repeats.setText(&#34; &#34;.join([str(x) for x in self.repeats]))
         view.random_order.setChecked(self.random_order)
 
     # MutableSequence method implementations ===========================================================================
@@ -230,11 +217,11 @@ set. This class also is a MutableSequence, which means you can get and set both 
         assert len(self.blocks) == len(self.repeats)
         return len(self.blocks)
     
-    def insert(self, index, value: Union[Block, tuple]):
+    def insert(self, index, value):
         &#34;&#34;&#34;Insert a new item into the group.
         Value can either be a single block or a tuple(block, repeats).
         &#34;&#34;&#34;
-        if isinstance(value, Block):
+        if not isinstance(value, tuple):
             value = (value, 1)
         
         self.blocks.insert(index, value[0])
@@ -242,13 +229,11 @@ set. This class also is a MutableSequence, which means you can get and set both 
 
     def serialize(self) -&gt; dict:
         return {
-            &#34;name&#34;: self.name,
             &#34;blocks&#34;: self.blocks,
             &#34;repeats&#34;: self.repeats,
         }
 
     def deserialize(self, data: dict):
-        self.name = data[&#34;name&#34;]
         self.blocks = data[&#34;blocks&#34;]
         self.repeats = data[&#34;repeats&#34;]
 
@@ -269,7 +254,6 @@ set. This class also is a MutableSequence, which means you can get and set both 
         # Export XML data ----------------------------------------------------------------------------------------------
         data = {}
 
-        data[&#34;sName&#34;] = self.name
         data[&#34;sList&#34;] = &#34; &#34;.join(name_list)
         data[&#34;sNumberList&#34;] = &#34; &#34;.join(str(number) for number in repeat_list)
         data[&#34;bShuffle&#34;] = self.random_order
@@ -282,7 +266,6 @@ set. This class also is a MutableSequence, which means you can get and set both 
         in an invalid state. The caller method is responsible for converting self.blocks from a list of names to a list
         of actual blocks.
         &#34;&#34;&#34;
-        self.name = data[&#34;sName&#34;]
         self.random_order = bool(int(data[&#34;bShuffle&#34;]))
 
         if data[&#34;sList&#34;] is not None:
@@ -303,18 +286,14 @@ set. This class also is a MutableSequence, which means you can get and set both 
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.group.Group.newid"><code class="name">var <span class="ident">newid</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="nfb_studio.group.Group.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dt id="nfb_studio.group.group.Group.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.group.Group.deserialize"><code class="name flex">
+<dt id="nfb_studio.group.group.Group.deserialize"><code class="name flex">
 <span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
 </code></dt>
 <dd>
@@ -324,13 +303,12 @@ set. This class also is a MutableSequence, which means you can get and set both 
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def deserialize(self, data: dict):
-    self.name = data[&#34;name&#34;]
     self.blocks = data[&#34;blocks&#34;]
     self.repeats = data[&#34;repeats&#34;]</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.group.Group.insert"><code class="name flex">
-<span>def <span class="ident">insert</span></span>(<span>self, index, value: typing.Union[nfb_studio.block.Block, tuple])</span>
+<dt id="nfb_studio.group.group.Group.insert"><code class="name flex">
+<span>def <span class="ident">insert</span></span>(<span>self, index, value)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Insert a new item into the group.
@@ -339,18 +317,18 @@ Value can either be a single block or a tuple(block, repeats).</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def insert(self, index, value: Union[Block, tuple]):
+<pre><code class="python">def insert(self, index, value):
     &#34;&#34;&#34;Insert a new item into the group.
     Value can either be a single block or a tuple(block, repeats).
     &#34;&#34;&#34;
-    if isinstance(value, Block):
+    if not isinstance(value, tuple):
         value = (value, 1)
     
     self.blocks.insert(index, value[0])
     self.repeats.insert(index, value[1])</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.group.Group.nfb_export_data"><code class="name flex">
+<dt id="nfb_studio.group.group.Group.nfb_export_data"><code class="name flex">
 <span>def <span class="ident">nfb_export_data</span></span>(<span>self) -> dict</span>
 </code></dt>
 <dd>
@@ -376,7 +354,6 @@ Bool items are written as-is. The encoder is responsible for converting them int
     # Export XML data ----------------------------------------------------------------------------------------------
     data = {}
 
-    data[&#34;sName&#34;] = self.name
     data[&#34;sList&#34;] = &#34; &#34;.join(name_list)
     data[&#34;sNumberList&#34;] = &#34; &#34;.join(str(number) for number in repeat_list)
     data[&#34;bShuffle&#34;] = self.random_order
@@ -384,7 +361,7 @@ Bool items are written as-is. The encoder is responsible for converting them int
     return data</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.group.Group.nfb_import_data"><code class="name flex">
+<dt id="nfb_studio.group.group.Group.nfb_import_data"><code class="name flex">
 <span>def <span class="ident">nfb_import_data</span></span>(<span>self, data: dict)</span>
 </code></dt>
 <dd>
@@ -402,7 +379,6 @@ of actual blocks.</p></div>
     in an invalid state. The caller method is responsible for converting self.blocks from a list of names to a list
     of actual blocks.
     &#34;&#34;&#34;
-    self.name = data[&#34;sName&#34;]
     self.random_order = bool(int(data[&#34;bShuffle&#34;]))
 
     if data[&#34;sList&#34;] is not None:
@@ -410,7 +386,7 @@ of actual blocks.</p></div>
         self.repeats = [int(number) for number in data[&#34;sNumberList&#34;].split(&#34; &#34;)]</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.group.Group.serialize"><code class="name flex">
+<dt id="nfb_studio.group.group.Group.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
 </code></dt>
 <dd>
@@ -421,13 +397,12 @@ of actual blocks.</p></div>
 </summary>
 <pre><code class="python">def serialize(self) -&gt; dict:
     return {
-        &#34;name&#34;: self.name,
         &#34;blocks&#34;: self.blocks,
         &#34;repeats&#34;: self.repeats,
     }</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.group.Group.setView"><code class="name flex">
+<dt id="nfb_studio.group.group.Group.setView"><code class="name flex">
 <span>def <span class="ident">setView</span></span>(<span>self, view)</span>
 </code></dt>
 <dd>
@@ -440,8 +415,8 @@ of actual blocks.</p></div>
     view.setModel(self)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.group.Group.sync"><code class="name flex">
-<span>def <span class="ident">sync</span></span>(<span>self)</span>
+<dt id="nfb_studio.group.group.Group.updateView"><code class="name flex">
+<span>def <span class="ident">updateView</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -449,18 +424,17 @@ of actual blocks.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def sync(self):
+<pre><code class="python">def updateView(self):
     view = self.view()
     if view is None:
         return
     
-    view.name.setText(self.name)
-    view.blocks = &#34; &#34;.join(self.blocks)
-    view.repeats = &#34; &#34;.join(self.repeats)
+    view.blocks.setText(&#34; &#34;.join(self.blocks))
+    view.repeats.setText(&#34; &#34;.join([str(x) for x in self.repeats]))
     view.random_order.setChecked(self.random_order)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.group.Group.view"><code class="name flex">
+<dt id="nfb_studio.group.group.Group.view"><code class="name flex">
 <span>def <span class="ident">view</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -476,7 +450,7 @@ of actual blocks.</p></div>
 </dd>
 </dl>
 </dd>
-<dt id="nfb_studio.group.GroupMetaclass"><code class="flex name class">
+<dt id="nfb_studio.group.group.GroupMetaclass"><code class="flex name class">
 <span>class <span class="ident">GroupMetaclass</span></span>
 <span>(</span><span>...)</span>
 </code></dt>
@@ -507,28 +481,27 @@ of actual blocks.</p></div>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio" href="index.html">nfb_studio</a></code></li>
+<li><code><a title="nfb_studio.group" href="index.html">nfb_studio.group</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.group.Group" href="#nfb_studio.group.Group">Group</a></code></h4>
+<h4><code><a title="nfb_studio.group.group.Group" href="#nfb_studio.group.group.Group">Group</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.group.Group.deserialize" href="#nfb_studio.group.Group.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.group.Group.insert" href="#nfb_studio.group.Group.insert">insert</a></code></li>
-<li><code><a title="nfb_studio.group.Group.newid" href="#nfb_studio.group.Group.newid">newid</a></code></li>
-<li><code><a title="nfb_studio.group.Group.nfb_export_data" href="#nfb_studio.group.Group.nfb_export_data">nfb_export_data</a></code></li>
-<li><code><a title="nfb_studio.group.Group.nfb_import_data" href="#nfb_studio.group.Group.nfb_import_data">nfb_import_data</a></code></li>
-<li><code><a title="nfb_studio.group.Group.serialize" href="#nfb_studio.group.Group.serialize">serialize</a></code></li>
-<li><code><a title="nfb_studio.group.Group.setView" href="#nfb_studio.group.Group.setView">setView</a></code></li>
-<li><code><a title="nfb_studio.group.Group.staticMetaObject" href="#nfb_studio.group.Group.staticMetaObject">staticMetaObject</a></code></li>
-<li><code><a title="nfb_studio.group.Group.sync" href="#nfb_studio.group.Group.sync">sync</a></code></li>
-<li><code><a title="nfb_studio.group.Group.view" href="#nfb_studio.group.Group.view">view</a></code></li>
+<li><code><a title="nfb_studio.group.group.Group.deserialize" href="#nfb_studio.group.group.Group.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.group.group.Group.insert" href="#nfb_studio.group.group.Group.insert">insert</a></code></li>
+<li><code><a title="nfb_studio.group.group.Group.nfb_export_data" href="#nfb_studio.group.group.Group.nfb_export_data">nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.group.group.Group.nfb_import_data" href="#nfb_studio.group.group.Group.nfb_import_data">nfb_import_data</a></code></li>
+<li><code><a title="nfb_studio.group.group.Group.serialize" href="#nfb_studio.group.group.Group.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.group.group.Group.setView" href="#nfb_studio.group.group.Group.setView">setView</a></code></li>
+<li><code><a title="nfb_studio.group.group.Group.staticMetaObject" href="#nfb_studio.group.group.Group.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.group.group.Group.updateView" href="#nfb_studio.group.group.Group.updateView">updateView</a></code></li>
+<li><code><a title="nfb_studio.group.group.Group.view" href="#nfb_studio.group.group.Group.view">view</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="nfb_studio.group.GroupMetaclass" href="#nfb_studio.group.GroupMetaclass">GroupMetaclass</a></code></h4>
+<h4><code><a title="nfb_studio.group.group.GroupMetaclass" href="#nfb_studio.group.group.GroupMetaclass">GroupMetaclass</a></code></h4>
 </li>
 </ul>
 </li>

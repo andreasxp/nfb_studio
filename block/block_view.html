@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets.config.block_config API documentation</title>
+<title>nfb_studio.block.block_view API documentation</title>
 <meta name="description" content="Config widget for a single experiment block." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.config.block_config</code></h1>
+<h1 class="title">Module <code>nfb_studio.block.block_view</code></h1>
 </header>
 <section id="section-intro">
 <p>Config widget for a single experiment block.</p>
@@ -26,11 +26,10 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Config widget for a single experiment block.&#34;&#34;&#34;
-import itertools
-from PySide2.QtWidgets import QWidget, QFormLayout, QLabel, QDoubleSpinBox, QSpinBox, QComboBox, QLineEdit, QCheckBox, QGroupBox
+from PySide2.QtWidgets import QWidget, QFormLayout, QDoubleSpinBox, QSpinBox, QComboBox, QLineEdit, QCheckBox, QGroupBox
 
 
-class BlockConfig(QWidget):
+class BlockView(QWidget):
     &#34;&#34;&#34;Config widget for a single experiment block.  
     In a model-view paradigm, this is a view, and block is a model. A new block can be set using setModel.
     &#34;&#34;&#34;
@@ -42,7 +41,6 @@ class BlockConfig(QWidget):
         self._model = None
 
         # Block properties ---------------------------------------------------------------------------------------------
-        self.name = QLabel(&#34;Block&#34;)
         self.duration = QDoubleSpinBox()
         self.duration.setValue(10)
         self.duration.setSuffix(&#34;s&#34;)
@@ -91,7 +89,6 @@ class BlockConfig(QWidget):
         after_block_gblayout.addRow(&#34;Update statistics&#34;, self.update_statistics)
 
         # Adding properties to the widget ------------------------------------------------------------------------------
-        layout.addRow(&#34;Name&#34;, self.name)
         layout.addRow(&#34;Duration&#34;, self.duration)
         layout.addRow(&#34;Source&#34;, self.feedback_source)
         layout.addRow(&#34;FB Type&#34;, self.feedback_type)
@@ -100,21 +97,21 @@ class BlockConfig(QWidget):
         layout.addRow(mock_signal_groupbox)
         layout.addRow(after_block_groupbox)
 
+    def model(self):
+        return self._model
+
     def setModel(self, block, /):
         &#34;&#34;&#34;Set the model block for this view.
         Data in the view will be updated to reflect the new block.
         &#34;&#34;&#34;
         self._model = block
         block._view = self
-        self._model.sync()
+        self._model.updateView()
     
-    def model(self):
-        return self._model
-    
-    def sync(self):
-        &#34;&#34;&#34;Sync data from this view to the block model.
-        &#34;Sync&#34; in this context means one way copy of data from self to model. A similarly named function in the block
-        copies data the opposite way. Use one or the other depending on where data was changed.
+    def updateModel(self):
+        &#34;&#34;&#34;Copy data from this view to the block model.
+        A similarly named function in the block copies data the opposite way. Use one or the other depending on where
+        data was changed.
         &#34;&#34;&#34;
         block = self.model()
         if block is None:
@@ -145,8 +142,8 @@ class BlockConfig(QWidget):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.config.block_config.BlockConfig"><code class="flex name class">
-<span>class <span class="ident">BlockConfig</span></span>
+<dt id="nfb_studio.block.block_view.BlockView"><code class="flex name class">
+<span>class <span class="ident">BlockView</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
@@ -156,7 +153,7 @@ In a model-view paradigm, this is a view, and block is a model. A new block can 
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class BlockConfig(QWidget):
+<pre><code class="python">class BlockView(QWidget):
     &#34;&#34;&#34;Config widget for a single experiment block.  
     In a model-view paradigm, this is a view, and block is a model. A new block can be set using setModel.
     &#34;&#34;&#34;
@@ -168,7 +165,6 @@ In a model-view paradigm, this is a view, and block is a model. A new block can 
         self._model = None
 
         # Block properties ---------------------------------------------------------------------------------------------
-        self.name = QLabel(&#34;Block&#34;)
         self.duration = QDoubleSpinBox()
         self.duration.setValue(10)
         self.duration.setSuffix(&#34;s&#34;)
@@ -217,7 +213,6 @@ In a model-view paradigm, this is a view, and block is a model. A new block can 
         after_block_gblayout.addRow(&#34;Update statistics&#34;, self.update_statistics)
 
         # Adding properties to the widget ------------------------------------------------------------------------------
-        layout.addRow(&#34;Name&#34;, self.name)
         layout.addRow(&#34;Duration&#34;, self.duration)
         layout.addRow(&#34;Source&#34;, self.feedback_source)
         layout.addRow(&#34;FB Type&#34;, self.feedback_type)
@@ -226,21 +221,21 @@ In a model-view paradigm, this is a view, and block is a model. A new block can 
         layout.addRow(mock_signal_groupbox)
         layout.addRow(after_block_groupbox)
 
+    def model(self):
+        return self._model
+
     def setModel(self, block, /):
         &#34;&#34;&#34;Set the model block for this view.
         Data in the view will be updated to reflect the new block.
         &#34;&#34;&#34;
         self._model = block
         block._view = self
-        self._model.sync()
+        self._model.updateView()
     
-    def model(self):
-        return self._model
-    
-    def sync(self):
-        &#34;&#34;&#34;Sync data from this view to the block model.
-        &#34;Sync&#34; in this context means one way copy of data from self to model. A similarly named function in the block
-        copies data the opposite way. Use one or the other depending on where data was changed.
+    def updateModel(self):
+        &#34;&#34;&#34;Copy data from this view to the block model.
+        A similarly named function in the block copies data the opposite way. Use one or the other depending on where
+        data was changed.
         &#34;&#34;&#34;
         block = self.model()
         if block is None:
@@ -270,14 +265,14 @@ In a model-view paradigm, this is a view, and block is a model. A new block can 
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.config.block_config.BlockConfig.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dt id="nfb_studio.block.block_view.BlockView.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.config.block_config.BlockConfig.model"><code class="name flex">
+<dt id="nfb_studio.block.block_view.BlockView.model"><code class="name flex">
 <span>def <span class="ident">model</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -290,7 +285,7 @@ In a model-view paradigm, this is a view, and block is a model. A new block can 
     return self._model</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.config.block_config.BlockConfig.setModel"><code class="name flex">
+<dt id="nfb_studio.block.block_view.BlockView.setModel"><code class="name flex">
 <span>def <span class="ident">setModel</span></span>(<span>self, block)</span>
 </code></dt>
 <dd>
@@ -306,24 +301,24 @@ Data in the view will be updated to reflect the new block.</p></div>
     &#34;&#34;&#34;
     self._model = block
     block._view = self
-    self._model.sync()</code></pre>
+    self._model.updateView()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.config.block_config.BlockConfig.sync"><code class="name flex">
-<span>def <span class="ident">sync</span></span>(<span>self)</span>
+<dt id="nfb_studio.block.block_view.BlockView.updateModel"><code class="name flex">
+<span>def <span class="ident">updateModel</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Sync data from this view to the block model.
-"Sync" in this context means one way copy of data from self to model. A similarly named function in the block
-copies data the opposite way. Use one or the other depending on where data was changed.</p></div>
+<div class="desc"><p>Copy data from this view to the block model.
+A similarly named function in the block copies data the opposite way. Use one or the other depending on where
+data was changed.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def sync(self):
-    &#34;&#34;&#34;Sync data from this view to the block model.
-    &#34;Sync&#34; in this context means one way copy of data from self to model. A similarly named function in the block
-    copies data the opposite way. Use one or the other depending on where data was changed.
+<pre><code class="python">def updateModel(self):
+    &#34;&#34;&#34;Copy data from this view to the block model.
+    A similarly named function in the block copies data the opposite way. Use one or the other depending on where
+    data was changed.
     &#34;&#34;&#34;
     block = self.model()
     if block is None:
@@ -358,18 +353,18 @@ copies data the opposite way. Use one or the other depending on where data was c
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.config" href="index.html">nfb_studio.widgets.config</a></code></li>
+<li><code><a title="nfb_studio.block" href="index.html">nfb_studio.block</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.config.block_config.BlockConfig" href="#nfb_studio.widgets.config.block_config.BlockConfig">BlockConfig</a></code></h4>
+<h4><code><a title="nfb_studio.block.block_view.BlockView" href="#nfb_studio.block.block_view.BlockView">BlockView</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.widgets.config.block_config.BlockConfig.model" href="#nfb_studio.widgets.config.block_config.BlockConfig.model">model</a></code></li>
-<li><code><a title="nfb_studio.widgets.config.block_config.BlockConfig.setModel" href="#nfb_studio.widgets.config.block_config.BlockConfig.setModel">setModel</a></code></li>
-<li><code><a title="nfb_studio.widgets.config.block_config.BlockConfig.staticMetaObject" href="#nfb_studio.widgets.config.block_config.BlockConfig.staticMetaObject">staticMetaObject</a></code></li>
-<li><code><a title="nfb_studio.widgets.config.block_config.BlockConfig.sync" href="#nfb_studio.widgets.config.block_config.BlockConfig.sync">sync</a></code></li>
+<li><code><a title="nfb_studio.block.block_view.BlockView.model" href="#nfb_studio.block.block_view.BlockView.model">model</a></code></li>
+<li><code><a title="nfb_studio.block.block_view.BlockView.setModel" href="#nfb_studio.block.block_view.BlockView.setModel">setModel</a></code></li>
+<li><code><a title="nfb_studio.block.block_view.BlockView.staticMetaObject" href="#nfb_studio.block.block_view.BlockView.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.block.block_view.BlockView.updateModel" href="#nfb_studio.block.block_view.BlockView.updateModel">updateModel</a></code></li>
 </ul>
 </li>
 </ul>

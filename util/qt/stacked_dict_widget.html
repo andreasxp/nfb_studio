@@ -25,7 +25,7 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QStackedWidget
+from PySide2.QtWidgets import QWidget, QStackedWidget
 
 
 class StackedDictWidget(QStackedWidget):
@@ -38,7 +38,16 @@ class StackedDictWidget(QStackedWidget):
 
         self._widgets = {}
     
-    def addWidget(self, key, widget):
+    def addWidget(self, key, widget: QWidget):
+        if not isinstance(widget, QWidget):
+            raise TypeError(
+                &#34;Added widget must be of type \&#34;&#34;
+                + QWidget.__name__
+                + &#34;\&#34;, not \&#34;&#34;
+                + type(widget).__name__
+                + &#34;\&#34;&#34;
+            )
+
         self.removeWidget(key)  # Remove old widget
 
         super().addWidget(widget)
@@ -55,6 +64,9 @@ class StackedDictWidget(QStackedWidget):
         
         return widget
     
+    def keys(self):
+        return self._widgets.keys()
+
     def widget(self, key):
         return self._widgets.get(key, None)
     
@@ -109,7 +121,16 @@ class StackedDictWidget(QStackedWidget):
 
         self._widgets = {}
     
-    def addWidget(self, key, widget):
+    def addWidget(self, key, widget: QWidget):
+        if not isinstance(widget, QWidget):
+            raise TypeError(
+                &#34;Added widget must be of type \&#34;&#34;
+                + QWidget.__name__
+                + &#34;\&#34;, not \&#34;&#34;
+                + type(widget).__name__
+                + &#34;\&#34;&#34;
+            )
+
         self.removeWidget(key)  # Remove old widget
 
         super().addWidget(widget)
@@ -126,6 +147,9 @@ class StackedDictWidget(QStackedWidget):
         
         return widget
     
+    def keys(self):
+        return self._widgets.keys()
+
     def widget(self, key):
         return self._widgets.get(key, None)
     
@@ -177,7 +201,7 @@ class StackedDictWidget(QStackedWidget):
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.addWidget"><code class="name flex">
-<span>def <span class="ident">addWidget</span></span>(<span>self, key, widget)</span>
+<span>def <span class="ident">addWidget</span></span>(<span>self, key, widget: PySide2.QtWidgets.QWidget)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>addWidget(self, w: PySide2.QtWidgets.QWidget) -&gt; int</p></div>
@@ -185,7 +209,16 @@ class StackedDictWidget(QStackedWidget):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def addWidget(self, key, widget):
+<pre><code class="python">def addWidget(self, key, widget: QWidget):
+    if not isinstance(widget, QWidget):
+        raise TypeError(
+            &#34;Added widget must be of type \&#34;&#34;
+            + QWidget.__name__
+            + &#34;\&#34;, not \&#34;&#34;
+            + type(widget).__name__
+            + &#34;\&#34;&#34;
+        )
+
     self.removeWidget(key)  # Remove old widget
 
     super().addWidget(widget)
@@ -220,6 +253,19 @@ class StackedDictWidget(QStackedWidget):
             return key
 
     return None</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    return self._widgets.keys()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.removeWidget"><code class="name flex">
@@ -312,6 +358,7 @@ class StackedDictWidget(QStackedWidget):
 <li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.currentChanged" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.currentChanged">currentChanged</a></code></li>
 <li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.currentKey" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.currentKey">currentKey</a></code></li>
 <li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keyOf" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keyOf">keyOf</a></code></li>
+<li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keys" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.keys">keys</a></code></li>
 <li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.removeWidget" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.removeWidget">removeWidget</a></code></li>
 <li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.setCurrentKey" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.setCurrentKey">setCurrentKey</a></code></li>
 <li><code><a title="nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.setCurrentWidget" href="#nfb_studio.util.qt.stacked_dict_widget.StackedDictWidget.setCurrentWidget">setCurrentWidget</a></code></li>

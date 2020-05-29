@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.widgets API documentation</title>
-<meta name="description" content="nfb_studio.widgets" />
+<title>nfb_studio.block API documentation</title>
+<meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -17,32 +17,32 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets</code></h1>
+<h1 class="title">Module <code>nfb_studio.block</code></h1>
 </header>
 <section id="section-intro">
-<p>nfb_studio.widgets</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;nfb_studio.widgets&#34;&#34;&#34;</code></pre>
+<pre><code class="python">from .block import Block
+from .block_view import BlockView
+from .block_dict import BlockDict</code></pre>
 </details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt><code class="name"><a title="nfb_studio.widgets.scheme" href="scheme/index.html">nfb_studio.widgets.scheme</a></code></dt>
+<dt><code class="name"><a title="nfb_studio.block.block" href="block.html">nfb_studio.block.block</a></code></dt>
 <dd>
-<div class="desc"><p>A collection of widgets that are used to represent the signal editing experience in NFB studio.
-SchemeEditor is the main widget that contains the node …</p></div>
+<div class="desc"><p>NFB Experiment block.</p></div>
 </dd>
-<dt><code class="name"><a title="nfb_studio.widgets.sequence_nodes" href="sequence_nodes/index.html">nfb_studio.widgets.sequence_nodes</a></code></dt>
+<dt><code class="name"><a title="nfb_studio.block.block_dict" href="block_dict.html">nfb_studio.block.block_dict</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Internally used dictionary for blocks.</p></div>
 </dd>
-<dt><code class="name"><a title="nfb_studio.widgets.signal_nodes" href="signal_nodes/index.html">nfb_studio.widgets.signal_nodes</a></code></dt>
+<dt><code class="name"><a title="nfb_studio.block.block_view" href="block_view.html">nfb_studio.block.block_view</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Config widget for a single experiment block.</p></div>
 </dd>
 </dl>
 </section>
@@ -66,9 +66,9 @@ SchemeEditor is the main widget that contains the node …</p></div>
 </li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li><code><a title="nfb_studio.widgets.scheme" href="scheme/index.html">nfb_studio.widgets.scheme</a></code></li>
-<li><code><a title="nfb_studio.widgets.sequence_nodes" href="sequence_nodes/index.html">nfb_studio.widgets.sequence_nodes</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal_nodes" href="signal_nodes/index.html">nfb_studio.widgets.signal_nodes</a></code></li>
+<li><code><a title="nfb_studio.block.block" href="block.html">nfb_studio.block.block</a></code></li>
+<li><code><a title="nfb_studio.block.block_dict" href="block_dict.html">nfb_studio.block.block_dict</a></code></li>
+<li><code><a title="nfb_studio.block.block_view" href="block_view.html">nfb_studio.block.block_view</a></code></li>
 </ul>
 </li>
 </ul>

@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>nfb_studio.item_dict API documentation</title>
+<meta name="description" content="Base class for BlockDict and GroupDict." />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nfb_studio.item_dict</code></h1>
+</header>
+<section id="section-intro">
+<p>Base class for BlockDict and GroupDict.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;Base class for BlockDict and GroupDict.&#34;&#34;&#34;
+from itertools import count
+from collections.abc import MutableMapping
+
+from PySide2.QtCore import QObject, Signal
+
+
+class ItemDictMetaclass(type(QObject), type(MutableMapping)):
+    pass
+
+
+class ItemDict(QObject, MutableMapping, metaclass=ItemDictMetaclass):
+    &#34;&#34;&#34;Internally used dictionary superclass for blocks and groups.
+    This dictionary also contains some logic related to naming new items.
+    &#34;&#34;&#34;
+    stored_cls = object
+
+    itemAdded = Signal(str)
+    itemRemoved = Signal(str)
+    itemRenamed = Signal(str, str)
+
+    def __init__(self):
+        super().__init__()
+        self._experiment = None
+        self._data = {}
+
+    def experiment(self):
+        return self._experiment
+    
+    def setExperiment(self, ex):
+        self._experiment = ex
+
+    def getName(self):
+        &#34;&#34;&#34;Get an unused name that can be used as a placeholder, such as &#34;Block1&#34;.&#34;&#34;&#34;
+        for i in count(1):
+            name = self.stored_cls.__qualname__ + str(i)
+            if self.isAcceptedName(name):
+                return name
+    
+    def isAcceptedName(self, key):
+        &#34;&#34;&#34;Returns True if a name can be used for a new block.&#34;&#34;&#34;
+        return not key in self
+
+    def __getitem__(self, key: str):
+        return self._data.__getitem__(key)
+    
+    def __setitem__(self, key: str, value):
+        if not isinstance(key, str):
+            raise TypeError(&#34;Item name must be of type \&#34;str\&#34;, not \&#34;&#34; + type(key) + &#34;\&#34;&#34;)
+
+        if not isinstance(value, self.stored_cls):
+            raise TypeError(
+                &#34;Dict value must be of type \&#34;&#34;
+                + self.stored_cls.__qualname__
+                + &#34;\&#34;, not \&#34;&#34;
+                + type(value).__qualname__
+                + &#34;\&#34;&#34;
+            )
+
+        self._data.__setitem__(key, value)
+        self.itemAdded.emit(key)
+        self.updateView(key)
+    
+    def __delitem__(self, key: str):
+        self._data.__delitem__(key)
+        self.itemRemoved.emit(key)
+        self.updateView(key)
+    
+    def rename(old_key, new_key):
+        &#34;&#34;&#34;Rename an item in the dict, changing the key. Emits itemRenamed signal.&#34;&#34;&#34;
+        if old_key not in self:
+            raise KeyError(&#34;No key \&#34;&#34; + old_key + &#34;\&#34; in dict&#34;)
+
+        self.blockSignals(True)
+        d[new_key] = d.pop(old_key)
+        self.blockSignals(False)
+
+        self.itemRenamed.emit(old_key, new_key)
+
+    def __iter__(self):
+        return self._data.__iter__()
+    
+    def __len__(self):
+        return self._data.__len__()
+
+    def updateView(self, key):
+        pass
+
+    def serialize(self) -&gt; dict:
+        data = {
+            &#34;data&#34;: self._data
+        }
+        
+        return data
+    
+    def deserialize(self, data: dict):
+        self._data = data[&#34;data&#34;]
+        </code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="nfb_studio.item_dict.ItemDict"><code class="flex name class">
+<span>class <span class="ident">ItemDict</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Internally used dictionary superclass for blocks and groups.
+This dictionary also contains some logic related to naming new items.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ItemDict(QObject, MutableMapping, metaclass=ItemDictMetaclass):
+    &#34;&#34;&#34;Internally used dictionary superclass for blocks and groups.
+    This dictionary also contains some logic related to naming new items.
+    &#34;&#34;&#34;
+    stored_cls = object
+
+    itemAdded = Signal(str)
+    itemRemoved = Signal(str)
+    itemRenamed = Signal(str, str)
+
+    def __init__(self):
+        super().__init__()
+        self._experiment = None
+        self._data = {}
+
+    def experiment(self):
+        return self._experiment
+    
+    def setExperiment(self, ex):
+        self._experiment = ex
+
+    def getName(self):
+        &#34;&#34;&#34;Get an unused name that can be used as a placeholder, such as &#34;Block1&#34;.&#34;&#34;&#34;
+        for i in count(1):
+            name = self.stored_cls.__qualname__ + str(i)
+            if self.isAcceptedName(name):
+                return name
+    
+    def isAcceptedName(self, key):
+        &#34;&#34;&#34;Returns True if a name can be used for a new block.&#34;&#34;&#34;
+        return not key in self
+
+    def __getitem__(self, key: str):
+        return self._data.__getitem__(key)
+    
+    def __setitem__(self, key: str, value):
+        if not isinstance(key, str):
+            raise TypeError(&#34;Item name must be of type \&#34;str\&#34;, not \&#34;&#34; + type(key) + &#34;\&#34;&#34;)
+
+        if not isinstance(value, self.stored_cls):
+            raise TypeError(
+                &#34;Dict value must be of type \&#34;&#34;
+                + self.stored_cls.__qualname__
+                + &#34;\&#34;, not \&#34;&#34;
+                + type(value).__qualname__
+                + &#34;\&#34;&#34;
+            )
+
+        self._data.__setitem__(key, value)
+        self.itemAdded.emit(key)
+        self.updateView(key)
+    
+    def __delitem__(self, key: str):
+        self._data.__delitem__(key)
+        self.itemRemoved.emit(key)
+        self.updateView(key)
+    
+    def rename(old_key, new_key):
+        &#34;&#34;&#34;Rename an item in the dict, changing the key. Emits itemRenamed signal.&#34;&#34;&#34;
+        if old_key not in self:
+            raise KeyError(&#34;No key \&#34;&#34; + old_key + &#34;\&#34; in dict&#34;)
+
+        self.blockSignals(True)
+        d[new_key] = d.pop(old_key)
+        self.blockSignals(False)
+
+        self.itemRenamed.emit(old_key, new_key)
+
+    def __iter__(self):
+        return self._data.__iter__()
+    
+    def __len__(self):
+        return self._data.__len__()
+
+    def updateView(self, key):
+        pass
+
+    def serialize(self) -&gt; dict:
+        data = {
+            &#34;data&#34;: self._data
+        }
+        
+        return data
+    
+    def deserialize(self, data: dict):
+        self._data = data[&#34;data&#34;]</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PySide2.QtCore.QObject</li>
+<li>Shiboken.Object</li>
+<li>collections.abc.MutableMapping</li>
+<li>collections.abc.Mapping</li>
+<li>collections.abc.Collection</li>
+<li>collections.abc.Sized</li>
+<li>collections.abc.Iterable</li>
+<li>collections.abc.Container</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="nfb_studio.block.block_dict.BlockDict" href="block/block_dict.html#nfb_studio.block.block_dict.BlockDict">BlockDict</a></li>
+<li><a title="nfb_studio.group.group_dict.GroupDict" href="group/group_dict.html#nfb_studio.group.group_dict.GroupDict">GroupDict</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.item_dict.ItemDict.itemAdded"><code class="name">var <span class="ident">itemAdded</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.itemRemoved"><code class="name">var <span class="ident">itemRemoved</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.itemRenamed"><code class="name">var <span class="ident">itemRenamed</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.stored_cls"><code class="name">var <span class="ident">stored_cls</span></code></dt>
+<dd>
+<div class="desc"><p>The base class of the class hierarchy.</p>
+<p>When called, it accepts no arguments and returns a new featureless
+instance that has no instance attributes and cannot be given any.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="nfb_studio.item_dict.ItemDict.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deserialize(self, data: dict):
+    self._data = data[&#34;data&#34;]</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.experiment"><code class="name flex">
+<span>def <span class="ident">experiment</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def experiment(self):
+    return self._experiment</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.getName"><code class="name flex">
+<span>def <span class="ident">getName</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get an unused name that can be used as a placeholder, such as "Block1".</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getName(self):
+    &#34;&#34;&#34;Get an unused name that can be used as a placeholder, such as &#34;Block1&#34;.&#34;&#34;&#34;
+    for i in count(1):
+        name = self.stored_cls.__qualname__ + str(i)
+        if self.isAcceptedName(name):
+            return name</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.isAcceptedName"><code class="name flex">
+<span>def <span class="ident">isAcceptedName</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns True if a name can be used for a new block.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def isAcceptedName(self, key):
+    &#34;&#34;&#34;Returns True if a name can be used for a new block.&#34;&#34;&#34;
+    return not key in self</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.rename"><code class="name flex">
+<span>def <span class="ident">rename</span></span>(<span>old_key, new_key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rename an item in the dict, changing the key. Emits itemRenamed signal.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rename(old_key, new_key):
+    &#34;&#34;&#34;Rename an item in the dict, changing the key. Emits itemRenamed signal.&#34;&#34;&#34;
+    if old_key not in self:
+        raise KeyError(&#34;No key \&#34;&#34; + old_key + &#34;\&#34; in dict&#34;)
+
+    self.blockSignals(True)
+    d[new_key] = d.pop(old_key)
+    self.blockSignals(False)
+
+    self.itemRenamed.emit(old_key, new_key)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) -> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    data = {
+        &#34;data&#34;: self._data
+    }
+    
+    return data</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.setExperiment"><code class="name flex">
+<span>def <span class="ident">setExperiment</span></span>(<span>self, ex)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setExperiment(self, ex):
+    self._experiment = ex</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDict.updateView"><code class="name flex">
+<span>def <span class="ident">updateView</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updateView(self, key):
+    pass</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="nfb_studio.item_dict.ItemDictMetaclass"><code class="flex name class">
+<span>class <span class="ident">ItemDictMetaclass</span></span>
+<span>(</span><span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ItemDictMetaclass(type(QObject), type(MutableMapping)):
+    pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>Shiboken.ObjectType</li>
+<li>typing.ABCMeta</li>
+<li>builtins.type</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nfb_studio" href="index.html">nfb_studio</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="nfb_studio.item_dict.ItemDict" href="#nfb_studio.item_dict.ItemDict">ItemDict</a></code></h4>
+<ul class="two-column">
+<li><code><a title="nfb_studio.item_dict.ItemDict.deserialize" href="#nfb_studio.item_dict.ItemDict.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.experiment" href="#nfb_studio.item_dict.ItemDict.experiment">experiment</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.getName" href="#nfb_studio.item_dict.ItemDict.getName">getName</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.isAcceptedName" href="#nfb_studio.item_dict.ItemDict.isAcceptedName">isAcceptedName</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.itemAdded" href="#nfb_studio.item_dict.ItemDict.itemAdded">itemAdded</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.itemRemoved" href="#nfb_studio.item_dict.ItemDict.itemRemoved">itemRemoved</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.itemRenamed" href="#nfb_studio.item_dict.ItemDict.itemRenamed">itemRenamed</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.rename" href="#nfb_studio.item_dict.ItemDict.rename">rename</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.serialize" href="#nfb_studio.item_dict.ItemDict.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.setExperiment" href="#nfb_studio.item_dict.ItemDict.setExperiment">setExperiment</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.staticMetaObject" href="#nfb_studio.item_dict.ItemDict.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.stored_cls" href="#nfb_studio.item_dict.ItemDict.stored_cls">stored_cls</a></code></li>
+<li><code><a title="nfb_studio.item_dict.ItemDict.updateView" href="#nfb_studio.item_dict.ItemDict.updateView">updateView</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="nfb_studio.item_dict.ItemDictMetaclass" href="#nfb_studio.item_dict.ItemDictMetaclass">ItemDictMetaclass</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

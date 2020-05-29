@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.property_tree API documentation</title>
+<title>nfb_studio.experiment.property_tree API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.property_tree</code></h1>
+<h1 class="title">Module <code>nfb_studio.experiment.property_tree</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -123,7 +123,7 @@ class PropertyTree(TreeModel):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.property_tree.PropertyTree"><code class="flex name class">
+<dt id="nfb_studio.experiment.property_tree.PropertyTree"><code class="flex name class">
 <span>class <span class="ident">PropertyTree</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
@@ -219,25 +219,25 @@ class PropertyTree(TreeModel):
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel" href="util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel">TreeModel</a></li>
+<li><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel" href="../util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel">TreeModel</a></li>
 <li>PySide2.QtCore.QAbstractItemModel</li>
 <li>PySide2.QtCore.QObject</li>
 <li>Shiboken.Object</li>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.property_tree.PropertyTree.View"><code class="name">var <span class="ident">View</span></code></dt>
+<dt id="nfb_studio.experiment.property_tree.PropertyTree.View"><code class="name">var <span class="ident">View</span></code></dt>
 <dd>
 <div class="desc"><p>QTreeView(self, parent: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></div>
 </dd>
-<dt id="nfb_studio.property_tree.PropertyTree.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dt id="nfb_studio.experiment.property_tree.PropertyTree.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.property_tree.PropertyTree.getView"><code class="name flex">
+<dt id="nfb_studio.experiment.property_tree.PropertyTree.getView"><code class="name flex">
 <span>def <span class="ident">getView</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -254,7 +254,7 @@ class PropertyTree(TreeModel):
     return view</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.property_tree.PropertyTree.headerData"><code class="name flex">
+<dt id="nfb_studio.experiment.property_tree.PropertyTree.headerData"><code class="name flex">
 <span>def <span class="ident">headerData</span></span>(<span>self, section, orientation: PySide2.QtCore.Qt.Orientation, role=PySide2.QtCore.Qt.ItemDataRole.DisplayRole)</span>
 </code></dt>
 <dd>
@@ -275,14 +275,14 @@ class PropertyTree(TreeModel):
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
-<li><code><b><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel" href="util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel">TreeModel</a></b></code>:
+<li><code><b><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel" href="../util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel">TreeModel</a></b></code>:
 <ul class="hlist">
-<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.columnCount" href="util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.columnCount">columnCount</a></code></li>
-<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.data" href="util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.data">data</a></code></li>
-<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.flags" href="util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.flags">flags</a></code></li>
-<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.index" href="util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.index">index</a></code></li>
-<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.parent" href="util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.parent">parent</a></code></li>
-<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.rowCount" href="util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.rowCount">rowCount</a></code></li>
+<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.columnCount" href="../util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.columnCount">columnCount</a></code></li>
+<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.data" href="../util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.data">data</a></code></li>
+<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.flags" href="../util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.flags">flags</a></code></li>
+<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.index" href="../util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.index">index</a></code></li>
+<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.parent" href="../util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.parent">parent</a></code></li>
+<li><code><a title="nfb_studio.util.qt.tree_model.tree_model.TreeModel.rowCount" href="../util/qt/tree_model/tree_model.html#nfb_studio.util.qt.tree_model.tree_model.TreeModel.rowCount">rowCount</a></code></li>
 </ul>
 </li>
 </ul>
@@ -298,18 +298,18 @@ class PropertyTree(TreeModel):
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio" href="index.html">nfb_studio</a></code></li>
+<li><code><a title="nfb_studio.experiment" href="index.html">nfb_studio.experiment</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.property_tree.PropertyTree" href="#nfb_studio.property_tree.PropertyTree">PropertyTree</a></code></h4>
+<h4><code><a title="nfb_studio.experiment.property_tree.PropertyTree" href="#nfb_studio.experiment.property_tree.PropertyTree">PropertyTree</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.property_tree.PropertyTree.View" href="#nfb_studio.property_tree.PropertyTree.View">View</a></code></li>
-<li><code><a title="nfb_studio.property_tree.PropertyTree.getView" href="#nfb_studio.property_tree.PropertyTree.getView">getView</a></code></li>
-<li><code><a title="nfb_studio.property_tree.PropertyTree.headerData" href="#nfb_studio.property_tree.PropertyTree.headerData">headerData</a></code></li>
-<li><code><a title="nfb_studio.property_tree.PropertyTree.staticMetaObject" href="#nfb_studio.property_tree.PropertyTree.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.View" href="#nfb_studio.experiment.property_tree.PropertyTree.View">View</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.getView" href="#nfb_studio.experiment.property_tree.PropertyTree.getView">getView</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.headerData" href="#nfb_studio.experiment.property_tree.PropertyTree.headerData">headerData</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.staticMetaObject" href="#nfb_studio.experiment.property_tree.PropertyTree.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
 </li>
 </ul>
