@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.gui.unitconv API documentation</title>
+<title>nfb_studio.widgets.scheme.unitconv API documentation</title>
 <meta name="description" content="Converts units in inches to units in pixels using logical dpi of the application." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.gui.unitconv</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.unitconv</code></h1>
 </header>
 <section id="section-intro">
 <p>Converts units in inches to units in pixels using logical dpi of the application.</p>
@@ -83,7 +83,7 @@ def pixels_to_inches(value):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="nfb_studio.gui.unitconv.dpi"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.unitconv.dpi"><code class="name flex">
 <span>def <span class="ident">dpi</span></span>(<span>)</span>
 </code></dt>
 <dd>
@@ -101,7 +101,7 @@ def pixels_to_inches(value):
     return QWidget().logicalDpiX()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.gui.unitconv.inches_to_pixels"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.unitconv.inches_to_pixels"><code class="name flex">
 <span>def <span class="ident">inches_to_pixels</span></span>(<span>value: typing.Union[int, float, PySide2.QtCore.QPoint, PySide2.QtCore.QPointF, PySide2.QtCore.QSize, PySide2.QtCore.QSizeF, PySide2.QtCore.QRect, PySide2.QtCore.QRectF])</span>
 </code></dt>
 <dd>
@@ -130,7 +130,7 @@ Supports values: plain numbers, QPoint, QPointF, QSize, QSizeF, QRect, QRectF.</
     return value * dpi()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.gui.unitconv.pixels_to_inches"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.unitconv.pixels_to_inches"><code class="name flex">
 <span>def <span class="ident">pixels_to_inches</span></span>(<span>value)</span>
 </code></dt>
 <dd>
@@ -169,14 +169,14 @@ Supports values: plain numbers, QPoint, QPointF, QSize, QSizeF, QRect, QRectF.</
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.gui" href="index.html">nfb_studio.gui</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme" href="index.html">nfb_studio.widgets.scheme</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="nfb_studio.gui.unitconv.dpi" href="#nfb_studio.gui.unitconv.dpi">dpi</a></code></li>
-<li><code><a title="nfb_studio.gui.unitconv.inches_to_pixels" href="#nfb_studio.gui.unitconv.inches_to_pixels">inches_to_pixels</a></code></li>
-<li><code><a title="nfb_studio.gui.unitconv.pixels_to_inches" href="#nfb_studio.gui.unitconv.pixels_to_inches">pixels_to_inches</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.unitconv.dpi" href="#nfb_studio.widgets.scheme.unitconv.dpi">dpi</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.unitconv.inches_to_pixels" href="#nfb_studio.widgets.scheme.unitconv.inches_to_pixels">inches_to_pixels</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.unitconv.pixels_to_inches" href="#nfb_studio.widgets.scheme.unitconv.pixels_to_inches">pixels_to_inches</a></code></li>
 </ul>
 </li>
 </ul>

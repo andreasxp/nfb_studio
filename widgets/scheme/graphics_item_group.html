@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.util.qt.graphics_item_group API documentation</title>
+<title>nfb_studio.widgets.scheme.graphics_item_group API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.util.qt.graphics_item_group</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.scheme.graphics_item_group</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -107,7 +107,7 @@ class GraphicsItemGroup(MutableSet):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup"><code class="flex name class">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup"><code class="flex name class">
 <span>class <span class="ident">GraphicsItemGroup</span></span>
 </code></dt>
 <dd>
@@ -197,11 +197,11 @@ manipulating groups of items without disrupting the scene ownership tree.</p></d
 </ul>
 <h3>Subclasses</h3>
 <ul class="hlist">
-<li><a title="nfb_studio.widgets.scheme.graph.Graph" href="../../widgets/scheme/graph.html#nfb_studio.widgets.scheme.graph.Graph">Graph</a></li>
+<li><a title="nfb_studio.widgets.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.scheme.graph.Graph">Graph</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.add"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.add"><code class="name flex">
 <span>def <span class="ident">add</span></span>(<span>self, item)</span>
 </code></dt>
 <dd>
@@ -216,7 +216,7 @@ manipulating groups of items without disrupting the scene ownership tree.</p></d
     self._data.add(item)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.boundingRect"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.boundingRect"><code class="name flex">
 <span>def <span class="ident">boundingRect</span></span>(<span>self)</span>
 </code></dt>
 <dd>
@@ -234,7 +234,7 @@ manipulating groups of items without disrupting the scene ownership tree.</p></d
     return result</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.discard"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.discard"><code class="name flex">
 <span>def <span class="ident">discard</span></span>(<span>self, item)</span>
 </code></dt>
 <dd>
@@ -248,7 +248,7 @@ Do not raise an exception if absent.</p></div>
     self._data.discard(item)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveBottomLeft"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveBottomLeft"><code class="name flex">
 <span>def <span class="ident">moveBottomLeft</span></span>(<span>self, *args)</span>
 </code></dt>
 <dd>
@@ -262,7 +262,7 @@ Do not raise an exception if absent.</p></div>
     self.translate(position - self.boundingRect().bottomLeft())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveBottomRight"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveBottomRight"><code class="name flex">
 <span>def <span class="ident">moveBottomRight</span></span>(<span>self, *args)</span>
 </code></dt>
 <dd>
@@ -276,7 +276,7 @@ Do not raise an exception if absent.</p></div>
     self.translate(position - self.boundingRect().bottomRight())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveCenter"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveCenter"><code class="name flex">
 <span>def <span class="ident">moveCenter</span></span>(<span>self, *args)</span>
 </code></dt>
 <dd>
@@ -290,7 +290,7 @@ Do not raise an exception if absent.</p></div>
     self.translate(position - self.boundingRect().center())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveTo"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveTo"><code class="name flex">
 <span>def <span class="ident">moveTo</span></span>(<span>self, *args)</span>
 </code></dt>
 <dd>
@@ -303,7 +303,7 @@ Do not raise an exception if absent.</p></div>
     self.moveTopLeft(*args)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveTopLeft"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveTopLeft"><code class="name flex">
 <span>def <span class="ident">moveTopLeft</span></span>(<span>self, *args)</span>
 </code></dt>
 <dd>
@@ -317,7 +317,7 @@ Do not raise an exception if absent.</p></div>
     self.translate(position - self.boundingRect().topLeft())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveTopRight"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveTopRight"><code class="name flex">
 <span>def <span class="ident">moveTopRight</span></span>(<span>self, *args)</span>
 </code></dt>
 <dd>
@@ -331,7 +331,7 @@ Do not raise an exception if absent.</p></div>
     self.translate(position - self.boundingRect().topRight())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.translate"><code class="name flex">
+<dt id="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.translate"><code class="name flex">
 <span>def <span class="ident">translate</span></span>(<span>self, *args)</span>
 </code></dt>
 <dd>
@@ -360,24 +360,24 @@ Do not raise an exception if absent.</p></div>
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.util.qt" href="index.html">nfb_studio.util.qt</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme" href="index.html">nfb_studio.widgets.scheme</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup">GraphicsItemGroup</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup">GraphicsItemGroup</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.add" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.add">add</a></code></li>
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.boundingRect" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.boundingRect">boundingRect</a></code></li>
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.discard" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.discard">discard</a></code></li>
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveBottomLeft" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveBottomLeft">moveBottomLeft</a></code></li>
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveBottomRight" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveBottomRight">moveBottomRight</a></code></li>
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveCenter" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveCenter">moveCenter</a></code></li>
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveTo" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveTo">moveTo</a></code></li>
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveTopLeft" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveTopLeft">moveTopLeft</a></code></li>
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveTopRight" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.moveTopRight">moveTopRight</a></code></li>
-<li><code><a title="nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.translate" href="#nfb_studio.util.qt.graphics_item_group.GraphicsItemGroup.translate">translate</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.add" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.add">add</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.boundingRect" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.boundingRect">boundingRect</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.discard" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.discard">discard</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveBottomLeft" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveBottomLeft">moveBottomLeft</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveBottomRight" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveBottomRight">moveBottomRight</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveCenter" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveCenter">moveCenter</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveTo" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveTo">moveTo</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveTopLeft" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveTopLeft">moveTopLeft</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveTopRight" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.moveTopRight">moveTopRight</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.translate" href="#nfb_studio.widgets.scheme.graphics_item_group.GraphicsItemGroup.translate">translate</a></code></li>
 </ul>
 </li>
 </ul>
