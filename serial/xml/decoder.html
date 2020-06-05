@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
 <title>nfb_studio.serial.xml.decoder API documentation</title>
-<meta name="description" content="An object-aware JSON encoder." />
+<meta name="description" content="An object-aware XML decoder." />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
@@ -20,26 +20,31 @@
 <h1 class="title">Module <code>nfb_studio.serial.xml.decoder</code></h1>
 </header>
 <section id="section-intro">
-<p>An object-aware JSON encoder.</p>
+<p>An object-aware XML decoder.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;An object-aware JSON encoder.&#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34;An object-aware XML decoder.&#34;&#34;&#34;
 from typing import Union
-
 import xmltodict as xd
-
-from ..hooks import Hooks
 from ..base import BaseDecoder
 
 
 class XMLDecoder:
-    def __init__(self, **kw):
+    def __init__(self, decode_attributes=True, force_list=None, **kw):
         self.base_decoder = BaseDecoder(**kw)
 
-    def encode(self, data):
-        data_dict = xd.parse(data)
+        self.decode_attributes = decode_attributes
+        self.force_list = force_list
+
+    def decode(self, data):
+        data_dict = xd.parse(
+            data, 
+            xml_attribs=self.decode_attributes, 
+            force_list=self.force_list
+        )
+
         return self.base_decoder.decode(data_dict)</code></pre>
 </details>
 </section>
@@ -54,7 +59,7 @@ class XMLDecoder:
 <dl>
 <dt id="nfb_studio.serial.xml.decoder.XMLDecoder"><code class="flex name class">
 <span>class <span class="ident">XMLDecoder</span></span>
-<span>(</span><span>**kw)</span>
+<span>(</span><span>decode_attributes=True, force_list=None, **kw)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -63,17 +68,25 @@ class XMLDecoder:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class XMLDecoder:
-    def __init__(self, **kw):
+    def __init__(self, decode_attributes=True, force_list=None, **kw):
         self.base_decoder = BaseDecoder(**kw)
 
-    def encode(self, data):
-        data_dict = xd.parse(data)
+        self.decode_attributes = decode_attributes
+        self.force_list = force_list
+
+    def decode(self, data):
+        data_dict = xd.parse(
+            data, 
+            xml_attribs=self.decode_attributes, 
+            force_list=self.force_list
+        )
+
         return self.base_decoder.decode(data_dict)</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.serial.xml.decoder.XMLDecoder.encode"><code class="name flex">
-<span>def <span class="ident">encode</span></span>(<span>self, data)</span>
+<dt id="nfb_studio.serial.xml.decoder.XMLDecoder.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>self, data)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -81,8 +94,13 @@ class XMLDecoder:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def encode(self, data):
-    data_dict = xd.parse(data)
+<pre><code class="python">def decode(self, data):
+    data_dict = xd.parse(
+        data, 
+        xml_attribs=self.decode_attributes, 
+        force_list=self.force_list
+    )
+
     return self.base_decoder.decode(data_dict)</code></pre>
 </details>
 </dd>
@@ -107,7 +125,7 @@ class XMLDecoder:
 <li>
 <h4><code><a title="nfb_studio.serial.xml.decoder.XMLDecoder" href="#nfb_studio.serial.xml.decoder.XMLDecoder">XMLDecoder</a></code></h4>
 <ul class="">
-<li><code><a title="nfb_studio.serial.xml.decoder.XMLDecoder.encode" href="#nfb_studio.serial.xml.decoder.XMLDecoder.encode">encode</a></code></li>
+<li><code><a title="nfb_studio.serial.xml.decoder.XMLDecoder.decode" href="#nfb_studio.serial.xml.decoder.XMLDecoder.decode">decode</a></code></li>
 </ul>
 </li>
 </ul>

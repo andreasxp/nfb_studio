@@ -33,10 +33,12 @@ import xmltodict as xd
 from nfb_studio.util import expose_property
 
 from ..base import BaseEncoder
+from json import dumps
 
 
 class XMLEncoder:
-    def __init__(self, *, encoding=&#34;utf-8&#34;, attr_prefix=&#34;@&#34;, cdata_key=&#34;#text&#34;, separator=&#34;&#34;, indent=&#34;&#34;, **kw):        
+    def __init__(self, *, encoding=&#34;utf-8&#34;, attr_prefix=&#34;@&#34;, cdata_key=&#34;#text&#34;, separator=&#34;&#34;, indent=&#34;&#34;, **kw):
+        kw[&#34;unknown_objects&#34;] = &#34;error&#34;
         self.base_encoder = BaseEncoder(**kw)
         
         self.encoding = encoding
@@ -45,23 +47,48 @@ class XMLEncoder:
         self.separator = separator
         self.indent = indent
 
-    def _convert_metadata(self, obj: dict):
+    def _convert_metadata(self, obj):
         &#34;&#34;&#34;Convert metadata from dict encoder to a format suitable for putting metadata as xml tags.&#34;&#34;&#34;
-        if &#34;__class__&#34; in obj:
-            obj[self.attr_prefix + &#34;__class__.__qualname__&#34;] = obj[&#34;__class__&#34;][&#34;__qualname__&#34;]
-            obj[self.attr_prefix + &#34;__class__.__module__&#34;] = obj[&#34;__class__&#34;][&#34;__module__&#34;]
+        if isinstance(obj, dict):
+            # Replace metadata if it exists
+            if &#34;__class__&#34; in obj:
+                obj[self.attr_prefix + &#34;__class__.__qualname__&#34;] = obj[&#34;__class__&#34;][&#34;__qualname__&#34;]
+                obj[self.attr_prefix + &#34;__class__.__module__&#34;] = obj[&#34;__class__&#34;][&#34;__module__&#34;]
 
-            obj.pop(&#34;__class__&#34;)
-        
-        for key, value in obj.items():
-            if isinstance(value, dict):
+                obj.pop(&#34;__class__&#34;)
+            
+            # Recursively convert metadata of nested objects
+            for value in obj.values():
                 self._convert_metadata(value)
+        elif isinstance(obj, list):
+            for item in obj:
+                self._convert_metadata(item)
+
+    def _prepare_data(self, obj):
+        &#34;&#34;&#34;Prepare data for conversion by xmltodict. For example, replace all non-string keys with strings, otherwise
+        xmltodict dies if in a list there is a dict with non-string keys.
+        &#34;&#34;&#34;
+        if isinstance(obj, dict):
+            keys = list(obj.keys())
+
+            for key in keys:
+                self._prepare_data(obj[key])
+
+                if not isinstance(key, str):
+                    obj[str(key)] = obj[key]
+                    obj.pop(key)
+        elif isinstance(obj, list):
+            for item in obj:
+                self._prepare_data(item)
 
     def encode(self, obj):
         data = self.base_encoder.encode(obj)
+
         if self.metadata:
             self._convert_metadata(data)
-            
+        
+        self._prepare_data(data)
+
         data_xml = xd.unparse(
             data, 
             encoding=self.encoding, 
@@ -75,8 +102,7 @@ class XMLEncoder:
         return data_xml
 
 expose_property(XMLEncoder, &#34;base_encoder&#34;, &#34;hooks&#34;)
-expose_property(XMLEncoder, &#34;base_encoder&#34;, &#34;metadata&#34;)
-expose_property(XMLEncoder, &#34;base_encoder&#34;, &#34;in_place&#34;)</code></pre>
+expose_property(XMLEncoder, &#34;base_encoder&#34;, &#34;metadata&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -99,7 +125,8 @@ expose_property(XMLEncoder, &#34;base_encoder&#34;, &#34;in_place&#34;)</code></
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class XMLEncoder:
-    def __init__(self, *, encoding=&#34;utf-8&#34;, attr_prefix=&#34;@&#34;, cdata_key=&#34;#text&#34;, separator=&#34;&#34;, indent=&#34;&#34;, **kw):        
+    def __init__(self, *, encoding=&#34;utf-8&#34;, attr_prefix=&#34;@&#34;, cdata_key=&#34;#text&#34;, separator=&#34;&#34;, indent=&#34;&#34;, **kw):
+        kw[&#34;unknown_objects&#34;] = &#34;error&#34;
         self.base_encoder = BaseEncoder(**kw)
         
         self.encoding = encoding
@@ -108,23 +135,48 @@ expose_property(XMLEncoder, &#34;base_encoder&#34;, &#34;in_place&#34;)</code></
         self.separator = separator
         self.indent = indent
 
-    def _convert_metadata(self, obj: dict):
+    def _convert_metadata(self, obj):
         &#34;&#34;&#34;Convert metadata from dict encoder to a format suitable for putting metadata as xml tags.&#34;&#34;&#34;
-        if &#34;__class__&#34; in obj:
-            obj[self.attr_prefix + &#34;__class__.__qualname__&#34;] = obj[&#34;__class__&#34;][&#34;__qualname__&#34;]
-            obj[self.attr_prefix + &#34;__class__.__module__&#34;] = obj[&#34;__class__&#34;][&#34;__module__&#34;]
+        if isinstance(obj, dict):
+            # Replace metadata if it exists
+            if &#34;__class__&#34; in obj:
+                obj[self.attr_prefix + &#34;__class__.__qualname__&#34;] = obj[&#34;__class__&#34;][&#34;__qualname__&#34;]
+                obj[self.attr_prefix + &#34;__class__.__module__&#34;] = obj[&#34;__class__&#34;][&#34;__module__&#34;]
 
-            obj.pop(&#34;__class__&#34;)
-        
-        for key, value in obj.items():
-            if isinstance(value, dict):
+                obj.pop(&#34;__class__&#34;)
+            
+            # Recursively convert metadata of nested objects
+            for value in obj.values():
                 self._convert_metadata(value)
+        elif isinstance(obj, list):
+            for item in obj:
+                self._convert_metadata(item)
+
+    def _prepare_data(self, obj):
+        &#34;&#34;&#34;Prepare data for conversion by xmltodict. For example, replace all non-string keys with strings, otherwise
+        xmltodict dies if in a list there is a dict with non-string keys.
+        &#34;&#34;&#34;
+        if isinstance(obj, dict):
+            keys = list(obj.keys())
+
+            for key in keys:
+                self._prepare_data(obj[key])
+
+                if not isinstance(key, str):
+                    obj[str(key)] = obj[key]
+                    obj.pop(key)
+        elif isinstance(obj, list):
+            for item in obj:
+                self._prepare_data(item)
 
     def encode(self, obj):
         data = self.base_encoder.encode(obj)
+
         if self.metadata:
             self._convert_metadata(data)
-            
+        
+        self._prepare_data(data)
+
         data_xml = xd.unparse(
             data, 
             encoding=self.encoding, 
@@ -140,17 +192,6 @@ expose_property(XMLEncoder, &#34;base_encoder&#34;, &#34;in_place&#34;)</code></
 <h3>Instance variables</h3>
 <dl>
 <dt id="nfb_studio.serial.xml.encoder.XMLEncoder.hooks"><code class="name">var <span class="ident">hooks</span></code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def fget(self):
-    return getattr(getattr(self, attr_container), attr_to_expose)</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.serial.xml.encoder.XMLEncoder.in_place"><code class="name">var <span class="ident">in_place</span></code></dt>
 <dd>
 <div class="desc"></div>
 <details class="source">
@@ -186,9 +227,12 @@ expose_property(XMLEncoder, &#34;base_encoder&#34;, &#34;in_place&#34;)</code></
 </summary>
 <pre><code class="python">def encode(self, obj):
     data = self.base_encoder.encode(obj)
+
     if self.metadata:
         self._convert_metadata(data)
-        
+    
+    self._prepare_data(data)
+
     data_xml = xd.unparse(
         data, 
         encoding=self.encoding, 
@@ -225,7 +269,6 @@ expose_property(XMLEncoder, &#34;base_encoder&#34;, &#34;in_place&#34;)</code></
 <ul class="">
 <li><code><a title="nfb_studio.serial.xml.encoder.XMLEncoder.encode" href="#nfb_studio.serial.xml.encoder.XMLEncoder.encode">encode</a></code></li>
 <li><code><a title="nfb_studio.serial.xml.encoder.XMLEncoder.hooks" href="#nfb_studio.serial.xml.encoder.XMLEncoder.hooks">hooks</a></code></li>
-<li><code><a title="nfb_studio.serial.xml.encoder.XMLEncoder.in_place" href="#nfb_studio.serial.xml.encoder.XMLEncoder.in_place">in_place</a></code></li>
 <li><code><a title="nfb_studio.serial.xml.encoder.XMLEncoder.metadata" href="#nfb_studio.serial.xml.encoder.XMLEncoder.metadata">metadata</a></code></li>
 </ul>
 </li>

@@ -25,43 +25,67 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">from typing import Union
-from warnings import warn
-from copy import deepcopy
 
 from ..hooks import Hooks
 
 
-def _write_metadata(obj, data: dict) -&gt; dict:
-    &#34;&#34;&#34;Write metadata that is required to reassemble the object, encoded by JSONEncoder.
-
-    An internal function that adds the `__class__` metadata field to the serialized data.
-
-    Returns
-    -------
-    data : dict
-        The `data` parameter.
-    &#34;&#34;&#34;
-    if &#34;__class__&#34; in data:
-        warn(
-            &#34;during serialization of &#34; +
-            str(obj) +
-            &#34; a \&#34;__class__\&#34; field is being overwritten&#34;
-        )
-
-    # Add meta information necessary to decode the object later
-    data[&#34;__class__&#34;] = {
-        &#34;__module__&#34;: obj.__class__.__module__,
-        &#34;__qualname__&#34;: obj.__class__.__qualname__
-    }
-
-    return data
-
-
 class BaseEncoder:
-    def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None, metadata=True, in_place=False, **kw):
+    def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None, metadata=True, unknown_objects=&#34;error&#34;):
         self.hooks = hooks        
         self.metadata = metadata
-        self.in_place = in_place
+        self.unknown_objects = unknown_objects
+
+    def encode(self, obj, /):
+        # Default-encodable objects
+        if type(obj) in {int, float, str, bool, type(None)}:
+            return obj
+        if type(obj) in {list, tuple, set}:
+            return self.encode_list_like(obj)
+        if type(obj) == dict:
+            return self.encode_dict_like(obj)
+        
+        # Custom objects
+        return self.encode_custom(obj)
+
+    def encode_list_like(self, obj: Union[list, tuple, set]):
+        result = []
+
+        for item in obj:
+            result.append(self.encode(item))
+        
+        return result
+    
+    def encode_dict_like(self, obj: dict):
+        result = {}
+
+        for key, value in obj.items():
+            result[self.encode(key)] = self.encode(value)
+        
+        return result
+
+    def encode_custom(self, obj):
+        # Get encode function for this object
+        func = self.encode_function(obj)
+
+        if func is None:
+            if self.unknown_objects == &#34;as-is&#34;:
+                return obj
+            if self.unknown_objects == &#34;error&#34;:
+                raise TypeError(&#34;object of type \&#34;&#34; + type(obj).__qualname__ + &#34;\&#34; cannot be encoded&#34;)
+        
+        result = func(obj)
+        result = self.encode(result)
+        
+        if self.metadata and not isinstance(result, dict):
+            # If custom function did not return a dict and metadata is enabled, raise ValueError because this metadata
+            # has nowhere to be written
+            raise ValueError(&#34;serialized value of type \&#34;&#34; + type(obj) + &#34;\&#34; is not a dict, metadata cannot be written&#34;)
+
+        # Write metadata about the object
+        if self.metadata:
+            self.write_metadata(obj, result)
+        
+        return result
     
     def encode_function(self, obj, /):
         &#34;&#34;&#34;Find a custom encode function for obj, or return None if that function does not exist.&#34;&#34;&#34;
@@ -73,63 +97,30 @@ class BaseEncoder:
         
         return None
 
-    def encode(self, obj, /):
-        # Get encode function for this object
-        func = self.encode_function(obj)
+    def write_metadata(self, obj, data: dict) -&gt; dict:
+        &#34;&#34;&#34;Write metadata that is required to reassemble the object, encoded by BaseEncoder.
 
-        if func is not None:
-            # If the function exists, encode this object
-            result = func(obj)
+        An internal function that adds the `__class__` metadata field to the serialized data.
 
-            # Encode resulting dict in-place (to encode nested custom objects)
-            in_place_saved = self.in_place
-            self.in_place = True
-            self.encode(result)
-            self.in_place = in_place_saved
-            
-            # Write metadata about the object
-            if self.metadata:
-                _write_metadata(obj, result)
-            
-            return result
-        
-        if isinstance(obj, dict):
-            # If the object is not custom encodable, but is a dict, encode its elements
-            if self.in_place:
-                result = obj  # In-place encoder replaces custom objects with their encodings
-            else:
-                result = {}  # Non-in-place encoder creates a new dict
-            
-            for key, value in obj.items():
-                # For each item, encode it
-                encoded = self.encode(value)
-                if encoded is value and not self.in_place:
-                    # If item could not be encoded and not in place, deepcopy it
-                    result[key] = deepcopy(value)
-                else:
-                    result[key] = encoded
-        
-            return result
-        
-        if isinstance(obj, list) or isinstance(obj, tuple):
-            if self.in_place:
-                result = obj  # In-place encoder replaces custom objects with their encodings
-            else:
-                result = [None] * len(obj)  # Non-in-place encoder creates a new list
-            
-            for i in range(len(obj)):
-                # For each item, encode it
-                value = obj[i]
-                encoded = self.encode(value)
-                if encoded is value and not self.in_place:
-                    # If item could not be encoded and not in place, deepcopy it
-                    result[i] = deepcopy(value)
-                else:
-                    result[i] = encoded
-            
-            return result
+        Returns
+        -------
+        data : dict
+            The `data` parameter.
+        &#34;&#34;&#34;
+        if &#34;__class__&#34; in data:
+            raise ValueError(
+                &#34;during serialization of &#34; +
+                str(obj) +
+                &#34; a \&#34;__class__\&#34; field is being overwritten&#34;
+            )
 
-        return obj
+        # Add meta information necessary to decode the object later
+        data[&#34;__class__&#34;] = {
+            &#34;__module__&#34;: obj.__class__.__module__,
+            &#34;__qualname__&#34;: obj.__class__.__qualname__
+        }
+
+        return data
 
     @property
     def hooks(self):
@@ -142,7 +133,24 @@ class BaseEncoder:
         elif isinstance(value, tuple):  # hooks.Hooks is also a tuple
             self._hooks = value[0]  # Only serialization functions
         else:
-            self._hooks = {}</code></pre>
+            self._hooks = {}
+
+    @property
+    def unknown_objects(self):
+        return self._unknown_objects
+    
+    @unknown_objects.setter
+    def unknown_objects(self, value: str):
+        unknown_objects_values = {&#34;as-is&#34;, &#34;error&#34;}
+        if value not in unknown_objects_values:
+            raise ValueError(
+                &#34;value \&#34;&#34;
+                + value
+                + &#34;\&#34; of unknown_objects not one of &#34;
+                + str(unknown_objects_values)
+            )
+        
+        self._unknown_objects = value</code></pre>
 </details>
 </section>
 <section>
@@ -156,7 +164,7 @@ class BaseEncoder:
 <dl>
 <dt id="nfb_studio.serial.base.encoder.BaseEncoder"><code class="flex name class">
 <span>class <span class="ident">BaseEncoder</span></span>
-<span>(</span><span>*, hooks: typing.Union[dict, tuple, nfb_studio.serial.hooks.Hooks] = None, metadata=True, in_place=False, **kw)</span>
+<span>(</span><span>*, hooks: typing.Union[dict, tuple, nfb_studio.serial.hooks.Hooks] = None, metadata=True, unknown_objects='error')</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -165,10 +173,62 @@ class BaseEncoder:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class BaseEncoder:
-    def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None, metadata=True, in_place=False, **kw):
+    def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None, metadata=True, unknown_objects=&#34;error&#34;):
         self.hooks = hooks        
         self.metadata = metadata
-        self.in_place = in_place
+        self.unknown_objects = unknown_objects
+
+    def encode(self, obj, /):
+        # Default-encodable objects
+        if type(obj) in {int, float, str, bool, type(None)}:
+            return obj
+        if type(obj) in {list, tuple, set}:
+            return self.encode_list_like(obj)
+        if type(obj) == dict:
+            return self.encode_dict_like(obj)
+        
+        # Custom objects
+        return self.encode_custom(obj)
+
+    def encode_list_like(self, obj: Union[list, tuple, set]):
+        result = []
+
+        for item in obj:
+            result.append(self.encode(item))
+        
+        return result
+    
+    def encode_dict_like(self, obj: dict):
+        result = {}
+
+        for key, value in obj.items():
+            result[self.encode(key)] = self.encode(value)
+        
+        return result
+
+    def encode_custom(self, obj):
+        # Get encode function for this object
+        func = self.encode_function(obj)
+
+        if func is None:
+            if self.unknown_objects == &#34;as-is&#34;:
+                return obj
+            if self.unknown_objects == &#34;error&#34;:
+                raise TypeError(&#34;object of type \&#34;&#34; + type(obj).__qualname__ + &#34;\&#34; cannot be encoded&#34;)
+        
+        result = func(obj)
+        result = self.encode(result)
+        
+        if self.metadata and not isinstance(result, dict):
+            # If custom function did not return a dict and metadata is enabled, raise ValueError because this metadata
+            # has nowhere to be written
+            raise ValueError(&#34;serialized value of type \&#34;&#34; + type(obj) + &#34;\&#34; is not a dict, metadata cannot be written&#34;)
+
+        # Write metadata about the object
+        if self.metadata:
+            self.write_metadata(obj, result)
+        
+        return result
     
     def encode_function(self, obj, /):
         &#34;&#34;&#34;Find a custom encode function for obj, or return None if that function does not exist.&#34;&#34;&#34;
@@ -180,63 +240,30 @@ class BaseEncoder:
         
         return None
 
-    def encode(self, obj, /):
-        # Get encode function for this object
-        func = self.encode_function(obj)
+    def write_metadata(self, obj, data: dict) -&gt; dict:
+        &#34;&#34;&#34;Write metadata that is required to reassemble the object, encoded by BaseEncoder.
 
-        if func is not None:
-            # If the function exists, encode this object
-            result = func(obj)
+        An internal function that adds the `__class__` metadata field to the serialized data.
 
-            # Encode resulting dict in-place (to encode nested custom objects)
-            in_place_saved = self.in_place
-            self.in_place = True
-            self.encode(result)
-            self.in_place = in_place_saved
-            
-            # Write metadata about the object
-            if self.metadata:
-                _write_metadata(obj, result)
-            
-            return result
-        
-        if isinstance(obj, dict):
-            # If the object is not custom encodable, but is a dict, encode its elements
-            if self.in_place:
-                result = obj  # In-place encoder replaces custom objects with their encodings
-            else:
-                result = {}  # Non-in-place encoder creates a new dict
-            
-            for key, value in obj.items():
-                # For each item, encode it
-                encoded = self.encode(value)
-                if encoded is value and not self.in_place:
-                    # If item could not be encoded and not in place, deepcopy it
-                    result[key] = deepcopy(value)
-                else:
-                    result[key] = encoded
-        
-            return result
-        
-        if isinstance(obj, list) or isinstance(obj, tuple):
-            if self.in_place:
-                result = obj  # In-place encoder replaces custom objects with their encodings
-            else:
-                result = [None] * len(obj)  # Non-in-place encoder creates a new list
-            
-            for i in range(len(obj)):
-                # For each item, encode it
-                value = obj[i]
-                encoded = self.encode(value)
-                if encoded is value and not self.in_place:
-                    # If item could not be encoded and not in place, deepcopy it
-                    result[i] = deepcopy(value)
-                else:
-                    result[i] = encoded
-            
-            return result
+        Returns
+        -------
+        data : dict
+            The `data` parameter.
+        &#34;&#34;&#34;
+        if &#34;__class__&#34; in data:
+            raise ValueError(
+                &#34;during serialization of &#34; +
+                str(obj) +
+                &#34; a \&#34;__class__\&#34; field is being overwritten&#34;
+            )
 
-        return obj
+        # Add meta information necessary to decode the object later
+        data[&#34;__class__&#34;] = {
+            &#34;__module__&#34;: obj.__class__.__module__,
+            &#34;__qualname__&#34;: obj.__class__.__qualname__
+        }
+
+        return data
 
     @property
     def hooks(self):
@@ -249,7 +276,24 @@ class BaseEncoder:
         elif isinstance(value, tuple):  # hooks.Hooks is also a tuple
             self._hooks = value[0]  # Only serialization functions
         else:
-            self._hooks = {}</code></pre>
+            self._hooks = {}
+
+    @property
+    def unknown_objects(self):
+        return self._unknown_objects
+    
+    @unknown_objects.setter
+    def unknown_objects(self, value: str):
+        unknown_objects_values = {&#34;as-is&#34;, &#34;error&#34;}
+        if value not in unknown_objects_values:
+            raise ValueError(
+                &#34;value \&#34;&#34;
+                + value
+                + &#34;\&#34; of unknown_objects not one of &#34;
+                + str(unknown_objects_values)
+            )
+        
+        self._unknown_objects = value</code></pre>
 </details>
 <h3>Instance variables</h3>
 <dl>
@@ -265,6 +309,18 @@ def hooks(self):
     return self._hooks</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.serial.base.encoder.BaseEncoder.unknown_objects"><code class="name">var <span class="ident">unknown_objects</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def unknown_objects(self):
+    return self._unknown_objects</code></pre>
+</details>
+</dd>
 </dl>
 <h3>Methods</h3>
 <dl>
@@ -278,62 +334,68 @@ def hooks(self):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def encode(self, obj, /):
+    # Default-encodable objects
+    if type(obj) in {int, float, str, bool, type(None)}:
+        return obj
+    if type(obj) in {list, tuple, set}:
+        return self.encode_list_like(obj)
+    if type(obj) == dict:
+        return self.encode_dict_like(obj)
+    
+    # Custom objects
+    return self.encode_custom(obj)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serial.base.encoder.BaseEncoder.encode_custom"><code class="name flex">
+<span>def <span class="ident">encode_custom</span></span>(<span>self, obj)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_custom(self, obj):
     # Get encode function for this object
     func = self.encode_function(obj)
 
-    if func is not None:
-        # If the function exists, encode this object
-        result = func(obj)
+    if func is None:
+        if self.unknown_objects == &#34;as-is&#34;:
+            return obj
+        if self.unknown_objects == &#34;error&#34;:
+            raise TypeError(&#34;object of type \&#34;&#34; + type(obj).__qualname__ + &#34;\&#34; cannot be encoded&#34;)
+    
+    result = func(obj)
+    result = self.encode(result)
+    
+    if self.metadata and not isinstance(result, dict):
+        # If custom function did not return a dict and metadata is enabled, raise ValueError because this metadata
+        # has nowhere to be written
+        raise ValueError(&#34;serialized value of type \&#34;&#34; + type(obj) + &#34;\&#34; is not a dict, metadata cannot be written&#34;)
 
-        # Encode resulting dict in-place (to encode nested custom objects)
-        in_place_saved = self.in_place
-        self.in_place = True
-        self.encode(result)
-        self.in_place = in_place_saved
-        
-        # Write metadata about the object
-        if self.metadata:
-            _write_metadata(obj, result)
-        
-        return result
+    # Write metadata about the object
+    if self.metadata:
+        self.write_metadata(obj, result)
     
-    if isinstance(obj, dict):
-        # If the object is not custom encodable, but is a dict, encode its elements
-        if self.in_place:
-            result = obj  # In-place encoder replaces custom objects with their encodings
-        else:
-            result = {}  # Non-in-place encoder creates a new dict
-        
-        for key, value in obj.items():
-            # For each item, encode it
-            encoded = self.encode(value)
-            if encoded is value and not self.in_place:
-                # If item could not be encoded and not in place, deepcopy it
-                result[key] = deepcopy(value)
-            else:
-                result[key] = encoded
-    
-        return result
-    
-    if isinstance(obj, list) or isinstance(obj, tuple):
-        if self.in_place:
-            result = obj  # In-place encoder replaces custom objects with their encodings
-        else:
-            result = [None] * len(obj)  # Non-in-place encoder creates a new list
-        
-        for i in range(len(obj)):
-            # For each item, encode it
-            value = obj[i]
-            encoded = self.encode(value)
-            if encoded is value and not self.in_place:
-                # If item could not be encoded and not in place, deepcopy it
-                result[i] = deepcopy(value)
-            else:
-                result[i] = encoded
-        
-        return result
+    return result</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serial.base.encoder.BaseEncoder.encode_dict_like"><code class="name flex">
+<span>def <span class="ident">encode_dict_like</span></span>(<span>self, obj: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_dict_like(self, obj: dict):
+    result = {}
 
-    return obj</code></pre>
+    for key, value in obj.items():
+        result[self.encode(key)] = self.encode(value)
+    
+    return result</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.serial.base.encoder.BaseEncoder.encode_function"><code class="name flex">
@@ -356,6 +418,65 @@ def hooks(self):
     return None</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.serial.base.encoder.BaseEncoder.encode_list_like"><code class="name flex">
+<span>def <span class="ident">encode_list_like</span></span>(<span>self, obj: typing.Union[list, tuple, set])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_list_like(self, obj: Union[list, tuple, set]):
+    result = []
+
+    for item in obj:
+        result.append(self.encode(item))
+    
+    return result</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serial.base.encoder.BaseEncoder.write_metadata"><code class="name flex">
+<span>def <span class="ident">write_metadata</span></span>(<span>self, obj, data: dict) -> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Write metadata that is required to reassemble the object, encoded by BaseEncoder.</p>
+<p>An internal function that adds the <code>__class__</code> metadata field to the serialized data.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>data</code></strong> :&ensp;<code>dict</code></dt>
+<dd>The <code>data</code> parameter.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def write_metadata(self, obj, data: dict) -&gt; dict:
+    &#34;&#34;&#34;Write metadata that is required to reassemble the object, encoded by BaseEncoder.
+
+    An internal function that adds the `__class__` metadata field to the serialized data.
+
+    Returns
+    -------
+    data : dict
+        The `data` parameter.
+    &#34;&#34;&#34;
+    if &#34;__class__&#34; in data:
+        raise ValueError(
+            &#34;during serialization of &#34; +
+            str(obj) +
+            &#34; a \&#34;__class__\&#34; field is being overwritten&#34;
+        )
+
+    # Add meta information necessary to decode the object later
+    data[&#34;__class__&#34;] = {
+        &#34;__module__&#34;: obj.__class__.__module__,
+        &#34;__qualname__&#34;: obj.__class__.__qualname__
+    }
+
+    return data</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -376,10 +497,15 @@ def hooks(self):
 <ul>
 <li>
 <h4><code><a title="nfb_studio.serial.base.encoder.BaseEncoder" href="#nfb_studio.serial.base.encoder.BaseEncoder">BaseEncoder</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="nfb_studio.serial.base.encoder.BaseEncoder.encode" href="#nfb_studio.serial.base.encoder.BaseEncoder.encode">encode</a></code></li>
+<li><code><a title="nfb_studio.serial.base.encoder.BaseEncoder.encode_custom" href="#nfb_studio.serial.base.encoder.BaseEncoder.encode_custom">encode_custom</a></code></li>
+<li><code><a title="nfb_studio.serial.base.encoder.BaseEncoder.encode_dict_like" href="#nfb_studio.serial.base.encoder.BaseEncoder.encode_dict_like">encode_dict_like</a></code></li>
 <li><code><a title="nfb_studio.serial.base.encoder.BaseEncoder.encode_function" href="#nfb_studio.serial.base.encoder.BaseEncoder.encode_function">encode_function</a></code></li>
+<li><code><a title="nfb_studio.serial.base.encoder.BaseEncoder.encode_list_like" href="#nfb_studio.serial.base.encoder.BaseEncoder.encode_list_like">encode_list_like</a></code></li>
 <li><code><a title="nfb_studio.serial.base.encoder.BaseEncoder.hooks" href="#nfb_studio.serial.base.encoder.BaseEncoder.hooks">hooks</a></code></li>
+<li><code><a title="nfb_studio.serial.base.encoder.BaseEncoder.unknown_objects" href="#nfb_studio.serial.base.encoder.BaseEncoder.unknown_objects">unknown_objects</a></code></li>
+<li><code><a title="nfb_studio.serial.base.encoder.BaseEncoder.write_metadata" href="#nfb_studio.serial.base.encoder.BaseEncoder.write_metadata">write_metadata</a></code></li>
 </ul>
 </li>
 </ul>

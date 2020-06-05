@@ -28,67 +28,80 @@
 from typing import Union
 from importlib import import_module
 from inspect import isclass
+from functools import reduce
 
 from ..hooks import Hooks
 
 
+def deepgetattr(obj, attr):
+    &#34;&#34;&#34;Recurses through an attribute chain to get the ultimate value.&#34;&#34;&#34;
+    return reduce(getattr, attr.split(&#39;.&#39;), obj)
+
+
 class BaseDecoder:
-    def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None, in_place=False, **kw):
+    def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None):
         self.hooks = hooks
-        self.in_place = in_place
 
     def decode(self, data):
-        # If data is not a dict, it is not an encoded object and is returned as-is -------------------------------------
-        if not isinstance(data, dict):
-            if self.in_place:
-                return data
-            return deepcopy(data)
-        
-        if self.in_place:
-            result = data
-        else:
-            result = {}
+        if isinstance(data, dict):
+            return self.decode_dict(data)
+        if isinstance(data, list):
+            return self.decode_list(data)
 
-        # Regardless of whether data is an encoded object or a plain dict, recursively decode its items ----------------
-        for key, value in data:
+        return data       
+    
+    def decode_list(self, data):
+        result = []
+        for item in data:
+            result.append(self.decode(item))
+        return result
+    
+    def decode_dict(self, data):
+        &#34;&#34;&#34;Decode a dict object.
+        If dict has metadata, this function will call decode_custom after decoding the internal values.
+        &#34;&#34;&#34;
+        result = {}
+        for key, value in data.items():
             result[key] = self.decode(value)
         
-        # If data does not have __class__, it is not considered an encoded object and is returned ----------------------
-        if &#34;__class__&#34; not in data:
-            return data
+        if &#34;__class__&#34; in result:
+            # Decode custom object
+            result = self.decode_custom(result)
+        
+        return result
 
-        # This looks like an encoded python object. Create it and deserialize data into it. ----------------------------
+    def decode_custom(self, data):
         # The following code is adapted from django.utils.module_loading module.
         module_path = data[&#34;__class__&#34;][&#34;__module__&#34;]
         class_name = data[&#34;__class__&#34;][&#34;__qualname__&#34;]
 
         module = import_module(module_path)
 
-        # Get the class that needs to be instantiated ------------------------------------------------------------------
+        # Get the class that needs to be instantiated
         try:
-            cls = getattr(module, class_name)
+            cls = deepgetattr(module, class_name)
         except AttributeError:
             message = &#34;module \&#34;{}\&#34; does not define a \&#34;{}\&#34; class&#34;.format(module_path, class_name)
             raise ImportError(message)
 
-        # Verify that cls is in fact a class ---------------------------------------------------------------------------
+        # Verify that cls is in fact a class
         if not isclass(cls):
             raise TypeError(&#34;{}.{} is not a class&#34;.format(module_path, class_name))
 
-        # Default-construct an object of that class --------------------------------------------------------------------
+        # Default-construct an object of that class
         obj = cls()
 
-        # Load the json data into the object ---------------------------------------------------------------------------
+        # Load the json data into the object
         if cls in self.hooks:
             self.hooks[cls](obj, data)
             return obj
-        elif hasattr(obj, &#34;deserialize&#34;) and callable(obj.deserialize):
+        if hasattr(obj, &#34;deserialize&#34;) and callable(obj.deserialize):
             obj.deserialize(data)
             return obj
-        else:
-            message = &#34;an instance of {}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
-                .format(module_path, class_name)
-            raise AttributeError(message)
+        
+        message = &#34;an instance of {}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
+            .format(module_path, class_name)
+        raise AttributeError(message)
 
     @property
     def hooks(self):
@@ -109,13 +122,30 @@ class BaseDecoder:
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="nfb_studio.serial.base.decoder.deepgetattr"><code class="name flex">
+<span>def <span class="ident">deepgetattr</span></span>(<span>obj, attr)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Recurses through an attribute chain to get the ultimate value.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deepgetattr(obj, attr):
+    &#34;&#34;&#34;Recurses through an attribute chain to get the ultimate value.&#34;&#34;&#34;
+    return reduce(getattr, attr.split(&#39;.&#39;), obj)</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
 <dt id="nfb_studio.serial.base.decoder.BaseDecoder"><code class="flex name class">
 <span>class <span class="ident">BaseDecoder</span></span>
-<span>(</span><span>*, hooks: typing.Union[dict, tuple, nfb_studio.serial.hooks.Hooks] = None, in_place=False, **kw)</span>
+<span>(</span><span>*, hooks: typing.Union[dict, tuple, nfb_studio.serial.hooks.Hooks] = None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -124,62 +154,69 @@ class BaseDecoder:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class BaseDecoder:
-    def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None, in_place=False, **kw):
+    def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None):
         self.hooks = hooks
-        self.in_place = in_place
 
     def decode(self, data):
-        # If data is not a dict, it is not an encoded object and is returned as-is -------------------------------------
-        if not isinstance(data, dict):
-            if self.in_place:
-                return data
-            return deepcopy(data)
-        
-        if self.in_place:
-            result = data
-        else:
-            result = {}
+        if isinstance(data, dict):
+            return self.decode_dict(data)
+        if isinstance(data, list):
+            return self.decode_list(data)
 
-        # Regardless of whether data is an encoded object or a plain dict, recursively decode its items ----------------
-        for key, value in data:
+        return data       
+    
+    def decode_list(self, data):
+        result = []
+        for item in data:
+            result.append(self.decode(item))
+        return result
+    
+    def decode_dict(self, data):
+        &#34;&#34;&#34;Decode a dict object.
+        If dict has metadata, this function will call decode_custom after decoding the internal values.
+        &#34;&#34;&#34;
+        result = {}
+        for key, value in data.items():
             result[key] = self.decode(value)
         
-        # If data does not have __class__, it is not considered an encoded object and is returned ----------------------
-        if &#34;__class__&#34; not in data:
-            return data
+        if &#34;__class__&#34; in result:
+            # Decode custom object
+            result = self.decode_custom(result)
+        
+        return result
 
-        # This looks like an encoded python object. Create it and deserialize data into it. ----------------------------
+    def decode_custom(self, data):
         # The following code is adapted from django.utils.module_loading module.
         module_path = data[&#34;__class__&#34;][&#34;__module__&#34;]
         class_name = data[&#34;__class__&#34;][&#34;__qualname__&#34;]
 
         module = import_module(module_path)
 
-        # Get the class that needs to be instantiated ------------------------------------------------------------------
+        # Get the class that needs to be instantiated
         try:
-            cls = getattr(module, class_name)
+            cls = deepgetattr(module, class_name)
         except AttributeError:
             message = &#34;module \&#34;{}\&#34; does not define a \&#34;{}\&#34; class&#34;.format(module_path, class_name)
             raise ImportError(message)
 
-        # Verify that cls is in fact a class ---------------------------------------------------------------------------
+        # Verify that cls is in fact a class
         if not isclass(cls):
             raise TypeError(&#34;{}.{} is not a class&#34;.format(module_path, class_name))
 
-        # Default-construct an object of that class --------------------------------------------------------------------
+        # Default-construct an object of that class
         obj = cls()
 
-        # Load the json data into the object ---------------------------------------------------------------------------
+        # Load the json data into the object
         if cls in self.hooks:
             self.hooks[cls](obj, data)
             return obj
-        elif hasattr(obj, &#34;deserialize&#34;) and callable(obj.deserialize):
+        if hasattr(obj, &#34;deserialize&#34;) and callable(obj.deserialize):
             obj.deserialize(data)
             return obj
-        else:
-            message = &#34;an instance of {}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
-                .format(module_path, class_name)
-            raise AttributeError(message)
+        
+        message = &#34;an instance of {}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
+            .format(module_path, class_name)
+        raise AttributeError(message)
 
     @property
     def hooks(self):
@@ -221,57 +258,96 @@ def hooks(self):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def decode(self, data):
-    # If data is not a dict, it is not an encoded object and is returned as-is -------------------------------------
-    if not isinstance(data, dict):
-        if self.in_place:
-            return data
-        return deepcopy(data)
-    
-    if self.in_place:
-        result = data
-    else:
-        result = {}
+    if isinstance(data, dict):
+        return self.decode_dict(data)
+    if isinstance(data, list):
+        return self.decode_list(data)
 
-    # Regardless of whether data is an encoded object or a plain dict, recursively decode its items ----------------
-    for key, value in data:
-        result[key] = self.decode(value)
-    
-    # If data does not have __class__, it is not considered an encoded object and is returned ----------------------
-    if &#34;__class__&#34; not in data:
-        return data
-
-    # This looks like an encoded python object. Create it and deserialize data into it. ----------------------------
+    return data       </code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serial.base.decoder.BaseDecoder.decode_custom"><code class="name flex">
+<span>def <span class="ident">decode_custom</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode_custom(self, data):
     # The following code is adapted from django.utils.module_loading module.
     module_path = data[&#34;__class__&#34;][&#34;__module__&#34;]
     class_name = data[&#34;__class__&#34;][&#34;__qualname__&#34;]
 
     module = import_module(module_path)
 
-    # Get the class that needs to be instantiated ------------------------------------------------------------------
+    # Get the class that needs to be instantiated
     try:
-        cls = getattr(module, class_name)
+        cls = deepgetattr(module, class_name)
     except AttributeError:
         message = &#34;module \&#34;{}\&#34; does not define a \&#34;{}\&#34; class&#34;.format(module_path, class_name)
         raise ImportError(message)
 
-    # Verify that cls is in fact a class ---------------------------------------------------------------------------
+    # Verify that cls is in fact a class
     if not isclass(cls):
         raise TypeError(&#34;{}.{} is not a class&#34;.format(module_path, class_name))
 
-    # Default-construct an object of that class --------------------------------------------------------------------
+    # Default-construct an object of that class
     obj = cls()
 
-    # Load the json data into the object ---------------------------------------------------------------------------
+    # Load the json data into the object
     if cls in self.hooks:
         self.hooks[cls](obj, data)
         return obj
-    elif hasattr(obj, &#34;deserialize&#34;) and callable(obj.deserialize):
+    if hasattr(obj, &#34;deserialize&#34;) and callable(obj.deserialize):
         obj.deserialize(data)
         return obj
-    else:
-        message = &#34;an instance of {}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
-            .format(module_path, class_name)
-        raise AttributeError(message)</code></pre>
+    
+    message = &#34;an instance of {}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
+        .format(module_path, class_name)
+    raise AttributeError(message)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serial.base.decoder.BaseDecoder.decode_dict"><code class="name flex">
+<span>def <span class="ident">decode_dict</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decode a dict object.
+If dict has metadata, this function will call decode_custom after decoding the internal values.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode_dict(self, data):
+    &#34;&#34;&#34;Decode a dict object.
+    If dict has metadata, this function will call decode_custom after decoding the internal values.
+    &#34;&#34;&#34;
+    result = {}
+    for key, value in data.items():
+        result[key] = self.decode(value)
+    
+    if &#34;__class__&#34; in result:
+        # Decode custom object
+        result = self.decode_custom(result)
+    
+    return result</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.serial.base.decoder.BaseDecoder.decode_list"><code class="name flex">
+<span>def <span class="ident">decode_list</span></span>(<span>self, data)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decode_list(self, data):
+    result = []
+    for item in data:
+        result.append(self.decode(item))
+    return result</code></pre>
 </details>
 </dd>
 </dl>
@@ -290,12 +366,20 @@ def hooks(self):
 <li><code><a title="nfb_studio.serial.base" href="index.html">nfb_studio.serial.base</a></code></li>
 </ul>
 </li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="nfb_studio.serial.base.decoder.deepgetattr" href="#nfb_studio.serial.base.decoder.deepgetattr">deepgetattr</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
 <h4><code><a title="nfb_studio.serial.base.decoder.BaseDecoder" href="#nfb_studio.serial.base.decoder.BaseDecoder">BaseDecoder</a></code></h4>
 <ul class="">
 <li><code><a title="nfb_studio.serial.base.decoder.BaseDecoder.decode" href="#nfb_studio.serial.base.decoder.BaseDecoder.decode">decode</a></code></li>
+<li><code><a title="nfb_studio.serial.base.decoder.BaseDecoder.decode_custom" href="#nfb_studio.serial.base.decoder.BaseDecoder.decode_custom">decode_custom</a></code></li>
+<li><code><a title="nfb_studio.serial.base.decoder.BaseDecoder.decode_dict" href="#nfb_studio.serial.base.decoder.BaseDecoder.decode_dict">decode_dict</a></code></li>
+<li><code><a title="nfb_studio.serial.base.decoder.BaseDecoder.decode_list" href="#nfb_studio.serial.base.decoder.BaseDecoder.decode_list">decode_list</a></code></li>
 <li><code><a title="nfb_studio.serial.base.decoder.BaseDecoder.hooks" href="#nfb_studio.serial.base.decoder.BaseDecoder.hooks">hooks</a></code></li>
 </ul>
 </li>
