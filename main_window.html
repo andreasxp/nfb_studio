@@ -52,6 +52,9 @@ class MainWindow(QMainWindow):
         export = filemenu.addAction(&#34;Export&#34;)
         export.triggered.connect(self.export)
 
+        import_xml = filemenu.addAction(&#34;Import&#34;)
+        import_xml.triggered.connect(self.import_xml)
+
     def experiment(self):
         return self._experiment
 
@@ -99,6 +102,17 @@ class MainWindow(QMainWindow):
             data = file.read()
         
         ex = Experiment.load(data)
+        self.setExperiment(ex)
+
+    def import_xml(self):
+        file_path = QFileDialog.getOpenFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
+        if file_path == &#34;&#34;:
+            return
+
+        with open(file_path) as file:
+            data = file.read()
+        
+        ex = Experiment.import_xml(data)
         self.setExperiment(ex)</code></pre>
 </details>
 </section>
@@ -140,6 +154,9 @@ class MainWindow(QMainWindow):
         export = filemenu.addAction(&#34;Export&#34;)
         export.triggered.connect(self.export)
 
+        import_xml = filemenu.addAction(&#34;Import&#34;)
+        import_xml.triggered.connect(self.import_xml)
+
     def experiment(self):
         return self._experiment
 
@@ -187,6 +204,17 @@ class MainWindow(QMainWindow):
             data = file.read()
         
         ex = Experiment.load(data)
+        self.setExperiment(ex)
+
+    def import_xml(self):
+        file_path = QFileDialog.getOpenFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
+        if file_path == &#34;&#34;:
+            return
+
+        with open(file_path) as file:
+            data = file.read()
+        
+        ex = Experiment.import_xml(data)
         self.setExperiment(ex)</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -241,6 +269,27 @@ class MainWindow(QMainWindow):
 
     with open(file_path, &#34;w&#34;) as file:
         file.write(data)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.import_xml"><code class="name flex">
+<span>def <span class="ident">import_xml</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def import_xml(self):
+    file_path = QFileDialog.getOpenFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
+    if file_path == &#34;&#34;:
+        return
+
+    with open(file_path) as file:
+        data = file.read()
+    
+    ex = Experiment.import_xml(data)
+    self.setExperiment(ex)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.main_window.MainWindow.load"><code class="name flex">
@@ -328,6 +377,7 @@ class MainWindow(QMainWindow):
 <ul class="two-column">
 <li><code><a title="nfb_studio.main_window.MainWindow.experiment" href="#nfb_studio.main_window.MainWindow.experiment">experiment</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.export" href="#nfb_studio.main_window.MainWindow.export">export</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.import_xml" href="#nfb_studio.main_window.MainWindow.import_xml">import_xml</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.load" href="#nfb_studio.main_window.MainWindow.load">load</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.save" href="#nfb_studio.main_window.MainWindow.save">save</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.setExperiment" href="#nfb_studio.main_window.MainWindow.setExperiment">setExperiment</a></code></li>

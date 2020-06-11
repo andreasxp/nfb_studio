@@ -52,6 +52,8 @@ class SpatialFilter(SignalNode):
             
             n._matrix_path = self.matrix_path.text()
 
+    default_matrix_path = &#34;&#34;
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -59,7 +61,7 @@ class SpatialFilter(SignalNode):
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self._matrix_path = &#34;&#34;
+        self._matrix_path = self.default_matrix_path
         self.sync()
 
     def matrixPath(self) -&gt; str:
@@ -132,6 +134,8 @@ class SpatialFilter(SignalNode):
             
             n._matrix_path = self.matrix_path.text()
 
+    default_matrix_path = &#34;&#34;
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
@@ -139,7 +143,7 @@ class SpatialFilter(SignalNode):
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self._matrix_path = &#34;&#34;
+        self._matrix_path = self.default_matrix_path
         self.sync()
 
     def matrixPath(self) -&gt; str:
@@ -179,6 +183,13 @@ class SpatialFilter(SignalNode):
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.default_matrix_path"><code class="name">var <span class="ident">default_matrix_path</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.add_nfb_export_data"><code class="name flex">
@@ -291,8 +302,9 @@ class SpatialFilter(SignalNode):
 <ul>
 <li>
 <h4><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter">SpatialFilter</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.add_nfb_export_data">add_nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.default_matrix_path" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.default_matrix_path">default_matrix_path</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.deserialize" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.matrixPath" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.matrixPath">matrixPath</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.serialize" href="#nfb_studio.widgets.signal_nodes.spatial_filter.SpatialFilter.serialize">serialize</a></code></li>

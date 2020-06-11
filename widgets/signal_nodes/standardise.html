@@ -60,6 +60,9 @@ class Standardise(SignalNode):
             n._average = self.average.value()
             n._standard_deviation = self.standard_deviation.value()
 
+    default_average = 0
+    default_standard_deviation = 1
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         
@@ -67,8 +70,8 @@ class Standardise(SignalNode):
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self._average = 0
-        self._standard_deviation = 1
+        self._average = self.default_average
+        self._standard_deviation = self.default_standard_deviation
         self.sync()
     
     def average(self):
@@ -159,6 +162,9 @@ class Standardise(SignalNode):
             n._average = self.average.value()
             n._standard_deviation = self.standard_deviation.value()
 
+    default_average = 0
+    default_standard_deviation = 1
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         
@@ -166,8 +172,8 @@ class Standardise(SignalNode):
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self._average = 0
-        self._standard_deviation = 1
+        self._average = self.default_average
+        self._standard_deviation = self.default_standard_deviation
         self.sync()
     
     def average(self):
@@ -218,6 +224,17 @@ class Standardise(SignalNode):
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.default_average"><code class="name">var <span class="ident">default_average</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.default_standard_deviation"><code class="name">var <span class="ident">default_standard_deviation</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.add_nfb_export_data"><code class="name flex">
@@ -363,6 +380,8 @@ class Standardise(SignalNode):
 <ul class="">
 <li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.add_nfb_export_data">add_nfb_export_data</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.average" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.average">average</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.default_average" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.default_average">default_average</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.default_standard_deviation" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.default_standard_deviation">default_standard_deviation</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.deserialize" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.serialize" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.serialize">serialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.standardise.Standardise.setAverage" href="#nfb_studio.widgets.signal_nodes.standardise.Standardise.setAverage">setAverage</a></code></li>

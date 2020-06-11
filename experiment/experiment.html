@@ -54,7 +54,7 @@ class Experiment:
         self.raw_data_path = &#34;&#34;
         self.hostname_port = &#34;&#34;
         self.dc = False  # TODO: A more descriptive name?
-        self.prefilter_band = (None, None)
+        self.prefilter_band = [None, None]
         self.plot_raw = True
         self.plot_signals = True
         self.show_subject_window = True
@@ -104,6 +104,178 @@ class Experiment:
     def load(cls, data: str):
         decoder = json.JSONDecoder(hooks=hooks.qt)
         return decoder.decode(data)
+
+    @classmethod
+    def import_xml(cls, xml_string: str):
+        &#34;&#34;&#34;Decode an XML string containing an exported file into an nfb_studio experiment.
+        Decoding xml files is an imperfect science, since nfb_studio has more information, like node position, their
+        connections, and so on. This function does it&#39;s best to at least produce the correct experiment flow.
+        &#34;&#34;&#34;
+        ex = cls()
+
+        # Decode the string --------------------------------------------------------------------------------------------
+        decoder = xml.XMLDecoder(force_list=(&#34;DerivedSignal&#34;, &#34;CompositeSignal&#34;, &#34;FeedbackProtocol&#34;, &#34;PGroup&#34;, &#34;s&#34;))
+        root = decoder.decode(xml_string)
+        data = next(iter(root.values()))  # Get first (and only) value in root
+
+        # Add empty signal/block/group/sequence lists if they are missing ----------------------------------------------
+        if data[&#34;vSignals&#34;] is None:
+            data[&#34;vSignals&#34;] = {
+                &#34;DerivedSignal&#34;: [],
+                &#34;CompositeSignal&#34;: [],
+            }
+        else:
+            if &#34;DerivedSignal&#34; not in data[&#34;vSignals&#34;]:
+                data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;] = []
+            if &#34;CompositeSignal&#34; not in data[&#34;vSignals&#34;]:
+                data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = []
+        
+        if data[&#34;vProtocols&#34;] is None:
+            data[&#34;vProtocols&#34;] = {&#34;FeedbackProtocol&#34;: []}
+        if data[&#34;vPGroups&#34;] is None:
+            data[&#34;vPGroups&#34;] = {&#34;PGroup&#34;: []}
+        if data[&#34;vPSequence&#34;] is None:
+            data[&#34;vPSequence&#34;] = {&#34;s&#34;: []}
+
+        # Decode main experiment properties ----------------------------------------------------------------------------
+        ex.name = data[&#34;sExperimentName&#34;]
+        ex.lsl_stream_name = data[&#34;sStreamName&#34;]
+
+        if &#34;sPrefilterBand&#34; in data:
+            prefilter_band_values = data[&#34;sPrefilterBand&#34;].split(&#34; &#34;)
+            if prefilter_band_values[0] == &#34;None&#34;:
+                ex.prefilter_band[0] = None
+            else:
+                ex.prefilter_band[0] = float(prefilter_band_values[0])
+
+            if prefilter_band_values[1] == &#34;None&#34;:
+                ex.prefilter_band[1] = None
+            else:
+                ex.prefilter_band[1] = float(prefilter_band_values[1])
+
+        ex.dc = bool(float(data[&#34;bDC&#34;]))
+        ex.inlet = data[&#34;sInletType&#34;]
+        ex.raw_data_path = data[&#34;sRawDataFilePath&#34;]
+        ex.hostname_port = data[&#34;sFTHostnamePort&#34;]
+        ex.plot_raw = bool(float(data[&#34;bPlotRaw&#34;]))
+        ex.plot_signals = bool(float(data[&#34;bPlotSignals&#34;]))
+        ex.show_subject_window = bool(float(data.get(&#34;bShowSubjectWindow&#34;, ex.show_subject_window)))
+        ex.discard_channels = data[&#34;sReference&#34;]
+        ex.reference_sub = data[&#34;sReferenceSub&#34;]
+        ex.show_proto_rectangle = bool(float(data.get(&#34;bShowPhotoRectangle&#34;, ex.show_proto_rectangle)))
+        ex.show_notch_filters = bool(float(data.get(&#34;sVizNotchFilters&#34;, ex.show_notch_filters)))
+
+        # Decode signals -----------------------------------------------------------------------------------------------
+        node_pos = [0, 0]
+        node_xdiff = -100
+        node_ydiff = 100
+
+        for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
+            # Assemble the signal front to back, starting with the signal name.
+            # Some nodes may not be present, this loop accounts for it.
+            if &#34;sSignalName&#34; in signal_data:
+                # Create the node and set variables from data
+                n = DerivedSignalExport()
+                n.setSignalName(signal_data[&#34;sSignalName&#34;])
+
+                # Set position and add to scheme
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+            if (signal_data.get(&#34;fAverage&#34;) is not None) or (signal_data.get(&#34;fStdDev&#34;) is not None):
+                last = n
+                n = Standardise()
+                n.setAverage(float(signal_data.get(&#34;fAverage&#34;, n.default_average)))
+                n.setStandardDeviation(float(signal_data.get(&#34;fStdDev&#34;, n.default_standard_deviation)))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if (&#34;fSmoothingFactor&#34; in signal_data) or (&#34;method&#34; in signal_data):
+                last = n
+                n = EnvelopeDetector()
+                n.setSmoothingFactor(float(signal_data.get(&#34;fSmoothingFactor&#34;, n.default_smoothing_factor)))
+                n.setMethod(signal_data.get(&#34;method&#34;, n.default_method))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if (&#34;fBandpassLowHz&#34; in signal_data) or (&#34;fBandpassHighHz&#34; in signal_data):
+                last = n
+                n = BandpassFilter()
+                n.setLowerBound(float(signal_data.get(&#34;fBandpassLowHz&#34;, n.default_lower_bound)))
+                n.setUpperBound(float(signal_data.get(&#34;fBandpassHighHz&#34;, n.default_upper_bound)))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if &#34;SpatialFilterMatrix&#34; in signal_data:
+                last = n
+                n = SpatialFilter()
+                n.setMatrixPath(signal_data[&#34;SpatialFilterMatrix&#34;])
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            # Unconditionally add LSLInput
+            last = n
+            n = LSLInput()
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+
+            # Bump vertial coordinates to prepare for a new signal
+            node_pos[0] = 0
+            node_pos[1] += node_ydiff
+
+        # Decode blocks ------------------------------------------------------------------------------------------------
+        for block_data in data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;]:
+            block = Block.nfb_import_data(block_data)
+            name = block_data[&#34;sProtocolName&#34;]
+            ex.blocks[name] = block
+        
+        # Decode groups ------------------------------------------------------------------------------------------------
+        for group_data in data[&#34;vPGroups&#34;][&#34;PGroup&#34;]:
+            group = Group.nfb_import_data(group_data)
+            name = group_data[&#34;sName&#34;]
+            ex.groups[name] = group
+        
+        # Decode sequence ----------------------------------------------------------------------------------------------
+        node = None
+        node_pos = [0, 0]
+        node_xdiff = 100
+
+        for name in data[&#34;vPSequence&#34;][&#34;s&#34;]:
+            last = node
+
+            if name in ex.blocks:
+                node = BlockNode()
+            else:
+                node = GroupNode()
+
+            node.setTitle(name)
+            node.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.sequence_scheme.addItem(node)
+
+            if last is not None:
+                ex.sequence_scheme.connect_nodes(last.outputs[0], node.inputs[0])
+
+        # --------------------------------------------------------------------------------------------------------------
+        return ex
 
     def updateView(self):
         view = self.view()
@@ -340,7 +512,7 @@ class Experiment:
         self.raw_data_path = &#34;&#34;
         self.hostname_port = &#34;&#34;
         self.dc = False  # TODO: A more descriptive name?
-        self.prefilter_band = (None, None)
+        self.prefilter_band = [None, None]
         self.plot_raw = True
         self.plot_signals = True
         self.show_subject_window = True
@@ -390,6 +562,178 @@ class Experiment:
     def load(cls, data: str):
         decoder = json.JSONDecoder(hooks=hooks.qt)
         return decoder.decode(data)
+
+    @classmethod
+    def import_xml(cls, xml_string: str):
+        &#34;&#34;&#34;Decode an XML string containing an exported file into an nfb_studio experiment.
+        Decoding xml files is an imperfect science, since nfb_studio has more information, like node position, their
+        connections, and so on. This function does it&#39;s best to at least produce the correct experiment flow.
+        &#34;&#34;&#34;
+        ex = cls()
+
+        # Decode the string --------------------------------------------------------------------------------------------
+        decoder = xml.XMLDecoder(force_list=(&#34;DerivedSignal&#34;, &#34;CompositeSignal&#34;, &#34;FeedbackProtocol&#34;, &#34;PGroup&#34;, &#34;s&#34;))
+        root = decoder.decode(xml_string)
+        data = next(iter(root.values()))  # Get first (and only) value in root
+
+        # Add empty signal/block/group/sequence lists if they are missing ----------------------------------------------
+        if data[&#34;vSignals&#34;] is None:
+            data[&#34;vSignals&#34;] = {
+                &#34;DerivedSignal&#34;: [],
+                &#34;CompositeSignal&#34;: [],
+            }
+        else:
+            if &#34;DerivedSignal&#34; not in data[&#34;vSignals&#34;]:
+                data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;] = []
+            if &#34;CompositeSignal&#34; not in data[&#34;vSignals&#34;]:
+                data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = []
+        
+        if data[&#34;vProtocols&#34;] is None:
+            data[&#34;vProtocols&#34;] = {&#34;FeedbackProtocol&#34;: []}
+        if data[&#34;vPGroups&#34;] is None:
+            data[&#34;vPGroups&#34;] = {&#34;PGroup&#34;: []}
+        if data[&#34;vPSequence&#34;] is None:
+            data[&#34;vPSequence&#34;] = {&#34;s&#34;: []}
+
+        # Decode main experiment properties ----------------------------------------------------------------------------
+        ex.name = data[&#34;sExperimentName&#34;]
+        ex.lsl_stream_name = data[&#34;sStreamName&#34;]
+
+        if &#34;sPrefilterBand&#34; in data:
+            prefilter_band_values = data[&#34;sPrefilterBand&#34;].split(&#34; &#34;)
+            if prefilter_band_values[0] == &#34;None&#34;:
+                ex.prefilter_band[0] = None
+            else:
+                ex.prefilter_band[0] = float(prefilter_band_values[0])
+
+            if prefilter_band_values[1] == &#34;None&#34;:
+                ex.prefilter_band[1] = None
+            else:
+                ex.prefilter_band[1] = float(prefilter_band_values[1])
+
+        ex.dc = bool(float(data[&#34;bDC&#34;]))
+        ex.inlet = data[&#34;sInletType&#34;]
+        ex.raw_data_path = data[&#34;sRawDataFilePath&#34;]
+        ex.hostname_port = data[&#34;sFTHostnamePort&#34;]
+        ex.plot_raw = bool(float(data[&#34;bPlotRaw&#34;]))
+        ex.plot_signals = bool(float(data[&#34;bPlotSignals&#34;]))
+        ex.show_subject_window = bool(float(data.get(&#34;bShowSubjectWindow&#34;, ex.show_subject_window)))
+        ex.discard_channels = data[&#34;sReference&#34;]
+        ex.reference_sub = data[&#34;sReferenceSub&#34;]
+        ex.show_proto_rectangle = bool(float(data.get(&#34;bShowPhotoRectangle&#34;, ex.show_proto_rectangle)))
+        ex.show_notch_filters = bool(float(data.get(&#34;sVizNotchFilters&#34;, ex.show_notch_filters)))
+
+        # Decode signals -----------------------------------------------------------------------------------------------
+        node_pos = [0, 0]
+        node_xdiff = -100
+        node_ydiff = 100
+
+        for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
+            # Assemble the signal front to back, starting with the signal name.
+            # Some nodes may not be present, this loop accounts for it.
+            if &#34;sSignalName&#34; in signal_data:
+                # Create the node and set variables from data
+                n = DerivedSignalExport()
+                n.setSignalName(signal_data[&#34;sSignalName&#34;])
+
+                # Set position and add to scheme
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+            if (signal_data.get(&#34;fAverage&#34;) is not None) or (signal_data.get(&#34;fStdDev&#34;) is not None):
+                last = n
+                n = Standardise()
+                n.setAverage(float(signal_data.get(&#34;fAverage&#34;, n.default_average)))
+                n.setStandardDeviation(float(signal_data.get(&#34;fStdDev&#34;, n.default_standard_deviation)))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if (&#34;fSmoothingFactor&#34; in signal_data) or (&#34;method&#34; in signal_data):
+                last = n
+                n = EnvelopeDetector()
+                n.setSmoothingFactor(float(signal_data.get(&#34;fSmoothingFactor&#34;, n.default_smoothing_factor)))
+                n.setMethod(signal_data.get(&#34;method&#34;, n.default_method))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if (&#34;fBandpassLowHz&#34; in signal_data) or (&#34;fBandpassHighHz&#34; in signal_data):
+                last = n
+                n = BandpassFilter()
+                n.setLowerBound(float(signal_data.get(&#34;fBandpassLowHz&#34;, n.default_lower_bound)))
+                n.setUpperBound(float(signal_data.get(&#34;fBandpassHighHz&#34;, n.default_upper_bound)))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if &#34;SpatialFilterMatrix&#34; in signal_data:
+                last = n
+                n = SpatialFilter()
+                n.setMatrixPath(signal_data[&#34;SpatialFilterMatrix&#34;])
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            # Unconditionally add LSLInput
+            last = n
+            n = LSLInput()
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+
+            # Bump vertial coordinates to prepare for a new signal
+            node_pos[0] = 0
+            node_pos[1] += node_ydiff
+
+        # Decode blocks ------------------------------------------------------------------------------------------------
+        for block_data in data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;]:
+            block = Block.nfb_import_data(block_data)
+            name = block_data[&#34;sProtocolName&#34;]
+            ex.blocks[name] = block
+        
+        # Decode groups ------------------------------------------------------------------------------------------------
+        for group_data in data[&#34;vPGroups&#34;][&#34;PGroup&#34;]:
+            group = Group.nfb_import_data(group_data)
+            name = group_data[&#34;sName&#34;]
+            ex.groups[name] = group
+        
+        # Decode sequence ----------------------------------------------------------------------------------------------
+        node = None
+        node_pos = [0, 0]
+        node_xdiff = 100
+
+        for name in data[&#34;vPSequence&#34;][&#34;s&#34;]:
+            last = node
+
+            if name in ex.blocks:
+                node = BlockNode()
+            else:
+                node = GroupNode()
+
+            node.setTitle(name)
+            node.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.sequence_scheme.addItem(node)
+
+            if last is not None:
+                ex.sequence_scheme.connect_nodes(last.outputs[0], node.inputs[0])
+
+        # --------------------------------------------------------------------------------------------------------------
+        return ex
 
     def updateView(self):
         view = self.view()
@@ -603,6 +947,190 @@ class Experiment:
 </dl>
 <h3>Static methods</h3>
 <dl>
+<dt id="nfb_studio.experiment.experiment.Experiment.import_xml"><code class="name flex">
+<span>def <span class="ident">import_xml</span></span>(<span>xml_string: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decode an XML string containing an exported file into an nfb_studio experiment.
+Decoding xml files is an imperfect science, since nfb_studio has more information, like node position, their
+connections, and so on. This function does it's best to at least produce the correct experiment flow.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def import_xml(cls, xml_string: str):
+    &#34;&#34;&#34;Decode an XML string containing an exported file into an nfb_studio experiment.
+    Decoding xml files is an imperfect science, since nfb_studio has more information, like node position, their
+    connections, and so on. This function does it&#39;s best to at least produce the correct experiment flow.
+    &#34;&#34;&#34;
+    ex = cls()
+
+    # Decode the string --------------------------------------------------------------------------------------------
+    decoder = xml.XMLDecoder(force_list=(&#34;DerivedSignal&#34;, &#34;CompositeSignal&#34;, &#34;FeedbackProtocol&#34;, &#34;PGroup&#34;, &#34;s&#34;))
+    root = decoder.decode(xml_string)
+    data = next(iter(root.values()))  # Get first (and only) value in root
+
+    # Add empty signal/block/group/sequence lists if they are missing ----------------------------------------------
+    if data[&#34;vSignals&#34;] is None:
+        data[&#34;vSignals&#34;] = {
+            &#34;DerivedSignal&#34;: [],
+            &#34;CompositeSignal&#34;: [],
+        }
+    else:
+        if &#34;DerivedSignal&#34; not in data[&#34;vSignals&#34;]:
+            data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;] = []
+        if &#34;CompositeSignal&#34; not in data[&#34;vSignals&#34;]:
+            data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = []
+    
+    if data[&#34;vProtocols&#34;] is None:
+        data[&#34;vProtocols&#34;] = {&#34;FeedbackProtocol&#34;: []}
+    if data[&#34;vPGroups&#34;] is None:
+        data[&#34;vPGroups&#34;] = {&#34;PGroup&#34;: []}
+    if data[&#34;vPSequence&#34;] is None:
+        data[&#34;vPSequence&#34;] = {&#34;s&#34;: []}
+
+    # Decode main experiment properties ----------------------------------------------------------------------------
+    ex.name = data[&#34;sExperimentName&#34;]
+    ex.lsl_stream_name = data[&#34;sStreamName&#34;]
+
+    if &#34;sPrefilterBand&#34; in data:
+        prefilter_band_values = data[&#34;sPrefilterBand&#34;].split(&#34; &#34;)
+        if prefilter_band_values[0] == &#34;None&#34;:
+            ex.prefilter_band[0] = None
+        else:
+            ex.prefilter_band[0] = float(prefilter_band_values[0])
+
+        if prefilter_band_values[1] == &#34;None&#34;:
+            ex.prefilter_band[1] = None
+        else:
+            ex.prefilter_band[1] = float(prefilter_band_values[1])
+
+    ex.dc = bool(float(data[&#34;bDC&#34;]))
+    ex.inlet = data[&#34;sInletType&#34;]
+    ex.raw_data_path = data[&#34;sRawDataFilePath&#34;]
+    ex.hostname_port = data[&#34;sFTHostnamePort&#34;]
+    ex.plot_raw = bool(float(data[&#34;bPlotRaw&#34;]))
+    ex.plot_signals = bool(float(data[&#34;bPlotSignals&#34;]))
+    ex.show_subject_window = bool(float(data.get(&#34;bShowSubjectWindow&#34;, ex.show_subject_window)))
+    ex.discard_channels = data[&#34;sReference&#34;]
+    ex.reference_sub = data[&#34;sReferenceSub&#34;]
+    ex.show_proto_rectangle = bool(float(data.get(&#34;bShowPhotoRectangle&#34;, ex.show_proto_rectangle)))
+    ex.show_notch_filters = bool(float(data.get(&#34;sVizNotchFilters&#34;, ex.show_notch_filters)))
+
+    # Decode signals -----------------------------------------------------------------------------------------------
+    node_pos = [0, 0]
+    node_xdiff = -100
+    node_ydiff = 100
+
+    for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
+        # Assemble the signal front to back, starting with the signal name.
+        # Some nodes may not be present, this loop accounts for it.
+        if &#34;sSignalName&#34; in signal_data:
+            # Create the node and set variables from data
+            n = DerivedSignalExport()
+            n.setSignalName(signal_data[&#34;sSignalName&#34;])
+
+            # Set position and add to scheme
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+        if (signal_data.get(&#34;fAverage&#34;) is not None) or (signal_data.get(&#34;fStdDev&#34;) is not None):
+            last = n
+            n = Standardise()
+            n.setAverage(float(signal_data.get(&#34;fAverage&#34;, n.default_average)))
+            n.setStandardDeviation(float(signal_data.get(&#34;fStdDev&#34;, n.default_standard_deviation)))
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+        if (&#34;fSmoothingFactor&#34; in signal_data) or (&#34;method&#34; in signal_data):
+            last = n
+            n = EnvelopeDetector()
+            n.setSmoothingFactor(float(signal_data.get(&#34;fSmoothingFactor&#34;, n.default_smoothing_factor)))
+            n.setMethod(signal_data.get(&#34;method&#34;, n.default_method))
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+        if (&#34;fBandpassLowHz&#34; in signal_data) or (&#34;fBandpassHighHz&#34; in signal_data):
+            last = n
+            n = BandpassFilter()
+            n.setLowerBound(float(signal_data.get(&#34;fBandpassLowHz&#34;, n.default_lower_bound)))
+            n.setUpperBound(float(signal_data.get(&#34;fBandpassHighHz&#34;, n.default_upper_bound)))
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+        if &#34;SpatialFilterMatrix&#34; in signal_data:
+            last = n
+            n = SpatialFilter()
+            n.setMatrixPath(signal_data[&#34;SpatialFilterMatrix&#34;])
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+        # Unconditionally add LSLInput
+        last = n
+        n = LSLInput()
+
+        n.setPos(*node_pos)
+        node_pos[0] += node_xdiff
+
+        ex.signal_scheme.addItem(n)
+        ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+
+        # Bump vertial coordinates to prepare for a new signal
+        node_pos[0] = 0
+        node_pos[1] += node_ydiff
+
+    # Decode blocks ------------------------------------------------------------------------------------------------
+    for block_data in data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;]:
+        block = Block.nfb_import_data(block_data)
+        name = block_data[&#34;sProtocolName&#34;]
+        ex.blocks[name] = block
+    
+    # Decode groups ------------------------------------------------------------------------------------------------
+    for group_data in data[&#34;vPGroups&#34;][&#34;PGroup&#34;]:
+        group = Group.nfb_import_data(group_data)
+        name = group_data[&#34;sName&#34;]
+        ex.groups[name] = group
+    
+    # Decode sequence ----------------------------------------------------------------------------------------------
+    node = None
+    node_pos = [0, 0]
+    node_xdiff = 100
+
+    for name in data[&#34;vPSequence&#34;][&#34;s&#34;]:
+        last = node
+
+        if name in ex.blocks:
+            node = BlockNode()
+        else:
+            node = GroupNode()
+
+        node.setTitle(name)
+        node.setPos(*node_pos)
+        node_pos[0] += node_xdiff
+
+        ex.sequence_scheme.addItem(node)
+
+        if last is not None:
+            ex.sequence_scheme.connect_nodes(last.outputs[0], node.inputs[0])
+
+    # --------------------------------------------------------------------------------------------------------------
+    return ex</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.experiment.experiment.Experiment.load"><code class="name flex">
 <span>def <span class="ident">load</span></span>(<span>data: str)</span>
 </code></dt>
@@ -948,6 +1476,7 @@ def load(cls, data: str):
 <ul class="">
 <li><code><a title="nfb_studio.experiment.experiment.Experiment.deserialize" href="#nfb_studio.experiment.experiment.Experiment.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.experiment.experiment.Experiment.export" href="#nfb_studio.experiment.experiment.Experiment.export">export</a></code></li>
+<li><code><a title="nfb_studio.experiment.experiment.Experiment.import_xml" href="#nfb_studio.experiment.experiment.Experiment.import_xml">import_xml</a></code></li>
 <li><code><a title="nfb_studio.experiment.experiment.Experiment.inlet_type_export_values" href="#nfb_studio.experiment.experiment.Experiment.inlet_type_export_values">inlet_type_export_values</a></code></li>
 <li><code><a title="nfb_studio.experiment.experiment.Experiment.inlet_type_import_values" href="#nfb_studio.experiment.experiment.Experiment.inlet_type_import_values">inlet_type_import_values</a></code></li>
 <li><code><a title="nfb_studio.experiment.experiment.Experiment.load" href="#nfb_studio.experiment.experiment.Experiment.load">load</a></code></li>

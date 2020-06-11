@@ -130,17 +130,18 @@ class Group(QObject, MutableSequence, metaclass=GroupMetaclass):
 
         return data
     
-    def nfb_import_data(self, data: dict):
-        &#34;&#34;&#34;Import this group from a dict from NFBLab.
-        Note that since self.blocks needs to contain references to other decoded objects, this function leaves the group
-        in an invalid state. The caller method is responsible for converting self.blocks from a list of names to a list
-        of actual blocks.
-        &#34;&#34;&#34;
-        self.random_order = bool(int(data[&#34;bShuffle&#34;]))
+    @classmethod
+    def nfb_import_data(cls, data: dict):
+        &#34;&#34;&#34;Import this group from a dict from NFBLab.&#34;&#34;&#34;
+        group = cls()
+
+        group.random_order = bool(float(data[&#34;bShuffle&#34;]))
 
         if data[&#34;sList&#34;] is not None:
-            self.blocks = data[&#34;sList&#34;].split(&#34; &#34;)
-            self.repeats = [int(number) for number in data[&#34;sNumberList&#34;].split(&#34; &#34;)]</code></pre>
+            group.blocks = data[&#34;sList&#34;].split(&#34; &#34;)
+            group.repeats = [int(number) for number in data[&#34;sNumberList&#34;].split(&#34; &#34;)]
+
+        return group</code></pre>
 </details>
 </section>
 <section>
@@ -260,17 +261,18 @@ set. This class also is a MutableSequence, which means you can get and set both 
 
         return data
     
-    def nfb_import_data(self, data: dict):
-        &#34;&#34;&#34;Import this group from a dict from NFBLab.
-        Note that since self.blocks needs to contain references to other decoded objects, this function leaves the group
-        in an invalid state. The caller method is responsible for converting self.blocks from a list of names to a list
-        of actual blocks.
-        &#34;&#34;&#34;
-        self.random_order = bool(int(data[&#34;bShuffle&#34;]))
+    @classmethod
+    def nfb_import_data(cls, data: dict):
+        &#34;&#34;&#34;Import this group from a dict from NFBLab.&#34;&#34;&#34;
+        group = cls()
+
+        group.random_order = bool(float(data[&#34;bShuffle&#34;]))
 
         if data[&#34;sList&#34;] is not None:
-            self.blocks = data[&#34;sList&#34;].split(&#34; &#34;)
-            self.repeats = [int(number) for number in data[&#34;sNumberList&#34;].split(&#34; &#34;)]</code></pre>
+            group.blocks = data[&#34;sList&#34;].split(&#34; &#34;)
+            group.repeats = [int(number) for number in data[&#34;sNumberList&#34;].split(&#34; &#34;)]
+
+        return group</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -289,6 +291,32 @@ set. This class also is a MutableSequence, which means you can get and set both 
 <dt id="nfb_studio.group.group.Group.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.group.group.Group.nfb_import_data"><code class="name flex">
+<span>def <span class="ident">nfb_import_data</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Import this group from a dict from NFBLab.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def nfb_import_data(cls, data: dict):
+    &#34;&#34;&#34;Import this group from a dict from NFBLab.&#34;&#34;&#34;
+    group = cls()
+
+    group.random_order = bool(float(data[&#34;bShuffle&#34;]))
+
+    if data[&#34;sList&#34;] is not None:
+        group.blocks = data[&#34;sList&#34;].split(&#34; &#34;)
+        group.repeats = [int(number) for number in data[&#34;sNumberList&#34;].split(&#34; &#34;)]
+
+    return group</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -359,31 +387,6 @@ Bool items are written as-is. The encoder is responsible for converting them int
     data[&#34;bShuffle&#34;] = self.random_order
 
     return data</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.group.group.Group.nfb_import_data"><code class="name flex">
-<span>def <span class="ident">nfb_import_data</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Import this group from a dict from NFBLab.
-Note that since self.blocks needs to contain references to other decoded objects, this function leaves the group
-in an invalid state. The caller method is responsible for converting self.blocks from a list of names to a list
-of actual blocks.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def nfb_import_data(self, data: dict):
-    &#34;&#34;&#34;Import this group from a dict from NFBLab.
-    Note that since self.blocks needs to contain references to other decoded objects, this function leaves the group
-    in an invalid state. The caller method is responsible for converting self.blocks from a list of names to a list
-    of actual blocks.
-    &#34;&#34;&#34;
-    self.random_order = bool(int(data[&#34;bShuffle&#34;]))
-
-    if data[&#34;sList&#34;] is not None:
-        self.blocks = data[&#34;sList&#34;].split(&#34; &#34;)
-        self.repeats = [int(number) for number in data[&#34;sNumberList&#34;].split(&#34; &#34;)]</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.group.group.Group.serialize"><code class="name flex">

@@ -114,6 +114,8 @@ class BandpassFilter(SignalNode):
             else:
                 self.lower_bound.setMaximum(250)
 
+    default_lower_bound = 0
+    default_upper_bound = 250
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -122,8 +124,8 @@ class BandpassFilter(SignalNode):
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self._lower_bound = 0
-        self._upper_bound = 250
+        self._lower_bound = self.default_lower_bound
+        self._upper_bound = self.default_upper_bound
         self.sync()
     
     def lowerBound(self):
@@ -148,6 +150,10 @@ class BandpassFilter(SignalNode):
         
         w = self.configWidget()
         
+        # Prevent view fields from emitting signals while they are updated
+        w.lower_bound.blockSignals(True)
+        w.upper_bound.blockSignals(True)
+
         if self.upperBound() is None:
             w.upper_bound_enable.setChecked(False)
         else:
@@ -159,6 +165,11 @@ class BandpassFilter(SignalNode):
         else:
             w.lower_bound_enable.setChecked(True)
             w.lower_bound.setValue(self.lowerBound())
+        
+        # Release the block and call adjust
+        w.lower_bound.blockSignals(False)
+        w.upper_bound.blockSignals(False)
+        w.adjust()
 
     def add_nfb_export_data(self, signal: dict):
         &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
@@ -282,6 +293,8 @@ class BandpassFilter(SignalNode):
             else:
                 self.lower_bound.setMaximum(250)
 
+    default_lower_bound = 0
+    default_upper_bound = 250
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -290,8 +303,8 @@ class BandpassFilter(SignalNode):
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self._lower_bound = 0
-        self._upper_bound = 250
+        self._lower_bound = self.default_lower_bound
+        self._upper_bound = self.default_upper_bound
         self.sync()
     
     def lowerBound(self):
@@ -316,6 +329,10 @@ class BandpassFilter(SignalNode):
         
         w = self.configWidget()
         
+        # Prevent view fields from emitting signals while they are updated
+        w.lower_bound.blockSignals(True)
+        w.upper_bound.blockSignals(True)
+
         if self.upperBound() is None:
             w.upper_bound_enable.setChecked(False)
         else:
@@ -327,6 +344,11 @@ class BandpassFilter(SignalNode):
         else:
             w.lower_bound_enable.setChecked(True)
             w.lower_bound.setValue(self.lowerBound())
+        
+        # Release the block and call adjust
+        w.lower_bound.blockSignals(False)
+        w.upper_bound.blockSignals(False)
+        w.adjust()
 
     def add_nfb_export_data(self, signal: dict):
         &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
@@ -355,6 +377,17 @@ class BandpassFilter(SignalNode):
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.default_lower_bound"><code class="name">var <span class="ident">default_lower_bound</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.default_upper_bound"><code class="name">var <span class="ident">default_upper_bound</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.add_nfb_export_data"><code class="name flex">
@@ -500,6 +533,8 @@ class BandpassFilter(SignalNode):
 <h4><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter">BandpassFilter</a></code></h4>
 <ul class="two-column">
 <li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.add_nfb_export_data">add_nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.default_lower_bound" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.default_lower_bound">default_lower_bound</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.default_upper_bound" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.default_upper_bound">default_upper_bound</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.deserialize" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.lowerBound" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.lowerBound">lowerBound</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.serialize" href="#nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.serialize">serialize</a></code></li>

@@ -35,6 +35,8 @@ class Block(QObject):
     &#34;&#34;&#34;A single step of an experiment.
     Experiment consists of a sequence of blocks and block groups that are executed in some order.
     &#34;&#34;&#34;
+    random_bound_types = [&#34;SimCircle&#34;, &#34;RandomCircle&#34;, &#34;Bar&#34;]
+
     def __init__(self, parent=None):
         super().__init__(parent)
         
@@ -114,7 +116,7 @@ class Block(QObject):
         data[&#34;bShowReward&#34;] = 0
         data[&#34;bPauseAfter&#34;] = self.pause
         data[&#34;bBeepAfter&#34;] = self.beep
-        data[&#34;iRandomBound&#34;] = self.random_bound
+        data[&#34;iRandomBound&#34;] = self.random_bound_types.index(self.random_bound)
         data[&#34;sVideoPath&#34;] = self.video_path
         data[&#34;sMSignal&#34;] = &#34;None&#34;
         data[&#34;fMSignalThreshold&#34;] = 1
@@ -159,25 +161,30 @@ class Block(QObject):
         self.beep = data[&#34;beep&#34;]
         self.update_statistics = data[&#34;update_statistics&#34;]
 
-    def nfb_import_data(self, data: dict):
+    @classmethod
+    def nfb_import_data(cls, data: dict):
         &#34;&#34;&#34;Import this block from a dict from NFBLab.
         Since the XML file stores everything as a string, this function is responsible for converting items to their
         proper types.
         &#34;&#34;&#34;
-        self.update_statistics = bool(int(data[&#34;bUpdateStatistics&#34;]))
-        self.start_data_driven_filter_designer = bool(int(data[&#34;bSSDInTheEnd&#34;]))
-        self.duration = float(data[&#34;fDuration&#34;])
-        self.feedback_source = data[&#34;fbSource&#34;]
-        self.feedback_type = int(data[&#34;sFb_type&#34;])
-        self.mock_signal_path = data[&#34;sMockSignalFilePath&#34;]
-        self.mock_signal_dataset = data[&#34;sMockSignalFileDataset&#34;]
-        self.mock_previous = int(data[&#34;iMockPrevious&#34;])
-        self.mock_previous_reverse = bool(int(data[&#34;bReverseMockPrevious&#34;]))
-        self.mock_previous_random = bool(int(data[&#34;bRandomMockPrevious&#34;]))
-        self.pause = bool(int(data[&#34;bPauseAfter&#34;]))
-        self.beep = bool(int(data[&#34;bBeepAfter&#34;]))
-        self.random_bound = int(data[&#34;iRandomBound&#34;])
-        self.video_path = data[&#34;sVideoPath&#34;]</code></pre>
+        b = cls()
+
+        b.update_statistics = bool(float(data[&#34;bUpdateStatistics&#34;]))
+        b.start_data_driven_filter_designer = bool(float(data[&#34;bSSDInTheEnd&#34;]))
+        b.duration = float(data[&#34;fDuration&#34;])
+        b.feedback_source = data[&#34;fbSource&#34;]
+        b.feedback_type = data[&#34;sFb_type&#34;]
+        b.mock_signal_path = data[&#34;sMockSignalFilePath&#34;]
+        b.mock_signal_dataset = data[&#34;sMockSignalFileDataset&#34;]
+        b.mock_previous = int(float(data[&#34;iMockPrevious&#34;]))
+        b.mock_previous_reverse = bool(float(data[&#34;bReverseMockPrevious&#34;]))
+        b.mock_previous_random = bool(float(data[&#34;bRandomMockPrevious&#34;]))
+        b.pause = bool(float(data[&#34;bPauseAfter&#34;]))
+        b.beep = bool(float(data[&#34;bBeepAfter&#34;]))
+        b.random_bound = b.random_bound_types[int(float(data[&#34;iRandomBound&#34;]))]
+        b.video_path = data[&#34;sVideoPath&#34;]
+
+        return b</code></pre>
 </details>
 </section>
 <section>
@@ -204,6 +211,8 @@ Experiment consists of a sequence of blocks and block groups that are executed i
     &#34;&#34;&#34;A single step of an experiment.
     Experiment consists of a sequence of blocks and block groups that are executed in some order.
     &#34;&#34;&#34;
+    random_bound_types = [&#34;SimCircle&#34;, &#34;RandomCircle&#34;, &#34;Bar&#34;]
+
     def __init__(self, parent=None):
         super().__init__(parent)
         
@@ -283,7 +292,7 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         data[&#34;bShowReward&#34;] = 0
         data[&#34;bPauseAfter&#34;] = self.pause
         data[&#34;bBeepAfter&#34;] = self.beep
-        data[&#34;iRandomBound&#34;] = self.random_bound
+        data[&#34;iRandomBound&#34;] = self.random_bound_types.index(self.random_bound)
         data[&#34;sVideoPath&#34;] = self.video_path
         data[&#34;sMSignal&#34;] = &#34;None&#34;
         data[&#34;fMSignalThreshold&#34;] = 1
@@ -328,25 +337,30 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         self.beep = data[&#34;beep&#34;]
         self.update_statistics = data[&#34;update_statistics&#34;]
 
-    def nfb_import_data(self, data: dict):
+    @classmethod
+    def nfb_import_data(cls, data: dict):
         &#34;&#34;&#34;Import this block from a dict from NFBLab.
         Since the XML file stores everything as a string, this function is responsible for converting items to their
         proper types.
         &#34;&#34;&#34;
-        self.update_statistics = bool(int(data[&#34;bUpdateStatistics&#34;]))
-        self.start_data_driven_filter_designer = bool(int(data[&#34;bSSDInTheEnd&#34;]))
-        self.duration = float(data[&#34;fDuration&#34;])
-        self.feedback_source = data[&#34;fbSource&#34;]
-        self.feedback_type = int(data[&#34;sFb_type&#34;])
-        self.mock_signal_path = data[&#34;sMockSignalFilePath&#34;]
-        self.mock_signal_dataset = data[&#34;sMockSignalFileDataset&#34;]
-        self.mock_previous = int(data[&#34;iMockPrevious&#34;])
-        self.mock_previous_reverse = bool(int(data[&#34;bReverseMockPrevious&#34;]))
-        self.mock_previous_random = bool(int(data[&#34;bRandomMockPrevious&#34;]))
-        self.pause = bool(int(data[&#34;bPauseAfter&#34;]))
-        self.beep = bool(int(data[&#34;bBeepAfter&#34;]))
-        self.random_bound = int(data[&#34;iRandomBound&#34;])
-        self.video_path = data[&#34;sVideoPath&#34;]</code></pre>
+        b = cls()
+
+        b.update_statistics = bool(float(data[&#34;bUpdateStatistics&#34;]))
+        b.start_data_driven_filter_designer = bool(float(data[&#34;bSSDInTheEnd&#34;]))
+        b.duration = float(data[&#34;fDuration&#34;])
+        b.feedback_source = data[&#34;fbSource&#34;]
+        b.feedback_type = data[&#34;sFb_type&#34;]
+        b.mock_signal_path = data[&#34;sMockSignalFilePath&#34;]
+        b.mock_signal_dataset = data[&#34;sMockSignalFileDataset&#34;]
+        b.mock_previous = int(float(data[&#34;iMockPrevious&#34;]))
+        b.mock_previous_reverse = bool(float(data[&#34;bReverseMockPrevious&#34;]))
+        b.mock_previous_random = bool(float(data[&#34;bRandomMockPrevious&#34;]))
+        b.pause = bool(float(data[&#34;bPauseAfter&#34;]))
+        b.beep = bool(float(data[&#34;bBeepAfter&#34;]))
+        b.random_bound = b.random_bound_types[int(float(data[&#34;iRandomBound&#34;]))]
+        b.video_path = data[&#34;sVideoPath&#34;]
+
+        return b</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -355,9 +369,53 @@ Experiment consists of a sequence of blocks and block groups that are executed i
 </ul>
 <h3>Class variables</h3>
 <dl>
+<dt id="nfb_studio.block.block.Block.random_bound_types"><code class="name">var <span class="ident">random_bound_types</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="nfb_studio.block.block.Block.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.block.block.Block.nfb_import_data"><code class="name flex">
+<span>def <span class="ident">nfb_import_data</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Import this block from a dict from NFBLab.
+Since the XML file stores everything as a string, this function is responsible for converting items to their
+proper types.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def nfb_import_data(cls, data: dict):
+    &#34;&#34;&#34;Import this block from a dict from NFBLab.
+    Since the XML file stores everything as a string, this function is responsible for converting items to their
+    proper types.
+    &#34;&#34;&#34;
+    b = cls()
+
+    b.update_statistics = bool(float(data[&#34;bUpdateStatistics&#34;]))
+    b.start_data_driven_filter_designer = bool(float(data[&#34;bSSDInTheEnd&#34;]))
+    b.duration = float(data[&#34;fDuration&#34;])
+    b.feedback_source = data[&#34;fbSource&#34;]
+    b.feedback_type = data[&#34;sFb_type&#34;]
+    b.mock_signal_path = data[&#34;sMockSignalFilePath&#34;]
+    b.mock_signal_dataset = data[&#34;sMockSignalFileDataset&#34;]
+    b.mock_previous = int(float(data[&#34;iMockPrevious&#34;]))
+    b.mock_previous_reverse = bool(float(data[&#34;bReverseMockPrevious&#34;]))
+    b.mock_previous_random = bool(float(data[&#34;bRandomMockPrevious&#34;]))
+    b.pause = bool(float(data[&#34;bPauseAfter&#34;]))
+    b.beep = bool(float(data[&#34;bBeepAfter&#34;]))
+    b.random_bound = b.random_bound_types[int(float(data[&#34;iRandomBound&#34;]))]
+    b.video_path = data[&#34;sVideoPath&#34;]
+
+    return b</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -426,44 +484,12 @@ Bool items are written as-is. The encoder is responsible for converting them int
     data[&#34;bShowReward&#34;] = 0
     data[&#34;bPauseAfter&#34;] = self.pause
     data[&#34;bBeepAfter&#34;] = self.beep
-    data[&#34;iRandomBound&#34;] = self.random_bound
+    data[&#34;iRandomBound&#34;] = self.random_bound_types.index(self.random_bound)
     data[&#34;sVideoPath&#34;] = self.video_path
     data[&#34;sMSignal&#34;] = &#34;None&#34;
     data[&#34;fMSignalThreshold&#34;] = 1
 
     return data</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.block.block.Block.nfb_import_data"><code class="name flex">
-<span>def <span class="ident">nfb_import_data</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Import this block from a dict from NFBLab.
-Since the XML file stores everything as a string, this function is responsible for converting items to their
-proper types.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def nfb_import_data(self, data: dict):
-    &#34;&#34;&#34;Import this block from a dict from NFBLab.
-    Since the XML file stores everything as a string, this function is responsible for converting items to their
-    proper types.
-    &#34;&#34;&#34;
-    self.update_statistics = bool(int(data[&#34;bUpdateStatistics&#34;]))
-    self.start_data_driven_filter_designer = bool(int(data[&#34;bSSDInTheEnd&#34;]))
-    self.duration = float(data[&#34;fDuration&#34;])
-    self.feedback_source = data[&#34;fbSource&#34;]
-    self.feedback_type = int(data[&#34;sFb_type&#34;])
-    self.mock_signal_path = data[&#34;sMockSignalFilePath&#34;]
-    self.mock_signal_dataset = data[&#34;sMockSignalFileDataset&#34;]
-    self.mock_previous = int(data[&#34;iMockPrevious&#34;])
-    self.mock_previous_reverse = bool(int(data[&#34;bReverseMockPrevious&#34;]))
-    self.mock_previous_random = bool(int(data[&#34;bRandomMockPrevious&#34;]))
-    self.pause = bool(int(data[&#34;bPauseAfter&#34;]))
-    self.beep = bool(int(data[&#34;bBeepAfter&#34;]))
-    self.random_bound = int(data[&#34;iRandomBound&#34;])
-    self.video_path = data[&#34;sVideoPath&#34;]</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.block.block.Block.serialize"><code class="name flex">
@@ -577,6 +603,7 @@ proper types.</p></div>
 <li><code><a title="nfb_studio.block.block.Block.deserialize" href="#nfb_studio.block.block.Block.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.block.block.Block.nfb_export_data" href="#nfb_studio.block.block.Block.nfb_export_data">nfb_export_data</a></code></li>
 <li><code><a title="nfb_studio.block.block.Block.nfb_import_data" href="#nfb_studio.block.block.Block.nfb_import_data">nfb_import_data</a></code></li>
+<li><code><a title="nfb_studio.block.block.Block.random_bound_types" href="#nfb_studio.block.block.Block.random_bound_types">random_bound_types</a></code></li>
 <li><code><a title="nfb_studio.block.block.Block.serialize" href="#nfb_studio.block.block.Block.serialize">serialize</a></code></li>
 <li><code><a title="nfb_studio.block.block.Block.setView" href="#nfb_studio.block.block.Block.setView">setView</a></code></li>
 <li><code><a title="nfb_studio.block.block.Block.staticMetaObject" href="#nfb_studio.block.block.Block.staticMetaObject">staticMetaObject</a></code></li>

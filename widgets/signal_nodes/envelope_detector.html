@@ -64,6 +64,8 @@ class EnvelopeDetector(SignalNode):
             n._smoothing_factor = self.smoothing_factor.value()
             n._method = self.method.currentText()
 
+    default_smoothing_factor = 0  # TODO: Is this the correct default value?
+    default_method = &#34;Rectification&#34;
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -72,8 +74,8 @@ class EnvelopeDetector(SignalNode):
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self._smoothing_factor = 0  # TODO: Is this the correct default value?
-        self._method = &#34;Rectification&#34;
+        self._smoothing_factor = self.default_smoothing_factor
+        self._method = self.default_method
 
     def smoothingFactor(self) -&gt; float:
         return self._smoothing_factor
@@ -168,6 +170,8 @@ class EnvelopeDetector(SignalNode):
             n._smoothing_factor = self.smoothing_factor.value()
             n._method = self.method.currentText()
 
+    default_smoothing_factor = 0  # TODO: Is this the correct default value?
+    default_method = &#34;Rectification&#34;
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -176,8 +180,8 @@ class EnvelopeDetector(SignalNode):
         self.addInput(Input(&#34;Input&#34;, DataType.Unknown))
         self.addOutput(Output(&#34;Output&#34;, DataType.Unknown))
 
-        self._smoothing_factor = 0  # TODO: Is this the correct default value?
-        self._method = &#34;Rectification&#34;
+        self._smoothing_factor = self.default_smoothing_factor
+        self._method = self.default_method
 
     def smoothingFactor(self) -&gt; float:
         return self._smoothing_factor
@@ -227,6 +231,17 @@ class EnvelopeDetector(SignalNode):
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.default_method"><code class="name">var <span class="ident">default_method</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.default_smoothing_factor"><code class="name">var <span class="ident">default_smoothing_factor</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.add_nfb_export_data"><code class="name flex">
@@ -369,8 +384,10 @@ class EnvelopeDetector(SignalNode):
 <ul>
 <li>
 <h4><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector">EnvelopeDetector</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.add_nfb_export_data">add_nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.default_method" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.default_method">default_method</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.default_smoothing_factor" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.default_smoothing_factor">default_smoothing_factor</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.deserialize" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.method" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.method">method</a></code></li>
 <li><code><a title="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.serialize" href="#nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.serialize">serialize</a></code></li>
