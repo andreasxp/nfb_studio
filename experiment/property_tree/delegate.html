@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>nfb_studio.experiment.property_tree.delegate API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nfb_studio.experiment.property_tree.delegate</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from PySide2.QtCore import Qt, QModelIndex, QEvent, QRect, Signal
+from PySide2.QtGui import QKeyEvent
+from PySide2.QtWidgets import QWidget, QStyledItemDelegate, QVBoxLayout, QLineEdit, QLabel, QFrame
+
+class SequenceItemDelegeate(QStyledItemDelegate):
+    &#34;&#34;&#34;A delegate used with sequence items, e.g. blocks and groups.&#34;&#34;&#34;
+    class Editor(QFrame):
+        &#34;&#34;&#34;A special editor that handles renaming blocks and groups.&#34;&#34;&#34;
+        sizeHintChanged = Signal(object)
+        &#34;&#34;&#34;Emitted when the widget changes sizeHint. Delegate should update it&#39;s geometry.&#34;&#34;&#34;
+
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            layout = QVBoxLayout()
+            self.setLayout(layout)            
+            self.setContentsMargins(0, 0, 0, 0)
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setSpacing(0)
+            self.setAutoFillBackground(True)
+            self.setFocusPolicy(Qt.StrongFocus)
+            self.setFrameStyle(QFrame.Panel | QFrame.Plain)
+
+            self._fallback_text = None
+
+            self.line_edit = QLineEdit()
+            self.line_edit.setFrame(False)
+            self.message_label = QLabel()
+            self.message_label.hide()
+
+            # Divi line
+            self.divider_line = QFrame()
+            self.divider_line.setFrameShape(QFrame.HLine)
+            self.divider_line.setFrameShadow(QFrame.Plain)
+            self.divider_line.setLineWidth(1)
+
+            layout.addWidget(self.line_edit)
+            layout.addWidget(self.divider_line)
+            layout.addWidget(self.message_label)
+
+            self.line_edit.textChanged.connect(self._updateMessage)
+        
+        def fallbackText(self):
+            return self._fallback_text
+
+        def text(self):
+            &#34;&#34;&#34;Get the current text value of the editor widget.
+            If editing has not been finished succesfully, returns fallbackText().
+            &#34;&#34;&#34;
+            view = self.parent().parent()
+            (text_ok, reason) = view.experiment().checkName(self.line_edit.text())
+            if text_ok:
+                return self.line_edit.text()
+            else:
+                return self.fallbackText()
+        
+        def setFallbackText(self, text):
+            &#34;&#34;&#34;Set the fallback text value to be used if the editing was not succesfully finished.
+            The text() method returns this value or the line_edit text.
+            &#34;&#34;&#34;
+            self._fallback_text = text
+
+        def setText(self, text):
+            &#34;&#34;&#34;Set currently editable text. Equivalent to self.line_edit.setText.&#34;&#34;&#34;
+            self.line_edit.setText(text)
+        
+        def _updateMessage(self):
+            &#34;&#34;&#34;Update the displayed message in response to changed text.&#34;&#34;&#34;
+            if self.line_edit.text() == self.fallbackText():
+                # Perform no check
+                text_ok = True
+            else:
+                view = self.parent().parent()
+                (text_ok, reason) = view.experiment().checkName(self.line_edit.text())
+            
+            if text_ok:
+                self.message_label.hide()
+                self.divider_line.hide()
+            else:
+                self.message_label.setText(reason)
+                self.message_label.show()
+                self.divider_line.show()
+            
+            self.sizeHintChanged.emit(self)
+        
+        def focusInEvent(self, event):
+            super().focusInEvent(event)
+            self.line_edit.setFocus()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def createEditor(self, parent: QWidget, option, index: QModelIndex):
+        editor = self.Editor(parent)
+        editor.sizeHintChanged.connect(lambda: self.updateEditorGeometry(editor, option, index))
+        return editor
+
+    def setEditorData(self, editor, index: QModelIndex):
+        editor.setFallbackText(index.data())
+        editor.setText(index.data())
+        editor.line_edit.selectAll()
+    
+    def setModelData(self, editor, model, index: QModelIndex):
+        view = editor.parent().parent()
+        item = view.itemFromIndex(index)
+
+        if item.parent() is view.blocks:
+            view.renameBlockTriggered.emit(item, editor.text())
+        elif item.parent() is view.groups:
+            view.renameGroupTriggered.emit(item, editor.text())
+
+    def updateEditorGeometry(self, editor, option, index):
+        # This is an undocumented property. Why?
+        # Probably also accessible as editor.parent().parent()
+        view = option.widget
+
+        item_rect = view.visualRect(index)
+        hint = editor.sizeHint()
+        editor.setGeometry(
+            item_rect.topLeft().x(),
+            item_rect.topLeft().y(),
+            item_rect.width(),
+            hint.height()
+        )
+
+    def eventFilter(self, editor, event: QEvent):
+        if (isinstance(event, QKeyEvent)
+            and (event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return)
+            and editor.text() != editor.line_edit.text()):
+            # Current text not accepted
+            return False
+        
+        return super().eventFilter(editor, event)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate"><code class="flex name class">
+<span>class <span class="ident">SequenceItemDelegeate</span></span>
+<span>(</span><span>parent=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A delegate used with sequence items, e.g. blocks and groups.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SequenceItemDelegeate(QStyledItemDelegate):
+    &#34;&#34;&#34;A delegate used with sequence items, e.g. blocks and groups.&#34;&#34;&#34;
+    class Editor(QFrame):
+        &#34;&#34;&#34;A special editor that handles renaming blocks and groups.&#34;&#34;&#34;
+        sizeHintChanged = Signal(object)
+        &#34;&#34;&#34;Emitted when the widget changes sizeHint. Delegate should update it&#39;s geometry.&#34;&#34;&#34;
+
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            layout = QVBoxLayout()
+            self.setLayout(layout)            
+            self.setContentsMargins(0, 0, 0, 0)
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setSpacing(0)
+            self.setAutoFillBackground(True)
+            self.setFocusPolicy(Qt.StrongFocus)
+            self.setFrameStyle(QFrame.Panel | QFrame.Plain)
+
+            self._fallback_text = None
+
+            self.line_edit = QLineEdit()
+            self.line_edit.setFrame(False)
+            self.message_label = QLabel()
+            self.message_label.hide()
+
+            # Divi line
+            self.divider_line = QFrame()
+            self.divider_line.setFrameShape(QFrame.HLine)
+            self.divider_line.setFrameShadow(QFrame.Plain)
+            self.divider_line.setLineWidth(1)
+
+            layout.addWidget(self.line_edit)
+            layout.addWidget(self.divider_line)
+            layout.addWidget(self.message_label)
+
+            self.line_edit.textChanged.connect(self._updateMessage)
+        
+        def fallbackText(self):
+            return self._fallback_text
+
+        def text(self):
+            &#34;&#34;&#34;Get the current text value of the editor widget.
+            If editing has not been finished succesfully, returns fallbackText().
+            &#34;&#34;&#34;
+            view = self.parent().parent()
+            (text_ok, reason) = view.experiment().checkName(self.line_edit.text())
+            if text_ok:
+                return self.line_edit.text()
+            else:
+                return self.fallbackText()
+        
+        def setFallbackText(self, text):
+            &#34;&#34;&#34;Set the fallback text value to be used if the editing was not succesfully finished.
+            The text() method returns this value or the line_edit text.
+            &#34;&#34;&#34;
+            self._fallback_text = text
+
+        def setText(self, text):
+            &#34;&#34;&#34;Set currently editable text. Equivalent to self.line_edit.setText.&#34;&#34;&#34;
+            self.line_edit.setText(text)
+        
+        def _updateMessage(self):
+            &#34;&#34;&#34;Update the displayed message in response to changed text.&#34;&#34;&#34;
+            if self.line_edit.text() == self.fallbackText():
+                # Perform no check
+                text_ok = True
+            else:
+                view = self.parent().parent()
+                (text_ok, reason) = view.experiment().checkName(self.line_edit.text())
+            
+            if text_ok:
+                self.message_label.hide()
+                self.divider_line.hide()
+            else:
+                self.message_label.setText(reason)
+                self.message_label.show()
+                self.divider_line.show()
+            
+            self.sizeHintChanged.emit(self)
+        
+        def focusInEvent(self, event):
+            super().focusInEvent(event)
+            self.line_edit.setFocus()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def createEditor(self, parent: QWidget, option, index: QModelIndex):
+        editor = self.Editor(parent)
+        editor.sizeHintChanged.connect(lambda: self.updateEditorGeometry(editor, option, index))
+        return editor
+
+    def setEditorData(self, editor, index: QModelIndex):
+        editor.setFallbackText(index.data())
+        editor.setText(index.data())
+        editor.line_edit.selectAll()
+    
+    def setModelData(self, editor, model, index: QModelIndex):
+        view = editor.parent().parent()
+        item = view.itemFromIndex(index)
+
+        if item.parent() is view.blocks:
+            view.renameBlockTriggered.emit(item, editor.text())
+        elif item.parent() is view.groups:
+            view.renameGroupTriggered.emit(item, editor.text())
+
+    def updateEditorGeometry(self, editor, option, index):
+        # This is an undocumented property. Why?
+        # Probably also accessible as editor.parent().parent()
+        view = option.widget
+
+        item_rect = view.visualRect(index)
+        hint = editor.sizeHint()
+        editor.setGeometry(
+            item_rect.topLeft().x(),
+            item_rect.topLeft().y(),
+            item_rect.width(),
+            hint.height()
+        )
+
+    def eventFilter(self, editor, event: QEvent):
+        if (isinstance(event, QKeyEvent)
+            and (event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return)
+            and editor.text() != editor.line_edit.text()):
+            # Current text not accepted
+            return False
+        
+        return super().eventFilter(editor, event)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PySide2.QtWidgets.QStyledItemDelegate</li>
+<li>PySide2.QtWidgets.QAbstractItemDelegate</li>
+<li>PySide2.QtCore.QObject</li>
+<li>Shiboken.Object</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.Editor"><code class="name">var <span class="ident">Editor</span></code></dt>
+<dd>
+<div class="desc"><p>A special editor that handles renaming blocks and groups.</p></div>
+</dd>
+<dt id="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.createEditor"><code class="name flex">
+<span>def <span class="ident">createEditor</span></span>(<span>self, parent: PySide2.QtWidgets.QWidget, option, index: PySide2.QtCore.QModelIndex)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>createEditor(self, parent: PySide2.QtWidgets.QWidget, option: PySide2.QtWidgets.QStyleOptionViewItem, index: PySide2.QtCore.QModelIndex) -&gt; PySide2.QtWidgets.QWidget</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def createEditor(self, parent: QWidget, option, index: QModelIndex):
+    editor = self.Editor(parent)
+    editor.sizeHintChanged.connect(lambda: self.updateEditorGeometry(editor, option, index))
+    return editor</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.eventFilter"><code class="name flex">
+<span>def <span class="ident">eventFilter</span></span>(<span>self, editor, event: PySide2.QtCore.QEvent)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>eventFilter(self, object: PySide2.QtCore.QObject, event: PySide2.QtCore.QEvent) -&gt; bool</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def eventFilter(self, editor, event: QEvent):
+    if (isinstance(event, QKeyEvent)
+        and (event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return)
+        and editor.text() != editor.line_edit.text()):
+        # Current text not accepted
+        return False
+    
+    return super().eventFilter(editor, event)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.setEditorData"><code class="name flex">
+<span>def <span class="ident">setEditorData</span></span>(<span>self, editor, index: PySide2.QtCore.QModelIndex)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>setEditorData(self, editor: PySide2.QtWidgets.QWidget, index: PySide2.QtCore.QModelIndex)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setEditorData(self, editor, index: QModelIndex):
+    editor.setFallbackText(index.data())
+    editor.setText(index.data())
+    editor.line_edit.selectAll()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.setModelData"><code class="name flex">
+<span>def <span class="ident">setModelData</span></span>(<span>self, editor, model, index: PySide2.QtCore.QModelIndex)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>setModelData(self, editor: PySide2.QtWidgets.QWidget, model: PySide2.QtCore.QAbstractItemModel, index: PySide2.QtCore.QModelIndex)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setModelData(self, editor, model, index: QModelIndex):
+    view = editor.parent().parent()
+    item = view.itemFromIndex(index)
+
+    if item.parent() is view.blocks:
+        view.renameBlockTriggered.emit(item, editor.text())
+    elif item.parent() is view.groups:
+        view.renameGroupTriggered.emit(item, editor.text())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.updateEditorGeometry"><code class="name flex">
+<span>def <span class="ident">updateEditorGeometry</span></span>(<span>self, editor, option, index)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>updateEditorGeometry(self, editor: PySide2.QtWidgets.QWidget, option: PySide2.QtWidgets.QStyleOptionViewItem, index: PySide2.QtCore.QModelIndex)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updateEditorGeometry(self, editor, option, index):
+    # This is an undocumented property. Why?
+    # Probably also accessible as editor.parent().parent()
+    view = option.widget
+
+    item_rect = view.visualRect(index)
+    hint = editor.sizeHint()
+    editor.setGeometry(
+        item_rect.topLeft().x(),
+        item_rect.topLeft().y(),
+        item_rect.width(),
+        hint.height()
+    )</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nfb_studio.experiment.property_tree" href="index.html">nfb_studio.experiment.property_tree</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate" href="#nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate">SequenceItemDelegeate</a></code></h4>
+<ul class="">
+<li><code><a title="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.Editor" href="#nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.Editor">Editor</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.createEditor" href="#nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.createEditor">createEditor</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.eventFilter" href="#nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.eventFilter">eventFilter</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.setEditorData" href="#nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.setEditorData">setEditorData</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.setModelData" href="#nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.setModelData">setModelData</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.staticMetaObject" href="#nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.updateEditorGeometry" href="#nfb_studio.experiment.property_tree.delegate.SequenceItemDelegeate.updateEditorGeometry">updateEditorGeometry</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

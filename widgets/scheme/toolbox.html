@@ -88,8 +88,10 @@ class Toolbox(QAbstractListModel):
         i = self._items.index(name)
 
         self.beginRemoveRows(QModelIndex(), i, i)
-        self._items.pop(name)
+        item = self._items.pop(name)
         self.endRemoveRows()
+
+        return item
 
     def flags(self, index: QModelIndex):
         default_flags = super().flags(index)
@@ -210,8 +212,10 @@ class Toolbox(QAbstractListModel):
         i = self._items.index(name)
 
         self.beginRemoveRows(QModelIndex(), i, i)
-        self._items.pop(name)
+        item = self._items.pop(name)
         self.endRemoveRows()
+
+        return item
 
     def flags(self, index: QModelIndex):
         default_flags = super().flags(index)
@@ -429,8 +433,10 @@ If an item with such a name does not exist, does nothing.</p></div>
     i = self._items.index(name)
 
     self.beginRemoveRows(QModelIndex(), i, i)
-    self._items.pop(name)
-    self.endRemoveRows()</code></pre>
+    item = self._items.pop(name)
+    self.endRemoveRows()
+
+    return item</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.rowCount"><code class="name flex">

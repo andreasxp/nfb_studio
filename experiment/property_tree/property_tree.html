@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.1" />
-<title>nfb_studio.experiment.property_tree API documentation</title>
+<title>nfb_studio.experiment.property_tree.property_tree API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,7 +17,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.experiment.property_tree</code></h1>
+<h1 class="title">Module <code>nfb_studio.experiment.property_tree.property_tree</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -27,17 +27,18 @@
 <pre><code class="python">from PySide2.QtCore import Qt, QObject, QAbstractItemModel, QModelIndex, QPoint, Signal
 from PySide2.QtWidgets import QTreeView, QMenu, QAction, QTreeWidget, QTreeWidgetItem
 
+from .delegate import SequenceItemDelegeate
 
 class PropertyTree(QTreeWidget):
     &#34;&#34;&#34;A tree widget displaying experiment properties inside the ExperimentView.
     Since this widget is entirely contained in the view model, there is no need for model-view separation.
     &#34;&#34;&#34;
-    addBlockClicked = Signal()
-    addGroupClicked = Signal()
-    renameBlockClicked = Signal()
-    renameGroupClicked = Signal()
-    removeBlockClicked = Signal(QTreeWidgetItem)
-    removeGroupClicked = Signal(QTreeWidgetItem)
+    addBlockTriggered = Signal()
+    addGroupTriggered = Signal()
+    renameBlockTriggered = Signal(QTreeWidgetItem, str)
+    renameGroupTriggered = Signal(QTreeWidgetItem, str)
+    removeBlockTriggered = Signal(QTreeWidgetItem)
+    removeGroupTriggered = Signal(QTreeWidgetItem)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -45,6 +46,8 @@ class PropertyTree(QTreeWidget):
         self.setSelectionMode(self.SingleSelection)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.showContextMenu)
+        self.setItemDelegate(SequenceItemDelegeate())
+        self.itemDoubleClicked.connect(self.editItem)
 
         self.general = QTreeWidgetItem()
         self.signals = QTreeWidgetItem()
@@ -58,12 +61,33 @@ class PropertyTree(QTreeWidget):
         self.groups.setText(0, &#34;Block Groups&#34;)
         self.sequence.setText(0, &#34;Sequence&#34;)
 
+        self.general.setFlags(self.general.flags() | Qt.ItemNeverHasChildren)
+        self.signals.setFlags(self.signals.flags() | Qt.ItemNeverHasChildren)
+        self.sequence.setFlags(self.sequence.flags() | Qt.ItemNeverHasChildren)
+
         self.addTopLevelItem(self.general)
         self.addTopLevelItem(self.signals)
         self.addTopLevelItem(self.blocks)
         self.addTopLevelItem(self.groups)
         self.addTopLevelItem(self.sequence)
     
+    def experiment(self):
+        &#34;&#34;&#34;Get the experiment assosiated with this property tree.
+        This function takes the experiment from the ExperimentView, which should be this widget&#39;s parent.
+        Used in the custom item delegate to check block name validity.
+        &#34;&#34;&#34;
+        if self.parent() is None:
+            raise ValueError(&#34;could not get the experiment because parent is None (should be ExperimentView)&#34;)
+            
+        return self.parent().parent().model()
+
+    def editItem(self, item, column):
+        &#34;&#34;&#34;Called when by some action user wants to edit the item.
+        Reimplements base class function to silence the warning when double-clicking non-editable items.
+        &#34;&#34;&#34;
+        if item.flags() &amp; Qt.ItemIsEditable:
+            super().editItem(item, column)
+
     def showContextMenu(self, point: QPoint):
         global_point = self.viewport().mapToGlobal(point)
         item = self.itemAt(point)
@@ -72,28 +96,28 @@ class PropertyTree(QTreeWidget):
             # Menu for &#34;Blocks&#34; item -----------------------------------------------------------------------------------
             menu = QMenu()
             add = menu.addAction(&#34;New Block&#34;)
-            add.triggered.connect(lambda: self.addBlockClicked.emit())
+            add.triggered.connect(lambda: self.addBlockTriggered.emit())
 
             menu.exec_(global_point)
         elif item is self.groups:
             # Menu for &#34;Groups&#34; item -----------------------------------------------------------------------------------
             menu = QMenu()
             add = menu.addAction(&#34;New Group&#34;)
-            add.triggered.connect(lambda: self.addGroupClicked.emit())
+            add.triggered.connect(lambda: self.addGroupTriggered.emit())
 
             menu.exec_(global_point)
         elif item.parent() is self.blocks:
             # Menu for an individual block -----------------------------------------------------------------------------
             menu = QMenu()
-            add = menu.addAction(&#34;Delete&#34;)
-            add.triggered.connect(lambda: self.removeBlockClicked.emit(item))
+            delete = menu.addAction(&#34;Delete&#34;)
+            delete.triggered.connect(lambda: self.removeBlockTriggered.emit(item))
 
             menu.exec_(global_point)
         elif item.parent() is self.groups:
             # Menu for an individual group -----------------------------------------------------------------------------
             menu = QMenu()
-            add = menu.addAction(&#34;Delete&#34;)
-            add.triggered.connect(lambda: self.removeGroupClicked.emit(item))
+            delete = menu.addAction(&#34;Delete&#34;)
+            delete.triggered.connect(lambda: self.removeGroupTriggered.emit(item))
 
             menu.exec_(global_point)</code></pre>
 </details>
@@ -107,7 +131,7 @@ class PropertyTree(QTreeWidget):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.experiment.property_tree.PropertyTree"><code class="flex name class">
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree"><code class="flex name class">
 <span>class <span class="ident">PropertyTree</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
@@ -122,12 +146,12 @@ Since this widget is entirely contained in the view model, there is no need for 
     &#34;&#34;&#34;A tree widget displaying experiment properties inside the ExperimentView.
     Since this widget is entirely contained in the view model, there is no need for model-view separation.
     &#34;&#34;&#34;
-    addBlockClicked = Signal()
-    addGroupClicked = Signal()
-    renameBlockClicked = Signal()
-    renameGroupClicked = Signal()
-    removeBlockClicked = Signal(QTreeWidgetItem)
-    removeGroupClicked = Signal(QTreeWidgetItem)
+    addBlockTriggered = Signal()
+    addGroupTriggered = Signal()
+    renameBlockTriggered = Signal(QTreeWidgetItem, str)
+    renameGroupTriggered = Signal(QTreeWidgetItem, str)
+    removeBlockTriggered = Signal(QTreeWidgetItem)
+    removeGroupTriggered = Signal(QTreeWidgetItem)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -135,6 +159,8 @@ Since this widget is entirely contained in the view model, there is no need for 
         self.setSelectionMode(self.SingleSelection)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.showContextMenu)
+        self.setItemDelegate(SequenceItemDelegeate())
+        self.itemDoubleClicked.connect(self.editItem)
 
         self.general = QTreeWidgetItem()
         self.signals = QTreeWidgetItem()
@@ -148,12 +174,33 @@ Since this widget is entirely contained in the view model, there is no need for 
         self.groups.setText(0, &#34;Block Groups&#34;)
         self.sequence.setText(0, &#34;Sequence&#34;)
 
+        self.general.setFlags(self.general.flags() | Qt.ItemNeverHasChildren)
+        self.signals.setFlags(self.signals.flags() | Qt.ItemNeverHasChildren)
+        self.sequence.setFlags(self.sequence.flags() | Qt.ItemNeverHasChildren)
+
         self.addTopLevelItem(self.general)
         self.addTopLevelItem(self.signals)
         self.addTopLevelItem(self.blocks)
         self.addTopLevelItem(self.groups)
         self.addTopLevelItem(self.sequence)
     
+    def experiment(self):
+        &#34;&#34;&#34;Get the experiment assosiated with this property tree.
+        This function takes the experiment from the ExperimentView, which should be this widget&#39;s parent.
+        Used in the custom item delegate to check block name validity.
+        &#34;&#34;&#34;
+        if self.parent() is None:
+            raise ValueError(&#34;could not get the experiment because parent is None (should be ExperimentView)&#34;)
+            
+        return self.parent().parent().model()
+
+    def editItem(self, item, column):
+        &#34;&#34;&#34;Called when by some action user wants to edit the item.
+        Reimplements base class function to silence the warning when double-clicking non-editable items.
+        &#34;&#34;&#34;
+        if item.flags() &amp; Qt.ItemIsEditable:
+            super().editItem(item, column)
+
     def showContextMenu(self, point: QPoint):
         global_point = self.viewport().mapToGlobal(point)
         item = self.itemAt(point)
@@ -162,28 +209,28 @@ Since this widget is entirely contained in the view model, there is no need for 
             # Menu for &#34;Blocks&#34; item -----------------------------------------------------------------------------------
             menu = QMenu()
             add = menu.addAction(&#34;New Block&#34;)
-            add.triggered.connect(lambda: self.addBlockClicked.emit())
+            add.triggered.connect(lambda: self.addBlockTriggered.emit())
 
             menu.exec_(global_point)
         elif item is self.groups:
             # Menu for &#34;Groups&#34; item -----------------------------------------------------------------------------------
             menu = QMenu()
             add = menu.addAction(&#34;New Group&#34;)
-            add.triggered.connect(lambda: self.addGroupClicked.emit())
+            add.triggered.connect(lambda: self.addGroupTriggered.emit())
 
             menu.exec_(global_point)
         elif item.parent() is self.blocks:
             # Menu for an individual block -----------------------------------------------------------------------------
             menu = QMenu()
-            add = menu.addAction(&#34;Delete&#34;)
-            add.triggered.connect(lambda: self.removeBlockClicked.emit(item))
+            delete = menu.addAction(&#34;Delete&#34;)
+            delete.triggered.connect(lambda: self.removeBlockTriggered.emit(item))
 
             menu.exec_(global_point)
         elif item.parent() is self.groups:
             # Menu for an individual group -----------------------------------------------------------------------------
             menu = QMenu()
-            add = menu.addAction(&#34;Delete&#34;)
-            add.triggered.connect(lambda: self.removeGroupClicked.emit(item))
+            delete = menu.addAction(&#34;Delete&#34;)
+            delete.triggered.connect(lambda: self.removeGroupTriggered.emit(item))
 
             menu.exec_(global_point)</code></pre>
 </details>
@@ -201,38 +248,78 @@ Since this widget is entirely contained in the view model, there is no need for 
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.experiment.property_tree.PropertyTree.addBlockClicked"><code class="name">var <span class="ident">addBlockClicked</span></code></dt>
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree.addBlockTriggered"><code class="name">var <span class="ident">addBlockTriggered</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.experiment.property_tree.PropertyTree.addGroupClicked"><code class="name">var <span class="ident">addGroupClicked</span></code></dt>
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree.addGroupTriggered"><code class="name">var <span class="ident">addGroupTriggered</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.experiment.property_tree.PropertyTree.removeBlockClicked"><code class="name">var <span class="ident">removeBlockClicked</span></code></dt>
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree.removeBlockTriggered"><code class="name">var <span class="ident">removeBlockTriggered</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.experiment.property_tree.PropertyTree.removeGroupClicked"><code class="name">var <span class="ident">removeGroupClicked</span></code></dt>
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree.removeGroupTriggered"><code class="name">var <span class="ident">removeGroupTriggered</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.experiment.property_tree.PropertyTree.renameBlockClicked"><code class="name">var <span class="ident">renameBlockClicked</span></code></dt>
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree.renameBlockTriggered"><code class="name">var <span class="ident">renameBlockTriggered</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.experiment.property_tree.PropertyTree.renameGroupClicked"><code class="name">var <span class="ident">renameGroupClicked</span></code></dt>
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree.renameGroupTriggered"><code class="name">var <span class="ident">renameGroupTriggered</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="nfb_studio.experiment.property_tree.PropertyTree.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.experiment.property_tree.PropertyTree.showContextMenu"><code class="name flex">
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree.editItem"><code class="name flex">
+<span>def <span class="ident">editItem</span></span>(<span>self, item, column)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Called when by some action user wants to edit the item.
+Reimplements base class function to silence the warning when double-clicking non-editable items.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def editItem(self, item, column):
+    &#34;&#34;&#34;Called when by some action user wants to edit the item.
+    Reimplements base class function to silence the warning when double-clicking non-editable items.
+    &#34;&#34;&#34;
+    if item.flags() &amp; Qt.ItemIsEditable:
+        super().editItem(item, column)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree.experiment"><code class="name flex">
+<span>def <span class="ident">experiment</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the experiment assosiated with this property tree.
+This function takes the experiment from the ExperimentView, which should be this widget's parent.
+Used in the custom item delegate to check block name validity.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def experiment(self):
+    &#34;&#34;&#34;Get the experiment assosiated with this property tree.
+    This function takes the experiment from the ExperimentView, which should be this widget&#39;s parent.
+    Used in the custom item delegate to check block name validity.
+    &#34;&#34;&#34;
+    if self.parent() is None:
+        raise ValueError(&#34;could not get the experiment because parent is None (should be ExperimentView)&#34;)
+        
+    return self.parent().parent().model()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.property_tree.property_tree.PropertyTree.showContextMenu"><code class="name flex">
 <span>def <span class="ident">showContextMenu</span></span>(<span>self, point: PySide2.QtCore.QPoint)</span>
 </code></dt>
 <dd>
@@ -249,28 +336,28 @@ Since this widget is entirely contained in the view model, there is no need for 
         # Menu for &#34;Blocks&#34; item -----------------------------------------------------------------------------------
         menu = QMenu()
         add = menu.addAction(&#34;New Block&#34;)
-        add.triggered.connect(lambda: self.addBlockClicked.emit())
+        add.triggered.connect(lambda: self.addBlockTriggered.emit())
 
         menu.exec_(global_point)
     elif item is self.groups:
         # Menu for &#34;Groups&#34; item -----------------------------------------------------------------------------------
         menu = QMenu()
         add = menu.addAction(&#34;New Group&#34;)
-        add.triggered.connect(lambda: self.addGroupClicked.emit())
+        add.triggered.connect(lambda: self.addGroupTriggered.emit())
 
         menu.exec_(global_point)
     elif item.parent() is self.blocks:
         # Menu for an individual block -----------------------------------------------------------------------------
         menu = QMenu()
-        add = menu.addAction(&#34;Delete&#34;)
-        add.triggered.connect(lambda: self.removeBlockClicked.emit(item))
+        delete = menu.addAction(&#34;Delete&#34;)
+        delete.triggered.connect(lambda: self.removeBlockTriggered.emit(item))
 
         menu.exec_(global_point)
     elif item.parent() is self.groups:
         # Menu for an individual group -----------------------------------------------------------------------------
         menu = QMenu()
-        add = menu.addAction(&#34;Delete&#34;)
-        add.triggered.connect(lambda: self.removeGroupClicked.emit(item))
+        delete = menu.addAction(&#34;Delete&#34;)
+        delete.triggered.connect(lambda: self.removeGroupTriggered.emit(item))
 
         menu.exec_(global_point)</code></pre>
 </details>
@@ -288,22 +375,24 @@ Since this widget is entirely contained in the view model, there is no need for 
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="nfb_studio.experiment" href="index.html">nfb_studio.experiment</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree" href="index.html">nfb_studio.experiment.property_tree</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.experiment.property_tree.PropertyTree" href="#nfb_studio.experiment.property_tree.PropertyTree">PropertyTree</a></code></h4>
-<ul class="two-column">
-<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.addBlockClicked" href="#nfb_studio.experiment.property_tree.PropertyTree.addBlockClicked">addBlockClicked</a></code></li>
-<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.addGroupClicked" href="#nfb_studio.experiment.property_tree.PropertyTree.addGroupClicked">addGroupClicked</a></code></li>
-<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.removeBlockClicked" href="#nfb_studio.experiment.property_tree.PropertyTree.removeBlockClicked">removeBlockClicked</a></code></li>
-<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.removeGroupClicked" href="#nfb_studio.experiment.property_tree.PropertyTree.removeGroupClicked">removeGroupClicked</a></code></li>
-<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.renameBlockClicked" href="#nfb_studio.experiment.property_tree.PropertyTree.renameBlockClicked">renameBlockClicked</a></code></li>
-<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.renameGroupClicked" href="#nfb_studio.experiment.property_tree.PropertyTree.renameGroupClicked">renameGroupClicked</a></code></li>
-<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.showContextMenu" href="#nfb_studio.experiment.property_tree.PropertyTree.showContextMenu">showContextMenu</a></code></li>
-<li><code><a title="nfb_studio.experiment.property_tree.PropertyTree.staticMetaObject" href="#nfb_studio.experiment.property_tree.PropertyTree.staticMetaObject">staticMetaObject</a></code></li>
+<h4><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree">PropertyTree</a></code></h4>
+<ul class="">
+<li><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree.addBlockTriggered" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree.addBlockTriggered">addBlockTriggered</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree.addGroupTriggered" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree.addGroupTriggered">addGroupTriggered</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree.editItem" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree.editItem">editItem</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree.experiment" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree.experiment">experiment</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree.removeBlockTriggered" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree.removeBlockTriggered">removeBlockTriggered</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree.removeGroupTriggered" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree.removeGroupTriggered">removeGroupTriggered</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree.renameBlockTriggered" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree.renameBlockTriggered">renameBlockTriggered</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree.renameGroupTriggered" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree.renameGroupTriggered">renameGroupTriggered</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree.showContextMenu" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree.showContextMenu">showContextMenu</a></code></li>
+<li><code><a title="nfb_studio.experiment.property_tree.property_tree.PropertyTree.staticMetaObject" href="#nfb_studio.experiment.property_tree.property_tree.PropertyTree.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
 </li>
 </ul>

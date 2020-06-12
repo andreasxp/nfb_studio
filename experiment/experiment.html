@@ -26,6 +26,7 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;NFB Experiment.&#34;&#34;&#34;
+import re
 from PySide2.QtCore import Qt, Signal, QObject, QAbstractItemModel, QModelIndex
 from PySide2.QtWidgets import QTreeView
 from sortedcontainers import SortedDict
@@ -73,6 +74,25 @@ class Experiment:
 
         self._view = None
     
+    def checkName(self, name: str):
+        &#34;&#34;&#34;Check if a name is appropriate for adding a new block or group.
+        Returns a bool (name good or not) and a reason why the name is not good (or None).
+        &#34;&#34;&#34;
+        if name == &#34;&#34;:
+            return (False, &#34;Name cannot be blank.&#34;)
+        
+        if &#34; &#34; in name:
+            return (False, &#34;Name cannot contain spaces.&#34;)
+
+        match = re.search(r&#34;([^A-Za-z0-9_])&#34;, name)
+        if match:
+            return (False, &#34;Illegal character &#39;{}&#39;&#34;.format(match.group(0)))
+
+        if name in self.blocks or name in self.groups:
+            return (False, &#34;Name already in use.&#34;)
+        
+        return (True, None)
+
     # Access functions =================================================================================================
     def view(self):
         return self._view
@@ -531,6 +551,25 @@ class Experiment:
 
         self._view = None
     
+    def checkName(self, name: str):
+        &#34;&#34;&#34;Check if a name is appropriate for adding a new block or group.
+        Returns a bool (name good or not) and a reason why the name is not good (or None).
+        &#34;&#34;&#34;
+        if name == &#34;&#34;:
+            return (False, &#34;Name cannot be blank.&#34;)
+        
+        if &#34; &#34; in name:
+            return (False, &#34;Name cannot contain spaces.&#34;)
+
+        match = re.search(r&#34;([^A-Za-z0-9_])&#34;, name)
+        if match:
+            return (False, &#34;Illegal character &#39;{}&#39;&#34;.format(match.group(0)))
+
+        if name in self.blocks or name in self.groups:
+            return (False, &#34;Name already in use.&#34;)
+        
+        return (True, None)
+
     # Access functions =================================================================================================
     def view(self):
         return self._view
@@ -1149,6 +1188,36 @@ def load(cls, data: str):
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="nfb_studio.experiment.experiment.Experiment.checkName"><code class="name flex">
+<span>def <span class="ident">checkName</span></span>(<span>self, name: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if a name is appropriate for adding a new block or group.
+Returns a bool (name good or not) and a reason why the name is not good (or None).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def checkName(self, name: str):
+    &#34;&#34;&#34;Check if a name is appropriate for adding a new block or group.
+    Returns a bool (name good or not) and a reason why the name is not good (or None).
+    &#34;&#34;&#34;
+    if name == &#34;&#34;:
+        return (False, &#34;Name cannot be blank.&#34;)
+    
+    if &#34; &#34; in name:
+        return (False, &#34;Name cannot contain spaces.&#34;)
+
+    match = re.search(r&#34;([^A-Za-z0-9_])&#34;, name)
+    if match:
+        return (False, &#34;Illegal character &#39;{}&#39;&#34;.format(match.group(0)))
+
+    if name in self.blocks or name in self.groups:
+        return (False, &#34;Name already in use.&#34;)
+    
+    return (True, None)</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.experiment.experiment.Experiment.deserialize"><code class="name flex">
 <span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
 </code></dt>
@@ -1474,6 +1543,7 @@ def load(cls, data: str):
 <li>
 <h4><code><a title="nfb_studio.experiment.experiment.Experiment" href="#nfb_studio.experiment.experiment.Experiment">Experiment</a></code></h4>
 <ul class="">
+<li><code><a title="nfb_studio.experiment.experiment.Experiment.checkName" href="#nfb_studio.experiment.experiment.Experiment.checkName">checkName</a></code></li>
 <li><code><a title="nfb_studio.experiment.experiment.Experiment.deserialize" href="#nfb_studio.experiment.experiment.Experiment.deserialize">deserialize</a></code></li>
 <li><code><a title="nfb_studio.experiment.experiment.Experiment.export" href="#nfb_studio.experiment.experiment.Experiment.export">export</a></code></li>
 <li><code><a title="nfb_studio.experiment.experiment.Experiment.import_xml" href="#nfb_studio.experiment.experiment.Experiment.import_xml">import_xml</a></code></li>
