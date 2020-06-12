@@ -108,7 +108,7 @@ class Experiment:
             Experiment: Experiment.nfb_export_data,
             Block: Block.nfb_export_data,
             Group: Group.nfb_export_data,
-            bool: lambda x: {&#34;#text&#34;: str(int(x))}
+            bool: lambda x: int(x)
         }
 
         encoder = xml.XMLEncoder(separator=&#34;\n&#34;, indent=&#34;\t&#34;, metadata=False, hooks=enc_hooks)
@@ -187,7 +187,7 @@ class Experiment:
 
         # Decode signals -----------------------------------------------------------------------------------------------
         node_pos = [0, 0]
-        node_xdiff = -100
+        node_xdiff = -100  # TODO: Change to a size dependent on node default width
         node_ydiff = 100
 
         for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
@@ -585,7 +585,7 @@ class Experiment:
             Experiment: Experiment.nfb_export_data,
             Block: Block.nfb_export_data,
             Group: Group.nfb_export_data,
-            bool: lambda x: {&#34;#text&#34;: str(int(x))}
+            bool: lambda x: int(x)
         }
 
         encoder = xml.XMLEncoder(separator=&#34;\n&#34;, indent=&#34;\t&#34;, metadata=False, hooks=enc_hooks)
@@ -664,7 +664,7 @@ class Experiment:
 
         # Decode signals -----------------------------------------------------------------------------------------------
         node_pos = [0, 0]
-        node_xdiff = -100
+        node_xdiff = -100  # TODO: Change to a size dependent on node default width
         node_ydiff = 100
 
         for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
@@ -1059,7 +1059,7 @@ def import_xml(cls, xml_string: str):
 
     # Decode signals -----------------------------------------------------------------------------------------------
     node_pos = [0, 0]
-    node_xdiff = -100
+    node_xdiff = -100  # TODO: Change to a size dependent on node default width
     node_ydiff = 100
 
     for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
@@ -1267,7 +1267,7 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
         Experiment: Experiment.nfb_export_data,
         Block: Block.nfb_export_data,
         Group: Group.nfb_export_data,
-        bool: lambda x: {&#34;#text&#34;: str(int(x))}
+        bool: lambda x: int(x)
     }
 
     encoder = xml.XMLEncoder(separator=&#34;\n&#34;, indent=&#34;\t&#34;, metadata=False, hooks=enc_hooks)
