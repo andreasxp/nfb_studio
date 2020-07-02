@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.3" />
-<title>nfb_studio.widgets.signal_nodes.lsl_input API documentation</title>
+<title>nfb_studio.widgets.signal_nodes.composite_signal_export API documentation</title>
 <meta name="description" content="NFB main source signal." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,7 +19,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>nfb_studio.widgets.signal_nodes.lsl_input</code></h1>
+<h1 class="title">Module <code>nfb_studio.widgets.signal_nodes.composite_signal_export</code></h1>
 </header>
 <section id="section-intro">
 <p>NFB main source signal.</p>
@@ -28,135 +28,110 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;NFB main source signal.&#34;&#34;&#34;
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QFrame
+from PySide2.QtWidgets import QWidget, QFormLayout, QLineEdit
 
-from ..scheme import Node, Output, DataType
+from ..scheme import Node, Input, Output, DataType
 from .signal_node import SignalNode
+from .derived_signal_export import DerivedSignalExport
 
 
-class LSLDataSource:
-    def __init__(self, name=None, channel_count=None, frequency=None):
-        self.name = name
-        self.channel_count = channel_count
-        self.frequency = frequency
-
-
-class LSLInput(SignalNode):
-    &#34;&#34;&#34;NFB main source signal.&#34;&#34;&#34;
-    data_sources = [
-        LSLDataSource(&#34;NVX136_Data&#34;, 32, 500),
-        LSLDataSource(&#34;Mitsar&#34;, 30, 250),
-    ]
-
-    output_type = DataType(100)
+class CompositeSignalExport(SignalNode):
+    input_type = DerivedSignalExport.output_type
 
     class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
             super().__init__(parent=parent)
 
-            self.data_source = QComboBox()
-            for source in LSLInput.data_sources:
-                self.data_source.addItem(source.name)
-            self.data_source.currentTextChanged.connect(self._adjust)
+            self.signal_name = QLineEdit(&#34;Signal&#34;)
+            self.signal_name.editingFinished.connect(self.updateModel)
 
-            self.channel_count = QLabel()
-            self.channel_count.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-            self.channel_count.setAlignment(Qt.AlignCenter)
-            self.channel_count.setMargin(5)
-
-            self.frequency = QLabel()
-            self.frequency.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-            self.frequency.setAlignment(Qt.AlignCenter)
-            self.frequency.setMargin(5)
+            self.expression = QLineEdit()
+            self.expression.editingFinished.connect(self.updateModel)
 
             layout = QFormLayout()
             self.setLayout(layout)
-
-            layout.addRow(&#34;Data source:&#34;, self.data_source)
-            layout.addRow(&#34;Channel count:&#34;, self.channel_count)
-            layout.addRow(&#34;Frequency:&#34;, self.frequency)
-
-            self._adjust()
-
-        def _adjust(self):
-            &#34;&#34;&#34;Adjust displayed values after a change.&#34;&#34;&#34;
-            # Sync changes with the node
-            self.updateModel()
-
-            # Find the data_source with the selected name
-            for data_source in LSLInput.data_sources:
-                if data_source.name == self.data_source.currentText():
-                    break
-            else:
-                data_source = None
-            
-            # Update displays to show new information
-            self.channel_count.setText(str(data_source.channel_count))
-            self.frequency.setText(str(data_source.frequency) + &#34; Hz&#34;)
-
+            layout.addRow(&#34;Signal name&#34;, self.signal_name)
+            layout.addRow(&#34;Expression&#34;, self.expression)
+        
         def updateModel(self):
             n = self.node()
             if n is None:
                 return
             
-            n.setDataSource(self.data_source.currentText())
+            signal_name = self.signal_name.text()
+            expression = self.expression.text()
+
+            n.setSignalName(signal_name)
+            n.setExpression(expression)
 
         def updateView(self):
             n = self.node()
             if n is None:
                 return
-            
-            self.data_source.blockSignals(True)
-            self.data_source.setCurrentText(n.dataSource())
-            self.data_source.blockSignals(False)
+
+            self.signal_name.blockSignals(True)
+            self.expression.blockSignals(True)
+
+            self.signal_name.setText(n.signalName())
+            self.expression.setText(n.expression())
+
+            self.signal_name.blockSignals(False)
+            self.expression.blockSignals(False)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        self.setTitle(&#34;LSL Input&#34;)
-        self.addOutput(Output(&#34;LSL data stream&#34;, self.output_type))
-        
-        self._data_source = self.data_sources[0].name
+        self.setTitle(&#34;Composite Signal Export&#34;)
+        i = Input(&#34;Input&#34;, self.input_type)
+        i.setMultiple(True)
+        self.addInput(i)
+
+        self._signal_name = &#34;Signal&#34;
+        self._expression = &#34;&#34;
         self._adjust()
 
-    def dataSource(self):
-        return self._data_source
+    def signalName(self) -&gt; str:
+        return self._signal_name
+
+    def expression(self) -&gt; str:
+        return self._expression
+
+    def setSignalName(self, name: str, /):
+        self._signal_name = name
+        self._adjust()
     
-    def setDataSource(self, source: str, /):
-        # TODO: Perform a check that this data source exists
-        self._data_source = source
+    def setExpression(self, eq: str, /):
+        self._expression = eq
         self._adjust()
 
     def _adjust(self):
         &#34;&#34;&#34;Adjust visuals in response to changes.&#34;&#34;&#34;
         self.updateView()
 
-        ds = [x for x in self.data_sources if x.name == self.dataSource()][0]
-        self.setDescription(
-            &#34;{}\n{} channels\n{} Hz&#34;.format(
-                ds.name,
-                ds.channel_count,
-                ds.frequency,
+        self.setDescription(&#34;{} =\n{}&#34;.format(
+                self.signalName(),
+                self.expression(),
             )
         )
 
     # Serialization ====================================================================================================
     def add_nfb_export_data(self, signal: dict):
         &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
-        pass
+        signal[&#34;sSignalName&#34;] = self.signalName()
+        signal[&#34;sExpression&#34;] = self.expression()
     
     def serialize(self) -&gt; dict:
         data = super().serialize()
 
-        data[&#34;data_source&#34;] = self.dataSource()
+        data[&#34;signal_name&#34;] = self.signalName()
+        data[&#34;expression&#34;] = self.expression()
         return data
     
     def deserialize(self, data: dict):
         super().deserialize(data)
-
-        self.setDataSource(data[&#34;data_source&#34;])</code></pre>
+        self.setSignalName(data[&#34;signal_name&#34;])
+        self.setExpression(data[&#34;expression&#34;])</code></pre>
 </details>
 </section>
 <section>
@@ -168,148 +143,114 @@ class LSLInput(SignalNode):
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLDataSource"><code class="flex name class">
-<span>class <span class="ident">LSLDataSource</span></span>
-<span>(</span><span>name=None, channel_count=None, frequency=None)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class LSLDataSource:
-    def __init__(self, name=None, channel_count=None, frequency=None):
-        self.name = name
-        self.channel_count = channel_count
-        self.frequency = frequency</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput"><code class="flex name class">
-<span>class <span class="ident">LSLInput</span></span>
+<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport"><code class="flex name class">
+<span>class <span class="ident">CompositeSignalExport</span></span>
 <span>(</span><span>parent=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>NFB main source signal.</p></div>
+<div class="desc"><p>A node representing part of the signal in the signal designer.
+In the model-view relationship the config widget is the view, and the node is the model.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class LSLInput(SignalNode):
-    &#34;&#34;&#34;NFB main source signal.&#34;&#34;&#34;
-    data_sources = [
-        LSLDataSource(&#34;NVX136_Data&#34;, 32, 500),
-        LSLDataSource(&#34;Mitsar&#34;, 30, 250),
-    ]
-
-    output_type = DataType(100)
+<pre><code class="python">class CompositeSignalExport(SignalNode):
+    input_type = DerivedSignalExport.output_type
 
     class Config(SignalNode.Config):
         &#34;&#34;&#34;Config widget displayed for LSLInput.&#34;&#34;&#34;
         def __init__(self, parent=None):
             super().__init__(parent=parent)
 
-            self.data_source = QComboBox()
-            for source in LSLInput.data_sources:
-                self.data_source.addItem(source.name)
-            self.data_source.currentTextChanged.connect(self._adjust)
+            self.signal_name = QLineEdit(&#34;Signal&#34;)
+            self.signal_name.editingFinished.connect(self.updateModel)
 
-            self.channel_count = QLabel()
-            self.channel_count.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-            self.channel_count.setAlignment(Qt.AlignCenter)
-            self.channel_count.setMargin(5)
-
-            self.frequency = QLabel()
-            self.frequency.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-            self.frequency.setAlignment(Qt.AlignCenter)
-            self.frequency.setMargin(5)
+            self.expression = QLineEdit()
+            self.expression.editingFinished.connect(self.updateModel)
 
             layout = QFormLayout()
             self.setLayout(layout)
-
-            layout.addRow(&#34;Data source:&#34;, self.data_source)
-            layout.addRow(&#34;Channel count:&#34;, self.channel_count)
-            layout.addRow(&#34;Frequency:&#34;, self.frequency)
-
-            self._adjust()
-
-        def _adjust(self):
-            &#34;&#34;&#34;Adjust displayed values after a change.&#34;&#34;&#34;
-            # Sync changes with the node
-            self.updateModel()
-
-            # Find the data_source with the selected name
-            for data_source in LSLInput.data_sources:
-                if data_source.name == self.data_source.currentText():
-                    break
-            else:
-                data_source = None
-            
-            # Update displays to show new information
-            self.channel_count.setText(str(data_source.channel_count))
-            self.frequency.setText(str(data_source.frequency) + &#34; Hz&#34;)
-
+            layout.addRow(&#34;Signal name&#34;, self.signal_name)
+            layout.addRow(&#34;Expression&#34;, self.expression)
+        
         def updateModel(self):
             n = self.node()
             if n is None:
                 return
             
-            n.setDataSource(self.data_source.currentText())
+            signal_name = self.signal_name.text()
+            expression = self.expression.text()
+
+            n.setSignalName(signal_name)
+            n.setExpression(expression)
 
         def updateView(self):
             n = self.node()
             if n is None:
                 return
-            
-            self.data_source.blockSignals(True)
-            self.data_source.setCurrentText(n.dataSource())
-            self.data_source.blockSignals(False)
+
+            self.signal_name.blockSignals(True)
+            self.expression.blockSignals(True)
+
+            self.signal_name.setText(n.signalName())
+            self.expression.setText(n.expression())
+
+            self.signal_name.blockSignals(False)
+            self.expression.blockSignals(False)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        self.setTitle(&#34;LSL Input&#34;)
-        self.addOutput(Output(&#34;LSL data stream&#34;, self.output_type))
-        
-        self._data_source = self.data_sources[0].name
+        self.setTitle(&#34;Composite Signal Export&#34;)
+        i = Input(&#34;Input&#34;, self.input_type)
+        i.setMultiple(True)
+        self.addInput(i)
+
+        self._signal_name = &#34;Signal&#34;
+        self._expression = &#34;&#34;
         self._adjust()
 
-    def dataSource(self):
-        return self._data_source
+    def signalName(self) -&gt; str:
+        return self._signal_name
+
+    def expression(self) -&gt; str:
+        return self._expression
+
+    def setSignalName(self, name: str, /):
+        self._signal_name = name
+        self._adjust()
     
-    def setDataSource(self, source: str, /):
-        # TODO: Perform a check that this data source exists
-        self._data_source = source
+    def setExpression(self, eq: str, /):
+        self._expression = eq
         self._adjust()
 
     def _adjust(self):
         &#34;&#34;&#34;Adjust visuals in response to changes.&#34;&#34;&#34;
         self.updateView()
 
-        ds = [x for x in self.data_sources if x.name == self.dataSource()][0]
-        self.setDescription(
-            &#34;{}\n{} channels\n{} Hz&#34;.format(
-                ds.name,
-                ds.channel_count,
-                ds.frequency,
+        self.setDescription(&#34;{} =\n{}&#34;.format(
+                self.signalName(),
+                self.expression(),
             )
         )
 
     # Serialization ====================================================================================================
     def add_nfb_export_data(self, signal: dict):
         &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
-        pass
+        signal[&#34;sSignalName&#34;] = self.signalName()
+        signal[&#34;sExpression&#34;] = self.expression()
     
     def serialize(self) -&gt; dict:
         data = super().serialize()
 
-        data[&#34;data_source&#34;] = self.dataSource()
+        data[&#34;signal_name&#34;] = self.signalName()
+        data[&#34;expression&#34;] = self.expression()
         return data
     
     def deserialize(self, data: dict):
         super().deserialize(data)
-
-        self.setDataSource(data[&#34;data_source&#34;])</code></pre>
+        self.setSignalName(data[&#34;signal_name&#34;])
+        self.setExpression(data[&#34;expression&#34;])</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -321,18 +262,14 @@ class LSLInput(SignalNode):
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.data_sources"><code class="name">var <span class="ident">data_sources</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.output_type"><code class="name">var <span class="ident">output_type</span></code></dt>
+<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.input_type"><code class="name">var <span class="ident">input_type</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.add_nfb_export_data"><code class="name flex">
+<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.add_nfb_export_data"><code class="name flex">
 <span>def <span class="ident">add_nfb_export_data</span></span>(<span>self, signal: dict)</span>
 </code></dt>
 <dd>
@@ -343,23 +280,11 @@ class LSLInput(SignalNode):
 </summary>
 <pre><code class="python">def add_nfb_export_data(self, signal: dict):
     &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
-    pass</code></pre>
+    signal[&#34;sSignalName&#34;] = self.signalName()
+    signal[&#34;sExpression&#34;] = self.expression()</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.dataSource"><code class="name flex">
-<span>def <span class="ident">dataSource</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def dataSource(self):
-    return self._data_source</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.deserialize"><code class="name flex">
+<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.deserialize"><code class="name flex">
 <span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
 </code></dt>
 <dd>
@@ -370,11 +295,24 @@ class LSLInput(SignalNode):
 </summary>
 <pre><code class="python">def deserialize(self, data: dict):
     super().deserialize(data)
-
-    self.setDataSource(data[&#34;data_source&#34;])</code></pre>
+    self.setSignalName(data[&#34;signal_name&#34;])
+    self.setExpression(data[&#34;expression&#34;])</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.serialize"><code class="name flex">
+<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.expression"><code class="name flex">
+<span>def <span class="ident">expression</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def expression(self) -&gt; str:
+    return self._expression</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self) ‑> dict</span>
 </code></dt>
 <dd>
@@ -386,12 +324,13 @@ class LSLInput(SignalNode):
 <pre><code class="python">def serialize(self) -&gt; dict:
     data = super().serialize()
 
-    data[&#34;data_source&#34;] = self.dataSource()
+    data[&#34;signal_name&#34;] = self.signalName()
+    data[&#34;expression&#34;] = self.expression()
     return data</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.setDataSource"><code class="name flex">
-<span>def <span class="ident">setDataSource</span></span>(<span>self, source: str, /)</span>
+<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.setExpression"><code class="name flex">
+<span>def <span class="ident">setExpression</span></span>(<span>self, eq: str, /)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -399,10 +338,36 @@ class LSLInput(SignalNode):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setDataSource(self, source: str, /):
-    # TODO: Perform a check that this data source exists
-    self._data_source = source
+<pre><code class="python">def setExpression(self, eq: str, /):
+    self._expression = eq
     self._adjust()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.setSignalName"><code class="name flex">
+<span>def <span class="ident">setSignalName</span></span>(<span>self, name: str, /)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setSignalName(self, name: str, /):
+    self._signal_name = name
+    self._adjust()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.signalName"><code class="name flex">
+<span>def <span class="ident">signalName</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def signalName(self) -&gt; str:
+    return self._signal_name</code></pre>
 </details>
 </dd>
 </dl>
@@ -443,18 +408,16 @@ class LSLInput(SignalNode):
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLDataSource" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLDataSource">LSLDataSource</a></code></h4>
-</li>
-<li>
-<h4><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput">LSLInput</a></code></h4>
+<h4><code><a title="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport" href="#nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport">CompositeSignalExport</a></code></h4>
 <ul class="two-column">
-<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.add_nfb_export_data">add_nfb_export_data</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.dataSource" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.dataSource">dataSource</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.data_sources" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.data_sources">data_sources</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.deserialize" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.deserialize">deserialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.output_type" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.output_type">output_type</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.serialize" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.serialize">serialize</a></code></li>
-<li><code><a title="nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.setDataSource" href="#nfb_studio.widgets.signal_nodes.lsl_input.LSLInput.setDataSource">setDataSource</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.add_nfb_export_data" href="#nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.add_nfb_export_data">add_nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.deserialize" href="#nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.expression" href="#nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.expression">expression</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.input_type" href="#nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.input_type">input_type</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.serialize" href="#nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.setExpression" href="#nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.setExpression">setExpression</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.setSignalName" href="#nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.setSignalName">setSignalName</a></code></li>
+<li><code><a title="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.signalName" href="#nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.signalName">signalName</a></code></li>
 </ul>
 </li>
 </ul>
