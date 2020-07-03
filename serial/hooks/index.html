@@ -31,6 +31,7 @@
 from collections import namedtuple
 import sys
 
+
 class Hooks(namedtuple(&#34;Hooks&#34;, [&#34;serialize&#34;, &#34;deserialize&#34;], defaults=[{}, {}])):
     &#34;&#34;&#34;A convenience class for a pair of two dicts of hooks: one dict for serialization and one for deserialization.  
     Can be passed to any class or function that requires hooks. Classes that only need serialization or only
@@ -56,6 +57,7 @@ class Hooks(namedtuple(&#34;Hooks&#34;, [&#34;serialize&#34;, &#34;deserialize&#
         return result
 
 
+# Must be at the bottom to prevent circular import errors
 from .qt import qt</code></pre>
 </details>
 </section>

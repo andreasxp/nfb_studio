@@ -391,28 +391,33 @@ class Experiment:
             &#34;groups&#34;: self.groups,
         }
     
-    def deserialize(self, data: dict):
-        self.name = data[&#34;name&#34;]
-        self.lsl_stream_name = data[&#34;lsl_stream_name&#34;]
-        self.inlet = data[&#34;inlet&#34;]
-        self.raw_data_path = data[&#34;raw_data_path&#34;]
-        self.hostname_port = data[&#34;hostname_port&#34;]
-        self.dc = data[&#34;dc&#34;]
-        self.prefilter_band = (data[&#34;prefilter_band_lower_bound&#34;], data[&#34;prefilter_band_upper_bound&#34;])
-        self.plot_raw = data[&#34;plot_raw&#34;]
-        self.plot_signals = data[&#34;plot_signals&#34;]
-        self.show_subject_window = data[&#34;show_subject_window&#34;]
-        self.discard_channels = data[&#34;discard_channels&#34;]
-        self.reference_sub = data[&#34;reference_sub&#34;]
-        self.show_proto_rectangle = data[&#34;show_proto_rectangle&#34;]
-        self.show_notch_filters = data[&#34;show_notch_filters&#34;]
-        self.signal_scheme = data[&#34;signal_scheme&#34;]
-        self.sequence_scheme = data[&#34;sequence_scheme&#34;]
-        self.blocks = data[&#34;blocks&#34;]
-        self.groups = data[&#34;groups&#34;]
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
 
-        self.blocks.setExperiment(self)
-        self.groups.setExperiment(self)
+        obj.name = data[&#34;name&#34;]
+        obj.lsl_stream_name = data[&#34;lsl_stream_name&#34;]
+        obj.inlet = data[&#34;inlet&#34;]
+        obj.raw_data_path = data[&#34;raw_data_path&#34;]
+        obj.hostname_port = data[&#34;hostname_port&#34;]
+        obj.dc = data[&#34;dc&#34;]
+        obj.prefilter_band = (data[&#34;prefilter_band_lower_bound&#34;], data[&#34;prefilter_band_upper_bound&#34;])
+        obj.plot_raw = data[&#34;plot_raw&#34;]
+        obj.plot_signals = data[&#34;plot_signals&#34;]
+        obj.show_subject_window = data[&#34;show_subject_window&#34;]
+        obj.discard_channels = data[&#34;discard_channels&#34;]
+        obj.reference_sub = data[&#34;reference_sub&#34;]
+        obj.show_proto_rectangle = data[&#34;show_proto_rectangle&#34;]
+        obj.show_notch_filters = data[&#34;show_notch_filters&#34;]
+        obj.signal_scheme = data[&#34;signal_scheme&#34;]
+        obj.sequence_scheme = data[&#34;sequence_scheme&#34;]
+        obj.blocks = data[&#34;blocks&#34;]
+        obj.groups = data[&#34;groups&#34;]
+
+        obj.blocks.setExperiment(obj)
+        obj.groups.setExperiment(obj)
+
+        return obj
 
     def nfb_export_data(self) -&gt; dict:
         &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
@@ -895,28 +900,33 @@ An instance of Experiment represents a collection</p></div>
             &#34;groups&#34;: self.groups,
         }
     
-    def deserialize(self, data: dict):
-        self.name = data[&#34;name&#34;]
-        self.lsl_stream_name = data[&#34;lsl_stream_name&#34;]
-        self.inlet = data[&#34;inlet&#34;]
-        self.raw_data_path = data[&#34;raw_data_path&#34;]
-        self.hostname_port = data[&#34;hostname_port&#34;]
-        self.dc = data[&#34;dc&#34;]
-        self.prefilter_band = (data[&#34;prefilter_band_lower_bound&#34;], data[&#34;prefilter_band_upper_bound&#34;])
-        self.plot_raw = data[&#34;plot_raw&#34;]
-        self.plot_signals = data[&#34;plot_signals&#34;]
-        self.show_subject_window = data[&#34;show_subject_window&#34;]
-        self.discard_channels = data[&#34;discard_channels&#34;]
-        self.reference_sub = data[&#34;reference_sub&#34;]
-        self.show_proto_rectangle = data[&#34;show_proto_rectangle&#34;]
-        self.show_notch_filters = data[&#34;show_notch_filters&#34;]
-        self.signal_scheme = data[&#34;signal_scheme&#34;]
-        self.sequence_scheme = data[&#34;sequence_scheme&#34;]
-        self.blocks = data[&#34;blocks&#34;]
-        self.groups = data[&#34;groups&#34;]
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
 
-        self.blocks.setExperiment(self)
-        self.groups.setExperiment(self)
+        obj.name = data[&#34;name&#34;]
+        obj.lsl_stream_name = data[&#34;lsl_stream_name&#34;]
+        obj.inlet = data[&#34;inlet&#34;]
+        obj.raw_data_path = data[&#34;raw_data_path&#34;]
+        obj.hostname_port = data[&#34;hostname_port&#34;]
+        obj.dc = data[&#34;dc&#34;]
+        obj.prefilter_band = (data[&#34;prefilter_band_lower_bound&#34;], data[&#34;prefilter_band_upper_bound&#34;])
+        obj.plot_raw = data[&#34;plot_raw&#34;]
+        obj.plot_signals = data[&#34;plot_signals&#34;]
+        obj.show_subject_window = data[&#34;show_subject_window&#34;]
+        obj.discard_channels = data[&#34;discard_channels&#34;]
+        obj.reference_sub = data[&#34;reference_sub&#34;]
+        obj.show_proto_rectangle = data[&#34;show_proto_rectangle&#34;]
+        obj.show_notch_filters = data[&#34;show_notch_filters&#34;]
+        obj.signal_scheme = data[&#34;signal_scheme&#34;]
+        obj.sequence_scheme = data[&#34;sequence_scheme&#34;]
+        obj.blocks = data[&#34;blocks&#34;]
+        obj.groups = data[&#34;groups&#34;]
+
+        obj.blocks.setExperiment(obj)
+        obj.groups.setExperiment(obj)
+
+        return obj
 
     def nfb_export_data(self) -&gt; dict:
         &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
@@ -1039,6 +1049,44 @@ An instance of Experiment represents a collection</p></div>
 </dl>
 <h3>Static methods</h3>
 <dl>
+<dt id="nfb_studio.experiment.experiment.Experiment.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = cls()
+
+    obj.name = data[&#34;name&#34;]
+    obj.lsl_stream_name = data[&#34;lsl_stream_name&#34;]
+    obj.inlet = data[&#34;inlet&#34;]
+    obj.raw_data_path = data[&#34;raw_data_path&#34;]
+    obj.hostname_port = data[&#34;hostname_port&#34;]
+    obj.dc = data[&#34;dc&#34;]
+    obj.prefilter_band = (data[&#34;prefilter_band_lower_bound&#34;], data[&#34;prefilter_band_upper_bound&#34;])
+    obj.plot_raw = data[&#34;plot_raw&#34;]
+    obj.plot_signals = data[&#34;plot_signals&#34;]
+    obj.show_subject_window = data[&#34;show_subject_window&#34;]
+    obj.discard_channels = data[&#34;discard_channels&#34;]
+    obj.reference_sub = data[&#34;reference_sub&#34;]
+    obj.show_proto_rectangle = data[&#34;show_proto_rectangle&#34;]
+    obj.show_notch_filters = data[&#34;show_notch_filters&#34;]
+    obj.signal_scheme = data[&#34;signal_scheme&#34;]
+    obj.sequence_scheme = data[&#34;sequence_scheme&#34;]
+    obj.blocks = data[&#34;blocks&#34;]
+    obj.groups = data[&#34;groups&#34;]
+
+    obj.blocks.setExperiment(obj)
+    obj.groups.setExperiment(obj)
+
+    return obj</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.experiment.experiment.Experiment.import_xml"><code class="name flex">
 <span>def <span class="ident">import_xml</span></span>(<span>xml_string: str)</span>
 </code></dt>
@@ -1282,39 +1330,6 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
         return (False, &#34;Name already in use.&#34;)
     
     return (True, None)</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.experiment.experiment.Experiment.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    self.name = data[&#34;name&#34;]
-    self.lsl_stream_name = data[&#34;lsl_stream_name&#34;]
-    self.inlet = data[&#34;inlet&#34;]
-    self.raw_data_path = data[&#34;raw_data_path&#34;]
-    self.hostname_port = data[&#34;hostname_port&#34;]
-    self.dc = data[&#34;dc&#34;]
-    self.prefilter_band = (data[&#34;prefilter_band_lower_bound&#34;], data[&#34;prefilter_band_upper_bound&#34;])
-    self.plot_raw = data[&#34;plot_raw&#34;]
-    self.plot_signals = data[&#34;plot_signals&#34;]
-    self.show_subject_window = data[&#34;show_subject_window&#34;]
-    self.discard_channels = data[&#34;discard_channels&#34;]
-    self.reference_sub = data[&#34;reference_sub&#34;]
-    self.show_proto_rectangle = data[&#34;show_proto_rectangle&#34;]
-    self.show_notch_filters = data[&#34;show_notch_filters&#34;]
-    self.signal_scheme = data[&#34;signal_scheme&#34;]
-    self.sequence_scheme = data[&#34;sequence_scheme&#34;]
-    self.blocks = data[&#34;blocks&#34;]
-    self.groups = data[&#34;groups&#34;]
-
-    self.blocks.setExperiment(self)
-    self.groups.setExperiment(self)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.experiment.experiment.Experiment.export"><code class="name flex">

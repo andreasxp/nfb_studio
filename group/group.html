@@ -105,9 +105,14 @@ class Group(QObject, MutableSequence, metaclass=GroupMetaclass):
             &#34;repeats&#34;: self.repeats,
         }
 
-    def deserialize(self, data: dict):
-        self.blocks = data[&#34;blocks&#34;]
-        self.repeats = data[&#34;repeats&#34;]
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+
+        obj.blocks = data[&#34;blocks&#34;]
+        obj.repeats = data[&#34;repeats&#34;]
+
+        return obj
 
     # NFB Export =======================================================================================================
     def nfb_export_data(self) -&gt; dict:
@@ -236,9 +241,14 @@ set. This class also is a MutableSequence, which means you can get and set both 
             &#34;repeats&#34;: self.repeats,
         }
 
-    def deserialize(self, data: dict):
-        self.blocks = data[&#34;blocks&#34;]
-        self.repeats = data[&#34;repeats&#34;]
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+
+        obj.blocks = data[&#34;blocks&#34;]
+        obj.repeats = data[&#34;repeats&#34;]
+
+        return obj
 
     # NFB Export =======================================================================================================
     def nfb_export_data(self) -&gt; dict:
@@ -297,6 +307,25 @@ set. This class also is a MutableSequence, which means you can get and set both 
 </dl>
 <h3>Static methods</h3>
 <dl>
+<dt id="nfb_studio.group.group.Group.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = cls()
+
+    obj.blocks = data[&#34;blocks&#34;]
+    obj.repeats = data[&#34;repeats&#34;]
+
+    return obj</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.group.group.Group.nfb_import_data"><code class="name flex">
 <span>def <span class="ident">nfb_import_data</span></span>(<span>data: dict)</span>
 </code></dt>
@@ -323,20 +352,6 @@ def nfb_import_data(cls, data: dict):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.group.group.Group.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    self.blocks = data[&#34;blocks&#34;]
-    self.repeats = data[&#34;repeats&#34;]</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.group.group.Group.insert"><code class="name flex">
 <span>def <span class="ident">insert</span></span>(<span>self, index, value)</span>
 </code></dt>

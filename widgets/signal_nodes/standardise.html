@@ -143,11 +143,13 @@ class Standardise(SignalNode):
         data[&#34;standard_deviation&#34;] = self.standardDeviation()
         return data
     
-    def deserialize(self, data: dict):
-        super().deserialize(data)
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = super().deserialize(data)
+        obj.setAverage(data[&#34;average&#34;])
+        obj.setStandardDeviation(data[&#34;standard_deviation&#34;])
 
-        self.setAverage(data[&#34;average&#34;])
-        self.setStandardDeviation(data[&#34;standard_deviation&#34;])</code></pre>
+        return obj</code></pre>
 </details>
 </section>
 <section>
@@ -275,11 +277,13 @@ In the model-view relationship the config widget is the view, and the node is th
         data[&#34;standard_deviation&#34;] = self.standardDeviation()
         return data
     
-    def deserialize(self, data: dict):
-        super().deserialize(data)
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = super().deserialize(data)
+        obj.setAverage(data[&#34;average&#34;])
+        obj.setStandardDeviation(data[&#34;standard_deviation&#34;])
 
-        self.setAverage(data[&#34;average&#34;])
-        self.setStandardDeviation(data[&#34;standard_deviation&#34;])</code></pre>
+        return obj</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -306,6 +310,27 @@ In the model-view relationship the config widget is the view, and the node is th
 <dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.output_type"><code class="name">var <span class="ident">output_type</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = super().deserialize(data)
+    obj.setAverage(data[&#34;average&#34;])
+    obj.setStandardDeviation(data[&#34;standard_deviation&#34;])
+
+    return obj</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -336,22 +361,6 @@ In the model-view relationship the config widget is the view, and the node is th
 </summary>
 <pre><code class="python">def average(self):
     return self._average</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    super().deserialize(data)
-
-    self.setAverage(data[&#34;average&#34;])
-    self.setStandardDeviation(data[&#34;standard_deviation&#34;])</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal_nodes.standardise.Standardise.serialize"><code class="name flex">

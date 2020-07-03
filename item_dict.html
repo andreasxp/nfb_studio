@@ -122,8 +122,12 @@ class ItemDict(QObject, MutableMapping, metaclass=ItemDictMetaclass):
         
         return data
     
-    def deserialize(self, data: dict):
-        self._data = data[&#34;data&#34;]</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj._data = data[&#34;data&#34;]
+
+        return obj</code></pre>
 </details>
 </section>
 <section>
@@ -229,8 +233,12 @@ This dictionary also contains some logic related to naming new items.</p></div>
         
         return data
     
-    def deserialize(self, data: dict):
-        self._data = data[&#34;data&#34;]</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj._data = data[&#34;data&#34;]
+
+        return obj</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -273,10 +281,10 @@ This dictionary also contains some logic related to naming new items.</p></div>
 instance that has no instance attributes and cannot be given any.</p></div>
 </dd>
 </dl>
-<h3>Methods</h3>
+<h3>Static methods</h3>
 <dl>
 <dt id="nfb_studio.item_dict.ItemDict.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -284,10 +292,17 @@ instance that has no instance attributes and cannot be given any.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    self._data = data[&#34;data&#34;]</code></pre>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = cls()
+    obj._data = data[&#34;data&#34;]
+
+    return obj</code></pre>
 </details>
 </dd>
+</dl>
+<h3>Methods</h3>
+<dl>
 <dt id="nfb_studio.item_dict.ItemDict.experiment"><code class="name flex">
 <span>def <span class="ident">experiment</span></span>(<span>self)</span>
 </code></dt>

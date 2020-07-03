@@ -206,17 +206,18 @@ class Graph(GraphicsItemGroup):
 
         return data
     
-    def deserialize(self, data: dict):
+    @classmethod
+    def deserialize(cls, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.
         
         Edges are not serialized as objects. Instead, only their connections are remembered and reconstructed during the
         deserialization.
         &#34;&#34;&#34;
-        self.clear()
+        obj = cls()
 
         # Deserialize nodes --------------------------------------------------------------------------------------------
         for node in data[&#34;nodes&#34;]:
-            self.add(node)
+            obj.add(node)
 
         # Deserialize edges --------------------------------------------------------------------------------------------
         for edge_data in data[&#34;edges&#34;]:
@@ -226,7 +227,9 @@ class Graph(GraphicsItemGroup):
             source = source_node.outputs[edge_data[&#34;source&#34;][&#34;connection_index&#34;]]
             target = target_node.inputs[edge_data[&#34;target&#34;][&#34;connection_index&#34;]]
 
-            self.connect_nodes(source, target)</code></pre>
+            obj.connect_nodes(source, target)
+
+        return obj</code></pre>
 </details>
 </section>
 <section>
@@ -416,17 +419,18 @@ class Graph(GraphicsItemGroup):
 
         return data
     
-    def deserialize(self, data: dict):
+    @classmethod
+    def deserialize(cls, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.
         
         Edges are not serialized as objects. Instead, only their connections are remembered and reconstructed during the
         deserialization.
         &#34;&#34;&#34;
-        self.clear()
+        obj = cls()
 
         # Deserialize nodes --------------------------------------------------------------------------------------------
         for node in data[&#34;nodes&#34;]:
-            self.add(node)
+            obj.add(node)
 
         # Deserialize edges --------------------------------------------------------------------------------------------
         for edge_data in data[&#34;edges&#34;]:
@@ -436,7 +440,9 @@ class Graph(GraphicsItemGroup):
             source = source_node.outputs[edge_data[&#34;source&#34;][&#34;connection_index&#34;]]
             target = target_node.inputs[edge_data[&#34;target&#34;][&#34;connection_index&#34;]]
 
-            self.connect_nodes(source, target)</code></pre>
+            obj.connect_nodes(source, target)
+
+        return obj</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -448,6 +454,46 @@ class Graph(GraphicsItemGroup):
 <li>collections.abc.Iterable</li>
 <li>collections.abc.Container</li>
 </ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.graph.Graph.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Deserialize this object from a dict of data.</p>
+<p>Edges are not serialized as objects. Instead, only their connections are remembered and reconstructed during the
+deserialization.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    &#34;&#34;&#34;Deserialize this object from a dict of data.
+    
+    Edges are not serialized as objects. Instead, only their connections are remembered and reconstructed during the
+    deserialization.
+    &#34;&#34;&#34;
+    obj = cls()
+
+    # Deserialize nodes --------------------------------------------------------------------------------------------
+    for node in data[&#34;nodes&#34;]:
+        obj.add(node)
+
+    # Deserialize edges --------------------------------------------------------------------------------------------
+    for edge_data in data[&#34;edges&#34;]:
+        source_node = data[&#34;nodes&#34;][edge_data[&#34;source&#34;][&#34;node_index&#34;]]
+        target_node = data[&#34;nodes&#34;][edge_data[&#34;target&#34;][&#34;node_index&#34;]]
+
+        source = source_node.outputs[edge_data[&#34;source&#34;][&#34;connection_index&#34;]]
+        target = target_node.inputs[edge_data[&#34;target&#34;][&#34;connection_index&#34;]]
+
+        obj.connect_nodes(source, target)
+
+    return obj</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.scheme.graph.Graph.clipboardSelection"><code class="name flex">
@@ -498,40 +544,6 @@ empty graph is returned instead.</p></div>
 
     self.add(edge)
     return edge</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.scheme.graph.Graph.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Deserialize this object from a dict of data.</p>
-<p>Edges are not serialized as objects. Instead, only their connections are remembered and reconstructed during the
-deserialization.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    &#34;&#34;&#34;Deserialize this object from a dict of data.
-    
-    Edges are not serialized as objects. Instead, only their connections are remembered and reconstructed during the
-    deserialization.
-    &#34;&#34;&#34;
-    self.clear()
-
-    # Deserialize nodes --------------------------------------------------------------------------------------------
-    for node in data[&#34;nodes&#34;]:
-        self.add(node)
-
-    # Deserialize edges --------------------------------------------------------------------------------------------
-    for edge_data in data[&#34;edges&#34;]:
-        source_node = data[&#34;nodes&#34;][edge_data[&#34;source&#34;][&#34;node_index&#34;]]
-        target_node = data[&#34;nodes&#34;][edge_data[&#34;target&#34;][&#34;node_index&#34;]]
-
-        source = source_node.outputs[edge_data[&#34;source&#34;][&#34;connection_index&#34;]]
-        target = target_node.inputs[edge_data[&#34;target&#34;][&#34;connection_index&#34;]]
-
-        self.connect_nodes(source, target)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.graph.Graph.disconnect_nodes"><code class="name flex">

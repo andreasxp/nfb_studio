@@ -28,8 +28,6 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;NFB main source signal.&#34;&#34;&#34;
-from PySide2.QtWidgets import QWidget, QComboBox, QLabel, QFormLayout, QLineEdit
-
 from ..scheme import Node, Input, Output, DataType
 
 
@@ -46,8 +44,9 @@ class GroupNode(Node):
     def serialize(self) -&gt; dict:
         return super().serialize()
     
-    def deserialize(self, data: dict):
-        super().deserialize(data)</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        return super().deserialize(data)</code></pre>
 </details>
 </section>
 <section>
@@ -83,8 +82,9 @@ class GroupNode(Node):
     def serialize(self) -&gt; dict:
         return super().serialize()
     
-    def deserialize(self, data: dict):
-        super().deserialize(data)</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        return super().deserialize(data)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -93,10 +93,10 @@ class GroupNode(Node):
 <li>PySide2.QtWidgets.QGraphicsItem</li>
 <li>Shiboken.Object</li>
 </ul>
-<h3>Methods</h3>
+<h3>Static methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.sequence_nodes.group_node.GroupNode.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -104,10 +104,14 @@ class GroupNode(Node):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    super().deserialize(data)</code></pre>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    return super().deserialize(data)</code></pre>
 </details>
 </dd>
+</dl>
+<h3>Methods</h3>
+<dl>
 <dt id="nfb_studio.widgets.sequence_nodes.group_node.GroupNode.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self) ‑> dict</span>
 </code></dt>

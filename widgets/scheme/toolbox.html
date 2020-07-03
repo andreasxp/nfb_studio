@@ -133,8 +133,12 @@ class Toolbox(QAbstractListModel):
     def serialize(self) -&gt; dict:
         return self._items
     
-    def deserialize(self, data: dict):
-        self._items = data</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj._items = data
+
+        return obj</code></pre>
 </details>
 </section>
 <section>
@@ -257,8 +261,12 @@ class Toolbox(QAbstractListModel):
     def serialize(self) -&gt; dict:
         return self._items
     
-    def deserialize(self, data: dict):
-        self._items = data</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj._items = data
+
+        return obj</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -276,6 +284,26 @@ class Toolbox(QAbstractListModel):
 <dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = cls()
+    obj._items = data
+
+    return obj</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -312,19 +340,6 @@ class Toolbox(QAbstractListModel):
     if role == Qt.DisplayRole:
         return self._items.peekitem(i)[0]
     return None</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    self._items = data</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.toolbox.Toolbox.flags"><code class="name flex">

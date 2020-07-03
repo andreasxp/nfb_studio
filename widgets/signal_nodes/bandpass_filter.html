@@ -203,11 +203,13 @@ class BandpassFilter(SignalNode):
 
         return data
     
-    def deserialize(self, data: dict):
-        super().deserialize(data)
-        
-        self.setLowerBound(data[&#34;lower_bound&#34;])
-        self.setUpperBound(data[&#34;upper_bound&#34;])</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = super().deserialize(data)
+        obj.setLowerBound(data[&#34;lower_bound&#34;])
+        obj.setUpperBound(data[&#34;upper_bound&#34;])
+
+        return obj</code></pre>
 </details>
 </section>
 <section>
@@ -398,11 +400,13 @@ In the model-view relationship the config widget is the view, and the node is th
 
         return data
     
-    def deserialize(self, data: dict):
-        super().deserialize(data)
-        
-        self.setLowerBound(data[&#34;lower_bound&#34;])
-        self.setUpperBound(data[&#34;upper_bound&#34;])</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = super().deserialize(data)
+        obj.setLowerBound(data[&#34;lower_bound&#34;])
+        obj.setUpperBound(data[&#34;upper_bound&#34;])
+
+        return obj</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -431,6 +435,27 @@ In the model-view relationship the config widget is the view, and the node is th
 <div class="desc"></div>
 </dd>
 </dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = super().deserialize(data)
+    obj.setLowerBound(data[&#34;lower_bound&#34;])
+    obj.setUpperBound(data[&#34;upper_bound&#34;])
+
+    return obj</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.add_nfb_export_data"><code class="name flex">
@@ -446,22 +471,6 @@ In the model-view relationship the config widget is the view, and the node is th
     &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
     signal[&#34;fBandpassLowHz&#34;] = self.lowerBound()
     signal[&#34;fBandpassHighHz&#34;] = self.upperBound()</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    super().deserialize(data)
-    
-    self.setLowerBound(data[&#34;lower_bound&#34;])
-    self.setUpperBound(data[&#34;upper_bound&#34;])</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal_nodes.bandpass_filter.BandpassFilter.lowerBound"><code class="name flex">

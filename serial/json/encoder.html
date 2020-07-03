@@ -78,7 +78,6 @@ class JSONEncoder(json.JSONEncoder):
     .. warning::
         JSONEncoder adds a field to the dict, produced from the object, called `__class__`. This field is used in the
         JSONDecoder to create an instance of the class, where json data is then deserialized.
-        Do not write anything in this field yourself - it will be overwritten.
 
     See Also
     --------
@@ -200,8 +199,7 @@ Functions in the <code>hooks</code> parameter take precedence over member functi
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>JSONEncoder adds a field to the dict, produced from the object, called <code>__class__</code>. This field is used in the
-JSONDecoder to create an instance of the class, where json data is then deserialized.
-Do not write anything in this field yourself - it will be overwritten.</p>
+JSONDecoder to create an instance of the class, where json data is then deserialized.</p>
 </div>
 <h2 id="see-also">See Also</h2>
 <dl>
@@ -268,7 +266,6 @@ indent is None and (',', ': ') otherwise. To get the most compact JSON represent
     .. warning::
         JSONEncoder adds a field to the dict, produced from the object, called `__class__`. This field is used in the
         JSONDecoder to create an instance of the class, where json data is then deserialized.
-        Do not write anything in this field yourself - it will be overwritten.
 
     See Also
     --------

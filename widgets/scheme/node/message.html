@@ -135,8 +135,12 @@ class Message(SchemeItem):
             &#34;text&#34;: self.text()
         }
 
-    def deserialize(self, data: dict):
-        self.setText(data[&#34;text&#34;])
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj.setText(data[&#34;text&#34;])
+
+        return obj
 
 
 class InfoMessage(Message):
@@ -406,8 +410,12 @@ ErrorMessage.</p></div>
             &#34;text&#34;: self.text()
         }
 
-    def deserialize(self, data: dict):
-        self.setText(data[&#34;text&#34;])</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj.setText(data[&#34;text&#34;])
+
+        return obj</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -423,6 +431,23 @@ ErrorMessage.</p></div>
 </ul>
 <h3>Static methods</h3>
 <dl>
+<dt id="nfb_studio.widgets.scheme.node.message.Message.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = cls()
+    obj.setText(data[&#34;text&#34;])
+
+    return obj</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.node.message.Message.severity"><code class="name flex">
 <span>def <span class="ident">severity</span></span>(<span>)</span>
 </code></dt>
@@ -452,19 +477,6 @@ def severity(cls):
 </summary>
 <pre><code class="python">def boundingRect(self) -&gt; QRectF:
     return QRectF()</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.message.Message.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    self.setText(data[&#34;text&#34;])</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.node.message.Message.paint"><code class="name flex">

@@ -50,10 +50,14 @@
             &#34;convertible_to&#34;: self.convertible_to,
         }
 
-    def deserialize(self, data: dict):
-        self.data_id = data[&#34;data_id&#34;]
-        self.convertible_from = data[&#34;convertible_from&#34;]
-        self.convertible_to = data[&#34;convertible_to&#34;]
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj.data_id = data[&#34;data_id&#34;]
+        obj.convertible_from = data[&#34;convertible_from&#34;]
+        obj.convertible_to = data[&#34;convertible_to&#34;]
+
+        return obj
 
     def __repr__(self):
         return &#34;DataType({})&#34;.format(self.data_id)
@@ -175,10 +179,14 @@ def convertible(datatype_from: DataType, datatype_to: DataType):
             &#34;convertible_to&#34;: self.convertible_to,
         }
 
-    def deserialize(self, data: dict):
-        self.data_id = data[&#34;data_id&#34;]
-        self.convertible_from = data[&#34;convertible_from&#34;]
-        self.convertible_to = data[&#34;convertible_to&#34;]
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj.data_id = data[&#34;data_id&#34;]
+        obj.convertible_from = data[&#34;convertible_from&#34;]
+        obj.convertible_to = data[&#34;convertible_to&#34;]
+
+        return obj
 
     def __repr__(self):
         return &#34;DataType({})&#34;.format(self.data_id)
@@ -227,6 +235,28 @@ def convertible(datatype_from: DataType, datatype_to: DataType):
 <div class="desc"></div>
 </dd>
 </dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.node.connection.data_type.DataType.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = cls()
+    obj.data_id = data[&#34;data_id&#34;]
+    obj.convertible_from = data[&#34;convertible_from&#34;]
+    obj.convertible_to = data[&#34;convertible_to&#34;]
+
+    return obj</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Instance variables</h3>
 <dl>
 <dt id="nfb_studio.widgets.scheme.node.connection.data_type.DataType.convertible_from"><code class="name">var <span class="ident">convertible_from</span></code></dt>
@@ -261,21 +291,6 @@ Data id is the defining attribute of a data type. Data types with the same id co
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.widgets.scheme.node.connection.data_type.DataType.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    self.data_id = data[&#34;data_id&#34;]
-    self.convertible_from = data[&#34;convertible_from&#34;]
-    self.convertible_to = data[&#34;convertible_to&#34;]</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.widgets.scheme.node.connection.data_type.DataType.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self) ‑> dict</span>
 </code></dt>

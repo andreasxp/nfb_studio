@@ -303,29 +303,32 @@ class Node(SchemeItem):
             &#34;position&#34;: self.position()
         }
 
-    def deserialize(self, data: dict):
-        self.setTitle(data[&#34;title&#34;])
-        self.setDescription(data[&#34;description&#34;])
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj.setTitle(data[&#34;title&#34;])
+        obj.setDescription(data[&#34;description&#34;])
+        obj.setPosition(data[&#34;position&#34;])
 
-        for i in range(len(self.inputs)):
-            self.removeInput(0)
+        for i in range(len(obj.inputs)):
+            obj.removeInput(0)
 
-        for i in range(len(self.outputs)):
-            self.removeOutput(0)
+        for i in range(len(obj.outputs)):
+            obj.removeOutput(0)
 
-        for i in range(len(self.messages)):
-            self.removeMessage(0)
+        for i in range(len(obj.messages)):
+            obj.removeMessage(0)
 
         for input in data[&#34;inputs&#34;]:
-            self.addInput(input)
+            obj.addInput(input)
 
         for output in data[&#34;outputs&#34;]:
-            self.addOutput(output)
+            obj.addOutput(output)
 
         for message in data[&#34;messages&#34;]:
-            self.addMessage(message)
+            obj.addMessage(message)
 
-        self.setPosition(data[&#34;position&#34;])</code></pre>
+        return obj</code></pre>
 </details>
 </section>
 <section>
@@ -610,29 +613,32 @@ class Node(SchemeItem):
             &#34;position&#34;: self.position()
         }
 
-    def deserialize(self, data: dict):
-        self.setTitle(data[&#34;title&#34;])
-        self.setDescription(data[&#34;description&#34;])
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj.setTitle(data[&#34;title&#34;])
+        obj.setDescription(data[&#34;description&#34;])
+        obj.setPosition(data[&#34;position&#34;])
 
-        for i in range(len(self.inputs)):
-            self.removeInput(0)
+        for i in range(len(obj.inputs)):
+            obj.removeInput(0)
 
-        for i in range(len(self.outputs)):
-            self.removeOutput(0)
+        for i in range(len(obj.outputs)):
+            obj.removeOutput(0)
 
-        for i in range(len(self.messages)):
-            self.removeMessage(0)
+        for i in range(len(obj.messages)):
+            obj.removeMessage(0)
 
         for input in data[&#34;inputs&#34;]:
-            self.addInput(input)
+            obj.addInput(input)
 
         for output in data[&#34;outputs&#34;]:
-            self.addOutput(output)
+            obj.addOutput(output)
 
         for message in data[&#34;messages&#34;]:
-            self.addMessage(message)
+            obj.addMessage(message)
 
-        self.setPosition(data[&#34;position&#34;])</code></pre>
+        return obj</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -646,6 +652,46 @@ class Node(SchemeItem):
 <li><a title="nfb_studio.widgets.sequence_nodes.group_node.GroupNode" href="../../sequence_nodes/group_node.html#nfb_studio.widgets.sequence_nodes.group_node.GroupNode">GroupNode</a></li>
 <li><a title="nfb_studio.widgets.signal_nodes.signal_node.SignalNode" href="../../signal_nodes/signal_node.html#nfb_studio.widgets.signal_nodes.signal_node.SignalNode">SignalNode</a></li>
 </ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.node.node.Node.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = cls()
+    obj.setTitle(data[&#34;title&#34;])
+    obj.setDescription(data[&#34;description&#34;])
+    obj.setPosition(data[&#34;position&#34;])
+
+    for i in range(len(obj.inputs)):
+        obj.removeInput(0)
+
+    for i in range(len(obj.outputs)):
+        obj.removeOutput(0)
+
+    for i in range(len(obj.messages)):
+        obj.removeMessage(0)
+
+    for input in data[&#34;inputs&#34;]:
+        obj.addInput(input)
+
+    for output in data[&#34;outputs&#34;]:
+        obj.addOutput(output)
+
+    for message in data[&#34;messages&#34;]:
+        obj.addMessage(message)
+
+    return obj</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.scheme.node.node.Node.addInput"><code class="name flex">
@@ -733,40 +779,6 @@ class Node(SchemeItem):
 </summary>
 <pre><code class="python">def description(self):
     return self._description_item.text()</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.node.Node.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    self.setTitle(data[&#34;title&#34;])
-    self.setDescription(data[&#34;description&#34;])
-
-    for i in range(len(self.inputs)):
-        self.removeInput(0)
-
-    for i in range(len(self.outputs)):
-        self.removeOutput(0)
-
-    for i in range(len(self.messages)):
-        self.removeMessage(0)
-
-    for input in data[&#34;inputs&#34;]:
-        self.addInput(input)
-
-    for output in data[&#34;outputs&#34;]:
-        self.addOutput(output)
-
-    for message in data[&#34;messages&#34;]:
-        self.addMessage(message)
-
-    self.setPosition(data[&#34;position&#34;])</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.node.node.Node.hideConnectionText"><code class="name flex">

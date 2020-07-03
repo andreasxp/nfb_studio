@@ -142,11 +142,13 @@ class EnvelopeDetector(SignalNode):
         data[&#34;method&#34;] = self.method()
         return data
     
-    def deserialize(self, data: dict):
-        super().deserialize(data)
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = super().deserialize(data)
+        obj.setSmoothingFactor(data[&#34;smoothing_factor&#34;])
+        obj.setMethod(data[&#34;method&#34;])
 
-        self.setSmoothingFactor(data[&#34;smoothing_factor&#34;])
-        self.setMethod(data[&#34;method&#34;])</code></pre>
+        return obj</code></pre>
 </details>
 </section>
 <section>
@@ -275,11 +277,13 @@ In the model-view relationship the config widget is the view, and the node is th
         data[&#34;method&#34;] = self.method()
         return data
     
-    def deserialize(self, data: dict):
-        super().deserialize(data)
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = super().deserialize(data)
+        obj.setSmoothingFactor(data[&#34;smoothing_factor&#34;])
+        obj.setMethod(data[&#34;method&#34;])
 
-        self.setSmoothingFactor(data[&#34;smoothing_factor&#34;])
-        self.setMethod(data[&#34;method&#34;])</code></pre>
+        return obj</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -308,6 +312,27 @@ In the model-view relationship the config widget is the view, and the node is th
 <div class="desc"></div>
 </dd>
 </dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = super().deserialize(data)
+    obj.setSmoothingFactor(data[&#34;smoothing_factor&#34;])
+    obj.setMethod(data[&#34;method&#34;])
+
+    return obj</code></pre>
+</details>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.add_nfb_export_data"><code class="name flex">
@@ -323,22 +348,6 @@ In the model-view relationship the config widget is the view, and the node is th
     &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
     signal[&#34;fSmoothingFactor&#34;] = self.smoothingFactor()
     signal[&#34;method&#34;] = self.method()</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    super().deserialize(data)
-
-    self.setSmoothingFactor(data[&#34;smoothing_factor&#34;])
-    self.setMethod(data[&#34;method&#34;])</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal_nodes.envelope_detector.EnvelopeDetector.method"><code class="name flex">

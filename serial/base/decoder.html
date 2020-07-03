@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.3" />
 <title>nfb_studio.serial.base.decoder API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Backend class managing decoding raw dicts of objects to proper dicts of objects." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
@@ -22,11 +22,12 @@
 <h1 class="title">Module <code>nfb_studio.serial.base.decoder</code></h1>
 </header>
 <section id="section-intro">
+<p>Backend class managing decoding raw dicts of objects to proper dicts of objects.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from copy import deepcopy
+<pre><code class="python">&#34;&#34;&#34;Backend class managing decoding raw dicts of objects to proper dicts of objects.&#34;&#34;&#34;
 from typing import Union
 from importlib import import_module
 from inspect import isclass
@@ -41,6 +42,8 @@ def deepgetattr(obj, attr):
 
 
 class BaseDecoder:
+    &#34;&#34;&#34;Backend class managing decoding raw dicts of objects to proper dicts of objects.&#34;&#34;&#34;
+
     def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None):
         self.hooks = hooks
 
@@ -90,18 +93,13 @@ class BaseDecoder:
         if not isclass(cls):
             raise TypeError(&#34;{}.{} is not a class&#34;.format(module_path, class_name))
 
-        # Default-construct an object of that class
-        obj = cls()
-
         # Load the json data into the object
         if cls in self.hooks:
-            self.hooks[cls](obj, data)
-            return obj
-        if hasattr(obj, &#34;deserialize&#34;) and callable(obj.deserialize):
-            obj.deserialize(data)
-            return obj
+            return self.hooks[cls](data)
+        if hasattr(cls, &#34;deserialize&#34;) and callable(cls.deserialize):
+            return cls.deserialize(data)
         
-        message = &#34;an instance of {}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
+        message = &#34;{}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
             .format(module_path, class_name)
         raise AttributeError(message)
 
@@ -150,12 +148,14 @@ class BaseDecoder:
 <span>(</span><span>*, hooks: typing.Union[dict, tuple, <a title="nfb_studio.serial.hooks.Hooks" href="../hooks/index.html#nfb_studio.serial.hooks.Hooks">Hooks</a>] = None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Backend class managing decoding raw dicts of objects to proper dicts of objects.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class BaseDecoder:
+    &#34;&#34;&#34;Backend class managing decoding raw dicts of objects to proper dicts of objects.&#34;&#34;&#34;
+
     def __init__(self, *, hooks: Union[dict, tuple, Hooks] = None):
         self.hooks = hooks
 
@@ -205,18 +205,13 @@ class BaseDecoder:
         if not isclass(cls):
             raise TypeError(&#34;{}.{} is not a class&#34;.format(module_path, class_name))
 
-        # Default-construct an object of that class
-        obj = cls()
-
         # Load the json data into the object
         if cls in self.hooks:
-            self.hooks[cls](obj, data)
-            return obj
-        if hasattr(obj, &#34;deserialize&#34;) and callable(obj.deserialize):
-            obj.deserialize(data)
-            return obj
+            return self.hooks[cls](data)
+        if hasattr(cls, &#34;deserialize&#34;) and callable(cls.deserialize):
+            return cls.deserialize(data)
         
-        message = &#34;an instance of {}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
+        message = &#34;{}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
             .format(module_path, class_name)
         raise AttributeError(message)
 
@@ -295,18 +290,13 @@ def hooks(self):
     if not isclass(cls):
         raise TypeError(&#34;{}.{} is not a class&#34;.format(module_path, class_name))
 
-    # Default-construct an object of that class
-    obj = cls()
-
     # Load the json data into the object
     if cls in self.hooks:
-        self.hooks[cls](obj, data)
-        return obj
-    if hasattr(obj, &#34;deserialize&#34;) and callable(obj.deserialize):
-        obj.deserialize(data)
-        return obj
+        return self.hooks[cls](data)
+    if hasattr(cls, &#34;deserialize&#34;) and callable(cls.deserialize):
+        return cls.deserialize(data)
     
-    message = &#34;an instance of {}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
+    message = &#34;{}.{} does not have a callable \&#34;deserialize\&#34; attribute&#34; \
         .format(module_path, class_name)
     raise AttributeError(message)</code></pre>
 </details>

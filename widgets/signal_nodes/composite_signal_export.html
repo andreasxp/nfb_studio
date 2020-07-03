@@ -128,10 +128,13 @@ class CompositeSignalExport(SignalNode):
         data[&#34;expression&#34;] = self.expression()
         return data
     
-    def deserialize(self, data: dict):
-        super().deserialize(data)
-        self.setSignalName(data[&#34;signal_name&#34;])
-        self.setExpression(data[&#34;expression&#34;])</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = super().deserialize(data)
+        obj.setSignalName(data[&#34;signal_name&#34;])
+        obj.setExpression(data[&#34;expression&#34;])
+
+        return obj</code></pre>
 </details>
 </section>
 <section>
@@ -247,10 +250,13 @@ In the model-view relationship the config widget is the view, and the node is th
         data[&#34;expression&#34;] = self.expression()
         return data
     
-    def deserialize(self, data: dict):
-        super().deserialize(data)
-        self.setSignalName(data[&#34;signal_name&#34;])
-        self.setExpression(data[&#34;expression&#34;])</code></pre>
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = super().deserialize(data)
+        obj.setSignalName(data[&#34;signal_name&#34;])
+        obj.setExpression(data[&#34;expression&#34;])
+
+        return obj</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -265,6 +271,27 @@ In the model-view relationship the config widget is the view, and the node is th
 <dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.input_type"><code class="name">var <span class="ident">input_type</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = super().deserialize(data)
+    obj.setSignalName(data[&#34;signal_name&#34;])
+    obj.setExpression(data[&#34;expression&#34;])
+
+    return obj</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -282,21 +309,6 @@ In the model-view relationship the config widget is the view, and the node is th
     &#34;&#34;&#34;Add this node&#39;s data to the dict representation of the signal.&#34;&#34;&#34;
     signal[&#34;sSignalName&#34;] = self.signalName()
     signal[&#34;sExpression&#34;] = self.expression()</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    super().deserialize(data)
-    self.setSignalName(data[&#34;signal_name&#34;])
-    self.setExpression(data[&#34;expression&#34;])</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.signal_nodes.composite_signal_export.CompositeSignalExport.expression"><code class="name flex">

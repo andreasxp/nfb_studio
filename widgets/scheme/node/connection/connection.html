@@ -201,10 +201,14 @@ class Connection(SchemeItem):
             &#34;is_multiple&#34;: self.isMultiple(),
         }
 
-    def deserialize(self, data: dict):
-        self.setText(data[&#34;text&#34;])
-        self.setDataType(data[&#34;datatype&#34;])
-        self.setMultiple(data[&#34;is_multiple&#34;])
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj.setText(data[&#34;text&#34;])
+        obj.setDataType(data[&#34;datatype&#34;])
+        obj.setMultiple(data[&#34;is_multiple&#34;])
+
+        return obj
     
     # Drawing edges ====================================================================================================
     # The heavy lifting such as detecting when the edge started being drawn, mouse moving and data transfers are handled
@@ -420,10 +424,14 @@ class Connection(SchemeItem):
             &#34;is_multiple&#34;: self.isMultiple(),
         }
 
-    def deserialize(self, data: dict):
-        self.setText(data[&#34;text&#34;])
-        self.setDataType(data[&#34;datatype&#34;])
-        self.setMultiple(data[&#34;is_multiple&#34;])
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+        obj.setText(data[&#34;text&#34;])
+        obj.setDataType(data[&#34;datatype&#34;])
+        obj.setMultiple(data[&#34;is_multiple&#34;])
+
+        return obj
     
     # Drawing edges ====================================================================================================
     # The heavy lifting such as detecting when the edge started being drawn, mouse moving and data transfers are handled
@@ -471,6 +479,28 @@ class Connection(SchemeItem):
 <dt id="nfb_studio.widgets.scheme.node.connection.connection.Connection.EdgeDragMimeType"><code class="name">var <span class="ident">EdgeDragMimeType</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.node.connection.connection.Connection.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = cls()
+    obj.setText(data[&#34;text&#34;])
+    obj.setDataType(data[&#34;datatype&#34;])
+    obj.setMultiple(data[&#34;is_multiple&#34;])
+
+    return obj</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Instance variables</h3>
@@ -562,21 +592,6 @@ The connection asks the edges to autoSelect themselves, and they in turn call se
 </summary>
 <pre><code class="python">def dataType(self):
     return self._datatype</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.scheme.node.connection.connection.Connection.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    self.setText(data[&#34;text&#34;])
-    self.setDataType(data[&#34;datatype&#34;])
-    self.setMultiple(data[&#34;is_multiple&#34;])</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.node.connection.connection.Connection.detach"><code class="name flex">

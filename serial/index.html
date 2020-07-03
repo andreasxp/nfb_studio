@@ -29,7 +29,9 @@ classes can be found in nested modules, such as <code>serial.json</code>.</p>
 <li>If a class you want serialized is in your control, you can define these two member functions:</li>
 </ul>
 <pre><code class="python">def serialize(self) -&gt; dict:
-def deserialize(self, data: dict):
+
+@classmethod
+def deserialize(cls, data: dict) -&gt; '''instance''':
 </code></pre>
 <p>These functions return/accept a dictionary containing the data that is necessary to save and required to recreate the
 object during deserialization.</p>
@@ -39,7 +41,7 @@ functions and pass them to the encoder you are using.</li>
 </ul>
 <pre><code class="python"># Names here do not matter (these functions can even be lambdas).
 def serialize(obj) -&gt; dict:
-def deserialize(obj, data: dict):
+def deserialize(data: dict) -&gt; '''instance''':
 </code></pre>
 <p>Put these functions in a dict that maps a type to a serialization function, and pass that dict as an argument to an
 encoder.</p>
@@ -51,7 +53,7 @@ my_encoder = JSONEncoder(hooks=my_serialization_hooks)
 </code></pre>
 <p>For convenience, you can store both serialization and deserialization hooks in one tuple or a <code><a title="nfb_studio.serial.hooks.Hooks" href="hooks/index.html#nfb_studio.serial.hooks.Hooks">Hooks</a></code> object,
 and pass that around instead:</p>
-<pre><code class="python">my_hooks = Hooks(my_serialization_hooks, my_deserialization_hooks)  # tuple works too
+<pre><code class="python">my_hooks = Hooks(my_serialization_hooks, my_deserialization_hooks)  # a plain tuple works too
 my_encoder = JSONEncoder(hooks=my_hooks)
 </code></pre>
 <p>This module supplies some commonly used hooks in the <code>serial.hooks</code> nested module. Hooks supplied manually take
@@ -73,10 +75,9 @@ class MyClass:
             &quot;c&quot;: self.c
         }
 
-    def deserialize(self, data: dict):
-        self.a = data[&quot;a&quot;]
-        self.b = data[&quot;b&quot;]
-        self.c = data[&quot;c&quot;]
+    @classmethod
+    def deserialize(cls, data: dict):
+        return cls(data[&quot;a&quot;], data[&quot;b&quot;], data[&quot;c&quot;])
 
 # A class that cannot be modified in an invasive way.
 from PySide2.QtCore import QRect
@@ -88,11 +89,14 @@ def qrect_serialize(obj: QRect) -&gt; dict:
         &quot;height&quot; = obj.height()
     }
 
-def qrect_deserialize(obj: QRect, data: dict):
+def qrect_deserialize(data: dict):
+    obj = QRect()
     obj.setX(data[&quot;x&quot;])
     obj.setY(data[&quot;y&quot;])
     obj.setWidth(data[&quot;width&quot;])
     obj.setHeight(data[&quot;height&quot;])
+
+    return obj
 
 encoder = JSONEncoder(hooks={QRect: qrect_serialize})
 decoder = JSONDecoder(hooks={QRect: qrect_deserialize})
@@ -107,8 +111,7 @@ that class is serializeable.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>In order for the decoder to know which dicts should be deserialized as which class instances, the encoder adds a
-metadata field to the serialized dictionary called <code>__class__</code>. Do not write anything to that field - it will be
-overwritten.</p>
+metadata field to the serialized dictionary called <code>__class__</code>. Therefore this dict key is reserved.</p>
 </div>
 <details class="source">
 <summary>
@@ -122,7 +125,9 @@ classes can be found in nested modules, such as `serial.json`.
 - If a class you want serialized is in your control, you can define these two member functions:
 ```python
 def serialize(self) -&gt; dict:
-def deserialize(self, data: dict):
+
+@classmethod
+def deserialize(cls, data: dict) -&gt; &#39;&#39;&#39;instance&#39;&#39;&#39;:
 ```
 These functions return/accept a dictionary containing the data that is necessary to save and required to recreate the
 object during deserialization.
@@ -132,7 +137,7 @@ functions and pass them to the encoder you are using.
 ```python
 # Names here do not matter (these functions can even be lambdas).
 def serialize(obj) -&gt; dict:
-def deserialize(obj, data: dict):
+def deserialize(data: dict) -&gt; &#39;&#39;&#39;instance&#39;&#39;&#39;:
 ```
 Put these functions in a dict that maps a type to a serialization function, and pass that dict as an argument to an
 encoder.
@@ -146,7 +151,7 @@ my_encoder = JSONEncoder(hooks=my_serialization_hooks)
 For convenience, you can store both serialization and deserialization hooks in one tuple or a `hooks.Hooks` object,
 and pass that around instead:
 ```python
-my_hooks = Hooks(my_serialization_hooks, my_deserialization_hooks)  # tuple works too
+my_hooks = Hooks(my_serialization_hooks, my_deserialization_hooks)  # a plain tuple works too
 my_encoder = JSONEncoder(hooks=my_hooks)
 ```
 This module supplies some commonly used hooks in the `serial.hooks` nested module. Hooks supplied manually take
@@ -171,10 +176,9 @@ class MyClass:
             &#34;c&#34;: self.c
         }
 
-    def deserialize(self, data: dict):
-        self.a = data[&#34;a&#34;]
-        self.b = data[&#34;b&#34;]
-        self.c = data[&#34;c&#34;]
+    @classmethod
+    def deserialize(cls, data: dict):
+        return cls(data[&#34;a&#34;], data[&#34;b&#34;], data[&#34;c&#34;])
 
 # A class that cannot be modified in an invasive way.
 from PySide2.QtCore import QRect
@@ -186,11 +190,14 @@ def qrect_serialize(obj: QRect) -&gt; dict:
         &#34;height&#34; = obj.height()
     }
 
-def qrect_deserialize(obj: QRect, data: dict):
+def qrect_deserialize(data: dict):
+    obj = QRect()
     obj.setX(data[&#34;x&#34;])
     obj.setY(data[&#34;y&#34;])
     obj.setWidth(data[&#34;width&#34;])
     obj.setHeight(data[&#34;height&#34;])
+
+    return obj
 
 encoder = JSONEncoder(hooks={QRect: qrect_serialize})
 decoder = JSONDecoder(hooks={QRect: qrect_deserialize})
@@ -204,8 +211,7 @@ In this example, the encoder and decoder will be able to serialize both `MyClass
 
 .. warning::
     In order for the decoder to know which dicts should be deserialized as which class instances, the encoder adds a
-    metadata field to the serialized dictionary called `__class__`. Do not write anything to that field - it will be
-    overwritten.
+    metadata field to the serialized dictionary called `__class__`. Therefore this dict key is reserved.
 &#34;&#34;&#34;
 from .hooks import Hooks</code></pre>
 </details>
@@ -215,7 +221,7 @@ from .hooks import Hooks</code></pre>
 <dl>
 <dt><code class="name"><a title="nfb_studio.serial.base" href="base/index.html">nfb_studio.serial.base</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Base encoder and decoder provide the backbone of the serialization engine.</p></div>
 </dd>
 <dt><code class="name"><a title="nfb_studio.serial.hooks" href="hooks/index.html">nfb_studio.serial.hooks</a></code></dt>
 <dd>

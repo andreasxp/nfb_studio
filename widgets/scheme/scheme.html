@@ -341,7 +341,7 @@ class Scheme(QGraphicsScene):
     def dropEvent(self, event):
         package = event.mimeData()
 
-        for fmt, drop_event in self._custom_drop_events:
+        for fmt, drop_event in self._custom_drop_events.items():
             if package.hasFormat(fmt):
                 drop_event(scheme=self, event=event)
 
@@ -392,19 +392,22 @@ class Scheme(QGraphicsScene):
     def serialize(self) -&gt; dict:
         return self.graph.serialize()
 
-    def deserialize(self, data: dict):
+    @classmethod
+    def deserialize(cls, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
-        self.clear()
+        obj = cls()
 
-        # Deserialize as graph -----------------------------------------------------------------------------------------
-        self.graph.deserialize(data)
+        # Deserialize the graph ----------------------------------------------------------------------------------------
+        obj.graph = Graph.deserialize(data)
 
         # Bring the scene up to speed ----------------------------------------------------------------------------------
-        for node in self.graph.nodes:
-            super().addItem(node)
+        for node in obj.graph.nodes:
+            super(Scheme, obj).addItem(node)
 
-        for edge in self.graph.edges:
-            super().addItem(edge)</code></pre>
+        for edge in obj.graph.edges:
+            super(Scheme, obj).addItem(edge)
+        
+        return obj</code></pre>
 </details>
 </section>
 <section>
@@ -744,7 +747,7 @@ behave incorrectly.</p>
     def dropEvent(self, event):
         package = event.mimeData()
 
-        for fmt, drop_event in self._custom_drop_events:
+        for fmt, drop_event in self._custom_drop_events.items():
             if package.hasFormat(fmt):
                 drop_event(scheme=self, event=event)
 
@@ -795,19 +798,22 @@ behave incorrectly.</p>
     def serialize(self) -&gt; dict:
         return self.graph.serialize()
 
-    def deserialize(self, data: dict):
+    @classmethod
+    def deserialize(cls, data: dict):
         &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
-        self.clear()
+        obj = cls()
 
-        # Deserialize as graph -----------------------------------------------------------------------------------------
-        self.graph.deserialize(data)
+        # Deserialize the graph ----------------------------------------------------------------------------------------
+        obj.graph = Graph.deserialize(data)
 
         # Bring the scene up to speed ----------------------------------------------------------------------------------
-        for node in self.graph.nodes:
-            super().addItem(node)
+        for node in obj.graph.nodes:
+            super(Scheme, obj).addItem(node)
 
-        for edge in self.graph.edges:
-            super().addItem(edge)</code></pre>
+        for edge in obj.graph.edges:
+            super(Scheme, obj).addItem(edge)
+        
+        return obj</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -828,6 +834,36 @@ behave incorrectly.</p>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Deserialize this object from a dict of data.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
+    obj = cls()
+
+    # Deserialize the graph ----------------------------------------------------------------------------------------
+    obj.graph = Graph.deserialize(data)
+
+    # Bring the scene up to speed ----------------------------------------------------------------------------------
+    for node in obj.graph.nodes:
+        super(Scheme, obj).addItem(node)
+
+    for edge in obj.graph.edges:
+        super(Scheme, obj).addItem(edge)
+    
+    return obj</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Instance variables</h3>
@@ -979,30 +1015,6 @@ This function is usually called when an object has been pasted.</p></div>
     self.extract(self.selection())</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Deserialize this object from a dict of data.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
-    self.clear()
-
-    # Deserialize as graph -----------------------------------------------------------------------------------------
-    self.graph.deserialize(data)
-
-    # Bring the scene up to speed ----------------------------------------------------------------------------------
-    for node in self.graph.nodes:
-        super().addItem(node)
-
-    for edge in self.graph.edges:
-        super().addItem(edge)</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.disconnect_nodes"><code class="name flex">
 <span>def <span class="ident">disconnect_nodes</span></span>(<span>self, source: <a title="nfb_studio.widgets.scheme.node.connection.output.Output" href="node/connection/output.html#nfb_studio.widgets.scheme.node.connection.output.Output">Output</a>, target: <a title="nfb_studio.widgets.scheme.node.connection.input.Input" href="node/connection/input.html#nfb_studio.widgets.scheme.node.connection.input.Input">Input</a>)</span>
 </code></dt>
@@ -1083,7 +1095,7 @@ Returns the edge that was removed, or None if no such edge was found.</p></div>
 <pre><code class="python">def dropEvent(self, event):
     package = event.mimeData()
 
-    for fmt, drop_event in self._custom_drop_events:
+    for fmt, drop_event in self._custom_drop_events.items():
         if package.hasFormat(fmt):
             drop_event(scheme=self, event=event)
 

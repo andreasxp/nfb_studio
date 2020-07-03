@@ -143,23 +143,28 @@ class Block(QObject):
             &#34;update_statistics&#34;: self.update_statistics,
         }
 
-    def deserialize(self, data: dict):
-        self.duration = data[&#34;duration&#34;]
-        self.feedback_source = data[&#34;feedback_source&#34;]
-        self.feedback_type = data[&#34;feedback_type&#34;]
-        self.random_bound = data[&#34;random_bound&#34;]
-        self.video_path = data[&#34;video_path&#34;]
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
 
-        self.mock_signal_path = data[&#34;mock_signal_path&#34;]
-        self.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
-        self.mock_previous = data[&#34;mock_previous&#34;]
-        self.mock_previous_reverse = data[&#34;mock_previous_reverse&#34;]
-        self.mock_previous_random = data[&#34;mock_previous_random&#34;]
+        obj.duration = data[&#34;duration&#34;]
+        obj.feedback_source = data[&#34;feedback_source&#34;]
+        obj.feedback_type = data[&#34;feedback_type&#34;]
+        obj.random_bound = data[&#34;random_bound&#34;]
+        obj.video_path = data[&#34;video_path&#34;]
 
-        self.start_data_driven_filter_designer = data[&#34;start_data_driven_filter_designer&#34;]
-        self.pause = data[&#34;pause&#34;]
-        self.beep = data[&#34;beep&#34;]
-        self.update_statistics = data[&#34;update_statistics&#34;]
+        obj.mock_signal_path = data[&#34;mock_signal_path&#34;]
+        obj.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
+        obj.mock_previous = data[&#34;mock_previous&#34;]
+        obj.mock_previous_reverse = data[&#34;mock_previous_reverse&#34;]
+        obj.mock_previous_random = data[&#34;mock_previous_random&#34;]
+
+        obj.start_data_driven_filter_designer = data[&#34;start_data_driven_filter_designer&#34;]
+        obj.pause = data[&#34;pause&#34;]
+        obj.beep = data[&#34;beep&#34;]
+        obj.update_statistics = data[&#34;update_statistics&#34;]
+
+        return obj
 
     @classmethod
     def nfb_import_data(cls, data: dict):
@@ -319,23 +324,28 @@ Experiment consists of a sequence of blocks and block groups that are executed i
             &#34;update_statistics&#34;: self.update_statistics,
         }
 
-    def deserialize(self, data: dict):
-        self.duration = data[&#34;duration&#34;]
-        self.feedback_source = data[&#34;feedback_source&#34;]
-        self.feedback_type = data[&#34;feedback_type&#34;]
-        self.random_bound = data[&#34;random_bound&#34;]
-        self.video_path = data[&#34;video_path&#34;]
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
 
-        self.mock_signal_path = data[&#34;mock_signal_path&#34;]
-        self.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
-        self.mock_previous = data[&#34;mock_previous&#34;]
-        self.mock_previous_reverse = data[&#34;mock_previous_reverse&#34;]
-        self.mock_previous_random = data[&#34;mock_previous_random&#34;]
+        obj.duration = data[&#34;duration&#34;]
+        obj.feedback_source = data[&#34;feedback_source&#34;]
+        obj.feedback_type = data[&#34;feedback_type&#34;]
+        obj.random_bound = data[&#34;random_bound&#34;]
+        obj.video_path = data[&#34;video_path&#34;]
 
-        self.start_data_driven_filter_designer = data[&#34;start_data_driven_filter_designer&#34;]
-        self.pause = data[&#34;pause&#34;]
-        self.beep = data[&#34;beep&#34;]
-        self.update_statistics = data[&#34;update_statistics&#34;]
+        obj.mock_signal_path = data[&#34;mock_signal_path&#34;]
+        obj.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
+        obj.mock_previous = data[&#34;mock_previous&#34;]
+        obj.mock_previous_reverse = data[&#34;mock_previous_reverse&#34;]
+        obj.mock_previous_random = data[&#34;mock_previous_random&#34;]
+
+        obj.start_data_driven_filter_designer = data[&#34;start_data_driven_filter_designer&#34;]
+        obj.pause = data[&#34;pause&#34;]
+        obj.beep = data[&#34;beep&#34;]
+        obj.update_statistics = data[&#34;update_statistics&#34;]
+
+        return obj
 
     @classmethod
     def nfb_import_data(cls, data: dict):
@@ -380,6 +390,39 @@ Experiment consists of a sequence of blocks and block groups that are executed i
 </dl>
 <h3>Static methods</h3>
 <dl>
+<dt id="nfb_studio.block.block.Block.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = cls()
+
+    obj.duration = data[&#34;duration&#34;]
+    obj.feedback_source = data[&#34;feedback_source&#34;]
+    obj.feedback_type = data[&#34;feedback_type&#34;]
+    obj.random_bound = data[&#34;random_bound&#34;]
+    obj.video_path = data[&#34;video_path&#34;]
+
+    obj.mock_signal_path = data[&#34;mock_signal_path&#34;]
+    obj.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
+    obj.mock_previous = data[&#34;mock_previous&#34;]
+    obj.mock_previous_reverse = data[&#34;mock_previous_reverse&#34;]
+    obj.mock_previous_random = data[&#34;mock_previous_random&#34;]
+
+    obj.start_data_driven_filter_designer = data[&#34;start_data_driven_filter_designer&#34;]
+    obj.pause = data[&#34;pause&#34;]
+    obj.beep = data[&#34;beep&#34;]
+    obj.update_statistics = data[&#34;update_statistics&#34;]
+
+    return obj</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.block.block.Block.nfb_import_data"><code class="name flex">
 <span>def <span class="ident">nfb_import_data</span></span>(<span>data: dict)</span>
 </code></dt>
@@ -420,34 +463,6 @@ def nfb_import_data(cls, data: dict):
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.block.block.Block.deserialize"><code class="name flex">
-<span>def <span class="ident">deserialize</span></span>(<span>self, data: dict)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def deserialize(self, data: dict):
-    self.duration = data[&#34;duration&#34;]
-    self.feedback_source = data[&#34;feedback_source&#34;]
-    self.feedback_type = data[&#34;feedback_type&#34;]
-    self.random_bound = data[&#34;random_bound&#34;]
-    self.video_path = data[&#34;video_path&#34;]
-
-    self.mock_signal_path = data[&#34;mock_signal_path&#34;]
-    self.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
-    self.mock_previous = data[&#34;mock_previous&#34;]
-    self.mock_previous_reverse = data[&#34;mock_previous_reverse&#34;]
-    self.mock_previous_random = data[&#34;mock_previous_random&#34;]
-
-    self.start_data_driven_filter_designer = data[&#34;start_data_driven_filter_designer&#34;]
-    self.pause = data[&#34;pause&#34;]
-    self.beep = data[&#34;beep&#34;]
-    self.update_statistics = data[&#34;update_statistics&#34;]</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.block.block.Block.nfb_export_data"><code class="name flex">
 <span>def <span class="ident">nfb_export_data</span></span>(<span>self) ‑> dict</span>
 </code></dt>
