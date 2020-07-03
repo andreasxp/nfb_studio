@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.3" />
 <title>nfb_studio.widgets.scheme.graphics_item_group API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="A simple collection of QGraphicsItems." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
@@ -22,18 +22,20 @@
 <h1 class="title">Module <code>nfb_studio.widgets.scheme.graphics_item_group</code></h1>
 </header>
 <section id="section-intro">
+<p>A simple collection of QGraphicsItems.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from collections.abc import MutableSet
+<pre><code class="python">&#34;&#34;&#34;A simple collection of QGraphicsItems.&#34;&#34;&#34;
+from collections.abc import MutableSet
 
 from PySide2.QtCore import QRectF, QPointF
 from PySide2.QtWidgets import QGraphicsItem
 
 
 class GraphicsItemGroup(MutableSet):
-    &#34;&#34;&#34;GraphicsItemGroup is a simple collection of QGraphicsItems.  
+    &#34;&#34;&#34;A simple collection of QGraphicsItems.  
     Unlike a similarly named QGraphicsItemGroup from Qt, this class in not a QGraphicsItem. It has no position in the
     graphics scene, and items that it contains do not change their parent. This class is a convenient way of
     manipulating groups of items without disrupting the scene ownership tree.
@@ -113,7 +115,7 @@ class GraphicsItemGroup(MutableSet):
 <span>class <span class="ident">GraphicsItemGroup</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>GraphicsItemGroup is a simple collection of QGraphicsItems.<br>
+<div class="desc"><p>A simple collection of QGraphicsItems.<br>
 Unlike a similarly named QGraphicsItemGroup from Qt, this class in not a QGraphicsItem. It has no position in the
 graphics scene, and items that it contains do not change their parent. This class is a convenient way of
 manipulating groups of items without disrupting the scene ownership tree.</p></div>
@@ -122,7 +124,7 @@ manipulating groups of items without disrupting the scene ownership tree.</p></d
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class GraphicsItemGroup(MutableSet):
-    &#34;&#34;&#34;GraphicsItemGroup is a simple collection of QGraphicsItems.  
+    &#34;&#34;&#34;A simple collection of QGraphicsItems.  
     Unlike a similarly named QGraphicsItemGroup from Qt, this class in not a QGraphicsItem. It has no position in the
     graphics scene, and items that it contains do not change their parent. This class is a convenient way of
     manipulating groups of items without disrupting the scene ownership tree.

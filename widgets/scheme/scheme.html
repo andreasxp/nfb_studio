@@ -28,13 +28,9 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.&#34;&#34;&#34;
-from typing import Union
-
 from PySide2.QtCore import Qt, QPointF, QMimeData, Signal
 from PySide2.QtGui import QPainter, QKeySequence
-from PySide2.QtWidgets import (
-    QGraphicsScene, QGraphicsView, QGraphicsItem, QGraphicsRectItem, QShortcut, QApplication, QSizePolicy
-)
+from PySide2.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsItem, QShortcut, QApplication
 
 from nfb_studio.serial import mime, hooks
 
@@ -52,7 +48,7 @@ class Scheme(QGraphicsScene):
     - QGraphicsView: a view of QGraphicsScene. Only one view is allowed - creating multiple views will make the program
     behave incorrectly.
 
-    The main components are available as self.graph, super() and self.view.
+    The main components are available as self.graph, super() and self.view().
 
     See Also
     --------
@@ -61,6 +57,8 @@ class Scheme(QGraphicsScene):
     nfb_studio.widgets.scheme.Graph : A collection of nodes and edges.
     &#34;&#34;&#34;
     class View(QGraphicsView):
+        &#34;&#34;&#34;Custom view widget for Scheme.&#34;&#34;&#34;
+
         configRequested = Signal(object)
         &#34;&#34;&#34;Emitted when a config of a node was requested. Sends the node.&#34;&#34;&#34;
 
@@ -217,10 +215,6 @@ class Scheme(QGraphicsScene):
         super().clear()
         self.graph.clear()
 
-    # Observer methods =================================================================================================
-    def findNode(self, node_id: int) -&gt; Union[Node, None]:  # FIXME: Where is this used? What is the node_id?
-        return self.graph.findNode(node_id)
-
     # Selection ========================================================================================================
     def selectAll(self):
         self.graph.selectAll()
@@ -339,17 +333,17 @@ class Scheme(QGraphicsScene):
         )
         
         # If any of the accepted_formats is present in package.formats(), accept the event.
-        for format in package.formats():
-            if format in accepted_formats:
+        for fmt in package.formats():
+            if fmt in accepted_formats:
                 event.accept()
                 break
     
     def dropEvent(self, event):
         package = event.mimeData()
 
-        for format in self._custom_drop_events.keys():
-            if package.hasFormat(format):
-                self._custom_drop_events[format](scheme=self, event=event)
+        for fmt, drop_event in self._custom_drop_events:
+            if package.hasFormat(fmt):
+                drop_event(scheme=self, event=event)
 
         super().dropEvent(event)
 
@@ -362,7 +356,7 @@ class Scheme(QGraphicsScene):
             else:
                 self._dragging_edge.setTargetPos(event.scenePos())
 
-    def setCustomDropEvent(self, format, event):
+    def setCustomDropEvent(self, fmt, event):
         &#34;&#34;&#34;Set a custom drop event for a particular MIME type (format).
         Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
         If event is None, the format is instead removed from the list of accepted formats.
@@ -371,9 +365,9 @@ class Scheme(QGraphicsScene):
         - event, which will contain the event that is being dropped
         &#34;&#34;&#34;
         if event is None:
-            self._custom_drop_events.pop(format)
+            self._custom_drop_events.pop(fmt)
         else:
-            self._custom_drop_events[format] = event
+            self._custom_drop_events[fmt] = event
 
     # Key presses ======================================================================================================
     def keyPressEvent(self, event):
@@ -433,7 +427,7 @@ class Scheme(QGraphicsScene):
 - QGraphicsScene (inherits): a Qt representation of that graph and additional items;
 - QGraphicsView: a view of QGraphicsScene. Only one view is allowed - creating multiple views will make the program
 behave incorrectly.</p>
-<p>The main components are available as self.graph, super() and self.view.</p>
+<p>The main components are available as self.graph, super() and self.view().</p>
 <h2 id="see-also">See Also</h2>
 <dl>
 <dt><code>nfb_studio.widgets.scheme.Node</code></dt>
@@ -457,7 +451,7 @@ behave incorrectly.</p>
     - QGraphicsView: a view of QGraphicsScene. Only one view is allowed - creating multiple views will make the program
     behave incorrectly.
 
-    The main components are available as self.graph, super() and self.view.
+    The main components are available as self.graph, super() and self.view().
 
     See Also
     --------
@@ -466,6 +460,8 @@ behave incorrectly.</p>
     nfb_studio.widgets.scheme.Graph : A collection of nodes and edges.
     &#34;&#34;&#34;
     class View(QGraphicsView):
+        &#34;&#34;&#34;Custom view widget for Scheme.&#34;&#34;&#34;
+
         configRequested = Signal(object)
         &#34;&#34;&#34;Emitted when a config of a node was requested. Sends the node.&#34;&#34;&#34;
 
@@ -622,10 +618,6 @@ behave incorrectly.</p>
         super().clear()
         self.graph.clear()
 
-    # Observer methods =================================================================================================
-    def findNode(self, node_id: int) -&gt; Union[Node, None]:  # FIXME: Where is this used? What is the node_id?
-        return self.graph.findNode(node_id)
-
     # Selection ========================================================================================================
     def selectAll(self):
         self.graph.selectAll()
@@ -744,17 +736,17 @@ behave incorrectly.</p>
         )
         
         # If any of the accepted_formats is present in package.formats(), accept the event.
-        for format in package.formats():
-            if format in accepted_formats:
+        for fmt in package.formats():
+            if fmt in accepted_formats:
                 event.accept()
                 break
     
     def dropEvent(self, event):
         package = event.mimeData()
 
-        for format in self._custom_drop_events.keys():
-            if package.hasFormat(format):
-                self._custom_drop_events[format](scheme=self, event=event)
+        for fmt, drop_event in self._custom_drop_events:
+            if package.hasFormat(fmt):
+                drop_event(scheme=self, event=event)
 
         super().dropEvent(event)
 
@@ -767,7 +759,7 @@ behave incorrectly.</p>
             else:
                 self._dragging_edge.setTargetPos(event.scenePos())
 
-    def setCustomDropEvent(self, format, event):
+    def setCustomDropEvent(self, fmt, event):
         &#34;&#34;&#34;Set a custom drop event for a particular MIME type (format).
         Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
         If event is None, the format is instead removed from the list of accepted formats.
@@ -776,9 +768,9 @@ behave incorrectly.</p>
         - event, which will contain the event that is being dropped
         &#34;&#34;&#34;
         if event is None:
-            self._custom_drop_events.pop(format)
+            self._custom_drop_events.pop(fmt)
         else:
-            self._custom_drop_events[format] = event
+            self._custom_drop_events[fmt] = event
 
     # Key presses ======================================================================================================
     def keyPressEvent(self, event):
@@ -831,8 +823,7 @@ behave incorrectly.</p>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.View"><code class="name">var <span class="ident">View</span></code></dt>
 <dd>
-<div class="desc"><p>QGraphicsView(self, parent: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)
-QGraphicsView(self, scene: PySide2.QtWidgets.QGraphicsScene, parent: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></div>
+<div class="desc"><p>Custom view widget for Scheme.</p></div>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
@@ -1055,8 +1046,8 @@ Returns the edge that was removed, or None if no such edge was found.</p></div>
     )
     
     # If any of the accepted_formats is present in package.formats(), accept the event.
-    for format in package.formats():
-        if format in accepted_formats:
+    for fmt in package.formats():
+        if fmt in accepted_formats:
             event.accept()
             break</code></pre>
 </details>
@@ -1092,9 +1083,9 @@ Returns the edge that was removed, or None if no such edge was found.</p></div>
 <pre><code class="python">def dropEvent(self, event):
     package = event.mimeData()
 
-    for format in self._custom_drop_events.keys():
-        if package.hasFormat(format):
-            self._custom_drop_events[format](scheme=self, event=event)
+    for fmt, drop_event in self._custom_drop_events:
+        if package.hasFormat(fmt):
+            drop_event(scheme=self, event=event)
 
     super().dropEvent(event)</code></pre>
 </details>
@@ -1165,19 +1156,6 @@ successful connection.</p></div>
 
     for node in other.nodes:
         self.removeItem(node)</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.findNode"><code class="name flex">
-<span>def <span class="ident">findNode</span></span>(<span>self, node_id: int) ‑> typing.Union[<a title="nfb_studio.widgets.scheme.node.node.Node" href="node/node.html#nfb_studio.widgets.scheme.node.node.Node">Node</a>, NoneType]</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def findNode(self, node_id: int) -&gt; Union[Node, None]:  # FIXME: Where is this used? What is the node_id?
-    return self.graph.findNode(node_id)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag"><code class="name flex">
@@ -1386,7 +1364,7 @@ successful connection.</p></div>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.setCustomDropEvent"><code class="name flex">
-<span>def <span class="ident">setCustomDropEvent</span></span>(<span>self, format, event)</span>
+<span>def <span class="ident">setCustomDropEvent</span></span>(<span>self, fmt, event)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Set a custom drop event for a particular MIME type (format).
@@ -1399,7 +1377,7 @@ If not None, event should be a function accepting two keyword arguments:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def setCustomDropEvent(self, format, event):
+<pre><code class="python">def setCustomDropEvent(self, fmt, event):
     &#34;&#34;&#34;Set a custom drop event for a particular MIME type (format).
     Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
     If event is None, the format is instead removed from the list of accepted formats.
@@ -1408,9 +1386,9 @@ If not None, event should be a function accepting two keyword arguments:
     - event, which will contain the event that is being dropped
     &#34;&#34;&#34;
     if event is None:
-        self._custom_drop_events.pop(format)
+        self._custom_drop_events.pop(fmt)
     else:
-        self._custom_drop_events[format] = event</code></pre>
+        self._custom_drop_events[fmt] = event</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.setPalette"><code class="name flex">
@@ -1529,7 +1507,6 @@ called, and always return this widget.</p></div>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart" href="#nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart">edgeDragStart</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop" href="#nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop">edgeDragStop</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.extract" href="#nfb_studio.widgets.scheme.scheme.Scheme.extract">extract</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.findNode" href="#nfb_studio.widgets.scheme.scheme.Scheme.findNode">findNode</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag" href="#nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag">hasEdgeDrag</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.keyPressEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.keyPressEvent">keyPressEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.keyReleaseEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.keyReleaseEvent">keyReleaseEvent</a></code></li>
