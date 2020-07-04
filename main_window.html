@@ -29,7 +29,7 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Main window of the UI application.&#34;&#34;&#34;
 import os
-
+from PySide2.QtGui import QKeySequence
 from PySide2.QtWidgets import QMainWindow, QFileDialog
 
 from nfb_studio.experiment import Experiment, ExperimentView
@@ -46,24 +46,35 @@ class MainWindow(QMainWindow):
         self._experiment = None
         self.setExperiment(Experiment())
 
+        self._assosiated_file = None
+
         # Menu bar -----------------------------------------------------------------------------------------------------
         menubar = self.menuBar()
         filemenu = menubar.addMenu(&#34;File&#34;)
 
-        open = filemenu.addAction(&#34;Open&#34;)
-        open.triggered.connect(self.load)
+        action_open = filemenu.addAction(&#34;Open&#34;)
+        action_open.triggered.connect(self.actionOpen)
+        action_open.setShortcut(QKeySequence.Open)
 
-        save = filemenu.addAction(&#34;Save As...&#34;)
-        save.triggered.connect(self.save)
+        action_save = filemenu.addAction(&#34;Save&#34;)
+        action_save.triggered.connect(self.actionSave)
+        action_save.setShortcut(QKeySequence.Save)
 
-        export = filemenu.addAction(&#34;Export&#34;)
-        export.triggered.connect(self.export)
+        action_save_as = filemenu.addAction(&#34;Save As...&#34;)
+        action_save_as.triggered.connect(self.actionSaveAs)
+        action_save_as.setShortcut(QKeySequence.SaveAs)
 
-        import_xml = filemenu.addAction(&#34;Import&#34;)
-        import_xml.triggered.connect(self.import_xml)
+        action_export = filemenu.addAction(&#34;Export...&#34;)
+        action_export.triggered.connect(self.actionExport)
+
+        action_import = filemenu.addAction(&#34;Import&#34;)
+        action_import.triggered.connect(self.actionImport)
 
     def experiment(self):
         return self._experiment
+
+    def associatedFile(self):
+        return self._assosiated_file
 
     def setExperiment(self, experiment):
         self._experiment = experiment
@@ -72,7 +83,7 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(experiment_view)
 
-    def export(self):
+    def actionExport(self):
         self.experiment().view().updateModel()
         data = self.experiment().export()
 
@@ -86,32 +97,31 @@ class MainWindow(QMainWindow):
         with open(file_path, &#34;w&#34;) as file:
             file.write(data)
 
-    def save(self):
-        self.experiment().view().updateModel()
-        data = self.experiment().save()
+    def actionSave(self):
+        if self.associatedFile() is None:
+            self.actionSaveAs()
         
-        file_path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
-        if file_path == &#34;&#34;:
+        self.fileSave(self.associatedFile())
+
+    def actionSaveAs(self):        
+        path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
+        if path == &#34;&#34;:
             return
 
-        if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
-            file_path = file_path + &#34;.nfbex&#34;
+        if os.path.splitext(path)[1] == &#34;&#34;:  # No extension
+            path = path + &#34;.nfbex&#34;
 
-        with open(file_path, &#34;w&#34;) as file:
-            file.write(data)
+        self._assosiated_file = path
+        self.fileSave(self.associatedFile())
 
-    def load(self):
-        file_path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
-        if file_path == &#34;&#34;:
+    def actionOpen(self):
+        path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
+        if path == &#34;&#34;:
             return
 
-        with open(file_path) as file:
-            data = file.read()
-        
-        ex = Experiment.load(data)
-        self.setExperiment(ex)
+        self.fileOpen(path)
 
-    def import_xml(self):
+    def actionImport(self):
         file_path = QFileDialog.getOpenFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
         if file_path == &#34;&#34;:
             return
@@ -120,7 +130,22 @@ class MainWindow(QMainWindow):
             data = file.read()
         
         ex = Experiment.import_xml(data)
-        self.setExperiment(ex)</code></pre>
+        self.setExperiment(ex)
+
+    def fileOpen(self, path):
+        with open(path) as file:
+            data = file.read()
+        
+        ex = Experiment.load(data)
+        self.setExperiment(ex)
+        self._assosiated_file = path
+
+    def fileSave(self, path):
+        self.experiment().view().updateModel()
+        data = self.experiment().save()
+
+        with open(path, &#34;w&#34;) as file:
+            file.write(data)</code></pre>
 </details>
 </section>
 <section>
@@ -154,24 +179,35 @@ widget.</p></div>
         self._experiment = None
         self.setExperiment(Experiment())
 
+        self._assosiated_file = None
+
         # Menu bar -----------------------------------------------------------------------------------------------------
         menubar = self.menuBar()
         filemenu = menubar.addMenu(&#34;File&#34;)
 
-        open = filemenu.addAction(&#34;Open&#34;)
-        open.triggered.connect(self.load)
+        action_open = filemenu.addAction(&#34;Open&#34;)
+        action_open.triggered.connect(self.actionOpen)
+        action_open.setShortcut(QKeySequence.Open)
 
-        save = filemenu.addAction(&#34;Save As...&#34;)
-        save.triggered.connect(self.save)
+        action_save = filemenu.addAction(&#34;Save&#34;)
+        action_save.triggered.connect(self.actionSave)
+        action_save.setShortcut(QKeySequence.Save)
 
-        export = filemenu.addAction(&#34;Export&#34;)
-        export.triggered.connect(self.export)
+        action_save_as = filemenu.addAction(&#34;Save As...&#34;)
+        action_save_as.triggered.connect(self.actionSaveAs)
+        action_save_as.setShortcut(QKeySequence.SaveAs)
 
-        import_xml = filemenu.addAction(&#34;Import&#34;)
-        import_xml.triggered.connect(self.import_xml)
+        action_export = filemenu.addAction(&#34;Export...&#34;)
+        action_export.triggered.connect(self.actionExport)
+
+        action_import = filemenu.addAction(&#34;Import&#34;)
+        action_import.triggered.connect(self.actionImport)
 
     def experiment(self):
         return self._experiment
+
+    def associatedFile(self):
+        return self._assosiated_file
 
     def setExperiment(self, experiment):
         self._experiment = experiment
@@ -180,7 +216,7 @@ widget.</p></div>
 
         self.setCentralWidget(experiment_view)
 
-    def export(self):
+    def actionExport(self):
         self.experiment().view().updateModel()
         data = self.experiment().export()
 
@@ -194,32 +230,31 @@ widget.</p></div>
         with open(file_path, &#34;w&#34;) as file:
             file.write(data)
 
-    def save(self):
-        self.experiment().view().updateModel()
-        data = self.experiment().save()
+    def actionSave(self):
+        if self.associatedFile() is None:
+            self.actionSaveAs()
         
-        file_path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
-        if file_path == &#34;&#34;:
+        self.fileSave(self.associatedFile())
+
+    def actionSaveAs(self):        
+        path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
+        if path == &#34;&#34;:
             return
 
-        if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
-            file_path = file_path + &#34;.nfbex&#34;
+        if os.path.splitext(path)[1] == &#34;&#34;:  # No extension
+            path = path + &#34;.nfbex&#34;
 
-        with open(file_path, &#34;w&#34;) as file:
-            file.write(data)
+        self._assosiated_file = path
+        self.fileSave(self.associatedFile())
 
-    def load(self):
-        file_path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
-        if file_path == &#34;&#34;:
+    def actionOpen(self):
+        path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
+        if path == &#34;&#34;:
             return
 
-        with open(file_path) as file:
-            data = file.read()
-        
-        ex = Experiment.load(data)
-        self.setExperiment(ex)
+        self.fileOpen(path)
 
-    def import_xml(self):
+    def actionImport(self):
         file_path = QFileDialog.getOpenFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
         if file_path == &#34;&#34;:
             return
@@ -228,7 +263,22 @@ widget.</p></div>
             data = file.read()
         
         ex = Experiment.import_xml(data)
-        self.setExperiment(ex)</code></pre>
+        self.setExperiment(ex)
+
+    def fileOpen(self, path):
+        with open(path) as file:
+            data = file.read()
+        
+        ex = Experiment.load(data)
+        self.setExperiment(ex)
+        self._assosiated_file = path
+
+    def fileSave(self, path):
+        self.experiment().view().updateModel()
+        data = self.experiment().save()
+
+        with open(path, &#34;w&#34;) as file:
+            file.write(data)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -247,8 +297,8 @@ widget.</p></div>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="nfb_studio.main_window.MainWindow.experiment"><code class="name flex">
-<span>def <span class="ident">experiment</span></span>(<span>self)</span>
+<dt id="nfb_studio.main_window.MainWindow.actionExport"><code class="name flex">
+<span>def <span class="ident">actionExport</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -256,20 +306,7 @@ widget.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def experiment(self):
-    return self._experiment</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.main_window.MainWindow.export"><code class="name flex">
-<span>def <span class="ident">export</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def export(self):
+<pre><code class="python">def actionExport(self):
     self.experiment().view().updateModel()
     data = self.experiment().export()
 
@@ -284,8 +321,8 @@ widget.</p></div>
         file.write(data)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.main_window.MainWindow.import_xml"><code class="name flex">
-<span>def <span class="ident">import_xml</span></span>(<span>self)</span>
+<dt id="nfb_studio.main_window.MainWindow.actionImport"><code class="name flex">
+<span>def <span class="ident">actionImport</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -293,7 +330,7 @@ widget.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def import_xml(self):
+<pre><code class="python">def actionImport(self):
     file_path = QFileDialog.getOpenFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
     if file_path == &#34;&#34;:
         return
@@ -305,8 +342,8 @@ widget.</p></div>
     self.setExperiment(ex)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.main_window.MainWindow.load"><code class="name flex">
-<span>def <span class="ident">load</span></span>(<span>self)</span>
+<dt id="nfb_studio.main_window.MainWindow.actionOpen"><code class="name flex">
+<span>def <span class="ident">actionOpen</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -314,20 +351,97 @@ widget.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def load(self):
-    file_path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
-    if file_path == &#34;&#34;:
+<pre><code class="python">def actionOpen(self):
+    path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
+    if path == &#34;&#34;:
         return
 
-    with open(file_path) as file:
+    self.fileOpen(path)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.actionSave"><code class="name flex">
+<span>def <span class="ident">actionSave</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def actionSave(self):
+    if self.associatedFile() is None:
+        self.actionSaveAs()
+    
+    self.fileSave(self.associatedFile())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.actionSaveAs"><code class="name flex">
+<span>def <span class="ident">actionSaveAs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def actionSaveAs(self):        
+    path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
+    if path == &#34;&#34;:
+        return
+
+    if os.path.splitext(path)[1] == &#34;&#34;:  # No extension
+        path = path + &#34;.nfbex&#34;
+
+    self._assosiated_file = path
+    self.fileSave(self.associatedFile())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.associatedFile"><code class="name flex">
+<span>def <span class="ident">associatedFile</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def associatedFile(self):
+    return self._assosiated_file</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.experiment"><code class="name flex">
+<span>def <span class="ident">experiment</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def experiment(self):
+    return self._experiment</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.fileOpen"><code class="name flex">
+<span>def <span class="ident">fileOpen</span></span>(<span>self, path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fileOpen(self, path):
+    with open(path) as file:
         data = file.read()
     
     ex = Experiment.load(data)
-    self.setExperiment(ex)</code></pre>
+    self.setExperiment(ex)
+    self._assosiated_file = path</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.main_window.MainWindow.save"><code class="name flex">
-<span>def <span class="ident">save</span></span>(<span>self)</span>
+<dt id="nfb_studio.main_window.MainWindow.fileSave"><code class="name flex">
+<span>def <span class="ident">fileSave</span></span>(<span>self, path)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -335,18 +449,11 @@ widget.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def save(self):
+<pre><code class="python">def fileSave(self, path):
     self.experiment().view().updateModel()
     data = self.experiment().save()
-    
-    file_path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
-    if file_path == &#34;&#34;:
-        return
 
-    if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
-        file_path = file_path + &#34;.nfbex&#34;
-
-    with open(file_path, &#34;w&#34;) as file:
+    with open(path, &#34;w&#34;) as file:
         file.write(data)</code></pre>
 </details>
 </dd>
@@ -388,11 +495,15 @@ widget.</p></div>
 <li>
 <h4><code><a title="nfb_studio.main_window.MainWindow" href="#nfb_studio.main_window.MainWindow">MainWindow</a></code></h4>
 <ul class="two-column">
+<li><code><a title="nfb_studio.main_window.MainWindow.actionExport" href="#nfb_studio.main_window.MainWindow.actionExport">actionExport</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.actionImport" href="#nfb_studio.main_window.MainWindow.actionImport">actionImport</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.actionOpen" href="#nfb_studio.main_window.MainWindow.actionOpen">actionOpen</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.actionSave" href="#nfb_studio.main_window.MainWindow.actionSave">actionSave</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.actionSaveAs" href="#nfb_studio.main_window.MainWindow.actionSaveAs">actionSaveAs</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.associatedFile" href="#nfb_studio.main_window.MainWindow.associatedFile">associatedFile</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.experiment" href="#nfb_studio.main_window.MainWindow.experiment">experiment</a></code></li>
-<li><code><a title="nfb_studio.main_window.MainWindow.export" href="#nfb_studio.main_window.MainWindow.export">export</a></code></li>
-<li><code><a title="nfb_studio.main_window.MainWindow.import_xml" href="#nfb_studio.main_window.MainWindow.import_xml">import_xml</a></code></li>
-<li><code><a title="nfb_studio.main_window.MainWindow.load" href="#nfb_studio.main_window.MainWindow.load">load</a></code></li>
-<li><code><a title="nfb_studio.main_window.MainWindow.save" href="#nfb_studio.main_window.MainWindow.save">save</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.fileOpen" href="#nfb_studio.main_window.MainWindow.fileOpen">fileOpen</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.fileSave" href="#nfb_studio.main_window.MainWindow.fileSave">fileSave</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.setExperiment" href="#nfb_studio.main_window.MainWindow.setExperiment">setExperiment</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.staticMetaObject" href="#nfb_studio.main_window.MainWindow.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
