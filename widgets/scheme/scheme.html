@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.8.3" />
+<meta name="generator" content="pdoc 0.8.4" />
 <title>nfb_studio.widgets.scheme.scheme API documentation</title>
 <meta name="description" content="A data model for the nfb experiment&#39;s system of signals and their components." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -62,6 +62,9 @@ class Scheme(QGraphicsScene):
         configRequested = Signal(object)
         &#34;&#34;&#34;Emitted when a config of a node was requested. Sends the node.&#34;&#34;&#34;
 
+        scale_factor = 1.25
+        &#34;&#34;&#34;Constant on which scaling by mouse is based.&#34;&#34;&#34;
+
         def __init__(self, parent=None):
             super().__init__(parent=parent)
             self.setDragMode(QGraphicsView.RubberBandDrag)
@@ -69,18 +72,22 @@ class Scheme(QGraphicsScene):
             self.setRenderHint(QPainter.Antialiasing)
             self.setRenderHint(QPainter.SmoothPixmapTransform)
 
-            # Remove the scrollbars
+            # Remove the scrollbars and configure panning
             self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
             self.setSceneRect(0, 0, self.size().width(), self.size().height())
-            #self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+            self.setTransformationAnchor(self.NoAnchor)
+
+            self._pan_origin = None
+            self._scale = 1
 
         def setScene(self, scene):
             if not isinstance(scene, Scheme):
                 raise TypeError(&#34;Scheme.View can only have Scheme as it&#39;s scene, not &#34; + type(scene).__name__)
 
             super().setScene(scene)
+            self.scene().sceneRectChanged.connect(self._adjustSceneRect)
+
             cut_shortcut = QShortcut(QKeySequence.Cut, self)
             cut_shortcut.activated.connect(scene.cutEvent)
 
@@ -96,7 +103,52 @@ class Scheme(QGraphicsScene):
         def setScheme(self, scheme):
             &#34;&#34;&#34;Alias function for setScene.&#34;&#34;&#34;
             self.setScene(scheme)
+        
+        def mousePressEvent(self, event):
+            if event.button() == Qt.RightButton:
+                self._pan_origin = event.pos()
+                return
+            
+            super().mousePressEvent(event)
+        
+        def mouseMoveEvent(self, event):
+            if event.buttons() &amp; Qt.RightButton:
+                # Scene is panned
+                pan_from = self.mapToScene(self._pan_origin)
+                pan_to = self.mapToScene(event.pos())
+                translate = pan_to - pan_from
 
+                self.translate(translate.x(), translate.y())
+                self._pan_origin = event.pos()
+                return
+            
+            super().mouseMoveEvent(event)
+        
+        def wheelEvent(self, event):
+            scale = self.scale_factor**(event.angleDelta().y()/120)
+
+            self._scale *= scale
+
+            self.setTransformationAnchor(self.AnchorUnderMouse)
+            self.scale(scale, scale)
+            self.setTransformationAnchor(self.NoAnchor)
+
+        def resizeEvent(self, event):
+            super().resizeEvent(event)
+            self._adjustSceneRect()
+
+        def _adjustSceneRect(self):
+            &#34;&#34;&#34;Adjust the scene rect displayed in the view.
+            Scheme rect aims to display the scene rect, expanded by widget size in all directions, to provide seamless
+            editing experience.
+            &#34;&#34;&#34;
+            if self.scene() is None:
+                return
+                     
+            wsize = self.size()
+            rect = self.scene().sceneRect()
+
+            self.setSceneRect(rect.adjusted(-wsize.width(), -wsize.height(), wsize.width(), wsize.height()))
 
     ClipboardMimeType = &#34;application/x-nfb_studio-graph&#34;
 
@@ -468,6 +520,9 @@ behave incorrectly.</p>
         configRequested = Signal(object)
         &#34;&#34;&#34;Emitted when a config of a node was requested. Sends the node.&#34;&#34;&#34;
 
+        scale_factor = 1.25
+        &#34;&#34;&#34;Constant on which scaling by mouse is based.&#34;&#34;&#34;
+
         def __init__(self, parent=None):
             super().__init__(parent=parent)
             self.setDragMode(QGraphicsView.RubberBandDrag)
@@ -475,18 +530,22 @@ behave incorrectly.</p>
             self.setRenderHint(QPainter.Antialiasing)
             self.setRenderHint(QPainter.SmoothPixmapTransform)
 
-            # Remove the scrollbars
+            # Remove the scrollbars and configure panning
             self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
             self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
             self.setSceneRect(0, 0, self.size().width(), self.size().height())
-            #self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+            self.setTransformationAnchor(self.NoAnchor)
+
+            self._pan_origin = None
+            self._scale = 1
 
         def setScene(self, scene):
             if not isinstance(scene, Scheme):
                 raise TypeError(&#34;Scheme.View can only have Scheme as it&#39;s scene, not &#34; + type(scene).__name__)
 
             super().setScene(scene)
+            self.scene().sceneRectChanged.connect(self._adjustSceneRect)
+
             cut_shortcut = QShortcut(QKeySequence.Cut, self)
             cut_shortcut.activated.connect(scene.cutEvent)
 
@@ -502,7 +561,52 @@ behave incorrectly.</p>
         def setScheme(self, scheme):
             &#34;&#34;&#34;Alias function for setScene.&#34;&#34;&#34;
             self.setScene(scheme)
+        
+        def mousePressEvent(self, event):
+            if event.button() == Qt.RightButton:
+                self._pan_origin = event.pos()
+                return
+            
+            super().mousePressEvent(event)
+        
+        def mouseMoveEvent(self, event):
+            if event.buttons() &amp; Qt.RightButton:
+                # Scene is panned
+                pan_from = self.mapToScene(self._pan_origin)
+                pan_to = self.mapToScene(event.pos())
+                translate = pan_to - pan_from
 
+                self.translate(translate.x(), translate.y())
+                self._pan_origin = event.pos()
+                return
+            
+            super().mouseMoveEvent(event)
+        
+        def wheelEvent(self, event):
+            scale = self.scale_factor**(event.angleDelta().y()/120)
+
+            self._scale *= scale
+
+            self.setTransformationAnchor(self.AnchorUnderMouse)
+            self.scale(scale, scale)
+            self.setTransformationAnchor(self.NoAnchor)
+
+        def resizeEvent(self, event):
+            super().resizeEvent(event)
+            self._adjustSceneRect()
+
+        def _adjustSceneRect(self):
+            &#34;&#34;&#34;Adjust the scene rect displayed in the view.
+            Scheme rect aims to display the scene rect, expanded by widget size in all directions, to provide seamless
+            editing experience.
+            &#34;&#34;&#34;
+            if self.scene() is None:
+                return
+                     
+            wsize = self.size()
+            rect = self.scene().sceneRect()
+
+            self.setSceneRect(rect.adjusted(-wsize.width(), -wsize.height(), wsize.width(), wsize.height()))
 
     ClipboardMimeType = &#34;application/x-nfb_studio-graph&#34;
 
@@ -1547,7 +1651,7 @@ called, and always return this widget.</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.3</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
 </footer>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.8.3" />
+<meta name="generator" content="pdoc 0.8.4" />
 <title>nfb_studio.main_window API documentation</title>
 <meta name="description" content="Main window of the UI application." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -29,8 +29,10 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Main window of the UI application.&#34;&#34;&#34;
 import os
+from typing import Union
+from pathlib import Path
 from PySide2.QtGui import QKeySequence
-from PySide2.QtWidgets import QMainWindow, QFileDialog
+from PySide2.QtWidgets import QMainWindow, QFileDialog, QMessageBox
 
 from nfb_studio.experiment import Experiment, ExperimentView
 
@@ -44,9 +46,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self._experiment = None
-        self.setExperiment(Experiment())
-
-        self._assosiated_file = None
+        self._save_path = None
 
         # Menu bar -----------------------------------------------------------------------------------------------------
         menubar = self.menuBar()
@@ -70,11 +70,21 @@ class MainWindow(QMainWindow):
         action_import = filemenu.addAction(&#34;Import&#34;)
         action_import.triggered.connect(self.actionImport)
 
+        # --------------------------------------------------------------------------------------------------------------
+        self.actionNew()
+
+    def projectTitle(self) -&gt; str:
+        &#34;&#34;&#34;Return document title, i.e. name of file &#34;&#34;&#34;
+        if self.savePath():
+            return Path(self.savePath()).stem
+        return &#34;Untitled&#34;
+
     def experiment(self):
         return self._experiment
 
-    def associatedFile(self):
-        return self._assosiated_file
+    def savePath(self) -&gt; Union[str, None]:
+        &#34;&#34;&#34;Return path of the file from which the &#34;&#34;&#34;
+        return self._save_path
 
     def setExperiment(self, experiment):
         self._experiment = experiment
@@ -83,54 +93,115 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(experiment_view)
 
-    def actionExport(self):
+    def actionNew(self) -&gt; bool:
+        if self.experiment() and not self.promptSaveChanges():
+            return False  # Action cancelled during prompt
+
+        self.setExperiment(Experiment())
+        self._save_path = None
+        self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+        return True
+
+    def actionExport(self) -&gt; bool:
         self.experiment().view().updateModel()
         data = self.experiment().export()
 
         file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
         if file_path == &#34;&#34;:
-            return
+            return False  # Action was cancelled
 
         if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
             file_path = file_path + &#34;.xml&#34;
 
         with open(file_path, &#34;w&#34;) as file:
             file.write(data)
+        return True
 
-    def actionSave(self):
-        if self.associatedFile() is None:
-            self.actionSaveAs()
+    def actionSave(self) -&gt; bool:
+        &#34;&#34;&#34;User action &#34;Save&#34;. Saves file to its location, or promts user if no location exists yet.
+        Returns True if file was saved, and False if action was cancelled.
+        &#34;&#34;&#34;
+        if self.savePath() is None:
+            return self.actionSaveAs()
         
-        self.fileSave(self.associatedFile())
+        self.fileSave(self.savePath())
+        self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+        return True
 
-    def actionSaveAs(self):        
+    def actionSaveAs(self) -&gt; bool:
+        &#34;&#34;&#34;User action &#34;Save As&#34;. Promts user to save file as.
+        Returns True if file was saved, and False if action was cancelled.
+        &#34;&#34;&#34;
         path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
         if path == &#34;&#34;:
-            return
+            return False  # Action was cancelled
 
         if os.path.splitext(path)[1] == &#34;&#34;:  # No extension
             path = path + &#34;.nfbex&#34;
 
-        self._assosiated_file = path
-        self.fileSave(self.associatedFile())
+        self._save_path = path
+        self.fileSave(self.savePath())
+        self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+        return True
 
-    def actionOpen(self):
+    def actionOpen(self) -&gt; bool:
+        &#34;&#34;&#34;User action &#34;Open&#34;. Promts user to open a file.
+        Returns True if file was opened, and False if action was cancelled.
+        &#34;&#34;&#34;
+        if self.experiment() and not self.promptSaveChanges():
+            return False  # Action cancelled during prompt
+
         path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
         if path == &#34;&#34;:
-            return
+            return False
 
         self.fileOpen(path)
+        self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+        return True
 
-    def actionImport(self):
+    def actionImport(self) -&gt; bool:
+        &#34;&#34;&#34;User action &#34;Import&#34;. Promts user to import a file.
+        Returns True if file was imported, and False if action was cancelled.
+        &#34;&#34;&#34;
+        if self.experiment() and not self.promptSaveChanges():
+            return False  # Action cancelled during prompt
+
         file_path = QFileDialog.getOpenFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
         if file_path == &#34;&#34;:
-            return
+            return False
 
         with open(file_path) as file:
             data = file.read()
         
         ex = Experiment.import_xml(data)
         self.setExperiment(ex)
+        return True
+
+    def promptSaveChanges(self) -&gt; bool:
+        &#34;&#34;&#34;Prompt the user to save changes to current project.
+        Display a message box asking the user if they want to save changes. If user selects Save, execute actionSave.
+        Returns True if the user decided to discard changes or saved the file, and False if the user cancelled operation
+        either during prompt or during save.
+        &#34;&#34;&#34;
+        prompt = QMessageBox()
+        prompt.setWindowTitle(&#34;NFB Studio&#34;)
+        prompt.setIcon(QMessageBox.Warning)
+        prompt.setText(&#34;Save changes to \&#34;{}\&#34; before closing?&#34;.format(self.projectTitle()))
+        prompt.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+        prompt.setDefaultButton(QMessageBox.Save)
+        
+        answer = prompt.exec_()
+        if answer == QMessageBox.Cancel:
+            return False
+        if answer == QMessageBox.Save:
+            return self.actionSave()
+        return True
+
+    def closeEvent(self, event):
+        if self.experiment():
+            event.setAccepted(self.promptSaveChanges())
+        else:
+            event.accept()
 
     def fileOpen(self, path):
         with open(path) as file:
@@ -138,7 +209,7 @@ class MainWindow(QMainWindow):
         
         ex = Experiment.load(data)
         self.setExperiment(ex)
-        self._assosiated_file = path
+        self._save_path = path
 
     def fileSave(self, path):
         self.experiment().view().updateModel()
@@ -177,9 +248,7 @@ widget.</p></div>
         super().__init__()
 
         self._experiment = None
-        self.setExperiment(Experiment())
-
-        self._assosiated_file = None
+        self._save_path = None
 
         # Menu bar -----------------------------------------------------------------------------------------------------
         menubar = self.menuBar()
@@ -203,11 +272,21 @@ widget.</p></div>
         action_import = filemenu.addAction(&#34;Import&#34;)
         action_import.triggered.connect(self.actionImport)
 
+        # --------------------------------------------------------------------------------------------------------------
+        self.actionNew()
+
+    def projectTitle(self) -&gt; str:
+        &#34;&#34;&#34;Return document title, i.e. name of file &#34;&#34;&#34;
+        if self.savePath():
+            return Path(self.savePath()).stem
+        return &#34;Untitled&#34;
+
     def experiment(self):
         return self._experiment
 
-    def associatedFile(self):
-        return self._assosiated_file
+    def savePath(self) -&gt; Union[str, None]:
+        &#34;&#34;&#34;Return path of the file from which the &#34;&#34;&#34;
+        return self._save_path
 
     def setExperiment(self, experiment):
         self._experiment = experiment
@@ -216,54 +295,115 @@ widget.</p></div>
 
         self.setCentralWidget(experiment_view)
 
-    def actionExport(self):
+    def actionNew(self) -&gt; bool:
+        if self.experiment() and not self.promptSaveChanges():
+            return False  # Action cancelled during prompt
+
+        self.setExperiment(Experiment())
+        self._save_path = None
+        self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+        return True
+
+    def actionExport(self) -&gt; bool:
         self.experiment().view().updateModel()
         data = self.experiment().export()
 
         file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
         if file_path == &#34;&#34;:
-            return
+            return False  # Action was cancelled
 
         if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
             file_path = file_path + &#34;.xml&#34;
 
         with open(file_path, &#34;w&#34;) as file:
             file.write(data)
+        return True
 
-    def actionSave(self):
-        if self.associatedFile() is None:
-            self.actionSaveAs()
+    def actionSave(self) -&gt; bool:
+        &#34;&#34;&#34;User action &#34;Save&#34;. Saves file to its location, or promts user if no location exists yet.
+        Returns True if file was saved, and False if action was cancelled.
+        &#34;&#34;&#34;
+        if self.savePath() is None:
+            return self.actionSaveAs()
         
-        self.fileSave(self.associatedFile())
+        self.fileSave(self.savePath())
+        self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+        return True
 
-    def actionSaveAs(self):        
+    def actionSaveAs(self) -&gt; bool:
+        &#34;&#34;&#34;User action &#34;Save As&#34;. Promts user to save file as.
+        Returns True if file was saved, and False if action was cancelled.
+        &#34;&#34;&#34;
         path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
         if path == &#34;&#34;:
-            return
+            return False  # Action was cancelled
 
         if os.path.splitext(path)[1] == &#34;&#34;:  # No extension
             path = path + &#34;.nfbex&#34;
 
-        self._assosiated_file = path
-        self.fileSave(self.associatedFile())
+        self._save_path = path
+        self.fileSave(self.savePath())
+        self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+        return True
 
-    def actionOpen(self):
+    def actionOpen(self) -&gt; bool:
+        &#34;&#34;&#34;User action &#34;Open&#34;. Promts user to open a file.
+        Returns True if file was opened, and False if action was cancelled.
+        &#34;&#34;&#34;
+        if self.experiment() and not self.promptSaveChanges():
+            return False  # Action cancelled during prompt
+
         path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
         if path == &#34;&#34;:
-            return
+            return False
 
         self.fileOpen(path)
+        self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+        return True
 
-    def actionImport(self):
+    def actionImport(self) -&gt; bool:
+        &#34;&#34;&#34;User action &#34;Import&#34;. Promts user to import a file.
+        Returns True if file was imported, and False if action was cancelled.
+        &#34;&#34;&#34;
+        if self.experiment() and not self.promptSaveChanges():
+            return False  # Action cancelled during prompt
+
         file_path = QFileDialog.getOpenFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
         if file_path == &#34;&#34;:
-            return
+            return False
 
         with open(file_path) as file:
             data = file.read()
         
         ex = Experiment.import_xml(data)
         self.setExperiment(ex)
+        return True
+
+    def promptSaveChanges(self) -&gt; bool:
+        &#34;&#34;&#34;Prompt the user to save changes to current project.
+        Display a message box asking the user if they want to save changes. If user selects Save, execute actionSave.
+        Returns True if the user decided to discard changes or saved the file, and False if the user cancelled operation
+        either during prompt or during save.
+        &#34;&#34;&#34;
+        prompt = QMessageBox()
+        prompt.setWindowTitle(&#34;NFB Studio&#34;)
+        prompt.setIcon(QMessageBox.Warning)
+        prompt.setText(&#34;Save changes to \&#34;{}\&#34; before closing?&#34;.format(self.projectTitle()))
+        prompt.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+        prompt.setDefaultButton(QMessageBox.Save)
+        
+        answer = prompt.exec_()
+        if answer == QMessageBox.Cancel:
+            return False
+        if answer == QMessageBox.Save:
+            return self.actionSave()
+        return True
+
+    def closeEvent(self, event):
+        if self.experiment():
+            event.setAccepted(self.promptSaveChanges())
+        else:
+            event.accept()
 
     def fileOpen(self, path):
         with open(path) as file:
@@ -271,7 +411,7 @@ widget.</p></div>
         
         ex = Experiment.load(data)
         self.setExperiment(ex)
-        self._assosiated_file = path
+        self._save_path = path
 
     def fileSave(self, path):
         self.experiment().view().updateModel()
@@ -298,7 +438,7 @@ widget.</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.main_window.MainWindow.actionExport"><code class="name flex">
-<span>def <span class="ident">actionExport</span></span>(<span>self)</span>
+<span>def <span class="ident">actionExport</span></span>(<span>self) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -306,107 +446,159 @@ widget.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def actionExport(self):
+<pre><code class="python">def actionExport(self) -&gt; bool:
     self.experiment().view().updateModel()
     data = self.experiment().export()
 
     file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
     if file_path == &#34;&#34;:
-        return
+        return False  # Action was cancelled
 
     if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
         file_path = file_path + &#34;.xml&#34;
 
     with open(file_path, &#34;w&#34;) as file:
-        file.write(data)</code></pre>
+        file.write(data)
+    return True</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.main_window.MainWindow.actionImport"><code class="name flex">
-<span>def <span class="ident">actionImport</span></span>(<span>self)</span>
+<span>def <span class="ident">actionImport</span></span>(<span>self) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>User action "Import". Promts user to import a file.
+Returns True if file was imported, and False if action was cancelled.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def actionImport(self):
+<pre><code class="python">def actionImport(self) -&gt; bool:
+    &#34;&#34;&#34;User action &#34;Import&#34;. Promts user to import a file.
+    Returns True if file was imported, and False if action was cancelled.
+    &#34;&#34;&#34;
+    if self.experiment() and not self.promptSaveChanges():
+        return False  # Action cancelled during prompt
+
     file_path = QFileDialog.getOpenFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
     if file_path == &#34;&#34;:
-        return
+        return False
 
     with open(file_path) as file:
         data = file.read()
     
     ex = Experiment.import_xml(data)
-    self.setExperiment(ex)</code></pre>
+    self.setExperiment(ex)
+    return True</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.actionNew"><code class="name flex">
+<span>def <span class="ident">actionNew</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def actionNew(self) -&gt; bool:
+    if self.experiment() and not self.promptSaveChanges():
+        return False  # Action cancelled during prompt
+
+    self.setExperiment(Experiment())
+    self._save_path = None
+    self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+    return True</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.main_window.MainWindow.actionOpen"><code class="name flex">
-<span>def <span class="ident">actionOpen</span></span>(<span>self)</span>
+<span>def <span class="ident">actionOpen</span></span>(<span>self) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>User action "Open". Promts user to open a file.
+Returns True if file was opened, and False if action was cancelled.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def actionOpen(self):
+<pre><code class="python">def actionOpen(self) -&gt; bool:
+    &#34;&#34;&#34;User action &#34;Open&#34;. Promts user to open a file.
+    Returns True if file was opened, and False if action was cancelled.
+    &#34;&#34;&#34;
+    if self.experiment() and not self.promptSaveChanges():
+        return False  # Action cancelled during prompt
+
     path = QFileDialog.getOpenFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
     if path == &#34;&#34;:
-        return
+        return False
 
-    self.fileOpen(path)</code></pre>
+    self.fileOpen(path)
+    self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+    return True</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.main_window.MainWindow.actionSave"><code class="name flex">
-<span>def <span class="ident">actionSave</span></span>(<span>self)</span>
+<span>def <span class="ident">actionSave</span></span>(<span>self) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>User action "Save". Saves file to its location, or promts user if no location exists yet.
+Returns True if file was saved, and False if action was cancelled.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def actionSave(self):
-    if self.associatedFile() is None:
-        self.actionSaveAs()
+<pre><code class="python">def actionSave(self) -&gt; bool:
+    &#34;&#34;&#34;User action &#34;Save&#34;. Saves file to its location, or promts user if no location exists yet.
+    Returns True if file was saved, and False if action was cancelled.
+    &#34;&#34;&#34;
+    if self.savePath() is None:
+        return self.actionSaveAs()
     
-    self.fileSave(self.associatedFile())</code></pre>
+    self.fileSave(self.savePath())
+    self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+    return True</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.main_window.MainWindow.actionSaveAs"><code class="name flex">
-<span>def <span class="ident">actionSaveAs</span></span>(<span>self)</span>
+<span>def <span class="ident">actionSaveAs</span></span>(<span>self) ‑> bool</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>User action "Save As". Promts user to save file as.
+Returns True if file was saved, and False if action was cancelled.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def actionSaveAs(self):        
+<pre><code class="python">def actionSaveAs(self) -&gt; bool:
+    &#34;&#34;&#34;User action &#34;Save As&#34;. Promts user to save file as.
+    Returns True if file was saved, and False if action was cancelled.
+    &#34;&#34;&#34;
     path = QFileDialog.getSaveFileName(filter=&#34;Experiment Files (*.nfbex)&#34;)[0]
     if path == &#34;&#34;:
-        return
+        return False  # Action was cancelled
 
     if os.path.splitext(path)[1] == &#34;&#34;:  # No extension
         path = path + &#34;.nfbex&#34;
 
-    self._assosiated_file = path
-    self.fileSave(self.associatedFile())</code></pre>
+    self._save_path = path
+    self.fileSave(self.savePath())
+    self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
+    return True</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.main_window.MainWindow.associatedFile"><code class="name flex">
-<span>def <span class="ident">associatedFile</span></span>(<span>self)</span>
+<dt id="nfb_studio.main_window.MainWindow.closeEvent"><code class="name flex">
+<span>def <span class="ident">closeEvent</span></span>(<span>self, event)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>closeEvent(self, event: PySide2.QtGui.QCloseEvent)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def associatedFile(self):
-    return self._assosiated_file</code></pre>
+<pre><code class="python">def closeEvent(self, event):
+    if self.experiment():
+        event.setAccepted(self.promptSaveChanges())
+    else:
+        event.accept()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.main_window.MainWindow.experiment"><code class="name flex">
@@ -437,7 +629,7 @@ widget.</p></div>
     
     ex = Experiment.load(data)
     self.setExperiment(ex)
-    self._assosiated_file = path</code></pre>
+    self._save_path = path</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.main_window.MainWindow.fileSave"><code class="name flex">
@@ -455,6 +647,69 @@ widget.</p></div>
 
     with open(path, &#34;w&#34;) as file:
         file.write(data)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.projectTitle"><code class="name flex">
+<span>def <span class="ident">projectTitle</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return document title, i.e. name of file</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def projectTitle(self) -&gt; str:
+    &#34;&#34;&#34;Return document title, i.e. name of file &#34;&#34;&#34;
+    if self.savePath():
+        return Path(self.savePath()).stem
+    return &#34;Untitled&#34;</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.promptSaveChanges"><code class="name flex">
+<span>def <span class="ident">promptSaveChanges</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Prompt the user to save changes to current project.
+Display a message box asking the user if they want to save changes. If user selects Save, execute actionSave.
+Returns True if the user decided to discard changes or saved the file, and False if the user cancelled operation
+either during prompt or during save.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def promptSaveChanges(self) -&gt; bool:
+    &#34;&#34;&#34;Prompt the user to save changes to current project.
+    Display a message box asking the user if they want to save changes. If user selects Save, execute actionSave.
+    Returns True if the user decided to discard changes or saved the file, and False if the user cancelled operation
+    either during prompt or during save.
+    &#34;&#34;&#34;
+    prompt = QMessageBox()
+    prompt.setWindowTitle(&#34;NFB Studio&#34;)
+    prompt.setIcon(QMessageBox.Warning)
+    prompt.setText(&#34;Save changes to \&#34;{}\&#34; before closing?&#34;.format(self.projectTitle()))
+    prompt.setStandardButtons(QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel)
+    prompt.setDefaultButton(QMessageBox.Save)
+    
+    answer = prompt.exec_()
+    if answer == QMessageBox.Cancel:
+        return False
+    if answer == QMessageBox.Save:
+        return self.actionSave()
+    return True</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.main_window.MainWindow.savePath"><code class="name flex">
+<span>def <span class="ident">savePath</span></span>(<span>self) ‑> typing.Union[str, NoneType]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return path of the file from which the</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def savePath(self) -&gt; Union[str, None]:
+    &#34;&#34;&#34;Return path of the file from which the &#34;&#34;&#34;
+    return self._save_path</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.main_window.MainWindow.setExperiment"><code class="name flex">
@@ -497,13 +752,17 @@ widget.</p></div>
 <ul class="two-column">
 <li><code><a title="nfb_studio.main_window.MainWindow.actionExport" href="#nfb_studio.main_window.MainWindow.actionExport">actionExport</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.actionImport" href="#nfb_studio.main_window.MainWindow.actionImport">actionImport</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.actionNew" href="#nfb_studio.main_window.MainWindow.actionNew">actionNew</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.actionOpen" href="#nfb_studio.main_window.MainWindow.actionOpen">actionOpen</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.actionSave" href="#nfb_studio.main_window.MainWindow.actionSave">actionSave</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.actionSaveAs" href="#nfb_studio.main_window.MainWindow.actionSaveAs">actionSaveAs</a></code></li>
-<li><code><a title="nfb_studio.main_window.MainWindow.associatedFile" href="#nfb_studio.main_window.MainWindow.associatedFile">associatedFile</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.closeEvent" href="#nfb_studio.main_window.MainWindow.closeEvent">closeEvent</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.experiment" href="#nfb_studio.main_window.MainWindow.experiment">experiment</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.fileOpen" href="#nfb_studio.main_window.MainWindow.fileOpen">fileOpen</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.fileSave" href="#nfb_studio.main_window.MainWindow.fileSave">fileSave</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.projectTitle" href="#nfb_studio.main_window.MainWindow.projectTitle">projectTitle</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.promptSaveChanges" href="#nfb_studio.main_window.MainWindow.promptSaveChanges">promptSaveChanges</a></code></li>
+<li><code><a title="nfb_studio.main_window.MainWindow.savePath" href="#nfb_studio.main_window.MainWindow.savePath">savePath</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.setExperiment" href="#nfb_studio.main_window.MainWindow.setExperiment">setExperiment</a></code></li>
 <li><code><a title="nfb_studio.main_window.MainWindow.staticMetaObject" href="#nfb_studio.main_window.MainWindow.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
@@ -514,7 +773,7 @@ widget.</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.3</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
 </footer>
 </body>
 </html>
