@@ -116,7 +116,9 @@ class ExperimentView(QMainWindow):
 
         self.tree.setExperiment(model)
         self.signal_editor.setScheme(model.signal_scheme)
+
         self.sequence_editor.setScheme(model.sequence_scheme)
+        self.sequence_editor.scheme().addItem(SequenceExport())
 
         model.blocks.itemAdded.connect(self._onBlockAdded)
         model.blocks.itemRenamed.connect(self._onBlockRenamed)
@@ -421,7 +423,9 @@ class ExperimentView(QMainWindow):
 
         self.tree.setExperiment(model)
         self.signal_editor.setScheme(model.signal_scheme)
+
         self.sequence_editor.setScheme(model.sequence_scheme)
+        self.sequence_editor.scheme().addItem(SequenceExport())
 
         model.blocks.itemAdded.connect(self._onBlockAdded)
         model.blocks.itemRenamed.connect(self._onBlockRenamed)
@@ -813,7 +817,9 @@ class ExperimentView(QMainWindow):
 
     self.tree.setExperiment(model)
     self.signal_editor.setScheme(model.signal_scheme)
+
     self.sequence_editor.setScheme(model.sequence_scheme)
+    self.sequence_editor.scheme().addItem(SequenceExport())
 
     model.blocks.itemAdded.connect(self._onBlockAdded)
     model.blocks.itemRenamed.connect(self._onBlockRenamed)

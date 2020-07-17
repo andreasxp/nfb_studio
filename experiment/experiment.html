@@ -508,18 +508,22 @@ class Experiment:
         data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = signals
 
         # Experiment sequence ------------------------------------------------------------------------------------------
-        sequence = []
-        
-        # Determine the start node of the sequence and put it in `n`
-        n = next(iter(self.sequence_scheme.graph.nodes))
-        while len(n.inputs[0].edges) &gt; 0:
+        sequence_nodes = []
+
+        # Build a list of lists of nodes (e.g. list of sequences)
+        for n in self.sequence_scheme.graph.nodes:
+            if isinstance(n, SequenceExport):
+                break
+
+        while True:
+            if len(n.inputs[0].edges) == 0:
+                break
+
             n = list(n.inputs[0].edges)[0].sourceNode()
-        
-        # For each node in sequence, append it&#39;s title as next item in sequence
-        sequence.append(n.title())
-        while len(n.outputs[0].edges) &gt; 0:
-            n = list(n.outputs[0].edges)[0].targetNode()
-            sequence.append(n.title())
+            sequence_nodes.insert(0, n)
+
+        # Convert a sequence of nodes to a sequence of block names
+        sequence = [n.title() for n in sequence_nodes]
 
         data[&#34;vPSequence&#34;] = {
             &#34;s&#34;: sequence
@@ -1017,18 +1021,22 @@ An instance of Experiment represents a collection</p></div>
         data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = signals
 
         # Experiment sequence ------------------------------------------------------------------------------------------
-        sequence = []
-        
-        # Determine the start node of the sequence and put it in `n`
-        n = next(iter(self.sequence_scheme.graph.nodes))
-        while len(n.inputs[0].edges) &gt; 0:
+        sequence_nodes = []
+
+        # Build a list of lists of nodes (e.g. list of sequences)
+        for n in self.sequence_scheme.graph.nodes:
+            if isinstance(n, SequenceExport):
+                break
+
+        while True:
+            if len(n.inputs[0].edges) == 0:
+                break
+
             n = list(n.inputs[0].edges)[0].sourceNode()
-        
-        # For each node in sequence, append it&#39;s title as next item in sequence
-        sequence.append(n.title())
-        while len(n.outputs[0].edges) &gt; 0:
-            n = list(n.outputs[0].edges)[0].targetNode()
-            sequence.append(n.title())
+            sequence_nodes.insert(0, n)
+
+        # Convert a sequence of nodes to a sequence of block names
+        sequence = [n.title() for n in sequence_nodes]
 
         data[&#34;vPSequence&#34;] = {
             &#34;s&#34;: sequence
@@ -1454,18 +1462,22 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
     data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = signals
 
     # Experiment sequence ------------------------------------------------------------------------------------------
-    sequence = []
-    
-    # Determine the start node of the sequence and put it in `n`
-    n = next(iter(self.sequence_scheme.graph.nodes))
-    while len(n.inputs[0].edges) &gt; 0:
+    sequence_nodes = []
+
+    # Build a list of lists of nodes (e.g. list of sequences)
+    for n in self.sequence_scheme.graph.nodes:
+        if isinstance(n, SequenceExport):
+            break
+
+    while True:
+        if len(n.inputs[0].edges) == 0:
+            break
+
         n = list(n.inputs[0].edges)[0].sourceNode()
-    
-    # For each node in sequence, append it&#39;s title as next item in sequence
-    sequence.append(n.title())
-    while len(n.outputs[0].edges) &gt; 0:
-        n = list(n.outputs[0].edges)[0].targetNode()
-        sequence.append(n.title())
+        sequence_nodes.insert(0, n)
+
+    # Convert a sequence of nodes to a sequence of block names
+    sequence = [n.title() for n in sequence_nodes]
 
     data[&#34;vPSequence&#34;] = {
         &#34;s&#34;: sequence
