@@ -29,13 +29,10 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Classes representing the graph stucture in the node scheme.&#34;&#34;&#34;
 from typing import Union
-from itertools import filterfalse
-from collections import MutableSet
-
-from PySide2.QtCore import QRectF
 
 from .graphics_item_group import GraphicsItemGroup
 from .node import Node, Edge, Input, Output
+
 
 class Graph(GraphicsItemGroup):
     &#34;&#34;&#34;A collection of nodes and edges connecting them.&#34;&#34;&#34;
@@ -102,6 +99,48 @@ class Graph(GraphicsItemGroup):
                 return edge
         return None
 
+    # Observer methods =================================================================================================
+    def sequences_from(self, node):
+        &#34;&#34;&#34;Return an iterable of all sequences inside a graph, starting from a particular node.
+        A sequence is a subgraph, where all nodes form a connected chain. Sequences from this function guarantee that
+        the last node does not have any outputs.
+        &#34;&#34;&#34;
+        has_sequences = False
+
+        for out in node.outputs:
+            for edge in out.edges:
+                connected = edge.targetNode()
+                for sequence in self.sequences_from(connected):
+                    sequence.add(node)
+                    sequence.add(edge)
+
+                    n = node
+                    while True:
+                        print(n.title(), end=&#34; &#34;)
+                        if len(n.outputs) == 0 or len(list(n.outputs[0].edges)) == 0:
+                            break
+                        n = list(n.outputs[0].edges)[0].targetNode()
+                    print(&#34;&#34;)
+                    yield sequence
+                    has_sequences = True
+        
+        if not has_sequences:
+            result = Graph()
+            result.add(node)
+            print(&#34;Final:&#34;, node.title())
+            yield result
+    
+    def sequences(self):
+        &#34;&#34;&#34;Return an iterable of all sequences inside a graph.
+        A sequence is a subgraph, where all nodes form a connected chain. Sequences from this function guarantee that
+        the first node does not have any inputs, the last one does not have any outputs.
+        &#34;&#34;&#34;
+        for node in self.nodes:
+            if len(node.inputs) == 0 or len(list(node.inputs[0].edges)) == 0:
+                for sequence in self.sequences_from(node):
+                    yield sequence
+                    print(&#34;===============================&#34;)
+
     # Selection ========================================================================================================
     def selectAll(self):
         &#34;&#34;&#34;Select the whole graph.&#34;&#34;&#34;
@@ -145,8 +184,8 @@ class Graph(GraphicsItemGroup):
         result = self.selection()
 
         for edge in self.edges:
-            if ((edge.sourceNode() is not None and self.sourceNode().isSelected()) or 
-                (edge.targetNode() is not None and self.targetNode().isSelected())):
+            if ((edge.sourceNode() is not None and edge.sourceNode().isSelected()) or 
+                (edge.targetNode() is not None and edge.targetNode().isSelected())):
                 result.add(edge)  
 
         return result
@@ -315,6 +354,48 @@ class Graph(GraphicsItemGroup):
                 return edge
         return None
 
+    # Observer methods =================================================================================================
+    def sequences_from(self, node):
+        &#34;&#34;&#34;Return an iterable of all sequences inside a graph, starting from a particular node.
+        A sequence is a subgraph, where all nodes form a connected chain. Sequences from this function guarantee that
+        the last node does not have any outputs.
+        &#34;&#34;&#34;
+        has_sequences = False
+
+        for out in node.outputs:
+            for edge in out.edges:
+                connected = edge.targetNode()
+                for sequence in self.sequences_from(connected):
+                    sequence.add(node)
+                    sequence.add(edge)
+
+                    n = node
+                    while True:
+                        print(n.title(), end=&#34; &#34;)
+                        if len(n.outputs) == 0 or len(list(n.outputs[0].edges)) == 0:
+                            break
+                        n = list(n.outputs[0].edges)[0].targetNode()
+                    print(&#34;&#34;)
+                    yield sequence
+                    has_sequences = True
+        
+        if not has_sequences:
+            result = Graph()
+            result.add(node)
+            print(&#34;Final:&#34;, node.title())
+            yield result
+    
+    def sequences(self):
+        &#34;&#34;&#34;Return an iterable of all sequences inside a graph.
+        A sequence is a subgraph, where all nodes form a connected chain. Sequences from this function guarantee that
+        the first node does not have any inputs, the last one does not have any outputs.
+        &#34;&#34;&#34;
+        for node in self.nodes:
+            if len(node.inputs) == 0 or len(list(node.inputs[0].edges)) == 0:
+                for sequence in self.sequences_from(node):
+                    yield sequence
+                    print(&#34;===============================&#34;)
+
     # Selection ========================================================================================================
     def selectAll(self):
         &#34;&#34;&#34;Select the whole graph.&#34;&#34;&#34;
@@ -358,8 +439,8 @@ class Graph(GraphicsItemGroup):
         result = self.selection()
 
         for edge in self.edges:
-            if ((edge.sourceNode() is not None and self.sourceNode().isSelected()) or 
-                (edge.targetNode() is not None and self.targetNode().isSelected())):
+            if ((edge.sourceNode() is not None and edge.sourceNode().isSelected()) or 
+                (edge.targetNode() is not None and edge.targetNode().isSelected())):
                 result.add(edge)  
 
         return result
@@ -655,6 +736,71 @@ that the resulting graph will contain only edges and no nodes.</p></div>
     return result</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.graph.Graph.sequences"><code class="name flex">
+<span>def <span class="ident">sequences</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return an iterable of all sequences inside a graph.
+A sequence is a subgraph, where all nodes form a connected chain. Sequences from this function guarantee that
+the first node does not have any inputs, the last one does not have any outputs.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sequences(self):
+    &#34;&#34;&#34;Return an iterable of all sequences inside a graph.
+    A sequence is a subgraph, where all nodes form a connected chain. Sequences from this function guarantee that
+    the first node does not have any inputs, the last one does not have any outputs.
+    &#34;&#34;&#34;
+    for node in self.nodes:
+        if len(node.inputs) == 0 or len(list(node.inputs[0].edges)) == 0:
+            for sequence in self.sequences_from(node):
+                yield sequence
+                print(&#34;===============================&#34;)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.widgets.scheme.graph.Graph.sequences_from"><code class="name flex">
+<span>def <span class="ident">sequences_from</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return an iterable of all sequences inside a graph, starting from a particular node.
+A sequence is a subgraph, where all nodes form a connected chain. Sequences from this function guarantee that
+the last node does not have any outputs.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sequences_from(self, node):
+    &#34;&#34;&#34;Return an iterable of all sequences inside a graph, starting from a particular node.
+    A sequence is a subgraph, where all nodes form a connected chain. Sequences from this function guarantee that
+    the last node does not have any outputs.
+    &#34;&#34;&#34;
+    has_sequences = False
+
+    for out in node.outputs:
+        for edge in out.edges:
+            connected = edge.targetNode()
+            for sequence in self.sequences_from(connected):
+                sequence.add(node)
+                sequence.add(edge)
+
+                n = node
+                while True:
+                    print(n.title(), end=&#34; &#34;)
+                    if len(n.outputs) == 0 or len(list(n.outputs[0].edges)) == 0:
+                        break
+                    n = list(n.outputs[0].edges)[0].targetNode()
+                print(&#34;&#34;)
+                yield sequence
+                has_sequences = True
+    
+    if not has_sequences:
+        result = Graph()
+        result.add(node)
+        print(&#34;Final:&#34;, node.title())
+        yield result</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.graph.Graph.serialize"><code class="name flex">
 <span>def <span class="ident">serialize</span></span>(<span>self) ‑> dict</span>
 </code></dt>
@@ -718,8 +864,8 @@ This snapshot is equivalent to the items that are deleted when a selection is re
     result = self.selection()
 
     for edge in self.edges:
-        if ((edge.sourceNode() is not None and self.sourceNode().isSelected()) or 
-            (edge.targetNode() is not None and self.targetNode().isSelected())):
+        if ((edge.sourceNode() is not None and edge.sourceNode().isSelected()) or 
+            (edge.targetNode() is not None and edge.targetNode().isSelected())):
             result.add(edge)  
 
     return result</code></pre>
@@ -763,6 +909,8 @@ This snapshot is equivalent to the items that are deleted when a selection is re
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.merge" href="#nfb_studio.widgets.scheme.graph.Graph.merge">merge</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.selectAll" href="#nfb_studio.widgets.scheme.graph.Graph.selectAll">selectAll</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.selection" href="#nfb_studio.widgets.scheme.graph.Graph.selection">selection</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.sequences" href="#nfb_studio.widgets.scheme.graph.Graph.sequences">sequences</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.graph.Graph.sequences_from" href="#nfb_studio.widgets.scheme.graph.Graph.sequences_from">sequences_from</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.serialize" href="#nfb_studio.widgets.scheme.graph.Graph.serialize">serialize</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.graph.Graph.wideSelection" href="#nfb_studio.widgets.scheme.graph.Graph.wideSelection">wideSelection</a></code></li>
 </ul>

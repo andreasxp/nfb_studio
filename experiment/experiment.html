@@ -420,6 +420,17 @@ class Experiment:
         return obj
 
     def nfb_export_data(self) -&gt; dict:
+        print(&#34;?&#34;)
+        print(list(self.sequence_scheme.graph.sequences()))
+        for seq in self.sequence_scheme.graph.sequences():
+            node = [n for n in seq.nodes if len(n.inputs) == 0 or len(list(n.inputs[0].edges)) == 0][0]
+            # while True:
+            #     print(node.title(), end=&#34; &#34;)
+            #     if len(node.outputs) == 0 or len(list(node.outputs[0].edges)) == 0:
+            #         break
+            #     node = list(node.outputs[0].edges)[0].targetNode()
+            # print(&#34;&#34;)
+
         &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
         data = {}
 
@@ -933,6 +944,17 @@ An instance of Experiment represents a collection</p></div>
         return obj
 
     def nfb_export_data(self) -&gt; dict:
+        print(&#34;?&#34;)
+        print(list(self.sequence_scheme.graph.sequences()))
+        for seq in self.sequence_scheme.graph.sequences():
+            node = [n for n in seq.nodes if len(n.inputs) == 0 or len(list(n.inputs[0].edges)) == 0][0]
+            # while True:
+            #     print(node.title(), end=&#34; &#34;)
+            #     if len(node.outputs) == 0 or len(list(node.outputs[0].edges)) == 0:
+            #         break
+            #     node = list(node.outputs[0].edges)[0].targetNode()
+            # print(&#34;&#34;)
+
         &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
         data = {}
 
@@ -1368,12 +1390,23 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
 <span>def <span class="ident">nfb_export_data</span></span>(<span>self) ‑> dict</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Export data in a dict format for encoding to XML and usage in NFBLab.</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def nfb_export_data(self) -&gt; dict:
+    print(&#34;?&#34;)
+    print(list(self.sequence_scheme.graph.sequences()))
+    for seq in self.sequence_scheme.graph.sequences():
+        node = [n for n in seq.nodes if len(n.inputs) == 0 or len(list(n.inputs[0].edges)) == 0][0]
+        # while True:
+        #     print(node.title(), end=&#34; &#34;)
+        #     if len(node.outputs) == 0 or len(list(node.outputs[0].edges)) == 0:
+        #         break
+        #     node = list(node.outputs[0].edges)[0].targetNode()
+        # print(&#34;&#34;)
+
     &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
     data = {}
 

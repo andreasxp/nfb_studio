@@ -157,8 +157,6 @@ class Scheme(QGraphicsScene):
         super().__init__(parent)
         self.graph = Graph()
 
-        self._view = None
-
         self._custom_drop_events = {}
         &#34;&#34;&#34;A dict mapping MIME types to custom functions to be executed when drag and drop operation finishes.  
         Users of this scheme can set their own drop event for a particular MIME type. MIME types that are present in
@@ -181,16 +179,12 @@ class Scheme(QGraphicsScene):
         self.paletteChange()
 
     # Viewing ==========================================================================================================
-    def view(self):
-        &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.
-        Note that only one view can exist for a given scheme. This function will construct the widget when it&#39;s first
-        called, and always return this widget.
-        &#34;&#34;&#34;
-        if self._view is None:
-            self._view = self.View()
-            self._view.setScene(self)
+    def getView(self):
+        &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.&#34;&#34;&#34;
+        v = self.View()
+        v.setScene(self)
 
-        return self._view
+        return v
 
     # Element manipulation =============================================================================================
     def addItem(self, item: QGraphicsItem):
@@ -615,8 +609,6 @@ behave incorrectly.</p>
         super().__init__(parent)
         self.graph = Graph()
 
-        self._view = None
-
         self._custom_drop_events = {}
         &#34;&#34;&#34;A dict mapping MIME types to custom functions to be executed when drag and drop operation finishes.  
         Users of this scheme can set their own drop event for a particular MIME type. MIME types that are present in
@@ -639,16 +631,12 @@ behave incorrectly.</p>
         self.paletteChange()
 
     # Viewing ==========================================================================================================
-    def view(self):
-        &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.
-        Note that only one view can exist for a given scheme. This function will construct the widget when it&#39;s first
-        called, and always return this widget.
-        &#34;&#34;&#34;
-        if self._view is None:
-            self._view = self.View()
-            self._view.setScene(self)
+    def getView(self):
+        &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.&#34;&#34;&#34;
+        v = self.View()
+        v.setScene(self)
 
-        return self._view
+        return v
 
     # Element manipulation =============================================================================================
     def addItem(self, item: QGraphicsItem):
@@ -1274,6 +1262,23 @@ successful connection.</p></div>
         self.removeItem(node)</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.widgets.scheme.scheme.Scheme.getView"><code class="name flex">
+<span>def <span class="ident">getView</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a Scheme.View, suitable for displaying contents of the scheme.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getView(self):
+    &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.&#34;&#34;&#34;
+    v = self.View()
+    v.setScene(self)
+
+    return v</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag"><code class="name flex">
 <span>def <span class="ident">hasEdgeDrag</span></span>(<span>self) ‑> bool</span>
 </code></dt>
@@ -1548,29 +1553,6 @@ If not None, event should be a function accepting two keyword arguments:
     pass</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.widgets.scheme.scheme.Scheme.view"><code class="name flex">
-<span>def <span class="ident">view</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Return a Scheme.View, suitable for displaying contents of the scheme.
-Note that only one view can exist for a given scheme. This function will construct the widget when it's first
-called, and always return this widget.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def view(self):
-    &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.
-    Note that only one view can exist for a given scheme. This function will construct the widget when it&#39;s first
-    called, and always return this widget.
-    &#34;&#34;&#34;
-    if self._view is None:
-        self._view = self.View()
-        self._view.setScene(self)
-
-    return self._view</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.widgets.scheme.scheme.Scheme.wideSelection"><code class="name flex">
 <span>def <span class="ident">wideSelection</span></span>(<span>self) ‑> <a title="nfb_studio.widgets.scheme.graph.Graph" href="graph.html#nfb_studio.widgets.scheme.graph.Graph">Graph</a></span>
 </code></dt>
@@ -1623,6 +1605,7 @@ called, and always return this widget.</p></div>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart" href="#nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStart">edgeDragStart</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop" href="#nfb_studio.widgets.scheme.scheme.Scheme.edgeDragStop">edgeDragStop</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.extract" href="#nfb_studio.widgets.scheme.scheme.Scheme.extract">extract</a></code></li>
+<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.getView" href="#nfb_studio.widgets.scheme.scheme.Scheme.getView">getView</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag" href="#nfb_studio.widgets.scheme.scheme.Scheme.hasEdgeDrag">hasEdgeDrag</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.keyPressEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.keyPressEvent">keyPressEvent</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.keyReleaseEvent" href="#nfb_studio.widgets.scheme.scheme.Scheme.keyReleaseEvent">keyReleaseEvent</a></code></li>
@@ -1641,7 +1624,6 @@ called, and always return this widget.</p></div>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.setStyle" href="#nfb_studio.widgets.scheme.scheme.Scheme.setStyle">setStyle</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject" href="#nfb_studio.widgets.scheme.scheme.Scheme.staticMetaObject">staticMetaObject</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.styleChange" href="#nfb_studio.widgets.scheme.scheme.Scheme.styleChange">styleChange</a></code></li>
-<li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.view" href="#nfb_studio.widgets.scheme.scheme.Scheme.view">view</a></code></li>
 <li><code><a title="nfb_studio.widgets.scheme.scheme.Scheme.wideSelection" href="#nfb_studio.widgets.scheme.scheme.Scheme.wideSelection">wideSelection</a></code></li>
 </ul>
 </li>
