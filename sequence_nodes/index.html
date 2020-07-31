@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.4" />
-<title>nfb_studio API documentation</title>
-<meta name="description" content="NFB experiment designer." />
+<title>nfb_studio.sequence_nodes API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
@@ -19,88 +19,27 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Package <code>nfb_studio</code></h1>
+<h1 class="title">Module <code>nfb_studio.sequence_nodes</code></h1>
 </header>
 <section id="section-intro">
-<p>NFB experiment designer.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;NFB experiment designer.&#34;&#34;&#34;
-import os
-
-assets = os.path.dirname(__file__) + &#34;/assets&#34;
-
-from .block import Block, BlockView
-from .group import Group, GroupView
-
-from .experiment import Experiment
-from .experiment_view import ExperimentView
-from .general_view import GeneralView
-from .property_tree import PropertyTree
-from .export_wizard import ExportWizard</code></pre>
+<pre><code class="python">from .block_node import BlockNode
+from .group_node import GroupNode</code></pre>
 </details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt><code class="name"><a title="nfb_studio.block" href="block/index.html">nfb_studio.block</a></code></dt>
+<dt><code class="name"><a title="nfb_studio.sequence_nodes.block_node" href="block_node.html">nfb_studio.sequence_nodes.block_node</a></code></dt>
 <dd>
-<div class="desc"><p>Main building block of the experiment.</p></div>
+<div class="desc"><p>NFB main source signal.</p></div>
 </dd>
-<dt><code class="name"><a title="nfb_studio.experiment" href="experiment.html">nfb_studio.experiment</a></code></dt>
+<dt><code class="name"><a title="nfb_studio.sequence_nodes.group_node" href="group_node.html">nfb_studio.sequence_nodes.group_node</a></code></dt>
 <dd>
-<div class="desc"><p>NFB Experiment.</p></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.experiment_view" href="experiment_view.html">nfb_studio.experiment_view</a></code></dt>
-<dd>
-<div class="desc"><p>View widget for Experiment class and the main window of this application.</p></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.export_dialog" href="export_dialog.html">nfb_studio.export_dialog</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.export_wizard" href="export_wizard.html">nfb_studio.export_wizard</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.general_view" href="general_view.html">nfb_studio.general_view</a></code></dt>
-<dd>
-<div class="desc"><p>Config widget for general properties of an experiment.</p></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.group" href="group/index.html">nfb_studio.group</a></code></dt>
-<dd>
-<div class="desc"><p>A group of experiment blocks.</p></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.item_dict" href="item_dict.html">nfb_studio.item_dict</a></code></dt>
-<dd>
-<div class="desc"><p>Base class for BlockDict and GroupDict.</p></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.property_tree" href="property_tree/index.html">nfb_studio.property_tree</a></code></dt>
-<dd>
-<div class="desc"><p>Property tree is the UI tree of general, signals, blocks, groups and sequence on the left of the window.</p></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.scheme" href="scheme/index.html">nfb_studio.scheme</a></code></dt>
-<dd>
-<div class="desc"><p>A collection of widgets that are used to represent the signal editing experience in NFB studio.
-SchemeEditor is the main widget that contains the node …</p></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.sequence_nodes" href="sequence_nodes/index.html">nfb_studio.sequence_nodes</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.serial" href="serial/index.html">nfb_studio.serial</a></code></dt>
-<dd>
-<div class="desc"><p>A module that implements nfb_studio's custom serialization engine …</p></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.signal_nodes" href="signal_nodes/index.html">nfb_studio.signal_nodes</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="nfb_studio.util" href="util/index.html">nfb_studio.util</a></code></dt>
-<dd>
-<div class="desc"><p>A collection of general-purpose classes and functions that do not relate to NFB studio directly.</p></div>
+<div class="desc"><p>NFB main source signal.</p></div>
 </dd>
 </dl>
 </section>
@@ -117,22 +56,15 @@ SchemeEditor is the main widget that contains the node …</p></div>
 <ul></ul>
 </div>
 <ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nfb_studio" href="../index.html">nfb_studio</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li><code><a title="nfb_studio.block" href="block/index.html">nfb_studio.block</a></code></li>
-<li><code><a title="nfb_studio.experiment" href="experiment.html">nfb_studio.experiment</a></code></li>
-<li><code><a title="nfb_studio.experiment_view" href="experiment_view.html">nfb_studio.experiment_view</a></code></li>
-<li><code><a title="nfb_studio.export_dialog" href="export_dialog.html">nfb_studio.export_dialog</a></code></li>
-<li><code><a title="nfb_studio.export_wizard" href="export_wizard.html">nfb_studio.export_wizard</a></code></li>
-<li><code><a title="nfb_studio.general_view" href="general_view.html">nfb_studio.general_view</a></code></li>
-<li><code><a title="nfb_studio.group" href="group/index.html">nfb_studio.group</a></code></li>
-<li><code><a title="nfb_studio.item_dict" href="item_dict.html">nfb_studio.item_dict</a></code></li>
-<li><code><a title="nfb_studio.property_tree" href="property_tree/index.html">nfb_studio.property_tree</a></code></li>
-<li><code><a title="nfb_studio.scheme" href="scheme/index.html">nfb_studio.scheme</a></code></li>
-<li><code><a title="nfb_studio.sequence_nodes" href="sequence_nodes/index.html">nfb_studio.sequence_nodes</a></code></li>
-<li><code><a title="nfb_studio.serial" href="serial/index.html">nfb_studio.serial</a></code></li>
-<li><code><a title="nfb_studio.signal_nodes" href="signal_nodes/index.html">nfb_studio.signal_nodes</a></code></li>
-<li><code><a title="nfb_studio.util" href="util/index.html">nfb_studio.util</a></code></li>
+<li><code><a title="nfb_studio.sequence_nodes.block_node" href="block_node.html">nfb_studio.sequence_nodes.block_node</a></code></li>
+<li><code><a title="nfb_studio.sequence_nodes.group_node" href="group_node.html">nfb_studio.sequence_nodes.group_node</a></code></li>
 </ul>
 </li>
 </ul>

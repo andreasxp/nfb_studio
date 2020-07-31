@@ -1,0 +1,1639 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.4" />
+<title>nfb_studio.scheme.scheme API documentation</title>
+<meta name="description" content="A data model for the nfb experiment&#39;s system of signals and their components." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nfb_studio.scheme.scheme</code></h1>
+</header>
+<section id="section-intro">
+<p>A data model for the nfb experiment's system of signals and their components.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.&#34;&#34;&#34;
+from PySide2.QtCore import Qt, QPointF, QMimeData, Signal
+from PySide2.QtGui import QPainter, QKeySequence
+from PySide2.QtWidgets import QGraphicsScene, QGraphicsView, QGraphicsItem, QShortcut, QApplication
+
+from nfb_studio.serial import mime, hooks
+
+from .graph import Graph
+from .node import Node, Edge, Input, Output, Connection
+from .style import Style
+from .palette import Palette
+
+class Scheme(QGraphicsScene):
+    &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
+
+    This class is a combination of three things:
+    - nfb_studio.widgets.scheme.Graph: a graph of nodes and edges;
+    - QGraphicsScene (inherits): a Qt representation of that graph and additional items;
+    - QGraphicsView: a view of QGraphicsScene. Only one view is allowed - creating multiple views will make the program
+    behave incorrectly.
+
+    The main components are available as self.graph, super() and self.view().
+
+    See Also
+    --------
+    nfb_studio.widgets.scheme.Node : Graph node.
+    nfb_studio.widgets.scheme.Edge : Graph edge.
+    nfb_studio.widgets.scheme.Graph : A collection of nodes and edges.
+    &#34;&#34;&#34;
+    class View(QGraphicsView):
+        &#34;&#34;&#34;Custom view widget for Scheme.&#34;&#34;&#34;
+
+        configRequested = Signal(object)
+        &#34;&#34;&#34;Emitted when a config of a node was requested. Sends the node.&#34;&#34;&#34;
+
+        scale_factor = 1.25
+        &#34;&#34;&#34;Constant on which scaling by mouse is based.&#34;&#34;&#34;
+
+        def __init__(self, parent=None):
+            super().__init__(parent=parent)
+            self.setDragMode(QGraphicsView.RubberBandDrag)
+            self.setRubberBandSelectionMode(Qt.ContainsItemShape)
+            self.setRenderHint(QPainter.Antialiasing)
+            self.setRenderHint(QPainter.SmoothPixmapTransform)
+
+            # Remove the scrollbars and configure panning
+            self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.setSceneRect(0, 0, self.size().width(), self.size().height())
+            self.setTransformationAnchor(self.NoAnchor)
+
+            self._pan_origin = None
+            self._scale = 1
+
+        def setScene(self, scene):
+            if not isinstance(scene, Scheme):
+                raise TypeError(&#34;Scheme.View can only have Scheme as it&#39;s scene, not &#34; + type(scene).__name__)
+
+            super().setScene(scene)
+            self.scene().sceneRectChanged.connect(self._adjustSceneRect)
+
+            cut_shortcut = QShortcut(QKeySequence.Cut, self)
+            cut_shortcut.activated.connect(scene.cutEvent)
+
+            copy_shortcut = QShortcut(QKeySequence.Copy, self)
+            copy_shortcut.activated.connect(scene.copyEvent)
+
+            paste_shortcut = QShortcut(QKeySequence.Paste, self)
+            paste_shortcut.activated.connect(scene.pasteEvent)
+
+            delete_shortcut = QShortcut(QKeySequence.Delete, self)
+            delete_shortcut.activated.connect(scene.deleteEvent)
+        
+        def setScheme(self, scheme):
+            &#34;&#34;&#34;Alias function for setScene.&#34;&#34;&#34;
+            self.setScene(scheme)
+        
+        def mousePressEvent(self, event):
+            if event.button() == Qt.RightButton:
+                self._pan_origin = event.pos()
+                return
+            
+            super().mousePressEvent(event)
+        
+        def mouseMoveEvent(self, event):
+            if event.buttons() &amp; Qt.RightButton:
+                # Scene is panned
+                pan_from = self.mapToScene(self._pan_origin)
+                pan_to = self.mapToScene(event.pos())
+                translate = pan_to - pan_from
+
+                self.translate(translate.x(), translate.y())
+                self._pan_origin = event.pos()
+                return
+            
+            super().mouseMoveEvent(event)
+        
+        def wheelEvent(self, event):
+            scale = self.scale_factor**(event.angleDelta().y()/120)
+
+            self._scale *= scale
+
+            self.setTransformationAnchor(self.AnchorUnderMouse)
+            self.scale(scale, scale)
+            self.setTransformationAnchor(self.NoAnchor)
+
+        def resizeEvent(self, event):
+            super().resizeEvent(event)
+            self._adjustSceneRect()
+
+        def _adjustSceneRect(self):
+            &#34;&#34;&#34;Adjust the scene rect displayed in the view.
+            Scheme rect aims to display the scene rect, expanded by widget size in all directions, to provide seamless
+            editing experience.
+            &#34;&#34;&#34;
+            if self.scene() is None:
+                return
+                     
+            wsize = self.size()
+            rect = self.scene().sceneRect()
+
+            self.setSceneRect(rect.adjusted(-wsize.width(), -wsize.height(), wsize.width(), wsize.height()))
+
+    ClipboardMimeType = &#34;application/x-nfb_studio-graph&#34;
+
+    def __init__(self, parent=None):
+        &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the super().&#34;&#34;&#34;
+        super().__init__(parent)
+        self.graph = Graph()
+
+        self._custom_drop_events = {}
+        &#34;&#34;&#34;A dict mapping MIME types to custom functions to be executed when drag and drop operation finishes.  
+        Users of this scheme can set their own drop event for a particular MIME type. MIME types that are present in
+        this dict will always be accepted drags.
+        &#34;&#34;&#34;
+
+        # Drag-drawing edges support -----------------------------------------------------------------------------------
+        self._dragging_edge = None
+        &#34;&#34;&#34;A temporary edge that is being displayed when an edge is drawn by the user with drag and drop.&#34;&#34;&#34;
+
+        # Clipboard support --------------------------------------------------------------------------------------------
+        self.paste_pos = QPointF()
+        &#34;&#34;&#34;Position where the center of the pasted object will be located.&#34;&#34;&#34;
+
+        # Style and palette --------------------------------------------------------------------------------------------
+        self._style = Style()
+        self._palette = Palette()
+
+        self.styleChange()
+        self.paletteChange()
+
+    # Viewing ==========================================================================================================
+    def getView(self):
+        &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.&#34;&#34;&#34;
+        v = self.View()
+        v.setScene(self)
+
+        return v
+
+    # Element manipulation =============================================================================================
+    def addItem(self, item: QGraphicsItem):
+        &#34;&#34;&#34;Add an item to the scene.
+
+        An override of super().addItem method that detects when a node or edge was added.
+        &#34;&#34;&#34;
+        self.graph.add(item)
+        super().addItem(item)
+
+    def removeItem(self, item: QGraphicsItem):
+        &#34;&#34;&#34;Add an item to the scene.
+
+        An override of super().removeItem method that detects when a node or edge was removed.
+        &#34;&#34;&#34;
+        super().removeItem(item)
+
+        # Remove a Node ------------------------------------------------------------------------------------------------
+        if isinstance(item, Node):
+            # Remove connected edges first
+            to_remove = []
+            for edge in self.graph.edges:
+                if edge.sourceNode() is item or edge.targetNode() is item:
+                    to_remove.append(edge)
+            
+            for edge in to_remove:
+                self.removeItem(edge)
+        
+        self.graph.remove(item)
+
+    def connect_nodes(self, source: Output, target: Input):
+        &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
+        
+        Returns the newly created edge.
+        &#34;&#34;&#34;
+        edge = self.graph.connect_nodes(source, target)
+        super().addItem(edge)
+
+        return edge
+
+    def disconnect_nodes(self, source: Output, target: Input):
+        &#34;&#34;&#34;Remove a connection between a node output and an input.
+        
+        If output and input are connected more than once, only one edge is removed.
+        Returns the edge that was removed, or None if no such edge was found.
+        &#34;&#34;&#34;
+        edge = self.graph.disconnect_nodes(source, target)
+        if edge is not None:
+            super().removeItem(edge)
+        return edge
+
+    def extract(self, other: Graph):
+        &#34;&#34;&#34;Update the scheme, removing elements from a graph.
+        
+        `other` represents a subgraph of the scheme graph that is to be extracted.
+        &#34;&#34;&#34;
+        for edge in other.edges:
+            self.removeItem(edge)
+
+        for node in other.nodes:
+            self.removeItem(node)
+
+    def merge(self, other: Graph):
+        &#34;&#34;&#34;Update the scheme, adding elements from a graph.&#34;&#34;&#34;
+        self.graph.merge(other)
+
+        for node in other.nodes:
+            super().addItem(node)
+        for edge in other.edges:
+            super().addItem(edge)
+
+    def clear(self):
+        &#34;&#34;&#34;Clear the scheme.&#34;&#34;&#34;
+        super().clear()
+        self.graph.clear()
+
+    # Selection ========================================================================================================
+    def selectAll(self):
+        self.graph.selectAll()
+
+    def selection(self) -&gt; Graph:
+        return self.graph.selection()
+    
+    def clipboardSelection(self) -&gt; Graph:
+        return self.graph.clipboardSelection()
+    
+    def wideSelection(self) -&gt; Graph:
+        return self.graph.wideSelection()
+
+    # User actions =====================================================================================================
+    def cutEvent(self):
+        &#34;&#34;&#34;Cut the selected graph and place it in the clipboard.&#34;&#34;&#34;
+        self.copyEvent()
+        self.deleteEvent()
+
+    def copyEvent(self):
+        &#34;&#34;&#34;Copy the selected graph and place it in the clipboard.&#34;&#34;&#34;
+        graph = self.clipboardSelection()
+        if len(graph.nodes) == 0:  # Nothing to copy
+            return
+
+        self.paste_pos = graph.boundingRect().center()
+        self.advancePastePos()
+
+        package = QMimeData()
+        mime.dump(graph, package, self.ClipboardMimeType, hooks=hooks.qt)
+
+        clipboard = QApplication.clipboard()
+        clipboard.setMimeData(package)
+
+    def pasteEvent(self):
+        &#34;&#34;&#34;Retrieve the data from a clipboard and paste it.&#34;&#34;&#34;
+        clipboard = QApplication.clipboard()
+        package = clipboard.mimeData()
+
+        if package.hasFormat(self.ClipboardMimeType):
+            graph = mime.load(package, self.ClipboardMimeType, hooks=hooks.qt)
+            self.merge(graph)
+
+            self.clearSelection()  # Clear old selection
+            graph.selectAll()  # Create new selection (pasted items)
+
+            graph.moveCenter(self.paste_pos)
+            self.advancePastePos()
+
+    def deleteEvent(self):
+        &#34;&#34;&#34;Delete the selection.&#34;&#34;&#34;
+        self.extract(self.selection())
+
+    def advancePastePos(self):
+        &#34;&#34;&#34;Move the paste position (usually down and to the right).  
+        This function is usually called when an object has been pasted.
+        &#34;&#34;&#34;
+        offset = self.schemeStyle().pixelMetric(Style.PasteOffset)
+        self.paste_pos += QPointF(offset, offset)
+
+    # Style and palette ================================================================================================
+    def styleChange(self):
+        pass
+
+    def paletteChange(self):
+        super().setBackgroundBrush(self.schemePalette().background())
+
+    def schemeStyle(self):
+        return self._style
+
+    def setStyle(self, style):
+        self._style = style
+        self.styleChange()
+
+    def schemePalette(self):
+        return self._palette
+    
+    def setPalette(self, palette):
+        self._palette = palette
+        self.paletteChange()
+
+    # Edge drawing =====================================================================================================
+    def hasEdgeDrag(self) -&gt; bool:
+        &#34;&#34;&#34;Returns True if an edge is currently being drawn via drag and drop.&#34;&#34;&#34;
+        return self._dragging_edge is not None
+
+    def edgeDragStart(self, connection: Connection):
+        &#34;&#34;&#34;Triggers a start to an edge drawing mode.  
+        By holding left mouse button while dragging from an end of a connection, user can start dragging an edge from
+        one connection to the other. The scene stores a &#34;fake&#34; edge that the user drags with their mouse. That edge is
+        created here and updated with mouse movements in dragMoveEvent.
+        &#34;&#34;&#34;
+        self._dragging_edge = Edge()
+        self._dragging_edge.attach(connection)       
+
+        super().addItem(self._dragging_edge)  # Edge is present in the scene, but not in the graph.
+
+    def edgeDragStop(self):
+        &#34;&#34;&#34;Triggers an end of an edge drawing mode.  
+        Cleans up by removing the fake edge. This function is called regardless of whether edge drag resulted in a
+        successful connection.
+        &#34;&#34;&#34;
+        super().removeItem(self._dragging_edge)
+
+        self._dragging_edge.detachAll()
+        self._dragging_edge = None
+
+    def dragEnterEvent(self, event):
+        package = event.mimeData()
+
+        # Form a list of accepted formats. Accepted formats include all format with custom drop functions, as well as
+        # Connection.EdgeDragMimeType
+        accepted_formats = (
+            list(self._custom_drop_events.keys()) + 
+            [Connection.EdgeDragMimeType]
+        )
+        
+        # If any of the accepted_formats is present in package.formats(), accept the event.
+        for fmt in package.formats():
+            if fmt in accepted_formats:
+                event.accept()
+                break
+    
+    def dropEvent(self, event):
+        package = event.mimeData()
+
+        for fmt, drop_event in self._custom_drop_events.items():
+            if package.hasFormat(fmt):
+                drop_event(scheme=self, event=event)
+
+        super().dropEvent(event)
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasFormat(Connection.EdgeDragMimeType) and self.hasEdgeDrag():
+            # Update edge position, but otherwise do the default thing.
+            super().dragMoveEvent(event)  
+            if self._dragging_edge.source() is None:
+                self._dragging_edge.setSourcePos(event.scenePos())
+            else:
+                self._dragging_edge.setTargetPos(event.scenePos())
+
+    def setCustomDropEvent(self, fmt, event):
+        &#34;&#34;&#34;Set a custom drop event for a particular MIME type (format).
+        Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
+        If event is None, the format is instead removed from the list of accepted formats.
+        If not None, event should be a function accepting two keyword arguments:
+        - scheme, which will contain this scheme
+        - event, which will contain the event that is being dropped
+        &#34;&#34;&#34;
+        if event is None:
+            self._custom_drop_events.pop(fmt)
+        else:
+            self._custom_drop_events[fmt] = event
+
+    # Key presses ======================================================================================================
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Alt:
+            event.accept()
+            for node in self.graph.nodes:
+                node.showConnectionText()
+            return
+        
+        super().keyPressEvent(event)
+    
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key_Alt:
+            event.accept()
+            for node in self.graph.nodes:
+                node.hideConnectionText()
+            return
+
+        super().keyReleaseEvent(event)
+
+    # Serialization ====================================================================================================
+    def serialize(self) -&gt; dict:
+        return self.graph.serialize()
+
+    @classmethod
+    def deserialize(cls, data: dict):
+        &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
+        obj = cls()
+
+        # Deserialize the graph ----------------------------------------------------------------------------------------
+        obj.graph = Graph.deserialize(data)
+
+        # Bring the scene up to speed ----------------------------------------------------------------------------------
+        for node in obj.graph.nodes:
+            super(Scheme, obj).addItem(node)
+
+        for edge in obj.graph.edges:
+            super(Scheme, obj).addItem(edge)
+        
+        return obj</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="nfb_studio.scheme.scheme.Scheme"><code class="flex name class">
+<span>class <span class="ident">Scheme</span></span>
+<span>(</span><span>parent=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A data model for the nfb experiment's system of signals and their components.</p>
+<p>This class is a combination of three things:
+- nfb_studio.widgets.scheme.Graph: a graph of nodes and edges;
+- QGraphicsScene (inherits): a Qt representation of that graph and additional items;
+- QGraphicsView: a view of QGraphicsScene. Only one view is allowed - creating multiple views will make the program
+behave incorrectly.</p>
+<p>The main components are available as self.graph, super() and self.view().</p>
+<h2 id="see-also">See Also</h2>
+<dl>
+<dt><code>nfb_studio.widgets.scheme.Node</code></dt>
+<dd>Graph node.</dd>
+<dt><code>nfb_studio.widgets.scheme.Edge</code></dt>
+<dd>Graph edge.</dd>
+<dt><code>nfb_studio.widgets.scheme.Graph</code></dt>
+<dd>A collection of nodes and edges.</dd>
+</dl>
+<p><code>Constructs a <a title="nfb_studio.scheme.scheme.Scheme" href="#nfb_studio.scheme.scheme.Scheme">Scheme</a> with an optional </code>parent<code> parameter that is passed to the super().</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Scheme(QGraphicsScene):
+    &#34;&#34;&#34;A data model for the nfb experiment&#39;s system of signals and their components.
+
+    This class is a combination of three things:
+    - nfb_studio.widgets.scheme.Graph: a graph of nodes and edges;
+    - QGraphicsScene (inherits): a Qt representation of that graph and additional items;
+    - QGraphicsView: a view of QGraphicsScene. Only one view is allowed - creating multiple views will make the program
+    behave incorrectly.
+
+    The main components are available as self.graph, super() and self.view().
+
+    See Also
+    --------
+    nfb_studio.widgets.scheme.Node : Graph node.
+    nfb_studio.widgets.scheme.Edge : Graph edge.
+    nfb_studio.widgets.scheme.Graph : A collection of nodes and edges.
+    &#34;&#34;&#34;
+    class View(QGraphicsView):
+        &#34;&#34;&#34;Custom view widget for Scheme.&#34;&#34;&#34;
+
+        configRequested = Signal(object)
+        &#34;&#34;&#34;Emitted when a config of a node was requested. Sends the node.&#34;&#34;&#34;
+
+        scale_factor = 1.25
+        &#34;&#34;&#34;Constant on which scaling by mouse is based.&#34;&#34;&#34;
+
+        def __init__(self, parent=None):
+            super().__init__(parent=parent)
+            self.setDragMode(QGraphicsView.RubberBandDrag)
+            self.setRubberBandSelectionMode(Qt.ContainsItemShape)
+            self.setRenderHint(QPainter.Antialiasing)
+            self.setRenderHint(QPainter.SmoothPixmapTransform)
+
+            # Remove the scrollbars and configure panning
+            self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.setSceneRect(0, 0, self.size().width(), self.size().height())
+            self.setTransformationAnchor(self.NoAnchor)
+
+            self._pan_origin = None
+            self._scale = 1
+
+        def setScene(self, scene):
+            if not isinstance(scene, Scheme):
+                raise TypeError(&#34;Scheme.View can only have Scheme as it&#39;s scene, not &#34; + type(scene).__name__)
+
+            super().setScene(scene)
+            self.scene().sceneRectChanged.connect(self._adjustSceneRect)
+
+            cut_shortcut = QShortcut(QKeySequence.Cut, self)
+            cut_shortcut.activated.connect(scene.cutEvent)
+
+            copy_shortcut = QShortcut(QKeySequence.Copy, self)
+            copy_shortcut.activated.connect(scene.copyEvent)
+
+            paste_shortcut = QShortcut(QKeySequence.Paste, self)
+            paste_shortcut.activated.connect(scene.pasteEvent)
+
+            delete_shortcut = QShortcut(QKeySequence.Delete, self)
+            delete_shortcut.activated.connect(scene.deleteEvent)
+        
+        def setScheme(self, scheme):
+            &#34;&#34;&#34;Alias function for setScene.&#34;&#34;&#34;
+            self.setScene(scheme)
+        
+        def mousePressEvent(self, event):
+            if event.button() == Qt.RightButton:
+                self._pan_origin = event.pos()
+                return
+            
+            super().mousePressEvent(event)
+        
+        def mouseMoveEvent(self, event):
+            if event.buttons() &amp; Qt.RightButton:
+                # Scene is panned
+                pan_from = self.mapToScene(self._pan_origin)
+                pan_to = self.mapToScene(event.pos())
+                translate = pan_to - pan_from
+
+                self.translate(translate.x(), translate.y())
+                self._pan_origin = event.pos()
+                return
+            
+            super().mouseMoveEvent(event)
+        
+        def wheelEvent(self, event):
+            scale = self.scale_factor**(event.angleDelta().y()/120)
+
+            self._scale *= scale
+
+            self.setTransformationAnchor(self.AnchorUnderMouse)
+            self.scale(scale, scale)
+            self.setTransformationAnchor(self.NoAnchor)
+
+        def resizeEvent(self, event):
+            super().resizeEvent(event)
+            self._adjustSceneRect()
+
+        def _adjustSceneRect(self):
+            &#34;&#34;&#34;Adjust the scene rect displayed in the view.
+            Scheme rect aims to display the scene rect, expanded by widget size in all directions, to provide seamless
+            editing experience.
+            &#34;&#34;&#34;
+            if self.scene() is None:
+                return
+                     
+            wsize = self.size()
+            rect = self.scene().sceneRect()
+
+            self.setSceneRect(rect.adjusted(-wsize.width(), -wsize.height(), wsize.width(), wsize.height()))
+
+    ClipboardMimeType = &#34;application/x-nfb_studio-graph&#34;
+
+    def __init__(self, parent=None):
+        &#34;&#34;&#34;Constructs a Scheme with an optional `parent` parameter that is passed to the super().&#34;&#34;&#34;
+        super().__init__(parent)
+        self.graph = Graph()
+
+        self._custom_drop_events = {}
+        &#34;&#34;&#34;A dict mapping MIME types to custom functions to be executed when drag and drop operation finishes.  
+        Users of this scheme can set their own drop event for a particular MIME type. MIME types that are present in
+        this dict will always be accepted drags.
+        &#34;&#34;&#34;
+
+        # Drag-drawing edges support -----------------------------------------------------------------------------------
+        self._dragging_edge = None
+        &#34;&#34;&#34;A temporary edge that is being displayed when an edge is drawn by the user with drag and drop.&#34;&#34;&#34;
+
+        # Clipboard support --------------------------------------------------------------------------------------------
+        self.paste_pos = QPointF()
+        &#34;&#34;&#34;Position where the center of the pasted object will be located.&#34;&#34;&#34;
+
+        # Style and palette --------------------------------------------------------------------------------------------
+        self._style = Style()
+        self._palette = Palette()
+
+        self.styleChange()
+        self.paletteChange()
+
+    # Viewing ==========================================================================================================
+    def getView(self):
+        &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.&#34;&#34;&#34;
+        v = self.View()
+        v.setScene(self)
+
+        return v
+
+    # Element manipulation =============================================================================================
+    def addItem(self, item: QGraphicsItem):
+        &#34;&#34;&#34;Add an item to the scene.
+
+        An override of super().addItem method that detects when a node or edge was added.
+        &#34;&#34;&#34;
+        self.graph.add(item)
+        super().addItem(item)
+
+    def removeItem(self, item: QGraphicsItem):
+        &#34;&#34;&#34;Add an item to the scene.
+
+        An override of super().removeItem method that detects when a node or edge was removed.
+        &#34;&#34;&#34;
+        super().removeItem(item)
+
+        # Remove a Node ------------------------------------------------------------------------------------------------
+        if isinstance(item, Node):
+            # Remove connected edges first
+            to_remove = []
+            for edge in self.graph.edges:
+                if edge.sourceNode() is item or edge.targetNode() is item:
+                    to_remove.append(edge)
+            
+            for edge in to_remove:
+                self.removeItem(edge)
+        
+        self.graph.remove(item)
+
+    def connect_nodes(self, source: Output, target: Input):
+        &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
+        
+        Returns the newly created edge.
+        &#34;&#34;&#34;
+        edge = self.graph.connect_nodes(source, target)
+        super().addItem(edge)
+
+        return edge
+
+    def disconnect_nodes(self, source: Output, target: Input):
+        &#34;&#34;&#34;Remove a connection between a node output and an input.
+        
+        If output and input are connected more than once, only one edge is removed.
+        Returns the edge that was removed, or None if no such edge was found.
+        &#34;&#34;&#34;
+        edge = self.graph.disconnect_nodes(source, target)
+        if edge is not None:
+            super().removeItem(edge)
+        return edge
+
+    def extract(self, other: Graph):
+        &#34;&#34;&#34;Update the scheme, removing elements from a graph.
+        
+        `other` represents a subgraph of the scheme graph that is to be extracted.
+        &#34;&#34;&#34;
+        for edge in other.edges:
+            self.removeItem(edge)
+
+        for node in other.nodes:
+            self.removeItem(node)
+
+    def merge(self, other: Graph):
+        &#34;&#34;&#34;Update the scheme, adding elements from a graph.&#34;&#34;&#34;
+        self.graph.merge(other)
+
+        for node in other.nodes:
+            super().addItem(node)
+        for edge in other.edges:
+            super().addItem(edge)
+
+    def clear(self):
+        &#34;&#34;&#34;Clear the scheme.&#34;&#34;&#34;
+        super().clear()
+        self.graph.clear()
+
+    # Selection ========================================================================================================
+    def selectAll(self):
+        self.graph.selectAll()
+
+    def selection(self) -&gt; Graph:
+        return self.graph.selection()
+    
+    def clipboardSelection(self) -&gt; Graph:
+        return self.graph.clipboardSelection()
+    
+    def wideSelection(self) -&gt; Graph:
+        return self.graph.wideSelection()
+
+    # User actions =====================================================================================================
+    def cutEvent(self):
+        &#34;&#34;&#34;Cut the selected graph and place it in the clipboard.&#34;&#34;&#34;
+        self.copyEvent()
+        self.deleteEvent()
+
+    def copyEvent(self):
+        &#34;&#34;&#34;Copy the selected graph and place it in the clipboard.&#34;&#34;&#34;
+        graph = self.clipboardSelection()
+        if len(graph.nodes) == 0:  # Nothing to copy
+            return
+
+        self.paste_pos = graph.boundingRect().center()
+        self.advancePastePos()
+
+        package = QMimeData()
+        mime.dump(graph, package, self.ClipboardMimeType, hooks=hooks.qt)
+
+        clipboard = QApplication.clipboard()
+        clipboard.setMimeData(package)
+
+    def pasteEvent(self):
+        &#34;&#34;&#34;Retrieve the data from a clipboard and paste it.&#34;&#34;&#34;
+        clipboard = QApplication.clipboard()
+        package = clipboard.mimeData()
+
+        if package.hasFormat(self.ClipboardMimeType):
+            graph = mime.load(package, self.ClipboardMimeType, hooks=hooks.qt)
+            self.merge(graph)
+
+            self.clearSelection()  # Clear old selection
+            graph.selectAll()  # Create new selection (pasted items)
+
+            graph.moveCenter(self.paste_pos)
+            self.advancePastePos()
+
+    def deleteEvent(self):
+        &#34;&#34;&#34;Delete the selection.&#34;&#34;&#34;
+        self.extract(self.selection())
+
+    def advancePastePos(self):
+        &#34;&#34;&#34;Move the paste position (usually down and to the right).  
+        This function is usually called when an object has been pasted.
+        &#34;&#34;&#34;
+        offset = self.schemeStyle().pixelMetric(Style.PasteOffset)
+        self.paste_pos += QPointF(offset, offset)
+
+    # Style and palette ================================================================================================
+    def styleChange(self):
+        pass
+
+    def paletteChange(self):
+        super().setBackgroundBrush(self.schemePalette().background())
+
+    def schemeStyle(self):
+        return self._style
+
+    def setStyle(self, style):
+        self._style = style
+        self.styleChange()
+
+    def schemePalette(self):
+        return self._palette
+    
+    def setPalette(self, palette):
+        self._palette = palette
+        self.paletteChange()
+
+    # Edge drawing =====================================================================================================
+    def hasEdgeDrag(self) -&gt; bool:
+        &#34;&#34;&#34;Returns True if an edge is currently being drawn via drag and drop.&#34;&#34;&#34;
+        return self._dragging_edge is not None
+
+    def edgeDragStart(self, connection: Connection):
+        &#34;&#34;&#34;Triggers a start to an edge drawing mode.  
+        By holding left mouse button while dragging from an end of a connection, user can start dragging an edge from
+        one connection to the other. The scene stores a &#34;fake&#34; edge that the user drags with their mouse. That edge is
+        created here and updated with mouse movements in dragMoveEvent.
+        &#34;&#34;&#34;
+        self._dragging_edge = Edge()
+        self._dragging_edge.attach(connection)       
+
+        super().addItem(self._dragging_edge)  # Edge is present in the scene, but not in the graph.
+
+    def edgeDragStop(self):
+        &#34;&#34;&#34;Triggers an end of an edge drawing mode.  
+        Cleans up by removing the fake edge. This function is called regardless of whether edge drag resulted in a
+        successful connection.
+        &#34;&#34;&#34;
+        super().removeItem(self._dragging_edge)
+
+        self._dragging_edge.detachAll()
+        self._dragging_edge = None
+
+    def dragEnterEvent(self, event):
+        package = event.mimeData()
+
+        # Form a list of accepted formats. Accepted formats include all format with custom drop functions, as well as
+        # Connection.EdgeDragMimeType
+        accepted_formats = (
+            list(self._custom_drop_events.keys()) + 
+            [Connection.EdgeDragMimeType]
+        )
+        
+        # If any of the accepted_formats is present in package.formats(), accept the event.
+        for fmt in package.formats():
+            if fmt in accepted_formats:
+                event.accept()
+                break
+    
+    def dropEvent(self, event):
+        package = event.mimeData()
+
+        for fmt, drop_event in self._custom_drop_events.items():
+            if package.hasFormat(fmt):
+                drop_event(scheme=self, event=event)
+
+        super().dropEvent(event)
+
+    def dragMoveEvent(self, event):
+        if event.mimeData().hasFormat(Connection.EdgeDragMimeType) and self.hasEdgeDrag():
+            # Update edge position, but otherwise do the default thing.
+            super().dragMoveEvent(event)  
+            if self._dragging_edge.source() is None:
+                self._dragging_edge.setSourcePos(event.scenePos())
+            else:
+                self._dragging_edge.setTargetPos(event.scenePos())
+
+    def setCustomDropEvent(self, fmt, event):
+        &#34;&#34;&#34;Set a custom drop event for a particular MIME type (format).
+        Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
+        If event is None, the format is instead removed from the list of accepted formats.
+        If not None, event should be a function accepting two keyword arguments:
+        - scheme, which will contain this scheme
+        - event, which will contain the event that is being dropped
+        &#34;&#34;&#34;
+        if event is None:
+            self._custom_drop_events.pop(fmt)
+        else:
+            self._custom_drop_events[fmt] = event
+
+    # Key presses ======================================================================================================
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Alt:
+            event.accept()
+            for node in self.graph.nodes:
+                node.showConnectionText()
+            return
+        
+        super().keyPressEvent(event)
+    
+    def keyReleaseEvent(self, event):
+        if event.key() == Qt.Key_Alt:
+            event.accept()
+            for node in self.graph.nodes:
+                node.hideConnectionText()
+            return
+
+        super().keyReleaseEvent(event)
+
+    # Serialization ====================================================================================================
+    def serialize(self) -&gt; dict:
+        return self.graph.serialize()
+
+    @classmethod
+    def deserialize(cls, data: dict):
+        &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
+        obj = cls()
+
+        # Deserialize the graph ----------------------------------------------------------------------------------------
+        obj.graph = Graph.deserialize(data)
+
+        # Bring the scene up to speed ----------------------------------------------------------------------------------
+        for node in obj.graph.nodes:
+            super(Scheme, obj).addItem(node)
+
+        for edge in obj.graph.edges:
+            super(Scheme, obj).addItem(edge)
+        
+        return obj</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PySide2.QtWidgets.QGraphicsScene</li>
+<li>PySide2.QtCore.QObject</li>
+<li>Shiboken.Object</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.scheme.scheme.Scheme.ClipboardMimeType"><code class="name">var <span class="ident">ClipboardMimeType</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.View"><code class="name">var <span class="ident">View</span></code></dt>
+<dd>
+<div class="desc"><p>Custom view widget for Scheme.</p></div>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.scheme.scheme.Scheme.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Deserialize this object from a dict of data.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    &#34;&#34;&#34;Deserialize this object from a dict of data.&#34;&#34;&#34;
+    obj = cls()
+
+    # Deserialize the graph ----------------------------------------------------------------------------------------
+    obj.graph = Graph.deserialize(data)
+
+    # Bring the scene up to speed ----------------------------------------------------------------------------------
+    for node in obj.graph.nodes:
+        super(Scheme, obj).addItem(node)
+
+    for edge in obj.graph.edges:
+        super(Scheme, obj).addItem(edge)
+    
+    return obj</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="nfb_studio.scheme.scheme.Scheme.paste_pos"><code class="name">var <span class="ident">paste_pos</span></code></dt>
+<dd>
+<div class="desc"><p>Position where the center of the pasted object will be located.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="nfb_studio.scheme.scheme.Scheme.addItem"><code class="name flex">
+<span>def <span class="ident">addItem</span></span>(<span>self, item: PySide2.QtWidgets.QGraphicsItem)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add an item to the scene.</p>
+<p>An override of super().addItem method that detects when a node or edge was added.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def addItem(self, item: QGraphicsItem):
+    &#34;&#34;&#34;Add an item to the scene.
+
+    An override of super().addItem method that detects when a node or edge was added.
+    &#34;&#34;&#34;
+    self.graph.add(item)
+    super().addItem(item)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.advancePastePos"><code class="name flex">
+<span>def <span class="ident">advancePastePos</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Move the paste position (usually down and to the right).<br>
+This function is usually called when an object has been pasted.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def advancePastePos(self):
+    &#34;&#34;&#34;Move the paste position (usually down and to the right).  
+    This function is usually called when an object has been pasted.
+    &#34;&#34;&#34;
+    offset = self.schemeStyle().pixelMetric(Style.PasteOffset)
+    self.paste_pos += QPointF(offset, offset)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.clear"><code class="name flex">
+<span>def <span class="ident">clear</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Clear the scheme.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clear(self):
+    &#34;&#34;&#34;Clear the scheme.&#34;&#34;&#34;
+    super().clear()
+    self.graph.clear()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.clipboardSelection"><code class="name flex">
+<span>def <span class="ident">clipboardSelection</span></span>(<span>self) ‑> <a title="nfb_studio.scheme.graph.Graph" href="graph.html#nfb_studio.scheme.graph.Graph">Graph</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clipboardSelection(self) -&gt; Graph:
+    return self.graph.clipboardSelection()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.connect_nodes"><code class="name flex">
+<span>def <span class="ident">connect_nodes</span></span>(<span>self, source: <a title="nfb_studio.scheme.node.connection.output.Output" href="node/connection/output.html#nfb_studio.scheme.node.connection.output.Output">Output</a>, target: <a title="nfb_studio.scheme.node.connection.input.Input" href="node/connection/input.html#nfb_studio.scheme.node.connection.input.Input">Input</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Connect an Output connection to an Input connection with an edge.</p>
+<p>Returns the newly created edge.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def connect_nodes(self, source: Output, target: Input):
+    &#34;&#34;&#34;Connect an Output connection to an Input connection with an edge.
+    
+    Returns the newly created edge.
+    &#34;&#34;&#34;
+    edge = self.graph.connect_nodes(source, target)
+    super().addItem(edge)
+
+    return edge</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.copyEvent"><code class="name flex">
+<span>def <span class="ident">copyEvent</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Copy the selected graph and place it in the clipboard.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copyEvent(self):
+    &#34;&#34;&#34;Copy the selected graph and place it in the clipboard.&#34;&#34;&#34;
+    graph = self.clipboardSelection()
+    if len(graph.nodes) == 0:  # Nothing to copy
+        return
+
+    self.paste_pos = graph.boundingRect().center()
+    self.advancePastePos()
+
+    package = QMimeData()
+    mime.dump(graph, package, self.ClipboardMimeType, hooks=hooks.qt)
+
+    clipboard = QApplication.clipboard()
+    clipboard.setMimeData(package)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.cutEvent"><code class="name flex">
+<span>def <span class="ident">cutEvent</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Cut the selected graph and place it in the clipboard.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cutEvent(self):
+    &#34;&#34;&#34;Cut the selected graph and place it in the clipboard.&#34;&#34;&#34;
+    self.copyEvent()
+    self.deleteEvent()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.deleteEvent"><code class="name flex">
+<span>def <span class="ident">deleteEvent</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Delete the selection.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deleteEvent(self):
+    &#34;&#34;&#34;Delete the selection.&#34;&#34;&#34;
+    self.extract(self.selection())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.disconnect_nodes"><code class="name flex">
+<span>def <span class="ident">disconnect_nodes</span></span>(<span>self, source: <a title="nfb_studio.scheme.node.connection.output.Output" href="node/connection/output.html#nfb_studio.scheme.node.connection.output.Output">Output</a>, target: <a title="nfb_studio.scheme.node.connection.input.Input" href="node/connection/input.html#nfb_studio.scheme.node.connection.input.Input">Input</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove a connection between a node output and an input.</p>
+<p>If output and input are connected more than once, only one edge is removed.
+Returns the edge that was removed, or None if no such edge was found.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def disconnect_nodes(self, source: Output, target: Input):
+    &#34;&#34;&#34;Remove a connection between a node output and an input.
+    
+    If output and input are connected more than once, only one edge is removed.
+    Returns the edge that was removed, or None if no such edge was found.
+    &#34;&#34;&#34;
+    edge = self.graph.disconnect_nodes(source, target)
+    if edge is not None:
+        super().removeItem(edge)
+    return edge</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.dragEnterEvent"><code class="name flex">
+<span>def <span class="ident">dragEnterEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>dragEnterEvent(self, event: PySide2.QtWidgets.QGraphicsSceneDragDropEvent)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dragEnterEvent(self, event):
+    package = event.mimeData()
+
+    # Form a list of accepted formats. Accepted formats include all format with custom drop functions, as well as
+    # Connection.EdgeDragMimeType
+    accepted_formats = (
+        list(self._custom_drop_events.keys()) + 
+        [Connection.EdgeDragMimeType]
+    )
+    
+    # If any of the accepted_formats is present in package.formats(), accept the event.
+    for fmt in package.formats():
+        if fmt in accepted_formats:
+            event.accept()
+            break</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.dragMoveEvent"><code class="name flex">
+<span>def <span class="ident">dragMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>dragMoveEvent(self, event: PySide2.QtWidgets.QGraphicsSceneDragDropEvent)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dragMoveEvent(self, event):
+    if event.mimeData().hasFormat(Connection.EdgeDragMimeType) and self.hasEdgeDrag():
+        # Update edge position, but otherwise do the default thing.
+        super().dragMoveEvent(event)  
+        if self._dragging_edge.source() is None:
+            self._dragging_edge.setSourcePos(event.scenePos())
+        else:
+            self._dragging_edge.setTargetPos(event.scenePos())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.dropEvent"><code class="name flex">
+<span>def <span class="ident">dropEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>dropEvent(self, event: PySide2.QtWidgets.QGraphicsSceneDragDropEvent)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dropEvent(self, event):
+    package = event.mimeData()
+
+    for fmt, drop_event in self._custom_drop_events.items():
+        if package.hasFormat(fmt):
+            drop_event(scheme=self, event=event)
+
+    super().dropEvent(event)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.edgeDragStart"><code class="name flex">
+<span>def <span class="ident">edgeDragStart</span></span>(<span>self, connection: <a title="nfb_studio.scheme.node.connection.connection.Connection" href="node/connection/connection.html#nfb_studio.scheme.node.connection.connection.Connection">Connection</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Triggers a start to an edge drawing mode.<br>
+By holding left mouse button while dragging from an end of a connection, user can start dragging an edge from
+one connection to the other. The scene stores a "fake" edge that the user drags with their mouse. That edge is
+created here and updated with mouse movements in dragMoveEvent.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edgeDragStart(self, connection: Connection):
+    &#34;&#34;&#34;Triggers a start to an edge drawing mode.  
+    By holding left mouse button while dragging from an end of a connection, user can start dragging an edge from
+    one connection to the other. The scene stores a &#34;fake&#34; edge that the user drags with their mouse. That edge is
+    created here and updated with mouse movements in dragMoveEvent.
+    &#34;&#34;&#34;
+    self._dragging_edge = Edge()
+    self._dragging_edge.attach(connection)       
+
+    super().addItem(self._dragging_edge)  # Edge is present in the scene, but not in the graph.</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.edgeDragStop"><code class="name flex">
+<span>def <span class="ident">edgeDragStop</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Triggers an end of an edge drawing mode.<br>
+Cleans up by removing the fake edge. This function is called regardless of whether edge drag resulted in a
+successful connection.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edgeDragStop(self):
+    &#34;&#34;&#34;Triggers an end of an edge drawing mode.  
+    Cleans up by removing the fake edge. This function is called regardless of whether edge drag resulted in a
+    successful connection.
+    &#34;&#34;&#34;
+    super().removeItem(self._dragging_edge)
+
+    self._dragging_edge.detachAll()
+    self._dragging_edge = None</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.extract"><code class="name flex">
+<span>def <span class="ident">extract</span></span>(<span>self, other: <a title="nfb_studio.scheme.graph.Graph" href="graph.html#nfb_studio.scheme.graph.Graph">Graph</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update the scheme, removing elements from a graph.</p>
+<p><code>other</code> represents a subgraph of the scheme graph that is to be extracted.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract(self, other: Graph):
+    &#34;&#34;&#34;Update the scheme, removing elements from a graph.
+    
+    `other` represents a subgraph of the scheme graph that is to be extracted.
+    &#34;&#34;&#34;
+    for edge in other.edges:
+        self.removeItem(edge)
+
+    for node in other.nodes:
+        self.removeItem(node)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.getView"><code class="name flex">
+<span>def <span class="ident">getView</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a Scheme.View, suitable for displaying contents of the scheme.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getView(self):
+    &#34;&#34;&#34;Return a Scheme.View, suitable for displaying contents of the scheme.&#34;&#34;&#34;
+    v = self.View()
+    v.setScene(self)
+
+    return v</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.hasEdgeDrag"><code class="name flex">
+<span>def <span class="ident">hasEdgeDrag</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns True if an edge is currently being drawn via drag and drop.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hasEdgeDrag(self) -&gt; bool:
+    &#34;&#34;&#34;Returns True if an edge is currently being drawn via drag and drop.&#34;&#34;&#34;
+    return self._dragging_edge is not None</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.keyPressEvent"><code class="name flex">
+<span>def <span class="ident">keyPressEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>keyPressEvent(self, event: PySide2.QtGui.QKeyEvent)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keyPressEvent(self, event):
+    if event.key() == Qt.Key_Alt:
+        event.accept()
+        for node in self.graph.nodes:
+            node.showConnectionText()
+        return
+    
+    super().keyPressEvent(event)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.keyReleaseEvent"><code class="name flex">
+<span>def <span class="ident">keyReleaseEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>keyReleaseEvent(self, event: PySide2.QtGui.QKeyEvent)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keyReleaseEvent(self, event):
+    if event.key() == Qt.Key_Alt:
+        event.accept()
+        for node in self.graph.nodes:
+            node.hideConnectionText()
+        return
+
+    super().keyReleaseEvent(event)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.merge"><code class="name flex">
+<span>def <span class="ident">merge</span></span>(<span>self, other: <a title="nfb_studio.scheme.graph.Graph" href="graph.html#nfb_studio.scheme.graph.Graph">Graph</a>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update the scheme, adding elements from a graph.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def merge(self, other: Graph):
+    &#34;&#34;&#34;Update the scheme, adding elements from a graph.&#34;&#34;&#34;
+    self.graph.merge(other)
+
+    for node in other.nodes:
+        super().addItem(node)
+    for edge in other.edges:
+        super().addItem(edge)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.paletteChange"><code class="name flex">
+<span>def <span class="ident">paletteChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paletteChange(self):
+    super().setBackgroundBrush(self.schemePalette().background())</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.pasteEvent"><code class="name flex">
+<span>def <span class="ident">pasteEvent</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieve the data from a clipboard and paste it.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pasteEvent(self):
+    &#34;&#34;&#34;Retrieve the data from a clipboard and paste it.&#34;&#34;&#34;
+    clipboard = QApplication.clipboard()
+    package = clipboard.mimeData()
+
+    if package.hasFormat(self.ClipboardMimeType):
+        graph = mime.load(package, self.ClipboardMimeType, hooks=hooks.qt)
+        self.merge(graph)
+
+        self.clearSelection()  # Clear old selection
+        graph.selectAll()  # Create new selection (pasted items)
+
+        graph.moveCenter(self.paste_pos)
+        self.advancePastePos()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.removeItem"><code class="name flex">
+<span>def <span class="ident">removeItem</span></span>(<span>self, item: PySide2.QtWidgets.QGraphicsItem)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add an item to the scene.</p>
+<p>An override of super().removeItem method that detects when a node or edge was removed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def removeItem(self, item: QGraphicsItem):
+    &#34;&#34;&#34;Add an item to the scene.
+
+    An override of super().removeItem method that detects when a node or edge was removed.
+    &#34;&#34;&#34;
+    super().removeItem(item)
+
+    # Remove a Node ------------------------------------------------------------------------------------------------
+    if isinstance(item, Node):
+        # Remove connected edges first
+        to_remove = []
+        for edge in self.graph.edges:
+            if edge.sourceNode() is item or edge.targetNode() is item:
+                to_remove.append(edge)
+        
+        for edge in to_remove:
+            self.removeItem(edge)
+    
+    self.graph.remove(item)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.schemePalette"><code class="name flex">
+<span>def <span class="ident">schemePalette</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def schemePalette(self):
+    return self._palette</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.schemeStyle"><code class="name flex">
+<span>def <span class="ident">schemeStyle</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def schemeStyle(self):
+    return self._style</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.selectAll"><code class="name flex">
+<span>def <span class="ident">selectAll</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def selectAll(self):
+    self.graph.selectAll()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.selection"><code class="name flex">
+<span>def <span class="ident">selection</span></span>(<span>self) ‑> <a title="nfb_studio.scheme.graph.Graph" href="graph.html#nfb_studio.scheme.graph.Graph">Graph</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def selection(self) -&gt; Graph:
+    return self.graph.selection()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    return self.graph.serialize()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.setCustomDropEvent"><code class="name flex">
+<span>def <span class="ident">setCustomDropEvent</span></span>(<span>self, fmt, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set a custom drop event for a particular MIME type (format).
+Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
+If event is None, the format is instead removed from the list of accepted formats.
+If not None, event should be a function accepting two keyword arguments:
+- scheme, which will contain this scheme
+- event, which will contain the event that is being dropped</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setCustomDropEvent(self, fmt, event):
+    &#34;&#34;&#34;Set a custom drop event for a particular MIME type (format).
+    Setting a custom event for a format will make this format get accepted by the scheme during drag and drop.
+    If event is None, the format is instead removed from the list of accepted formats.
+    If not None, event should be a function accepting two keyword arguments:
+    - scheme, which will contain this scheme
+    - event, which will contain the event that is being dropped
+    &#34;&#34;&#34;
+    if event is None:
+        self._custom_drop_events.pop(fmt)
+    else:
+        self._custom_drop_events[fmt] = event</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.setPalette"><code class="name flex">
+<span>def <span class="ident">setPalette</span></span>(<span>self, palette)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>setPalette(self, palette: PySide2.QtGui.QPalette)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setPalette(self, palette):
+    self._palette = palette
+    self.paletteChange()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.setStyle"><code class="name flex">
+<span>def <span class="ident">setStyle</span></span>(<span>self, style)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>setStyle(self, style: PySide2.QtWidgets.QStyle)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setStyle(self, style):
+    self._style = style
+    self.styleChange()</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.styleChange"><code class="name flex">
+<span>def <span class="ident">styleChange</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def styleChange(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.scheme.scheme.Scheme.wideSelection"><code class="name flex">
+<span>def <span class="ident">wideSelection</span></span>(<span>self) ‑> <a title="nfb_studio.scheme.graph.Graph" href="graph.html#nfb_studio.scheme.graph.Graph">Graph</a></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wideSelection(self) -&gt; Graph:
+    return self.graph.wideSelection()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nfb_studio.scheme" href="index.html">nfb_studio.scheme</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="nfb_studio.scheme.scheme.Scheme" href="#nfb_studio.scheme.scheme.Scheme">Scheme</a></code></h4>
+<ul class="two-column">
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.ClipboardMimeType" href="#nfb_studio.scheme.scheme.Scheme.ClipboardMimeType">ClipboardMimeType</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.View" href="#nfb_studio.scheme.scheme.Scheme.View">View</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.addItem" href="#nfb_studio.scheme.scheme.Scheme.addItem">addItem</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.advancePastePos" href="#nfb_studio.scheme.scheme.Scheme.advancePastePos">advancePastePos</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.clear" href="#nfb_studio.scheme.scheme.Scheme.clear">clear</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.clipboardSelection" href="#nfb_studio.scheme.scheme.Scheme.clipboardSelection">clipboardSelection</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.connect_nodes" href="#nfb_studio.scheme.scheme.Scheme.connect_nodes">connect_nodes</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.copyEvent" href="#nfb_studio.scheme.scheme.Scheme.copyEvent">copyEvent</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.cutEvent" href="#nfb_studio.scheme.scheme.Scheme.cutEvent">cutEvent</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.deleteEvent" href="#nfb_studio.scheme.scheme.Scheme.deleteEvent">deleteEvent</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.deserialize" href="#nfb_studio.scheme.scheme.Scheme.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.disconnect_nodes" href="#nfb_studio.scheme.scheme.Scheme.disconnect_nodes">disconnect_nodes</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.dragEnterEvent" href="#nfb_studio.scheme.scheme.Scheme.dragEnterEvent">dragEnterEvent</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.dragMoveEvent" href="#nfb_studio.scheme.scheme.Scheme.dragMoveEvent">dragMoveEvent</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.dropEvent" href="#nfb_studio.scheme.scheme.Scheme.dropEvent">dropEvent</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.edgeDragStart" href="#nfb_studio.scheme.scheme.Scheme.edgeDragStart">edgeDragStart</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.edgeDragStop" href="#nfb_studio.scheme.scheme.Scheme.edgeDragStop">edgeDragStop</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.extract" href="#nfb_studio.scheme.scheme.Scheme.extract">extract</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.getView" href="#nfb_studio.scheme.scheme.Scheme.getView">getView</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.hasEdgeDrag" href="#nfb_studio.scheme.scheme.Scheme.hasEdgeDrag">hasEdgeDrag</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.keyPressEvent" href="#nfb_studio.scheme.scheme.Scheme.keyPressEvent">keyPressEvent</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.keyReleaseEvent" href="#nfb_studio.scheme.scheme.Scheme.keyReleaseEvent">keyReleaseEvent</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.merge" href="#nfb_studio.scheme.scheme.Scheme.merge">merge</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.paletteChange" href="#nfb_studio.scheme.scheme.Scheme.paletteChange">paletteChange</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.pasteEvent" href="#nfb_studio.scheme.scheme.Scheme.pasteEvent">pasteEvent</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.paste_pos" href="#nfb_studio.scheme.scheme.Scheme.paste_pos">paste_pos</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.removeItem" href="#nfb_studio.scheme.scheme.Scheme.removeItem">removeItem</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.schemePalette" href="#nfb_studio.scheme.scheme.Scheme.schemePalette">schemePalette</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.schemeStyle" href="#nfb_studio.scheme.scheme.Scheme.schemeStyle">schemeStyle</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.selectAll" href="#nfb_studio.scheme.scheme.Scheme.selectAll">selectAll</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.selection" href="#nfb_studio.scheme.scheme.Scheme.selection">selection</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.serialize" href="#nfb_studio.scheme.scheme.Scheme.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.setCustomDropEvent" href="#nfb_studio.scheme.scheme.Scheme.setCustomDropEvent">setCustomDropEvent</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.setPalette" href="#nfb_studio.scheme.scheme.Scheme.setPalette">setPalette</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.setStyle" href="#nfb_studio.scheme.scheme.Scheme.setStyle">setStyle</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.staticMetaObject" href="#nfb_studio.scheme.scheme.Scheme.staticMetaObject">staticMetaObject</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.styleChange" href="#nfb_studio.scheme.scheme.Scheme.styleChange">styleChange</a></code></li>
+<li><code><a title="nfb_studio.scheme.scheme.Scheme.wideSelection" href="#nfb_studio.scheme.scheme.Scheme.wideSelection">wideSelection</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
+</footer>
+</body>
+</html>

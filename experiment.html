@@ -1,0 +1,1707 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.4" />
+<title>nfb_studio.experiment API documentation</title>
+<meta name="description" content="NFB Experiment." />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nfb_studio.experiment</code></h1>
+</header>
+<section id="section-intro">
+<p>NFB Experiment.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;NFB Experiment.&#34;&#34;&#34;
+import re
+
+from .block import Block, BlockDict
+from .group import Group, GroupDict
+from .serial import json, xml, hooks
+from .scheme import Scheme
+from .signal_nodes import *
+from .sequence_nodes import *
+
+
+class Experiment:
+    &#34;&#34;&#34;NFB Experiment: the main class of nfb_studio.
+    An instance of Experiment represents a collection
+    &#34;&#34;&#34;
+    inlet_type_export_values = {
+        &#34;LSL stream&#34;: &#34;lsl&#34;,
+        &#34;LSL file stream&#34;: &#34;lsl_from_file&#34;,
+        &#34;LSL generator&#34;: &#34;lsl_generator&#34;,
+        &#34;Field trip buffer&#34;: &#34;ftbuffer&#34;
+    }
+    inlet_type_import_values = {v: k for k, v in inlet_type_export_values.items()}
+
+    def __init__(self):
+        self.name = &#34;Experiment&#34;
+        self.lsl_stream_name = &#34;NVX136_Data&#34;
+        self.inlet = &#34;lsl&#34;
+        self.raw_data_path = &#34;&#34;
+        self.hostname_port = &#34;&#34;
+        self.dc = False  # TODO: A more descriptive name?
+        self.prefilter_band = [None, None]
+        self.plot_raw = True
+        self.plot_signals = True
+        self.show_subject_window = True
+        self.discard_channels = &#34;&#34;
+        self.reference_sub = &#34;&#34;
+        self.show_proto_rectangle = False
+        self.show_notch_filters = False
+
+        self.signal_scheme = Scheme()
+        self.sequence_scheme = Scheme()
+        self.blocks = BlockDict()
+        self.groups = GroupDict()
+
+        self.blocks.setExperiment(self)
+        self.groups.setExperiment(self)
+
+        self._view = None
+    
+    def checkName(self, name: str):
+        &#34;&#34;&#34;Check if a name is appropriate for adding a new block or group.
+        Returns a bool (name good or not) and a reason why the name is not good (or None).
+        &#34;&#34;&#34;
+        if name == &#34;&#34;:
+            return (False, &#34;Name cannot be blank.&#34;)
+        
+        if &#34; &#34; in name:
+            return (False, &#34;Name cannot contain spaces.&#34;)
+
+        match = re.search(r&#34;([^A-Za-z0-9_])&#34;, name)
+        if match:
+            return (False, &#34;Illegal character &#39;{}&#39;&#34;.format(match.group(0)))
+
+        if name in self.blocks or name in self.groups:
+            return (False, &#34;Name already in use.&#34;)
+        
+        return (True, None)
+
+    # Access functions =================================================================================================
+    def view(self):
+        return self._view
+    
+    def setView(self, view, /):
+        view.setModel(self)
+    
+    # Serialization ====================================================================================================
+    def export(self) -&gt; str:
+        data = {&#34;NeurofeedbackSignalSpecs&#34;: self}
+
+        enc_hooks = {
+            Experiment: Experiment.nfb_export_data,
+            Block: Block.nfb_export_data,
+            Group: Group.nfb_export_data,
+            bool: lambda x: int(x)
+        }
+
+        encoder = xml.XMLEncoder(separator=&#34;\n&#34;, indent=&#34;\t&#34;, metadata=False, hooks=enc_hooks)
+
+        return encoder.encode(data)
+
+    def save(self) -&gt; str:
+        encoder = json.JSONEncoder(separator=&#34;\n&#34;, indent=&#34;\t&#34;, hooks=hooks.qt)
+
+        return encoder.encode(self)
+    
+    @classmethod
+    def load(cls, data: str):
+        decoder = json.JSONDecoder(hooks=hooks.qt)
+        return decoder.decode(data)
+
+    @classmethod
+    def import_xml(cls, xml_string: str):
+        &#34;&#34;&#34;Decode an XML string containing an exported file into an nfb_studio experiment.
+        Decoding xml files is an imperfect science, since nfb_studio has more information, like node position, their
+        connections, and so on. This function does it&#39;s best to at least produce the correct experiment flow.
+        &#34;&#34;&#34;
+        ex = cls()
+
+        # Decode the string --------------------------------------------------------------------------------------------
+        decoder = xml.XMLDecoder(force_list=(&#34;DerivedSignal&#34;, &#34;CompositeSignal&#34;, &#34;FeedbackProtocol&#34;, &#34;PGroup&#34;, &#34;s&#34;))
+        root = decoder.decode(xml_string)
+        data = next(iter(root.values()))  # Get first (and only) value in root
+
+        # Add empty signal/block/group/sequence lists if they are missing ----------------------------------------------
+        if data[&#34;vSignals&#34;] is None:
+            data[&#34;vSignals&#34;] = {
+                &#34;DerivedSignal&#34;: [],
+                &#34;CompositeSignal&#34;: [],
+            }
+        else:
+            if &#34;DerivedSignal&#34; not in data[&#34;vSignals&#34;]:
+                data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;] = []
+            if &#34;CompositeSignal&#34; not in data[&#34;vSignals&#34;]:
+                data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = []
+        
+        if data[&#34;vProtocols&#34;] is None:
+            data[&#34;vProtocols&#34;] = {&#34;FeedbackProtocol&#34;: []}
+        if data[&#34;vPGroups&#34;] is None:
+            data[&#34;vPGroups&#34;] = {&#34;PGroup&#34;: []}
+        if data[&#34;vPSequence&#34;] is None:
+            data[&#34;vPSequence&#34;] = {&#34;s&#34;: []}
+
+        # Decode main experiment properties ----------------------------------------------------------------------------
+        ex.name = data[&#34;sExperimentName&#34;]
+        ex.lsl_stream_name = data[&#34;sStreamName&#34;]
+
+        if &#34;sPrefilterBand&#34; in data:
+            prefilter_band_values = data[&#34;sPrefilterBand&#34;].split(&#34; &#34;)
+            if prefilter_band_values[0] == &#34;None&#34;:
+                ex.prefilter_band[0] = None
+            else:
+                ex.prefilter_band[0] = float(prefilter_band_values[0])
+
+            if prefilter_band_values[1] == &#34;None&#34;:
+                ex.prefilter_band[1] = None
+            else:
+                ex.prefilter_band[1] = float(prefilter_band_values[1])
+
+        ex.dc = bool(float(data[&#34;bDC&#34;]))
+        ex.inlet = data[&#34;sInletType&#34;]
+        ex.raw_data_path = data[&#34;sRawDataFilePath&#34;]
+        ex.hostname_port = data[&#34;sFTHostnamePort&#34;]
+        ex.plot_raw = bool(float(data[&#34;bPlotRaw&#34;]))
+        ex.plot_signals = bool(float(data[&#34;bPlotSignals&#34;]))
+        ex.show_subject_window = bool(float(data.get(&#34;bShowSubjectWindow&#34;, ex.show_subject_window)))
+        ex.discard_channels = data[&#34;sReference&#34;]
+        ex.reference_sub = data[&#34;sReferenceSub&#34;]
+        ex.show_proto_rectangle = bool(float(data.get(&#34;bShowPhotoRectangle&#34;, ex.show_proto_rectangle)))
+        ex.show_notch_filters = bool(float(data.get(&#34;sVizNotchFilters&#34;, ex.show_notch_filters)))
+
+        # Decode signals -----------------------------------------------------------------------------------------------
+        node_pos = [0, 0]
+        node_xdiff = -100  # TODO: Change to a size dependent on node default width
+        node_ydiff = 100
+
+        for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
+            # Assemble the signal front to back, starting with the signal name.
+            # Some nodes may not be present, this loop accounts for it.
+            if &#34;sSignalName&#34; in signal_data:
+                # Create the node and set variables from data
+                n = DerivedSignalExport()
+                n.setSignalName(signal_data[&#34;sSignalName&#34;])
+
+                # Set position and add to scheme
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+            if (signal_data.get(&#34;fAverage&#34;) is not None) or (signal_data.get(&#34;fStdDev&#34;) is not None):
+                last = n
+                n = Standardise()
+                n.setAverage(float(signal_data.get(&#34;fAverage&#34;, n.default_average)))
+                n.setStandardDeviation(float(signal_data.get(&#34;fStdDev&#34;, n.default_standard_deviation)))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if (&#34;fSmoothingFactor&#34; in signal_data) or (&#34;method&#34; in signal_data):
+                last = n
+                n = EnvelopeDetector()
+                n.setSmoothingFactor(float(signal_data.get(&#34;fSmoothingFactor&#34;, n.default_smoothing_factor)))
+                n.setMethod(signal_data.get(&#34;method&#34;, n.default_method))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if (&#34;fBandpassLowHz&#34; in signal_data) or (&#34;fBandpassHighHz&#34; in signal_data):
+                last = n
+                n = BandpassFilter()
+                n.setLowerBound(float(signal_data.get(&#34;fBandpassLowHz&#34;, n.default_lower_bound)))
+                n.setUpperBound(float(signal_data.get(&#34;fBandpassHighHz&#34;, n.default_upper_bound)))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if &#34;SpatialFilterMatrix&#34; in signal_data:
+                last = n
+                n = SpatialFilter()
+                n.setMatrixPath(signal_data[&#34;SpatialFilterMatrix&#34;])
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            # Unconditionally add LSLInput
+            last = n
+            n = LSLInput()
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+
+            # Bump vertial coordinates to prepare for a new signal
+            node_pos[0] = 0
+            node_pos[1] += node_ydiff
+
+        # Add composite signals separately
+        for comp_data in data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;]:
+            n = CompositeSignalExport()
+            n.setSignalName(comp_data[&#34;sSignalName&#34;])
+            n.setExpression(comp_data[&#34;sExpression&#34;])
+
+            # Set position and add to scheme
+            n.setPos(*node_pos)
+            node_pos[0] = 0
+            node_pos[1] += node_ydiff
+
+            ex.signal_scheme.addItem(n)
+
+        # Decode blocks ------------------------------------------------------------------------------------------------
+        for block_data in data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;]:
+            block = Block.nfb_import_data(block_data)
+            name = block_data[&#34;sProtocolName&#34;]
+            ex.blocks[name] = block
+        
+        # Decode groups ------------------------------------------------------------------------------------------------
+        for group_data in data[&#34;vPGroups&#34;][&#34;PGroup&#34;]:
+            group = Group.nfb_import_data(group_data)
+            name = group_data[&#34;sName&#34;]
+            ex.groups[name] = group
+        
+        # Decode sequence ----------------------------------------------------------------------------------------------
+        node = None
+        node_pos = [0, 0]
+        node_xdiff = 100
+
+        for name in data[&#34;vPSequence&#34;][&#34;s&#34;]:
+            last = node
+
+            if name in ex.blocks:
+                node = BlockNode()
+            else:
+                node = GroupNode()
+
+            node.setTitle(name)
+            node.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.sequence_scheme.addItem(node)
+
+            if last is not None:
+                ex.sequence_scheme.connect_nodes(last.outputs[0], node.inputs[0])
+
+        # --------------------------------------------------------------------------------------------------------------
+        return ex
+
+    def updateView(self):
+        view = self.view()
+        if view is None:
+            return
+
+        # General properties -------------------------------------------------------------------------------------------
+        general = view.general_view
+        
+        general.name.setText(self.name)
+        general.inlet_type.setCurrentText(general.inlet_type_import_values[self.inlet])
+        general.lsl_stream_name.setCurrentText(self.lsl_stream_name)
+        general.lsl_filename.setText(self.raw_data_path)
+        general.hostname_port.setText(self.hostname_port)
+        general.dc.setChecked(self.dc)
+
+        if self.prefilter_band[0] is None:
+            general.prefilterBandLow_enable.setChecked(False)
+            general.prefilterBandLow_input.setValue(0)
+        else:
+            general.prefilterBandLow_enable.setChecked(True)
+            general.prefilterBandLow_input.setValue(self.prefilter_band[0])
+        
+        if self.prefilter_band[1] is None:
+            general.prefilterBandHigh_enable.setChecked(False)
+            general.prefilterBandHigh_input.setValue(0)
+        else:
+            general.prefilterBandHigh_enable.setChecked(True)
+            general.prefilterBandHigh_input.setValue(self.prefilter_band[1])
+        
+        general.plot_raw.setChecked(self.plot_raw)
+        general.plot_signals.setChecked(self.plot_signals)
+        general.show_subject_window.setChecked(self.show_subject_window)
+        general.discard_channels.setText(self.discard_channels)
+        general.reference_sub.setText(self.reference_sub)
+        general.show_proto_rectangle.setChecked(self.show_proto_rectangle)
+        general.show_notch_filters.setChecked(self.show_notch_filters)
+
+        # Blocks and groups --------------------------------------------------------------------------------------------
+        while view.tree.blocks.rowCount() &gt; 0:
+            name = view.tree.blocks.child(0).text(0)
+            view.tree.blocks.takeChild(0)
+            view.blocks.removeWidget(name)
+            view.sequence_editor.toolbox().removeItem(name)
+        
+        while view.tree.groups.rowCount() &gt; 0:
+            name = view.tree.groups.child(0).text(0)
+            view.tree.groups.takeChild(0)
+            view.groups.removeWidget(name)
+            view.sequence_editor.toolbox().removeItem(name)
+
+        for name in self.blocks:
+            self.blocks.itemAdded.emit(name)
+        
+        for name in self.groups:
+            self.groups.itemAdded.emit(name)
+
+    def serialize(self) -&gt; dict:
+        return {
+            &#34;name&#34;: self.name,
+            &#34;lsl_stream_name&#34;: self.lsl_stream_name,
+            &#34;inlet&#34;: self.inlet,
+            &#34;raw_data_path&#34;: self.raw_data_path,
+            &#34;hostname_port&#34;: self.hostname_port,
+            &#34;dc&#34;: self.dc,
+            &#34;prefilter_band_lower_bound&#34;: self.prefilter_band[0],
+            &#34;prefilter_band_upper_bound&#34;: self.prefilter_band[1],
+            &#34;plot_raw&#34;: self.plot_raw,
+            &#34;plot_signals&#34;: self.plot_signals,
+            &#34;show_subject_window&#34;: self.show_subject_window,
+            &#34;discard_channels&#34;: self.discard_channels,
+            &#34;reference_sub&#34;: self.reference_sub,
+            &#34;show_proto_rectangle&#34;: self.show_proto_rectangle,
+            &#34;show_notch_filters&#34;: self.show_notch_filters,
+            &#34;signal_scheme&#34;: self.signal_scheme,
+            &#34;sequence_scheme&#34;: self.sequence_scheme,
+            &#34;blocks&#34;: self.blocks,
+            &#34;groups&#34;: self.groups,
+        }
+    
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+
+        obj.name = data[&#34;name&#34;]
+        obj.lsl_stream_name = data[&#34;lsl_stream_name&#34;]
+        obj.inlet = data[&#34;inlet&#34;]
+        obj.raw_data_path = data[&#34;raw_data_path&#34;]
+        obj.hostname_port = data[&#34;hostname_port&#34;]
+        obj.dc = data[&#34;dc&#34;]
+        obj.prefilter_band = (data[&#34;prefilter_band_lower_bound&#34;], data[&#34;prefilter_band_upper_bound&#34;])
+        obj.plot_raw = data[&#34;plot_raw&#34;]
+        obj.plot_signals = data[&#34;plot_signals&#34;]
+        obj.show_subject_window = data[&#34;show_subject_window&#34;]
+        obj.discard_channels = data[&#34;discard_channels&#34;]
+        obj.reference_sub = data[&#34;reference_sub&#34;]
+        obj.show_proto_rectangle = data[&#34;show_proto_rectangle&#34;]
+        obj.show_notch_filters = data[&#34;show_notch_filters&#34;]
+        obj.signal_scheme = data[&#34;signal_scheme&#34;]
+        obj.sequence_scheme = data[&#34;sequence_scheme&#34;]
+        obj.blocks = data[&#34;blocks&#34;]
+        obj.groups = data[&#34;groups&#34;]
+
+        obj.blocks.setExperiment(obj)
+        obj.groups.setExperiment(obj)
+
+        return obj
+
+    def nfb_export_data(self) -&gt; dict:
+        print(&#34;?&#34;)
+        print(list(self.sequence_scheme.graph.sequences()))
+        for seq in self.sequence_scheme.graph.sequences():
+            node = [n for n in seq.nodes if len(n.inputs) == 0 or len(list(n.inputs[0].edges)) == 0][0]
+            # while True:
+            #     print(node.title(), end=&#34; &#34;)
+            #     if len(node.outputs) == 0 or len(list(node.outputs[0].edges)) == 0:
+            #         break
+            #     node = list(node.outputs[0].edges)[0].targetNode()
+            # print(&#34;&#34;)
+
+        &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
+        data = {}
+
+        # General ------------------------------------------------------------------------------------------------------
+        data[&#34;sExperimentName&#34;] = self.name
+        data[&#34;sStreamName&#34;] = self.lsl_stream_name
+        data[&#34;sPrefilterBand&#34;] = str(self.prefilter_band[0]) + &#34; &#34; + str(self.prefilter_band[1])
+        data[&#34;bDC&#34;] = self.dc
+        data[&#34;sInletType&#34;] = self.inlet
+        data[&#34;sRawDataFilePath&#34;] = self.raw_data_path
+        data[&#34;sFTHostnamePort&#34;] = self.hostname_port
+        data[&#34;bPlotRaw&#34;] = self.plot_raw
+        data[&#34;bPlotSignals&#34;] = self.plot_signals
+        data[&#34;bPlotSourceSpace&#34;] = 0
+        data[&#34;bShowSubjectWindow&#34;] = self.show_subject_window
+        data[&#34;fRewardPeriodS&#34;] = 0.25
+        data[&#34;sReference&#34;] = self.discard_channels
+        data[&#34;sReferenceSub&#34;] = self.reference_sub
+        data[&#34;bUseExpyriment&#34;] = 0
+        data[&#34;bShowPhotoRectangle&#34;] = self.show_proto_rectangle
+        data[&#34;sVizNotchFilters&#34;] = self.show_notch_filters
+
+        # Blocks -------------------------------------------------------------------------------------------------------
+        data[&#34;vProtocols&#34;] = {
+            &#34;FeedbackProtocol&#34;: []
+        }
+
+        for name in self.blocks:
+            block = self.blocks[name]
+
+            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;].append(block.nfb_export_data())  # Add other information
+            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;][-1][&#34;sProtocolName&#34;] = name  # Add name
+
+        # Groups -------------------------------------------------------------------------------------------------------
+        data[&#34;vPGroups&#34;] = {
+            &#34;PGroup&#34;: list(self.groups)
+        }
+
+        for name in self.groups:
+            group = self.groups[name]
+
+            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;].append(group.nfb_export_data())  # Add other information
+            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;][-1][&#34;sName&#34;] = name  # Add name
+
+        # Derived Signals ----------------------------------------------------------------------------------------------
+        signals = []
+
+        # Build a list of lists of nodes (e.g. list of sequences)
+        for node in self.signal_scheme.graph.nodes:
+            if isinstance(node, DerivedSignalExport):
+                signal = []
+                n = node
+
+                while True:
+                    signal.append(n)
+
+                    if len(n.inputs) == 0:
+                        break
+                    
+                    n = list(n.inputs[0].edges)[0].sourceNode()
+                
+                signals.append(signal)
+        
+        # Convert list of lists of nodes to a list of serialized signals
+        for i in range(len(signals)):
+            signal = {}
+
+            for node in signals[i]:
+                node.add_nfb_export_data(signal)
+            
+            signals[i] = signal
+
+        data[&#34;vSignals&#34;] = {
+            &#34;DerivedSignal&#34;: signals
+        }
+
+        # Composite signals --------------------------------------------------------------------------------------------
+        signals = []
+
+        for node in self.signal_scheme.graph.nodes:
+            if isinstance(node, CompositeSignalExport):
+                signal = {}
+                node.add_nfb_export_data(signal)
+                signals.append(signal)
+        
+        data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = signals
+
+        # Experiment sequence ------------------------------------------------------------------------------------------
+        sequence_nodes = []
+
+        # Build a list of lists of nodes (e.g. list of sequences)
+        for n in self.sequence_scheme.graph.nodes:
+            if isinstance(n, SequenceExport):
+                break
+
+        while True:
+            if len(n.inputs[0].edges) == 0:
+                break
+
+            n = list(n.inputs[0].edges)[0].sourceNode()
+            sequence_nodes.insert(0, n)
+
+        # Convert a sequence of nodes to a sequence of block names
+        sequence = [n.title() for n in sequence_nodes]
+
+        data[&#34;vPSequence&#34;] = {
+            &#34;s&#34;: sequence
+        }
+
+        return data</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="nfb_studio.experiment.Experiment"><code class="flex name class">
+<span>class <span class="ident">Experiment</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>NFB Experiment: the main class of nfb_studio.
+An instance of Experiment represents a collection</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Experiment:
+    &#34;&#34;&#34;NFB Experiment: the main class of nfb_studio.
+    An instance of Experiment represents a collection
+    &#34;&#34;&#34;
+    inlet_type_export_values = {
+        &#34;LSL stream&#34;: &#34;lsl&#34;,
+        &#34;LSL file stream&#34;: &#34;lsl_from_file&#34;,
+        &#34;LSL generator&#34;: &#34;lsl_generator&#34;,
+        &#34;Field trip buffer&#34;: &#34;ftbuffer&#34;
+    }
+    inlet_type_import_values = {v: k for k, v in inlet_type_export_values.items()}
+
+    def __init__(self):
+        self.name = &#34;Experiment&#34;
+        self.lsl_stream_name = &#34;NVX136_Data&#34;
+        self.inlet = &#34;lsl&#34;
+        self.raw_data_path = &#34;&#34;
+        self.hostname_port = &#34;&#34;
+        self.dc = False  # TODO: A more descriptive name?
+        self.prefilter_band = [None, None]
+        self.plot_raw = True
+        self.plot_signals = True
+        self.show_subject_window = True
+        self.discard_channels = &#34;&#34;
+        self.reference_sub = &#34;&#34;
+        self.show_proto_rectangle = False
+        self.show_notch_filters = False
+
+        self.signal_scheme = Scheme()
+        self.sequence_scheme = Scheme()
+        self.blocks = BlockDict()
+        self.groups = GroupDict()
+
+        self.blocks.setExperiment(self)
+        self.groups.setExperiment(self)
+
+        self._view = None
+    
+    def checkName(self, name: str):
+        &#34;&#34;&#34;Check if a name is appropriate for adding a new block or group.
+        Returns a bool (name good or not) and a reason why the name is not good (or None).
+        &#34;&#34;&#34;
+        if name == &#34;&#34;:
+            return (False, &#34;Name cannot be blank.&#34;)
+        
+        if &#34; &#34; in name:
+            return (False, &#34;Name cannot contain spaces.&#34;)
+
+        match = re.search(r&#34;([^A-Za-z0-9_])&#34;, name)
+        if match:
+            return (False, &#34;Illegal character &#39;{}&#39;&#34;.format(match.group(0)))
+
+        if name in self.blocks or name in self.groups:
+            return (False, &#34;Name already in use.&#34;)
+        
+        return (True, None)
+
+    # Access functions =================================================================================================
+    def view(self):
+        return self._view
+    
+    def setView(self, view, /):
+        view.setModel(self)
+    
+    # Serialization ====================================================================================================
+    def export(self) -&gt; str:
+        data = {&#34;NeurofeedbackSignalSpecs&#34;: self}
+
+        enc_hooks = {
+            Experiment: Experiment.nfb_export_data,
+            Block: Block.nfb_export_data,
+            Group: Group.nfb_export_data,
+            bool: lambda x: int(x)
+        }
+
+        encoder = xml.XMLEncoder(separator=&#34;\n&#34;, indent=&#34;\t&#34;, metadata=False, hooks=enc_hooks)
+
+        return encoder.encode(data)
+
+    def save(self) -&gt; str:
+        encoder = json.JSONEncoder(separator=&#34;\n&#34;, indent=&#34;\t&#34;, hooks=hooks.qt)
+
+        return encoder.encode(self)
+    
+    @classmethod
+    def load(cls, data: str):
+        decoder = json.JSONDecoder(hooks=hooks.qt)
+        return decoder.decode(data)
+
+    @classmethod
+    def import_xml(cls, xml_string: str):
+        &#34;&#34;&#34;Decode an XML string containing an exported file into an nfb_studio experiment.
+        Decoding xml files is an imperfect science, since nfb_studio has more information, like node position, their
+        connections, and so on. This function does it&#39;s best to at least produce the correct experiment flow.
+        &#34;&#34;&#34;
+        ex = cls()
+
+        # Decode the string --------------------------------------------------------------------------------------------
+        decoder = xml.XMLDecoder(force_list=(&#34;DerivedSignal&#34;, &#34;CompositeSignal&#34;, &#34;FeedbackProtocol&#34;, &#34;PGroup&#34;, &#34;s&#34;))
+        root = decoder.decode(xml_string)
+        data = next(iter(root.values()))  # Get first (and only) value in root
+
+        # Add empty signal/block/group/sequence lists if they are missing ----------------------------------------------
+        if data[&#34;vSignals&#34;] is None:
+            data[&#34;vSignals&#34;] = {
+                &#34;DerivedSignal&#34;: [],
+                &#34;CompositeSignal&#34;: [],
+            }
+        else:
+            if &#34;DerivedSignal&#34; not in data[&#34;vSignals&#34;]:
+                data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;] = []
+            if &#34;CompositeSignal&#34; not in data[&#34;vSignals&#34;]:
+                data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = []
+        
+        if data[&#34;vProtocols&#34;] is None:
+            data[&#34;vProtocols&#34;] = {&#34;FeedbackProtocol&#34;: []}
+        if data[&#34;vPGroups&#34;] is None:
+            data[&#34;vPGroups&#34;] = {&#34;PGroup&#34;: []}
+        if data[&#34;vPSequence&#34;] is None:
+            data[&#34;vPSequence&#34;] = {&#34;s&#34;: []}
+
+        # Decode main experiment properties ----------------------------------------------------------------------------
+        ex.name = data[&#34;sExperimentName&#34;]
+        ex.lsl_stream_name = data[&#34;sStreamName&#34;]
+
+        if &#34;sPrefilterBand&#34; in data:
+            prefilter_band_values = data[&#34;sPrefilterBand&#34;].split(&#34; &#34;)
+            if prefilter_band_values[0] == &#34;None&#34;:
+                ex.prefilter_band[0] = None
+            else:
+                ex.prefilter_band[0] = float(prefilter_band_values[0])
+
+            if prefilter_band_values[1] == &#34;None&#34;:
+                ex.prefilter_band[1] = None
+            else:
+                ex.prefilter_band[1] = float(prefilter_band_values[1])
+
+        ex.dc = bool(float(data[&#34;bDC&#34;]))
+        ex.inlet = data[&#34;sInletType&#34;]
+        ex.raw_data_path = data[&#34;sRawDataFilePath&#34;]
+        ex.hostname_port = data[&#34;sFTHostnamePort&#34;]
+        ex.plot_raw = bool(float(data[&#34;bPlotRaw&#34;]))
+        ex.plot_signals = bool(float(data[&#34;bPlotSignals&#34;]))
+        ex.show_subject_window = bool(float(data.get(&#34;bShowSubjectWindow&#34;, ex.show_subject_window)))
+        ex.discard_channels = data[&#34;sReference&#34;]
+        ex.reference_sub = data[&#34;sReferenceSub&#34;]
+        ex.show_proto_rectangle = bool(float(data.get(&#34;bShowPhotoRectangle&#34;, ex.show_proto_rectangle)))
+        ex.show_notch_filters = bool(float(data.get(&#34;sVizNotchFilters&#34;, ex.show_notch_filters)))
+
+        # Decode signals -----------------------------------------------------------------------------------------------
+        node_pos = [0, 0]
+        node_xdiff = -100  # TODO: Change to a size dependent on node default width
+        node_ydiff = 100
+
+        for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
+            # Assemble the signal front to back, starting with the signal name.
+            # Some nodes may not be present, this loop accounts for it.
+            if &#34;sSignalName&#34; in signal_data:
+                # Create the node and set variables from data
+                n = DerivedSignalExport()
+                n.setSignalName(signal_data[&#34;sSignalName&#34;])
+
+                # Set position and add to scheme
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+            if (signal_data.get(&#34;fAverage&#34;) is not None) or (signal_data.get(&#34;fStdDev&#34;) is not None):
+                last = n
+                n = Standardise()
+                n.setAverage(float(signal_data.get(&#34;fAverage&#34;, n.default_average)))
+                n.setStandardDeviation(float(signal_data.get(&#34;fStdDev&#34;, n.default_standard_deviation)))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if (&#34;fSmoothingFactor&#34; in signal_data) or (&#34;method&#34; in signal_data):
+                last = n
+                n = EnvelopeDetector()
+                n.setSmoothingFactor(float(signal_data.get(&#34;fSmoothingFactor&#34;, n.default_smoothing_factor)))
+                n.setMethod(signal_data.get(&#34;method&#34;, n.default_method))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if (&#34;fBandpassLowHz&#34; in signal_data) or (&#34;fBandpassHighHz&#34; in signal_data):
+                last = n
+                n = BandpassFilter()
+                n.setLowerBound(float(signal_data.get(&#34;fBandpassLowHz&#34;, n.default_lower_bound)))
+                n.setUpperBound(float(signal_data.get(&#34;fBandpassHighHz&#34;, n.default_upper_bound)))
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            if &#34;SpatialFilterMatrix&#34; in signal_data:
+                last = n
+                n = SpatialFilter()
+                n.setMatrixPath(signal_data[&#34;SpatialFilterMatrix&#34;])
+
+                n.setPos(*node_pos)
+                node_pos[0] += node_xdiff
+
+                ex.signal_scheme.addItem(n)
+                ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+            # Unconditionally add LSLInput
+            last = n
+            n = LSLInput()
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+
+            # Bump vertial coordinates to prepare for a new signal
+            node_pos[0] = 0
+            node_pos[1] += node_ydiff
+
+        # Add composite signals separately
+        for comp_data in data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;]:
+            n = CompositeSignalExport()
+            n.setSignalName(comp_data[&#34;sSignalName&#34;])
+            n.setExpression(comp_data[&#34;sExpression&#34;])
+
+            # Set position and add to scheme
+            n.setPos(*node_pos)
+            node_pos[0] = 0
+            node_pos[1] += node_ydiff
+
+            ex.signal_scheme.addItem(n)
+
+        # Decode blocks ------------------------------------------------------------------------------------------------
+        for block_data in data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;]:
+            block = Block.nfb_import_data(block_data)
+            name = block_data[&#34;sProtocolName&#34;]
+            ex.blocks[name] = block
+        
+        # Decode groups ------------------------------------------------------------------------------------------------
+        for group_data in data[&#34;vPGroups&#34;][&#34;PGroup&#34;]:
+            group = Group.nfb_import_data(group_data)
+            name = group_data[&#34;sName&#34;]
+            ex.groups[name] = group
+        
+        # Decode sequence ----------------------------------------------------------------------------------------------
+        node = None
+        node_pos = [0, 0]
+        node_xdiff = 100
+
+        for name in data[&#34;vPSequence&#34;][&#34;s&#34;]:
+            last = node
+
+            if name in ex.blocks:
+                node = BlockNode()
+            else:
+                node = GroupNode()
+
+            node.setTitle(name)
+            node.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.sequence_scheme.addItem(node)
+
+            if last is not None:
+                ex.sequence_scheme.connect_nodes(last.outputs[0], node.inputs[0])
+
+        # --------------------------------------------------------------------------------------------------------------
+        return ex
+
+    def updateView(self):
+        view = self.view()
+        if view is None:
+            return
+
+        # General properties -------------------------------------------------------------------------------------------
+        general = view.general_view
+        
+        general.name.setText(self.name)
+        general.inlet_type.setCurrentText(general.inlet_type_import_values[self.inlet])
+        general.lsl_stream_name.setCurrentText(self.lsl_stream_name)
+        general.lsl_filename.setText(self.raw_data_path)
+        general.hostname_port.setText(self.hostname_port)
+        general.dc.setChecked(self.dc)
+
+        if self.prefilter_band[0] is None:
+            general.prefilterBandLow_enable.setChecked(False)
+            general.prefilterBandLow_input.setValue(0)
+        else:
+            general.prefilterBandLow_enable.setChecked(True)
+            general.prefilterBandLow_input.setValue(self.prefilter_band[0])
+        
+        if self.prefilter_band[1] is None:
+            general.prefilterBandHigh_enable.setChecked(False)
+            general.prefilterBandHigh_input.setValue(0)
+        else:
+            general.prefilterBandHigh_enable.setChecked(True)
+            general.prefilterBandHigh_input.setValue(self.prefilter_band[1])
+        
+        general.plot_raw.setChecked(self.plot_raw)
+        general.plot_signals.setChecked(self.plot_signals)
+        general.show_subject_window.setChecked(self.show_subject_window)
+        general.discard_channels.setText(self.discard_channels)
+        general.reference_sub.setText(self.reference_sub)
+        general.show_proto_rectangle.setChecked(self.show_proto_rectangle)
+        general.show_notch_filters.setChecked(self.show_notch_filters)
+
+        # Blocks and groups --------------------------------------------------------------------------------------------
+        while view.tree.blocks.rowCount() &gt; 0:
+            name = view.tree.blocks.child(0).text(0)
+            view.tree.blocks.takeChild(0)
+            view.blocks.removeWidget(name)
+            view.sequence_editor.toolbox().removeItem(name)
+        
+        while view.tree.groups.rowCount() &gt; 0:
+            name = view.tree.groups.child(0).text(0)
+            view.tree.groups.takeChild(0)
+            view.groups.removeWidget(name)
+            view.sequence_editor.toolbox().removeItem(name)
+
+        for name in self.blocks:
+            self.blocks.itemAdded.emit(name)
+        
+        for name in self.groups:
+            self.groups.itemAdded.emit(name)
+
+    def serialize(self) -&gt; dict:
+        return {
+            &#34;name&#34;: self.name,
+            &#34;lsl_stream_name&#34;: self.lsl_stream_name,
+            &#34;inlet&#34;: self.inlet,
+            &#34;raw_data_path&#34;: self.raw_data_path,
+            &#34;hostname_port&#34;: self.hostname_port,
+            &#34;dc&#34;: self.dc,
+            &#34;prefilter_band_lower_bound&#34;: self.prefilter_band[0],
+            &#34;prefilter_band_upper_bound&#34;: self.prefilter_band[1],
+            &#34;plot_raw&#34;: self.plot_raw,
+            &#34;plot_signals&#34;: self.plot_signals,
+            &#34;show_subject_window&#34;: self.show_subject_window,
+            &#34;discard_channels&#34;: self.discard_channels,
+            &#34;reference_sub&#34;: self.reference_sub,
+            &#34;show_proto_rectangle&#34;: self.show_proto_rectangle,
+            &#34;show_notch_filters&#34;: self.show_notch_filters,
+            &#34;signal_scheme&#34;: self.signal_scheme,
+            &#34;sequence_scheme&#34;: self.sequence_scheme,
+            &#34;blocks&#34;: self.blocks,
+            &#34;groups&#34;: self.groups,
+        }
+    
+    @classmethod
+    def deserialize(cls, data: dict):
+        obj = cls()
+
+        obj.name = data[&#34;name&#34;]
+        obj.lsl_stream_name = data[&#34;lsl_stream_name&#34;]
+        obj.inlet = data[&#34;inlet&#34;]
+        obj.raw_data_path = data[&#34;raw_data_path&#34;]
+        obj.hostname_port = data[&#34;hostname_port&#34;]
+        obj.dc = data[&#34;dc&#34;]
+        obj.prefilter_band = (data[&#34;prefilter_band_lower_bound&#34;], data[&#34;prefilter_band_upper_bound&#34;])
+        obj.plot_raw = data[&#34;plot_raw&#34;]
+        obj.plot_signals = data[&#34;plot_signals&#34;]
+        obj.show_subject_window = data[&#34;show_subject_window&#34;]
+        obj.discard_channels = data[&#34;discard_channels&#34;]
+        obj.reference_sub = data[&#34;reference_sub&#34;]
+        obj.show_proto_rectangle = data[&#34;show_proto_rectangle&#34;]
+        obj.show_notch_filters = data[&#34;show_notch_filters&#34;]
+        obj.signal_scheme = data[&#34;signal_scheme&#34;]
+        obj.sequence_scheme = data[&#34;sequence_scheme&#34;]
+        obj.blocks = data[&#34;blocks&#34;]
+        obj.groups = data[&#34;groups&#34;]
+
+        obj.blocks.setExperiment(obj)
+        obj.groups.setExperiment(obj)
+
+        return obj
+
+    def nfb_export_data(self) -&gt; dict:
+        print(&#34;?&#34;)
+        print(list(self.sequence_scheme.graph.sequences()))
+        for seq in self.sequence_scheme.graph.sequences():
+            node = [n for n in seq.nodes if len(n.inputs) == 0 or len(list(n.inputs[0].edges)) == 0][0]
+            # while True:
+            #     print(node.title(), end=&#34; &#34;)
+            #     if len(node.outputs) == 0 or len(list(node.outputs[0].edges)) == 0:
+            #         break
+            #     node = list(node.outputs[0].edges)[0].targetNode()
+            # print(&#34;&#34;)
+
+        &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
+        data = {}
+
+        # General ------------------------------------------------------------------------------------------------------
+        data[&#34;sExperimentName&#34;] = self.name
+        data[&#34;sStreamName&#34;] = self.lsl_stream_name
+        data[&#34;sPrefilterBand&#34;] = str(self.prefilter_band[0]) + &#34; &#34; + str(self.prefilter_band[1])
+        data[&#34;bDC&#34;] = self.dc
+        data[&#34;sInletType&#34;] = self.inlet
+        data[&#34;sRawDataFilePath&#34;] = self.raw_data_path
+        data[&#34;sFTHostnamePort&#34;] = self.hostname_port
+        data[&#34;bPlotRaw&#34;] = self.plot_raw
+        data[&#34;bPlotSignals&#34;] = self.plot_signals
+        data[&#34;bPlotSourceSpace&#34;] = 0
+        data[&#34;bShowSubjectWindow&#34;] = self.show_subject_window
+        data[&#34;fRewardPeriodS&#34;] = 0.25
+        data[&#34;sReference&#34;] = self.discard_channels
+        data[&#34;sReferenceSub&#34;] = self.reference_sub
+        data[&#34;bUseExpyriment&#34;] = 0
+        data[&#34;bShowPhotoRectangle&#34;] = self.show_proto_rectangle
+        data[&#34;sVizNotchFilters&#34;] = self.show_notch_filters
+
+        # Blocks -------------------------------------------------------------------------------------------------------
+        data[&#34;vProtocols&#34;] = {
+            &#34;FeedbackProtocol&#34;: []
+        }
+
+        for name in self.blocks:
+            block = self.blocks[name]
+
+            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;].append(block.nfb_export_data())  # Add other information
+            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;][-1][&#34;sProtocolName&#34;] = name  # Add name
+
+        # Groups -------------------------------------------------------------------------------------------------------
+        data[&#34;vPGroups&#34;] = {
+            &#34;PGroup&#34;: list(self.groups)
+        }
+
+        for name in self.groups:
+            group = self.groups[name]
+
+            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;].append(group.nfb_export_data())  # Add other information
+            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;][-1][&#34;sName&#34;] = name  # Add name
+
+        # Derived Signals ----------------------------------------------------------------------------------------------
+        signals = []
+
+        # Build a list of lists of nodes (e.g. list of sequences)
+        for node in self.signal_scheme.graph.nodes:
+            if isinstance(node, DerivedSignalExport):
+                signal = []
+                n = node
+
+                while True:
+                    signal.append(n)
+
+                    if len(n.inputs) == 0:
+                        break
+                    
+                    n = list(n.inputs[0].edges)[0].sourceNode()
+                
+                signals.append(signal)
+        
+        # Convert list of lists of nodes to a list of serialized signals
+        for i in range(len(signals)):
+            signal = {}
+
+            for node in signals[i]:
+                node.add_nfb_export_data(signal)
+            
+            signals[i] = signal
+
+        data[&#34;vSignals&#34;] = {
+            &#34;DerivedSignal&#34;: signals
+        }
+
+        # Composite signals --------------------------------------------------------------------------------------------
+        signals = []
+
+        for node in self.signal_scheme.graph.nodes:
+            if isinstance(node, CompositeSignalExport):
+                signal = {}
+                node.add_nfb_export_data(signal)
+                signals.append(signal)
+        
+        data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = signals
+
+        # Experiment sequence ------------------------------------------------------------------------------------------
+        sequence_nodes = []
+
+        # Build a list of lists of nodes (e.g. list of sequences)
+        for n in self.sequence_scheme.graph.nodes:
+            if isinstance(n, SequenceExport):
+                break
+
+        while True:
+            if len(n.inputs[0].edges) == 0:
+                break
+
+            n = list(n.inputs[0].edges)[0].sourceNode()
+            sequence_nodes.insert(0, n)
+
+        # Convert a sequence of nodes to a sequence of block names
+        sequence = [n.title() for n in sequence_nodes]
+
+        data[&#34;vPSequence&#34;] = {
+            &#34;s&#34;: sequence
+        }
+
+        return data</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.experiment.Experiment.inlet_type_export_values"><code class="name">var <span class="ident">inlet_type_export_values</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="nfb_studio.experiment.Experiment.inlet_type_import_values"><code class="name">var <span class="ident">inlet_type_import_values</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="nfb_studio.experiment.Experiment.deserialize"><code class="name flex">
+<span>def <span class="ident">deserialize</span></span>(<span>data: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def deserialize(cls, data: dict):
+    obj = cls()
+
+    obj.name = data[&#34;name&#34;]
+    obj.lsl_stream_name = data[&#34;lsl_stream_name&#34;]
+    obj.inlet = data[&#34;inlet&#34;]
+    obj.raw_data_path = data[&#34;raw_data_path&#34;]
+    obj.hostname_port = data[&#34;hostname_port&#34;]
+    obj.dc = data[&#34;dc&#34;]
+    obj.prefilter_band = (data[&#34;prefilter_band_lower_bound&#34;], data[&#34;prefilter_band_upper_bound&#34;])
+    obj.plot_raw = data[&#34;plot_raw&#34;]
+    obj.plot_signals = data[&#34;plot_signals&#34;]
+    obj.show_subject_window = data[&#34;show_subject_window&#34;]
+    obj.discard_channels = data[&#34;discard_channels&#34;]
+    obj.reference_sub = data[&#34;reference_sub&#34;]
+    obj.show_proto_rectangle = data[&#34;show_proto_rectangle&#34;]
+    obj.show_notch_filters = data[&#34;show_notch_filters&#34;]
+    obj.signal_scheme = data[&#34;signal_scheme&#34;]
+    obj.sequence_scheme = data[&#34;sequence_scheme&#34;]
+    obj.blocks = data[&#34;blocks&#34;]
+    obj.groups = data[&#34;groups&#34;]
+
+    obj.blocks.setExperiment(obj)
+    obj.groups.setExperiment(obj)
+
+    return obj</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.Experiment.import_xml"><code class="name flex">
+<span>def <span class="ident">import_xml</span></span>(<span>xml_string: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Decode an XML string containing an exported file into an nfb_studio experiment.
+Decoding xml files is an imperfect science, since nfb_studio has more information, like node position, their
+connections, and so on. This function does it's best to at least produce the correct experiment flow.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def import_xml(cls, xml_string: str):
+    &#34;&#34;&#34;Decode an XML string containing an exported file into an nfb_studio experiment.
+    Decoding xml files is an imperfect science, since nfb_studio has more information, like node position, their
+    connections, and so on. This function does it&#39;s best to at least produce the correct experiment flow.
+    &#34;&#34;&#34;
+    ex = cls()
+
+    # Decode the string --------------------------------------------------------------------------------------------
+    decoder = xml.XMLDecoder(force_list=(&#34;DerivedSignal&#34;, &#34;CompositeSignal&#34;, &#34;FeedbackProtocol&#34;, &#34;PGroup&#34;, &#34;s&#34;))
+    root = decoder.decode(xml_string)
+    data = next(iter(root.values()))  # Get first (and only) value in root
+
+    # Add empty signal/block/group/sequence lists if they are missing ----------------------------------------------
+    if data[&#34;vSignals&#34;] is None:
+        data[&#34;vSignals&#34;] = {
+            &#34;DerivedSignal&#34;: [],
+            &#34;CompositeSignal&#34;: [],
+        }
+    else:
+        if &#34;DerivedSignal&#34; not in data[&#34;vSignals&#34;]:
+            data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;] = []
+        if &#34;CompositeSignal&#34; not in data[&#34;vSignals&#34;]:
+            data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = []
+    
+    if data[&#34;vProtocols&#34;] is None:
+        data[&#34;vProtocols&#34;] = {&#34;FeedbackProtocol&#34;: []}
+    if data[&#34;vPGroups&#34;] is None:
+        data[&#34;vPGroups&#34;] = {&#34;PGroup&#34;: []}
+    if data[&#34;vPSequence&#34;] is None:
+        data[&#34;vPSequence&#34;] = {&#34;s&#34;: []}
+
+    # Decode main experiment properties ----------------------------------------------------------------------------
+    ex.name = data[&#34;sExperimentName&#34;]
+    ex.lsl_stream_name = data[&#34;sStreamName&#34;]
+
+    if &#34;sPrefilterBand&#34; in data:
+        prefilter_band_values = data[&#34;sPrefilterBand&#34;].split(&#34; &#34;)
+        if prefilter_band_values[0] == &#34;None&#34;:
+            ex.prefilter_band[0] = None
+        else:
+            ex.prefilter_band[0] = float(prefilter_band_values[0])
+
+        if prefilter_band_values[1] == &#34;None&#34;:
+            ex.prefilter_band[1] = None
+        else:
+            ex.prefilter_band[1] = float(prefilter_band_values[1])
+
+    ex.dc = bool(float(data[&#34;bDC&#34;]))
+    ex.inlet = data[&#34;sInletType&#34;]
+    ex.raw_data_path = data[&#34;sRawDataFilePath&#34;]
+    ex.hostname_port = data[&#34;sFTHostnamePort&#34;]
+    ex.plot_raw = bool(float(data[&#34;bPlotRaw&#34;]))
+    ex.plot_signals = bool(float(data[&#34;bPlotSignals&#34;]))
+    ex.show_subject_window = bool(float(data.get(&#34;bShowSubjectWindow&#34;, ex.show_subject_window)))
+    ex.discard_channels = data[&#34;sReference&#34;]
+    ex.reference_sub = data[&#34;sReferenceSub&#34;]
+    ex.show_proto_rectangle = bool(float(data.get(&#34;bShowPhotoRectangle&#34;, ex.show_proto_rectangle)))
+    ex.show_notch_filters = bool(float(data.get(&#34;sVizNotchFilters&#34;, ex.show_notch_filters)))
+
+    # Decode signals -----------------------------------------------------------------------------------------------
+    node_pos = [0, 0]
+    node_xdiff = -100  # TODO: Change to a size dependent on node default width
+    node_ydiff = 100
+
+    for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
+        # Assemble the signal front to back, starting with the signal name.
+        # Some nodes may not be present, this loop accounts for it.
+        if &#34;sSignalName&#34; in signal_data:
+            # Create the node and set variables from data
+            n = DerivedSignalExport()
+            n.setSignalName(signal_data[&#34;sSignalName&#34;])
+
+            # Set position and add to scheme
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+        if (signal_data.get(&#34;fAverage&#34;) is not None) or (signal_data.get(&#34;fStdDev&#34;) is not None):
+            last = n
+            n = Standardise()
+            n.setAverage(float(signal_data.get(&#34;fAverage&#34;, n.default_average)))
+            n.setStandardDeviation(float(signal_data.get(&#34;fStdDev&#34;, n.default_standard_deviation)))
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+        if (&#34;fSmoothingFactor&#34; in signal_data) or (&#34;method&#34; in signal_data):
+            last = n
+            n = EnvelopeDetector()
+            n.setSmoothingFactor(float(signal_data.get(&#34;fSmoothingFactor&#34;, n.default_smoothing_factor)))
+            n.setMethod(signal_data.get(&#34;method&#34;, n.default_method))
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+        if (&#34;fBandpassLowHz&#34; in signal_data) or (&#34;fBandpassHighHz&#34; in signal_data):
+            last = n
+            n = BandpassFilter()
+            n.setLowerBound(float(signal_data.get(&#34;fBandpassLowHz&#34;, n.default_lower_bound)))
+            n.setUpperBound(float(signal_data.get(&#34;fBandpassHighHz&#34;, n.default_upper_bound)))
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+        if &#34;SpatialFilterMatrix&#34; in signal_data:
+            last = n
+            n = SpatialFilter()
+            n.setMatrixPath(signal_data[&#34;SpatialFilterMatrix&#34;])
+
+            n.setPos(*node_pos)
+            node_pos[0] += node_xdiff
+
+            ex.signal_scheme.addItem(n)
+            ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+        # Unconditionally add LSLInput
+        last = n
+        n = LSLInput()
+
+        n.setPos(*node_pos)
+        node_pos[0] += node_xdiff
+
+        ex.signal_scheme.addItem(n)
+        ex.signal_scheme.connect_nodes(n.outputs[0], last.inputs[0])
+
+        # Bump vertial coordinates to prepare for a new signal
+        node_pos[0] = 0
+        node_pos[1] += node_ydiff
+
+    # Add composite signals separately
+    for comp_data in data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;]:
+        n = CompositeSignalExport()
+        n.setSignalName(comp_data[&#34;sSignalName&#34;])
+        n.setExpression(comp_data[&#34;sExpression&#34;])
+
+        # Set position and add to scheme
+        n.setPos(*node_pos)
+        node_pos[0] = 0
+        node_pos[1] += node_ydiff
+
+        ex.signal_scheme.addItem(n)
+
+    # Decode blocks ------------------------------------------------------------------------------------------------
+    for block_data in data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;]:
+        block = Block.nfb_import_data(block_data)
+        name = block_data[&#34;sProtocolName&#34;]
+        ex.blocks[name] = block
+    
+    # Decode groups ------------------------------------------------------------------------------------------------
+    for group_data in data[&#34;vPGroups&#34;][&#34;PGroup&#34;]:
+        group = Group.nfb_import_data(group_data)
+        name = group_data[&#34;sName&#34;]
+        ex.groups[name] = group
+    
+    # Decode sequence ----------------------------------------------------------------------------------------------
+    node = None
+    node_pos = [0, 0]
+    node_xdiff = 100
+
+    for name in data[&#34;vPSequence&#34;][&#34;s&#34;]:
+        last = node
+
+        if name in ex.blocks:
+            node = BlockNode()
+        else:
+            node = GroupNode()
+
+        node.setTitle(name)
+        node.setPos(*node_pos)
+        node_pos[0] += node_xdiff
+
+        ex.sequence_scheme.addItem(node)
+
+        if last is not None:
+            ex.sequence_scheme.connect_nodes(last.outputs[0], node.inputs[0])
+
+    # --------------------------------------------------------------------------------------------------------------
+    return ex</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.Experiment.load"><code class="name flex">
+<span>def <span class="ident">load</span></span>(<span>data: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def load(cls, data: str):
+    decoder = json.JSONDecoder(hooks=hooks.qt)
+    return decoder.decode(data)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="nfb_studio.experiment.Experiment.checkName"><code class="name flex">
+<span>def <span class="ident">checkName</span></span>(<span>self, name: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if a name is appropriate for adding a new block or group.
+Returns a bool (name good or not) and a reason why the name is not good (or None).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def checkName(self, name: str):
+    &#34;&#34;&#34;Check if a name is appropriate for adding a new block or group.
+    Returns a bool (name good or not) and a reason why the name is not good (or None).
+    &#34;&#34;&#34;
+    if name == &#34;&#34;:
+        return (False, &#34;Name cannot be blank.&#34;)
+    
+    if &#34; &#34; in name:
+        return (False, &#34;Name cannot contain spaces.&#34;)
+
+    match = re.search(r&#34;([^A-Za-z0-9_])&#34;, name)
+    if match:
+        return (False, &#34;Illegal character &#39;{}&#39;&#34;.format(match.group(0)))
+
+    if name in self.blocks or name in self.groups:
+        return (False, &#34;Name already in use.&#34;)
+    
+    return (True, None)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.Experiment.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export(self) -&gt; str:
+    data = {&#34;NeurofeedbackSignalSpecs&#34;: self}
+
+    enc_hooks = {
+        Experiment: Experiment.nfb_export_data,
+        Block: Block.nfb_export_data,
+        Group: Group.nfb_export_data,
+        bool: lambda x: int(x)
+    }
+
+    encoder = xml.XMLEncoder(separator=&#34;\n&#34;, indent=&#34;\t&#34;, metadata=False, hooks=enc_hooks)
+
+    return encoder.encode(data)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.Experiment.nfb_export_data"><code class="name flex">
+<span>def <span class="ident">nfb_export_data</span></span>(<span>self) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nfb_export_data(self) -&gt; dict:
+    print(&#34;?&#34;)
+    print(list(self.sequence_scheme.graph.sequences()))
+    for seq in self.sequence_scheme.graph.sequences():
+        node = [n for n in seq.nodes if len(n.inputs) == 0 or len(list(n.inputs[0].edges)) == 0][0]
+        # while True:
+        #     print(node.title(), end=&#34; &#34;)
+        #     if len(node.outputs) == 0 or len(list(node.outputs[0].edges)) == 0:
+        #         break
+        #     node = list(node.outputs[0].edges)[0].targetNode()
+        # print(&#34;&#34;)
+
+    &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
+    data = {}
+
+    # General ------------------------------------------------------------------------------------------------------
+    data[&#34;sExperimentName&#34;] = self.name
+    data[&#34;sStreamName&#34;] = self.lsl_stream_name
+    data[&#34;sPrefilterBand&#34;] = str(self.prefilter_band[0]) + &#34; &#34; + str(self.prefilter_band[1])
+    data[&#34;bDC&#34;] = self.dc
+    data[&#34;sInletType&#34;] = self.inlet
+    data[&#34;sRawDataFilePath&#34;] = self.raw_data_path
+    data[&#34;sFTHostnamePort&#34;] = self.hostname_port
+    data[&#34;bPlotRaw&#34;] = self.plot_raw
+    data[&#34;bPlotSignals&#34;] = self.plot_signals
+    data[&#34;bPlotSourceSpace&#34;] = 0
+    data[&#34;bShowSubjectWindow&#34;] = self.show_subject_window
+    data[&#34;fRewardPeriodS&#34;] = 0.25
+    data[&#34;sReference&#34;] = self.discard_channels
+    data[&#34;sReferenceSub&#34;] = self.reference_sub
+    data[&#34;bUseExpyriment&#34;] = 0
+    data[&#34;bShowPhotoRectangle&#34;] = self.show_proto_rectangle
+    data[&#34;sVizNotchFilters&#34;] = self.show_notch_filters
+
+    # Blocks -------------------------------------------------------------------------------------------------------
+    data[&#34;vProtocols&#34;] = {
+        &#34;FeedbackProtocol&#34;: []
+    }
+
+    for name in self.blocks:
+        block = self.blocks[name]
+
+        data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;].append(block.nfb_export_data())  # Add other information
+        data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;][-1][&#34;sProtocolName&#34;] = name  # Add name
+
+    # Groups -------------------------------------------------------------------------------------------------------
+    data[&#34;vPGroups&#34;] = {
+        &#34;PGroup&#34;: list(self.groups)
+    }
+
+    for name in self.groups:
+        group = self.groups[name]
+
+        data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;].append(group.nfb_export_data())  # Add other information
+        data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;][-1][&#34;sName&#34;] = name  # Add name
+
+    # Derived Signals ----------------------------------------------------------------------------------------------
+    signals = []
+
+    # Build a list of lists of nodes (e.g. list of sequences)
+    for node in self.signal_scheme.graph.nodes:
+        if isinstance(node, DerivedSignalExport):
+            signal = []
+            n = node
+
+            while True:
+                signal.append(n)
+
+                if len(n.inputs) == 0:
+                    break
+                
+                n = list(n.inputs[0].edges)[0].sourceNode()
+            
+            signals.append(signal)
+    
+    # Convert list of lists of nodes to a list of serialized signals
+    for i in range(len(signals)):
+        signal = {}
+
+        for node in signals[i]:
+            node.add_nfb_export_data(signal)
+        
+        signals[i] = signal
+
+    data[&#34;vSignals&#34;] = {
+        &#34;DerivedSignal&#34;: signals
+    }
+
+    # Composite signals --------------------------------------------------------------------------------------------
+    signals = []
+
+    for node in self.signal_scheme.graph.nodes:
+        if isinstance(node, CompositeSignalExport):
+            signal = {}
+            node.add_nfb_export_data(signal)
+            signals.append(signal)
+    
+    data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = signals
+
+    # Experiment sequence ------------------------------------------------------------------------------------------
+    sequence_nodes = []
+
+    # Build a list of lists of nodes (e.g. list of sequences)
+    for n in self.sequence_scheme.graph.nodes:
+        if isinstance(n, SequenceExport):
+            break
+
+    while True:
+        if len(n.inputs[0].edges) == 0:
+            break
+
+        n = list(n.inputs[0].edges)[0].sourceNode()
+        sequence_nodes.insert(0, n)
+
+    # Convert a sequence of nodes to a sequence of block names
+    sequence = [n.title() for n in sequence_nodes]
+
+    data[&#34;vPSequence&#34;] = {
+        &#34;s&#34;: sequence
+    }
+
+    return data</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.Experiment.save"><code class="name flex">
+<span>def <span class="ident">save</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save(self) -&gt; str:
+    encoder = json.JSONEncoder(separator=&#34;\n&#34;, indent=&#34;\t&#34;, hooks=hooks.qt)
+
+    return encoder.encode(self)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.Experiment.serialize"><code class="name flex">
+<span>def <span class="ident">serialize</span></span>(<span>self) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def serialize(self) -&gt; dict:
+    return {
+        &#34;name&#34;: self.name,
+        &#34;lsl_stream_name&#34;: self.lsl_stream_name,
+        &#34;inlet&#34;: self.inlet,
+        &#34;raw_data_path&#34;: self.raw_data_path,
+        &#34;hostname_port&#34;: self.hostname_port,
+        &#34;dc&#34;: self.dc,
+        &#34;prefilter_band_lower_bound&#34;: self.prefilter_band[0],
+        &#34;prefilter_band_upper_bound&#34;: self.prefilter_band[1],
+        &#34;plot_raw&#34;: self.plot_raw,
+        &#34;plot_signals&#34;: self.plot_signals,
+        &#34;show_subject_window&#34;: self.show_subject_window,
+        &#34;discard_channels&#34;: self.discard_channels,
+        &#34;reference_sub&#34;: self.reference_sub,
+        &#34;show_proto_rectangle&#34;: self.show_proto_rectangle,
+        &#34;show_notch_filters&#34;: self.show_notch_filters,
+        &#34;signal_scheme&#34;: self.signal_scheme,
+        &#34;sequence_scheme&#34;: self.sequence_scheme,
+        &#34;blocks&#34;: self.blocks,
+        &#34;groups&#34;: self.groups,
+    }</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.Experiment.setView"><code class="name flex">
+<span>def <span class="ident">setView</span></span>(<span>self, view, /)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setView(self, view, /):
+    view.setModel(self)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.Experiment.updateView"><code class="name flex">
+<span>def <span class="ident">updateView</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updateView(self):
+    view = self.view()
+    if view is None:
+        return
+
+    # General properties -------------------------------------------------------------------------------------------
+    general = view.general_view
+    
+    general.name.setText(self.name)
+    general.inlet_type.setCurrentText(general.inlet_type_import_values[self.inlet])
+    general.lsl_stream_name.setCurrentText(self.lsl_stream_name)
+    general.lsl_filename.setText(self.raw_data_path)
+    general.hostname_port.setText(self.hostname_port)
+    general.dc.setChecked(self.dc)
+
+    if self.prefilter_band[0] is None:
+        general.prefilterBandLow_enable.setChecked(False)
+        general.prefilterBandLow_input.setValue(0)
+    else:
+        general.prefilterBandLow_enable.setChecked(True)
+        general.prefilterBandLow_input.setValue(self.prefilter_band[0])
+    
+    if self.prefilter_band[1] is None:
+        general.prefilterBandHigh_enable.setChecked(False)
+        general.prefilterBandHigh_input.setValue(0)
+    else:
+        general.prefilterBandHigh_enable.setChecked(True)
+        general.prefilterBandHigh_input.setValue(self.prefilter_band[1])
+    
+    general.plot_raw.setChecked(self.plot_raw)
+    general.plot_signals.setChecked(self.plot_signals)
+    general.show_subject_window.setChecked(self.show_subject_window)
+    general.discard_channels.setText(self.discard_channels)
+    general.reference_sub.setText(self.reference_sub)
+    general.show_proto_rectangle.setChecked(self.show_proto_rectangle)
+    general.show_notch_filters.setChecked(self.show_notch_filters)
+
+    # Blocks and groups --------------------------------------------------------------------------------------------
+    while view.tree.blocks.rowCount() &gt; 0:
+        name = view.tree.blocks.child(0).text(0)
+        view.tree.blocks.takeChild(0)
+        view.blocks.removeWidget(name)
+        view.sequence_editor.toolbox().removeItem(name)
+    
+    while view.tree.groups.rowCount() &gt; 0:
+        name = view.tree.groups.child(0).text(0)
+        view.tree.groups.takeChild(0)
+        view.groups.removeWidget(name)
+        view.sequence_editor.toolbox().removeItem(name)
+
+    for name in self.blocks:
+        self.blocks.itemAdded.emit(name)
+    
+    for name in self.groups:
+        self.groups.itemAdded.emit(name)</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment.Experiment.view"><code class="name flex">
+<span>def <span class="ident">view</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def view(self):
+    return self._view</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="nfb_studio" href="index.html">nfb_studio</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="nfb_studio.experiment.Experiment" href="#nfb_studio.experiment.Experiment">Experiment</a></code></h4>
+<ul class="">
+<li><code><a title="nfb_studio.experiment.Experiment.checkName" href="#nfb_studio.experiment.Experiment.checkName">checkName</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.deserialize" href="#nfb_studio.experiment.Experiment.deserialize">deserialize</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.export" href="#nfb_studio.experiment.Experiment.export">export</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.import_xml" href="#nfb_studio.experiment.Experiment.import_xml">import_xml</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.inlet_type_export_values" href="#nfb_studio.experiment.Experiment.inlet_type_export_values">inlet_type_export_values</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.inlet_type_import_values" href="#nfb_studio.experiment.Experiment.inlet_type_import_values">inlet_type_import_values</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.load" href="#nfb_studio.experiment.Experiment.load">load</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.nfb_export_data" href="#nfb_studio.experiment.Experiment.nfb_export_data">nfb_export_data</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.save" href="#nfb_studio.experiment.Experiment.save">save</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.serialize" href="#nfb_studio.experiment.Experiment.serialize">serialize</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.setView" href="#nfb_studio.experiment.Experiment.setView">setView</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.updateView" href="#nfb_studio.experiment.Experiment.updateView">updateView</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.view" href="#nfb_studio.experiment.Experiment.view">view</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
+</footer>
+</body>
+</html>
