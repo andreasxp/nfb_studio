@@ -116,18 +116,15 @@ class Graph(GraphicsItemGroup):
 
                     n = node
                     while True:
-                        print(n.title(), end=&#34; &#34;)
                         if len(n.outputs) == 0 or len(list(n.outputs[0].edges)) == 0:
                             break
                         n = list(n.outputs[0].edges)[0].targetNode()
-                    print(&#34;&#34;)
                     yield sequence
                     has_sequences = True
         
         if not has_sequences:
             result = Graph()
             result.add(node)
-            print(&#34;Final:&#34;, node.title())
             yield result
     
     def sequences(self):
@@ -139,7 +136,6 @@ class Graph(GraphicsItemGroup):
             if len(node.inputs) == 0 or len(list(node.inputs[0].edges)) == 0:
                 for sequence in self.sequences_from(node):
                     yield sequence
-                    print(&#34;===============================&#34;)
 
     # Selection ========================================================================================================
     def selectAll(self):
@@ -371,18 +367,15 @@ class Graph(GraphicsItemGroup):
 
                     n = node
                     while True:
-                        print(n.title(), end=&#34; &#34;)
                         if len(n.outputs) == 0 or len(list(n.outputs[0].edges)) == 0:
                             break
                         n = list(n.outputs[0].edges)[0].targetNode()
-                    print(&#34;&#34;)
                     yield sequence
                     has_sequences = True
         
         if not has_sequences:
             result = Graph()
             result.add(node)
-            print(&#34;Final:&#34;, node.title())
             yield result
     
     def sequences(self):
@@ -394,7 +387,6 @@ class Graph(GraphicsItemGroup):
             if len(node.inputs) == 0 or len(list(node.inputs[0].edges)) == 0:
                 for sequence in self.sequences_from(node):
                     yield sequence
-                    print(&#34;===============================&#34;)
 
     # Selection ========================================================================================================
     def selectAll(self):
@@ -755,8 +747,7 @@ the first node does not have any inputs, the last one does not have any outputs.
     for node in self.nodes:
         if len(node.inputs) == 0 or len(list(node.inputs[0].edges)) == 0:
             for sequence in self.sequences_from(node):
-                yield sequence
-                print(&#34;===============================&#34;)</code></pre>
+                yield sequence</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.scheme.graph.Graph.sequences_from"><code class="name flex">
@@ -786,18 +777,15 @@ the last node does not have any outputs.</p></div>
 
                 n = node
                 while True:
-                    print(n.title(), end=&#34; &#34;)
                     if len(n.outputs) == 0 or len(list(n.outputs[0].edges)) == 0:
                         break
                     n = list(n.outputs[0].edges)[0].targetNode()
-                print(&#34;&#34;)
                 yield sequence
                 has_sequences = True
     
     if not has_sequences:
         result = Graph()
         result.add(node)
-        print(&#34;Final:&#34;, node.title())
         yield result</code></pre>
 </details>
 </dd>

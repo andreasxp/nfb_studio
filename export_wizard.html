@@ -26,12 +26,14 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from PySide2.QtWidgets import QWizard, QWizardPage, QButtonGroup, QVBoxLayout, QRadioButton
+<pre><code class="python">from PySide2.QtWidgets import QWizard, QWizardPage, QButtonGroup, QVBoxLayout, QRadioButton, QFileDialog, QLabel
+
+from .util import FileSelect
 
 
 class SelectSequencePage(QWizardPage):
-    def __init__(self, parent, scheme):
-        super().__init__(parent)
+    def __init__(self, scheme):
+        super().__init__()
         self.sequence = None
 
         self.setLayout(QVBoxLayout())
@@ -76,16 +78,48 @@ class SelectSequencePage(QWizardPage):
         self.layout().addWidget(scheme.getView())
 
 
+class FilePage(QWizardPage):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        self.file_select = FileSelect()
+        dialog = QFileDialog()
+        dialog.setDefaultSuffix(&#34;.xml&#34;)
+        dialog.setAcceptMode(dialog.AcceptSave)
+        dialog.setWindowTitle(&#34;Save exported experiment&#34;)
+        dialog.setNameFilter(&#34;XML Files (*.xml)&#34;)
+        self.file_select.setDialog(dialog)
+
+        layout.addWidget(QLabel(&#34;Location of exported experiment file:&#34;))
+        layout.addWidget(self.file_select)
+
+
 class ExportWizard(QWizard):
     &#34;&#34;&#34;A wizard responsible for guiding the user through the process of exporting an experiment.&#34;&#34;&#34;
     def __init__(self, parent, experiment):
         super().__init__(parent)
         self.setWindowTitle(&#34;Experiment Export&#34;)
-        self.sequence_page = SelectSequencePage(self, experiment.sequence_scheme)
-        self.addPage(self.sequence_page)
+        self.sequence_page = None
+        self.file_page = FilePage()
+
+        self.preselected_sequence = None
+        sequences = list(experiment.sequence_scheme.graph.sequences())
+        if len(sequences) == 1:
+            # If only one sequence is possible, skip the sequence select window.
+            self.preselected_sequence = next(iter(sequences))
+        else:
+            self.sequence_page = SelectSequencePage(experiment.sequence_scheme)
+            self.addPage(self.sequence_page)
+
+        self.addPage(self.file_page)
 
     def sequence(self):
-        return self.sequence_page.sequence</code></pre>
+        return self.preselected_sequence or self.sequence_page.sequence
+
+    def savePath(self):
+        return self.file_page.file_select.text()</code></pre>
 </details>
 </section>
 <section>
@@ -112,11 +146,25 @@ class ExportWizard(QWizard):
     def __init__(self, parent, experiment):
         super().__init__(parent)
         self.setWindowTitle(&#34;Experiment Export&#34;)
-        self.sequence_page = SelectSequencePage(self, experiment.sequence_scheme)
-        self.addPage(self.sequence_page)
+        self.sequence_page = None
+        self.file_page = FilePage()
+
+        self.preselected_sequence = None
+        sequences = list(experiment.sequence_scheme.graph.sequences())
+        if len(sequences) == 1:
+            # If only one sequence is possible, skip the sequence select window.
+            self.preselected_sequence = next(iter(sequences))
+        else:
+            self.sequence_page = SelectSequencePage(experiment.sequence_scheme)
+            self.addPage(self.sequence_page)
+
+        self.addPage(self.file_page)
 
     def sequence(self):
-        return self.sequence_page.sequence</code></pre>
+        return self.preselected_sequence or self.sequence_page.sequence
+
+    def savePath(self):
+        return self.file_page.file_select.text()</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -136,6 +184,19 @@ class ExportWizard(QWizard):
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="nfb_studio.export_wizard.ExportWizard.savePath"><code class="name flex">
+<span>def <span class="ident">savePath</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def savePath(self):
+    return self.file_page.file_select.text()</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.export_wizard.ExportWizard.sequence"><code class="name flex">
 <span>def <span class="ident">sequence</span></span>(<span>self)</span>
 </code></dt>
@@ -146,14 +207,57 @@ class ExportWizard(QWizard):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def sequence(self):
-    return self.sequence_page.sequence</code></pre>
+    return self.preselected_sequence or self.sequence_page.sequence</code></pre>
 </details>
+</dd>
+</dl>
+</dd>
+<dt id="nfb_studio.export_wizard.FilePage"><code class="flex name class">
+<span>class <span class="ident">FilePage</span></span>
+<span>(</span><span>parent=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>QWizardPage(self, parent: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FilePage(QWizardPage):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        self.file_select = FileSelect()
+        dialog = QFileDialog()
+        dialog.setDefaultSuffix(&#34;.xml&#34;)
+        dialog.setAcceptMode(dialog.AcceptSave)
+        dialog.setWindowTitle(&#34;Save exported experiment&#34;)
+        dialog.setNameFilter(&#34;XML Files (*.xml)&#34;)
+        self.file_select.setDialog(dialog)
+
+        layout.addWidget(QLabel(&#34;Location of exported experiment file:&#34;))
+        layout.addWidget(self.file_select)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PySide2.QtWidgets.QWizardPage</li>
+<li>PySide2.QtWidgets.QWidget</li>
+<li>PySide2.QtCore.QObject</li>
+<li>PySide2.QtGui.QPaintDevice</li>
+<li>Shiboken.Object</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfb_studio.export_wizard.FilePage.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
 </dl>
 </dd>
 <dt id="nfb_studio.export_wizard.SelectSequencePage"><code class="flex name class">
 <span>class <span class="ident">SelectSequencePage</span></span>
-<span>(</span><span>parent, scheme)</span>
+<span>(</span><span>scheme)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>QWizardPage(self, parent: typing.Union[PySide2.QtWidgets.QWidget, NoneType] = None)</p></div>
@@ -162,8 +266,8 @@ class ExportWizard(QWizard):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class SelectSequencePage(QWizardPage):
-    def __init__(self, parent, scheme):
-        super().__init__(parent)
+    def __init__(self, scheme):
+        super().__init__()
         self.sequence = None
 
         self.setLayout(QVBoxLayout())
@@ -242,8 +346,15 @@ class ExportWizard(QWizard):
 <li>
 <h4><code><a title="nfb_studio.export_wizard.ExportWizard" href="#nfb_studio.export_wizard.ExportWizard">ExportWizard</a></code></h4>
 <ul class="">
+<li><code><a title="nfb_studio.export_wizard.ExportWizard.savePath" href="#nfb_studio.export_wizard.ExportWizard.savePath">savePath</a></code></li>
 <li><code><a title="nfb_studio.export_wizard.ExportWizard.sequence" href="#nfb_studio.export_wizard.ExportWizard.sequence">sequence</a></code></li>
 <li><code><a title="nfb_studio.export_wizard.ExportWizard.staticMetaObject" href="#nfb_studio.export_wizard.ExportWizard.staticMetaObject">staticMetaObject</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="nfb_studio.export_wizard.FilePage" href="#nfb_studio.export_wizard.FilePage">FilePage</a></code></h4>
+<ul class="">
+<li><code><a title="nfb_studio.export_wizard.FilePage.staticMetaObject" href="#nfb_studio.export_wizard.FilePage.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
 </li>
 <li>

@@ -34,12 +34,12 @@ from pathlib import Path
 
 from PySide2.QtCore import Qt, QModelIndex
 from PySide2.QtGui import QStandardItem, QKeySequence
-from PySide2.QtWidgets import QMainWindow, QDockWidget, QStackedWidget, QFileDialog, QMessageBox
+from PySide2.QtWidgets import QMainWindow, QDockWidget, QStackedWidget, QFileDialog, QMessageBox, QScrollArea
 
 from .experiment import Experiment
 
-from .block import Block, BlockView
-from .group import Group, GroupView
+from .block import BlockView
+from .group import GroupView
 from .util import StackedDictWidget
 from .general_view import GeneralView
 from .property_tree import PropertyTree
@@ -113,7 +113,10 @@ class ExperimentView(QMainWindow):
         # Central widget -----------------------------------------------------------------------------------------------
         self.central_widget = QStackedWidget()
         self.setCentralWidget(self.central_widget)
-        self.central_widget.addWidget(self.general_view)
+
+        scrollarea = QScrollArea()
+        scrollarea.setWidget(self.general_view)
+        self.central_widget.addWidget(scrollarea)
         self.central_widget.addWidget(self.signal_editor)
         self.central_widget.addWidget(self.blocks)
         self.central_widget.addWidget(self.groups)
@@ -166,12 +169,12 @@ class ExperimentView(QMainWindow):
         
         # For each block, write it&#39;s data to the experiment
         for name in self.blocks.keys():
-            block_view: BlockView = self.blocks.widget(name)
+            block_view: BlockView = self.blocks.widget(name).widget()
             block_view.updateModel()
         
         # For each group, write its data to the experiment
         for name in self.groups.keys():
-            group_view: GroupView = self.groups.widget(name)
+            group_view: GroupView = self.groups.widget(name).widget()
             group_view.updateModel()
 
         # Write general experiment data
@@ -187,7 +190,9 @@ class ExperimentView(QMainWindow):
         # Add a view to the widget stack
         block_view = BlockView()
         block_view.setModel(self.model().blocks[name])
-        self.blocks.addWidget(name, block_view)
+        scrollarea = QScrollArea()
+        scrollarea.setWidget(block_view)
+        self.blocks.addWidget(name, scrollarea)
 
         # Add a node to draw the sequence
         node = BlockNode()
@@ -207,7 +212,9 @@ class ExperimentView(QMainWindow):
         # Add a view to the widget stack
         group_view = GroupView()
         group_view.setModel(self.model().groups[name])
-        self.groups.addWidget(name, group_view)
+        scrollarea = QScrollArea()
+        scrollarea.setWidget(group_view)
+        self.groups.addWidget(name, scrollarea)
 
         # Add a node to draw the sequence
         node = GroupNode()
@@ -302,7 +309,9 @@ class ExperimentView(QMainWindow):
 
         if item is self.tree.general:
             # General
-            self.central_widget.setCurrentWidget(self.general_view)
+            scrollarea = self.general_view.parent().parent()
+            assert type(scrollarea) == QScrollArea
+            self.central_widget.setCurrentWidget(scrollarea)
         elif item is self.tree.signals:
             # Signal editor
             self.central_widget.setCurrentWidget(self.signal_editor)
@@ -331,19 +340,20 @@ class ExperimentView(QMainWindow):
     def actionExport(self) -&gt; bool:        
         self.updateModel()
         
+        if (len(self.model().sequence_scheme.graph.nodes) == 0):
+            # No nodes in sequence scheme, cancel operation
+            # TODO: A better way to signal to the user that he needs to create a sequence?
+            self.central_widget.setCurrentWidget(self.sequence_editor)
+            return
+
         wiz = ExportWizard(self, self.model())
-        wiz.exec_()
+        ok = wiz.exec_()
         
-        data = self.model().export()
+        if not ok:
+            return  # User cancelled operation
 
-        file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
-        if file_path == &#34;&#34;:
-            return False  # Action was cancelled
-
-        if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
-            file_path = file_path + &#34;.xml&#34;
-
-        with open(file_path, &#34;w&#34;) as file:
+        data = self.model().export(wiz.sequence())
+        with open(wiz.savePath(), &#34;w&#34;) as file:
             file.write(data)
         return True
 
@@ -533,7 +543,10 @@ class ExperimentView(QMainWindow):
         # Central widget -----------------------------------------------------------------------------------------------
         self.central_widget = QStackedWidget()
         self.setCentralWidget(self.central_widget)
-        self.central_widget.addWidget(self.general_view)
+
+        scrollarea = QScrollArea()
+        scrollarea.setWidget(self.general_view)
+        self.central_widget.addWidget(scrollarea)
         self.central_widget.addWidget(self.signal_editor)
         self.central_widget.addWidget(self.blocks)
         self.central_widget.addWidget(self.groups)
@@ -586,12 +599,12 @@ class ExperimentView(QMainWindow):
         
         # For each block, write it&#39;s data to the experiment
         for name in self.blocks.keys():
-            block_view: BlockView = self.blocks.widget(name)
+            block_view: BlockView = self.blocks.widget(name).widget()
             block_view.updateModel()
         
         # For each group, write its data to the experiment
         for name in self.groups.keys():
-            group_view: GroupView = self.groups.widget(name)
+            group_view: GroupView = self.groups.widget(name).widget()
             group_view.updateModel()
 
         # Write general experiment data
@@ -607,7 +620,9 @@ class ExperimentView(QMainWindow):
         # Add a view to the widget stack
         block_view = BlockView()
         block_view.setModel(self.model().blocks[name])
-        self.blocks.addWidget(name, block_view)
+        scrollarea = QScrollArea()
+        scrollarea.setWidget(block_view)
+        self.blocks.addWidget(name, scrollarea)
 
         # Add a node to draw the sequence
         node = BlockNode()
@@ -627,7 +642,9 @@ class ExperimentView(QMainWindow):
         # Add a view to the widget stack
         group_view = GroupView()
         group_view.setModel(self.model().groups[name])
-        self.groups.addWidget(name, group_view)
+        scrollarea = QScrollArea()
+        scrollarea.setWidget(group_view)
+        self.groups.addWidget(name, scrollarea)
 
         # Add a node to draw the sequence
         node = GroupNode()
@@ -722,7 +739,9 @@ class ExperimentView(QMainWindow):
 
         if item is self.tree.general:
             # General
-            self.central_widget.setCurrentWidget(self.general_view)
+            scrollarea = self.general_view.parent().parent()
+            assert type(scrollarea) == QScrollArea
+            self.central_widget.setCurrentWidget(scrollarea)
         elif item is self.tree.signals:
             # Signal editor
             self.central_widget.setCurrentWidget(self.signal_editor)
@@ -751,19 +770,20 @@ class ExperimentView(QMainWindow):
     def actionExport(self) -&gt; bool:        
         self.updateModel()
         
+        if (len(self.model().sequence_scheme.graph.nodes) == 0):
+            # No nodes in sequence scheme, cancel operation
+            # TODO: A better way to signal to the user that he needs to create a sequence?
+            self.central_widget.setCurrentWidget(self.sequence_editor)
+            return
+
         wiz = ExportWizard(self, self.model())
-        wiz.exec_()
+        ok = wiz.exec_()
         
-        data = self.model().export()
+        if not ok:
+            return  # User cancelled operation
 
-        file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
-        if file_path == &#34;&#34;:
-            return False  # Action was cancelled
-
-        if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
-            file_path = file_path + &#34;.xml&#34;
-
-        with open(file_path, &#34;w&#34;) as file:
+        data = self.model().export(wiz.sequence())
+        with open(wiz.savePath(), &#34;w&#34;) as file:
             file.write(data)
         return True
 
@@ -898,19 +918,20 @@ class ExperimentView(QMainWindow):
 <pre><code class="python">def actionExport(self) -&gt; bool:        
     self.updateModel()
     
+    if (len(self.model().sequence_scheme.graph.nodes) == 0):
+        # No nodes in sequence scheme, cancel operation
+        # TODO: A better way to signal to the user that he needs to create a sequence?
+        self.central_widget.setCurrentWidget(self.sequence_editor)
+        return
+
     wiz = ExportWizard(self, self.model())
-    wiz.exec_()
+    ok = wiz.exec_()
     
-    data = self.model().export()
+    if not ok:
+        return  # User cancelled operation
 
-    file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
-    if file_path == &#34;&#34;:
-        return False  # Action was cancelled
-
-    if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
-        file_path = file_path + &#34;.xml&#34;
-
-    with open(file_path, &#34;w&#34;) as file:
+    data = self.model().export(wiz.sequence())
+    with open(wiz.savePath(), &#34;w&#34;) as file:
         file.write(data)
     return True</code></pre>
 </details>
@@ -1069,7 +1090,9 @@ Returns True if file was saved, and False if action was cancelled.</p></div>
 
     if item is self.tree.general:
         # General
-        self.central_widget.setCurrentWidget(self.general_view)
+        scrollarea = self.general_view.parent().parent()
+        assert type(scrollarea) == QScrollArea
+        self.central_widget.setCurrentWidget(scrollarea)
     elif item is self.tree.signals:
         # Signal editor
         self.central_widget.setCurrentWidget(self.signal_editor)
@@ -1246,12 +1269,12 @@ either during prompt or during save.</p></div>
     
     # For each block, write it&#39;s data to the experiment
     for name in self.blocks.keys():
-        block_view: BlockView = self.blocks.widget(name)
+        block_view: BlockView = self.blocks.widget(name).widget()
         block_view.updateModel()
     
     # For each group, write its data to the experiment
     for name in self.groups.keys():
-        group_view: GroupView = self.groups.widget(name)
+        group_view: GroupView = self.groups.widget(name).widget()
         group_view.updateModel()
 
     # Write general experiment data
