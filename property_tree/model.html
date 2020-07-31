@@ -41,13 +41,6 @@ class PropertyTree(QStandardItemModel):
     &#34;&#34;&#34;An item model displaying experiment properties inside the ExperimentView.
     Both this class and PropertyTreeView (the view widget)
     &#34;&#34;&#34;
-    addBlockTriggered = Signal()
-    addGroupTriggered = Signal()
-    renameBlockTriggered = Signal(QStandardItem, str)
-    renameGroupTriggered = Signal(QStandardItem, str)
-    removeBlockTriggered = Signal(QStandardItem)
-    removeGroupTriggered = Signal(QStandardItem)
-
     View = PropertyTreeView
 
     def __init__(self, parent=None):
@@ -156,13 +149,6 @@ Both this class and PropertyTreeView (the view widget)</p></div>
     &#34;&#34;&#34;An item model displaying experiment properties inside the ExperimentView.
     Both this class and PropertyTreeView (the view widget)
     &#34;&#34;&#34;
-    addBlockTriggered = Signal()
-    addGroupTriggered = Signal()
-    renameBlockTriggered = Signal(QStandardItem, str)
-    renameGroupTriggered = Signal(QStandardItem, str)
-    removeBlockTriggered = Signal(QStandardItem)
-    removeGroupTriggered = Signal(QStandardItem)
-
     View = PropertyTreeView
 
     def __init__(self, parent=None):
@@ -258,30 +244,6 @@ Both this class and PropertyTreeView (the view widget)</p></div>
 <dt id="nfb_studio.property_tree.model.PropertyTree.View"><code class="name">var <span class="ident">View</span></code></dt>
 <dd>
 <div class="desc"><p>View widget for PropertyTree class.</p></div>
-</dd>
-<dt id="nfb_studio.property_tree.model.PropertyTree.addBlockTriggered"><code class="name">var <span class="ident">addBlockTriggered</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="nfb_studio.property_tree.model.PropertyTree.addGroupTriggered"><code class="name">var <span class="ident">addGroupTriggered</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="nfb_studio.property_tree.model.PropertyTree.removeBlockTriggered"><code class="name">var <span class="ident">removeBlockTriggered</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="nfb_studio.property_tree.model.PropertyTree.removeGroupTriggered"><code class="name">var <span class="ident">removeGroupTriggered</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="nfb_studio.property_tree.model.PropertyTree.renameBlockTriggered"><code class="name">var <span class="ident">renameBlockTriggered</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="nfb_studio.property_tree.model.PropertyTree.renameGroupTriggered"><code class="name">var <span class="ident">renameGroupTriggered</span></code></dt>
-<dd>
-<div class="desc"></div>
 </dd>
 <dt id="nfb_studio.property_tree.model.PropertyTree.staticMetaObject"><code class="name">var <span class="ident">staticMetaObject</span></code></dt>
 <dd>
@@ -457,22 +419,16 @@ Both this class and PropertyTreeView (the view widget)</p></div>
 <ul>
 <li>
 <h4><code><a title="nfb_studio.property_tree.model.PropertyTree" href="#nfb_studio.property_tree.model.PropertyTree">PropertyTree</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.View" href="#nfb_studio.property_tree.model.PropertyTree.View">View</a></code></li>
-<li><code><a title="nfb_studio.property_tree.model.PropertyTree.addBlockTriggered" href="#nfb_studio.property_tree.model.PropertyTree.addBlockTriggered">addBlockTriggered</a></code></li>
-<li><code><a title="nfb_studio.property_tree.model.PropertyTree.addGroupTriggered" href="#nfb_studio.property_tree.model.PropertyTree.addGroupTriggered">addGroupTriggered</a></code></li>
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.addNewBlock" href="#nfb_studio.property_tree.model.PropertyTree.addNewBlock">addNewBlock</a></code></li>
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.addNewGroup" href="#nfb_studio.property_tree.model.PropertyTree.addNewGroup">addNewGroup</a></code></li>
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.experiment" href="#nfb_studio.property_tree.model.PropertyTree.experiment">experiment</a></code></li>
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.getView" href="#nfb_studio.property_tree.model.PropertyTree.getView">getView</a></code></li>
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.removeBlock" href="#nfb_studio.property_tree.model.PropertyTree.removeBlock">removeBlock</a></code></li>
-<li><code><a title="nfb_studio.property_tree.model.PropertyTree.removeBlockTriggered" href="#nfb_studio.property_tree.model.PropertyTree.removeBlockTriggered">removeBlockTriggered</a></code></li>
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.removeGroup" href="#nfb_studio.property_tree.model.PropertyTree.removeGroup">removeGroup</a></code></li>
-<li><code><a title="nfb_studio.property_tree.model.PropertyTree.removeGroupTriggered" href="#nfb_studio.property_tree.model.PropertyTree.removeGroupTriggered">removeGroupTriggered</a></code></li>
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.renameBlock" href="#nfb_studio.property_tree.model.PropertyTree.renameBlock">renameBlock</a></code></li>
-<li><code><a title="nfb_studio.property_tree.model.PropertyTree.renameBlockTriggered" href="#nfb_studio.property_tree.model.PropertyTree.renameBlockTriggered">renameBlockTriggered</a></code></li>
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.renameGroup" href="#nfb_studio.property_tree.model.PropertyTree.renameGroup">renameGroup</a></code></li>
-<li><code><a title="nfb_studio.property_tree.model.PropertyTree.renameGroupTriggered" href="#nfb_studio.property_tree.model.PropertyTree.renameGroupTriggered">renameGroupTriggered</a></code></li>
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.setExperiment" href="#nfb_studio.property_tree.model.PropertyTree.setExperiment">setExperiment</a></code></li>
 <li><code><a title="nfb_studio.property_tree.model.PropertyTree.staticMetaObject" href="#nfb_studio.property_tree.model.PropertyTree.staticMetaObject">staticMetaObject</a></code></li>
 </ul>
