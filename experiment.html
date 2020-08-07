@@ -264,6 +264,9 @@ class Experiment:
 
         # Add composite signals separately
         for comp_data in data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;]:
+            if comp_data is None:
+                continue
+
             n = CompositeSignalExport()
             n.setSignalName(comp_data[&#34;sSignalName&#34;])
             n.setExpression(comp_data[&#34;sExpression&#34;])
@@ -455,14 +458,14 @@ class Experiment:
 
         # Groups -------------------------------------------------------------------------------------------------------
         data[&#34;vPGroups&#34;] = {
-            &#34;PGroup&#34;: list(self.groups)
+            &#34;PGroup&#34;: []
         }
 
         for name in self.groups:
             group = self.groups[name]
 
-            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;].append(group.nfb_export_data())  # Add other information
-            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;][-1][&#34;sName&#34;] = name  # Add name
+            data[&#34;vPGroups&#34;][&#34;PGroup&#34;].append(group.nfb_export_data())  # Add other information
+            data[&#34;vPGroups&#34;][&#34;PGroup&#34;][-1][&#34;sName&#34;] = name  # Add name
 
         # Derived Signals ----------------------------------------------------------------------------------------------
         signals = []
@@ -777,6 +780,9 @@ An instance of Experiment represents a collection</p></div>
 
         # Add composite signals separately
         for comp_data in data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;]:
+            if comp_data is None:
+                continue
+
             n = CompositeSignalExport()
             n.setSignalName(comp_data[&#34;sSignalName&#34;])
             n.setExpression(comp_data[&#34;sExpression&#34;])
@@ -968,14 +974,14 @@ An instance of Experiment represents a collection</p></div>
 
         # Groups -------------------------------------------------------------------------------------------------------
         data[&#34;vPGroups&#34;] = {
-            &#34;PGroup&#34;: list(self.groups)
+            &#34;PGroup&#34;: []
         }
 
         for name in self.groups:
             group = self.groups[name]
 
-            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;].append(group.nfb_export_data())  # Add other information
-            data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;][-1][&#34;sName&#34;] = name  # Add name
+            data[&#34;vPGroups&#34;][&#34;PGroup&#34;].append(group.nfb_export_data())  # Add other information
+            data[&#34;vPGroups&#34;][&#34;PGroup&#34;][-1][&#34;sName&#34;] = name  # Add name
 
         # Derived Signals ----------------------------------------------------------------------------------------------
         signals = []
@@ -1243,6 +1249,9 @@ def import_xml(cls, xml_string: str):
 
     # Add composite signals separately
     for comp_data in data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;]:
+        if comp_data is None:
+            continue
+
         n = CompositeSignalExport()
         n.setSignalName(comp_data[&#34;sSignalName&#34;])
         n.setExpression(comp_data[&#34;sExpression&#34;])
@@ -1409,14 +1418,14 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
 
     # Groups -------------------------------------------------------------------------------------------------------
     data[&#34;vPGroups&#34;] = {
-        &#34;PGroup&#34;: list(self.groups)
+        &#34;PGroup&#34;: []
     }
 
     for name in self.groups:
         group = self.groups[name]
 
-        data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;].append(group.nfb_export_data())  # Add other information
-        data[&#34;vProtocols&#34;][&#34;FeedbackProtocol&#34;][-1][&#34;sName&#34;] = name  # Add name
+        data[&#34;vPGroups&#34;][&#34;PGroup&#34;].append(group.nfb_export_data())  # Add other information
+        data[&#34;vPGroups&#34;][&#34;PGroup&#34;][-1][&#34;sName&#34;] = name  # Add name
 
     # Derived Signals ----------------------------------------------------------------------------------------------
     signals = []

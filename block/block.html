@@ -46,6 +46,7 @@ class Block(QObject):
         self.feedback_type = &#34;Baseline&#34;
         self.random_bound = &#34;SimCircle&#34;
         self.video_path = &#34;&#34;
+        self.message = &#34;&#34;
 
         # Mock signal --------------------------------------------------------------------------------------------------
         self.mock_signal_path = &#34;&#34;
@@ -89,6 +90,7 @@ class Block(QObject):
         view.update_statistics.setChecked(self.update_statistics)
         view.random_bound.setCurrentText(self.random_bound)
         view.video_path.setText(self.video_path)
+        view.message.setText(self.message)
 
     def nfb_export_data(self) -&gt; dict:
         &#34;&#34;&#34;Export this block into a dict to be encoded as XML for NFBLab.
@@ -102,7 +104,7 @@ class Block(QObject):
         data[&#34;fDuration&#34;] = self.duration
         data[&#34;fbSource&#34;] = self.feedback_source
         data[&#34;sFb_type&#34;] = self.feedback_type
-        data[&#34;cString&#34;] = &#34;&#34;
+        data[&#34;cString&#34;] = self.message
         data[&#34;bUseExtraMessage&#34;] = 0
         data[&#34;cString2&#34;] = &#34;&#34;
         data[&#34;fBlinkDurationMs&#34;] = 50
@@ -130,6 +132,7 @@ class Block(QObject):
             &#34;feedback_type&#34;: self.feedback_type,
             &#34;random_bound&#34;: self.random_bound,
             &#34;video_path&#34;: self.video_path,
+            &#34;message&#34;: self.message,
 
             &#34;mock_signal_path&#34;: self.mock_signal_path,
             &#34;mock_signal_dataset&#34;: self.mock_signal_dataset,
@@ -152,6 +155,7 @@ class Block(QObject):
         obj.feedback_type = data[&#34;feedback_type&#34;]
         obj.random_bound = data[&#34;random_bound&#34;]
         obj.video_path = data[&#34;video_path&#34;]
+        obj.message = data[&#34;message&#34;]
 
         obj.mock_signal_path = data[&#34;mock_signal_path&#34;]
         obj.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
@@ -188,6 +192,7 @@ class Block(QObject):
         b.beep = bool(float(data[&#34;bBeepAfter&#34;]))
         b.random_bound = b.random_bound_types[int(float(data[&#34;iRandomBound&#34;]))]
         b.video_path = data[&#34;sVideoPath&#34;]
+        b.message = data[&#34;cString&#34;]
 
         return b</code></pre>
 </details>
@@ -227,6 +232,7 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         self.feedback_type = &#34;Baseline&#34;
         self.random_bound = &#34;SimCircle&#34;
         self.video_path = &#34;&#34;
+        self.message = &#34;&#34;
 
         # Mock signal --------------------------------------------------------------------------------------------------
         self.mock_signal_path = &#34;&#34;
@@ -270,6 +276,7 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         view.update_statistics.setChecked(self.update_statistics)
         view.random_bound.setCurrentText(self.random_bound)
         view.video_path.setText(self.video_path)
+        view.message.setText(self.message)
 
     def nfb_export_data(self) -&gt; dict:
         &#34;&#34;&#34;Export this block into a dict to be encoded as XML for NFBLab.
@@ -283,7 +290,7 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         data[&#34;fDuration&#34;] = self.duration
         data[&#34;fbSource&#34;] = self.feedback_source
         data[&#34;sFb_type&#34;] = self.feedback_type
-        data[&#34;cString&#34;] = &#34;&#34;
+        data[&#34;cString&#34;] = self.message
         data[&#34;bUseExtraMessage&#34;] = 0
         data[&#34;cString2&#34;] = &#34;&#34;
         data[&#34;fBlinkDurationMs&#34;] = 50
@@ -311,6 +318,7 @@ Experiment consists of a sequence of blocks and block groups that are executed i
             &#34;feedback_type&#34;: self.feedback_type,
             &#34;random_bound&#34;: self.random_bound,
             &#34;video_path&#34;: self.video_path,
+            &#34;message&#34;: self.message,
 
             &#34;mock_signal_path&#34;: self.mock_signal_path,
             &#34;mock_signal_dataset&#34;: self.mock_signal_dataset,
@@ -333,6 +341,7 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         obj.feedback_type = data[&#34;feedback_type&#34;]
         obj.random_bound = data[&#34;random_bound&#34;]
         obj.video_path = data[&#34;video_path&#34;]
+        obj.message = data[&#34;message&#34;]
 
         obj.mock_signal_path = data[&#34;mock_signal_path&#34;]
         obj.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
@@ -369,6 +378,7 @@ Experiment consists of a sequence of blocks and block groups that are executed i
         b.beep = bool(float(data[&#34;bBeepAfter&#34;]))
         b.random_bound = b.random_bound_types[int(float(data[&#34;iRandomBound&#34;]))]
         b.video_path = data[&#34;sVideoPath&#34;]
+        b.message = data[&#34;cString&#34;]
 
         return b</code></pre>
 </details>
@@ -408,6 +418,7 @@ def deserialize(cls, data: dict):
     obj.feedback_type = data[&#34;feedback_type&#34;]
     obj.random_bound = data[&#34;random_bound&#34;]
     obj.video_path = data[&#34;video_path&#34;]
+    obj.message = data[&#34;message&#34;]
 
     obj.mock_signal_path = data[&#34;mock_signal_path&#34;]
     obj.mock_signal_dataset = data[&#34;mock_signal_dataset&#34;]
@@ -456,6 +467,7 @@ def nfb_import_data(cls, data: dict):
     b.beep = bool(float(data[&#34;bBeepAfter&#34;]))
     b.random_bound = b.random_bound_types[int(float(data[&#34;iRandomBound&#34;]))]
     b.video_path = data[&#34;sVideoPath&#34;]
+    b.message = data[&#34;cString&#34;]
 
     return b</code></pre>
 </details>
@@ -485,7 +497,7 @@ Bool items are written as-is. The encoder is responsible for converting them int
     data[&#34;fDuration&#34;] = self.duration
     data[&#34;fbSource&#34;] = self.feedback_source
     data[&#34;sFb_type&#34;] = self.feedback_type
-    data[&#34;cString&#34;] = &#34;&#34;
+    data[&#34;cString&#34;] = self.message
     data[&#34;bUseExtraMessage&#34;] = 0
     data[&#34;cString2&#34;] = &#34;&#34;
     data[&#34;fBlinkDurationMs&#34;] = 50
@@ -523,6 +535,7 @@ Bool items are written as-is. The encoder is responsible for converting them int
         &#34;feedback_type&#34;: self.feedback_type,
         &#34;random_bound&#34;: self.random_bound,
         &#34;video_path&#34;: self.video_path,
+        &#34;message&#34;: self.message,
 
         &#34;mock_signal_path&#34;: self.mock_signal_path,
         &#34;mock_signal_dataset&#34;: self.mock_signal_dataset,
@@ -577,7 +590,8 @@ Bool items are written as-is. The encoder is responsible for converting them int
     view.start_data_driven_filter_designer.setChecked(self.start_data_driven_filter_designer)
     view.update_statistics.setChecked(self.update_statistics)
     view.random_bound.setCurrentText(self.random_bound)
-    view.video_path.setText(self.video_path)</code></pre>
+    view.video_path.setText(self.video_path)
+    view.message.setText(self.message)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.block.block.Block.view"><code class="name flex">
