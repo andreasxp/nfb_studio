@@ -29,6 +29,7 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34;View widget for Experiment class and the main window of this application.&#34;&#34;&#34;
 import os
+import subprocess
 from typing import Optional
 from pathlib import Path
 
@@ -36,8 +37,9 @@ from PySide2.QtCore import Qt, QModelIndex
 from PySide2.QtGui import QStandardItem, QKeySequence
 from PySide2.QtWidgets import QMainWindow, QDockWidget, QStackedWidget, QFileDialog, QMessageBox, QScrollArea
 
-from .experiment import Experiment
+import nfb_studio
 
+from .experiment import Experiment
 from .block import BlockView
 from .group import GroupView
 from .util import StackedDictWidget
@@ -79,6 +81,12 @@ class ExperimentView(QMainWindow):
 
         action_import = filemenu.addAction(&#34;Import&#34;)
         action_import.triggered.connect(self.actionImport)
+
+        runmenu = menubar.addMenu(&#34;Run&#34;)
+
+        action_start_ex = runmenu.addAction(&#34;Start Experiment&#34;)
+        action_start_ex.triggered.connect(self.actionStartExperiment)
+        action_start_ex.setShortcut(&#34;F9&#34;)
 
         # Property tree ------------------------------------------------------------------------------------------------
         self.tree = PropertyTree()
@@ -416,6 +424,28 @@ class ExperimentView(QMainWindow):
         ex = Experiment.import_xml(data)
         self.setModel(ex)
         return True
+
+    def actionStartExperiment(self):
+        self.updateModel()
+        
+        if (len(self.model().sequence_scheme.graph.nodes) == 0):
+            # No nodes in sequence scheme, cancel operation
+            # TODO: A better way to signal to the user that he needs to create a sequence?
+            self.central_widget.setCurrentWidget(self.sequence_editor)
+            return
+
+        wiz = ExportWizard(self, self.model())
+        ok = wiz.exec_()
+        
+        if not ok:
+            return  # User cancelled operation
+
+        data = self.model().export(wiz.sequence())
+        with open(wiz.savePath(), &#34;w&#34;) as file:
+            file.write(data)
+        
+        pynfb_path = os.path.dirname(nfb_studio.__file__) + &#34;/bin/pynfb.exe&#34;
+        subprocess.run([pynfb_path, &#34;-x&#34;, wiz.savePath()])
 
     def promptSaveChanges(self) -&gt; bool:
         &#34;&#34;&#34;Prompt the user to save changes to current project.
@@ -510,6 +540,12 @@ class ExperimentView(QMainWindow):
         action_import = filemenu.addAction(&#34;Import&#34;)
         action_import.triggered.connect(self.actionImport)
 
+        runmenu = menubar.addMenu(&#34;Run&#34;)
+
+        action_start_ex = runmenu.addAction(&#34;Start Experiment&#34;)
+        action_start_ex.triggered.connect(self.actionStartExperiment)
+        action_start_ex.setShortcut(&#34;F9&#34;)
+
         # Property tree ------------------------------------------------------------------------------------------------
         self.tree = PropertyTree()
         self.tree_view = self.tree.getView()
@@ -846,6 +882,28 @@ class ExperimentView(QMainWindow):
         ex = Experiment.import_xml(data)
         self.setModel(ex)
         return True
+
+    def actionStartExperiment(self):
+        self.updateModel()
+        
+        if (len(self.model().sequence_scheme.graph.nodes) == 0):
+            # No nodes in sequence scheme, cancel operation
+            # TODO: A better way to signal to the user that he needs to create a sequence?
+            self.central_widget.setCurrentWidget(self.sequence_editor)
+            return
+
+        wiz = ExportWizard(self, self.model())
+        ok = wiz.exec_()
+        
+        if not ok:
+            return  # User cancelled operation
+
+        data = self.model().export(wiz.sequence())
+        with open(wiz.savePath(), &#34;w&#34;) as file:
+            file.write(data)
+        
+        pynfb_path = os.path.dirname(nfb_studio.__file__) + &#34;/bin/pynfb.exe&#34;
+        subprocess.run([pynfb_path, &#34;-x&#34;, wiz.savePath()])
 
     def promptSaveChanges(self) -&gt; bool:
         &#34;&#34;&#34;Prompt the user to save changes to current project.
@@ -1057,6 +1115,38 @@ Returns True if file was saved, and False if action was cancelled.</p></div>
     self.fileSave(self.savePath())
     self.setWindowTitle(self.projectTitle() + &#34; - NFB Studio&#34;)
     return True</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment_view.ExperimentView.actionStartExperiment"><code class="name flex">
+<span>def <span class="ident">actionStartExperiment</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def actionStartExperiment(self):
+    self.updateModel()
+    
+    if (len(self.model().sequence_scheme.graph.nodes) == 0):
+        # No nodes in sequence scheme, cancel operation
+        # TODO: A better way to signal to the user that he needs to create a sequence?
+        self.central_widget.setCurrentWidget(self.sequence_editor)
+        return
+
+    wiz = ExportWizard(self, self.model())
+    ok = wiz.exec_()
+    
+    if not ok:
+        return  # User cancelled operation
+
+    data = self.model().export(wiz.sequence())
+    with open(wiz.savePath(), &#34;w&#34;) as file:
+        file.write(data)
+    
+    pynfb_path = os.path.dirname(nfb_studio.__file__) + &#34;/bin/pynfb.exe&#34;
+    subprocess.run([pynfb_path, &#34;-x&#34;, wiz.savePath()])</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.experiment_view.ExperimentView.closeEvent"><code class="name flex">
@@ -1301,13 +1391,14 @@ either during prompt or during save.</p></div>
 <ul>
 <li>
 <h4><code><a title="nfb_studio.experiment_view.ExperimentView" href="#nfb_studio.experiment_view.ExperimentView">ExperimentView</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.actionExport" href="#nfb_studio.experiment_view.ExperimentView.actionExport">actionExport</a></code></li>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.actionImport" href="#nfb_studio.experiment_view.ExperimentView.actionImport">actionImport</a></code></li>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.actionNew" href="#nfb_studio.experiment_view.ExperimentView.actionNew">actionNew</a></code></li>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.actionOpen" href="#nfb_studio.experiment_view.ExperimentView.actionOpen">actionOpen</a></code></li>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.actionSave" href="#nfb_studio.experiment_view.ExperimentView.actionSave">actionSave</a></code></li>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.actionSaveAs" href="#nfb_studio.experiment_view.ExperimentView.actionSaveAs">actionSaveAs</a></code></li>
+<li><code><a title="nfb_studio.experiment_view.ExperimentView.actionStartExperiment" href="#nfb_studio.experiment_view.ExperimentView.actionStartExperiment">actionStartExperiment</a></code></li>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.closeEvent" href="#nfb_studio.experiment_view.ExperimentView.closeEvent">closeEvent</a></code></li>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.displayTreeItem" href="#nfb_studio.experiment_view.ExperimentView.displayTreeItem">displayTreeItem</a></code></li>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.fileOpen" href="#nfb_studio.experiment_view.ExperimentView.fileOpen">fileOpen</a></code></li>
