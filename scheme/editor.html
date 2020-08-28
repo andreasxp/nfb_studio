@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.8.4" />
+<meta name="generator" content="pdoc 0.9.1" />
 <title>nfb_studio.scheme.editor API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
-<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
 <style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
 </head>
 <body>
@@ -43,8 +43,10 @@ class SchemeEditor(QMainWindow):
         super().__init__(parent)
 
         self._scheme = None
-        self._scheme_view = None
+        self._scheme_view = Scheme.View()
         self._toolbox = None
+
+        self.setCentralWidget(self._scheme_view)
 
         self.toolbox_dock = QDockWidget(&#34;Node toolbox&#34;, self)
         self.toolbox_dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
@@ -57,19 +59,27 @@ class SchemeEditor(QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.config_widget_dock)
         self.config_widget_dock.hide()
 
+    def scheme(self):
+        return self._scheme
+
+    def toolbox(self):
+        return self._toolbox
+
+    def schemeView(self):
+        return self._scheme_view
+    
+    def toolboxView(self):
+        return self.toolbox_dock.widget()
+
     def setScheme(self, scheme: Scheme):
         if self._scheme is not None:
-            self.setCentralWidget(QWidget())
             self._scheme_view.configRequested.disconnect(self.showConfigWidget)
             self._scheme.setCustomDropEvent(self.toolbox().DragMimeType, None)
 
         self._scheme = scheme
 
         if self._scheme is not None:
-            self._scheme_view = self._scheme.getView()
-
-            # Set the scheme as the central widget
-            self.setCentralWidget(self._scheme_view)
+            self._scheme_view.setScene(self._scheme)
 
             # Conect the signal for config widget
             self._scheme_view.configRequested.connect(self.showConfigWidget)
@@ -77,16 +87,10 @@ class SchemeEditor(QMainWindow):
             # Add a custom drop event for the scheme from the toolbox
             self._scheme.setCustomDropEvent(self.toolbox().DragMimeType, self.toolbox().schemeDropEvent)
 
-    def scheme(self):
-        return self._scheme
-
     def setToolbox(self, toolbox):
         self._toolbox = toolbox
 
         self.toolbox_dock.setWidget(self._toolbox.getView())
-
-    def toolbox(self):
-        return self._toolbox
 
     def showConfigWidget(self, node):
         &#34;&#34;&#34;Show config widget for a node.
@@ -130,8 +134,10 @@ As its main components, SchemeEditor contains the following widgets:
         super().__init__(parent)
 
         self._scheme = None
-        self._scheme_view = None
+        self._scheme_view = Scheme.View()
         self._toolbox = None
+
+        self.setCentralWidget(self._scheme_view)
 
         self.toolbox_dock = QDockWidget(&#34;Node toolbox&#34;, self)
         self.toolbox_dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
@@ -144,19 +150,27 @@ As its main components, SchemeEditor contains the following widgets:
         self.addDockWidget(Qt.RightDockWidgetArea, self.config_widget_dock)
         self.config_widget_dock.hide()
 
+    def scheme(self):
+        return self._scheme
+
+    def toolbox(self):
+        return self._toolbox
+
+    def schemeView(self):
+        return self._scheme_view
+    
+    def toolboxView(self):
+        return self.toolbox_dock.widget()
+
     def setScheme(self, scheme: Scheme):
         if self._scheme is not None:
-            self.setCentralWidget(QWidget())
             self._scheme_view.configRequested.disconnect(self.showConfigWidget)
             self._scheme.setCustomDropEvent(self.toolbox().DragMimeType, None)
 
         self._scheme = scheme
 
         if self._scheme is not None:
-            self._scheme_view = self._scheme.getView()
-
-            # Set the scheme as the central widget
-            self.setCentralWidget(self._scheme_view)
+            self._scheme_view.setScene(self._scheme)
 
             # Conect the signal for config widget
             self._scheme_view.configRequested.connect(self.showConfigWidget)
@@ -164,16 +178,10 @@ As its main components, SchemeEditor contains the following widgets:
             # Add a custom drop event for the scheme from the toolbox
             self._scheme.setCustomDropEvent(self.toolbox().DragMimeType, self.toolbox().schemeDropEvent)
 
-    def scheme(self):
-        return self._scheme
-
     def setToolbox(self, toolbox):
         self._toolbox = toolbox
 
         self.toolbox_dock.setWidget(self._toolbox.getView())
-
-    def toolbox(self):
-        return self._toolbox
 
     def showConfigWidget(self, node):
         &#34;&#34;&#34;Show config widget for a node.
@@ -189,6 +197,10 @@ As its main components, SchemeEditor contains the following widgets:
 <li>PySide2.QtCore.QObject</li>
 <li>PySide2.QtGui.QPaintDevice</li>
 <li>Shiboken.Object</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="nfb_studio.sequence_editor.SequenceEditor" href="../sequence_editor.html#nfb_studio.sequence_editor.SequenceEditor">SequenceEditor</a></li>
 </ul>
 <h3>Class variables</h3>
 <dl>
@@ -212,6 +224,19 @@ As its main components, SchemeEditor contains the following widgets:
     return self._scheme</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.scheme.editor.SchemeEditor.schemeView"><code class="name flex">
+<span>def <span class="ident">schemeView</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def schemeView(self):
+    return self._scheme_view</code></pre>
+</details>
+</dd>
 <dt id="nfb_studio.scheme.editor.SchemeEditor.setScheme"><code class="name flex">
 <span>def <span class="ident">setScheme</span></span>(<span>self, scheme: <a title="nfb_studio.scheme.scheme.Scheme" href="scheme.html#nfb_studio.scheme.scheme.Scheme">Scheme</a>)</span>
 </code></dt>
@@ -223,17 +248,13 @@ As its main components, SchemeEditor contains the following widgets:
 </summary>
 <pre><code class="python">def setScheme(self, scheme: Scheme):
     if self._scheme is not None:
-        self.setCentralWidget(QWidget())
         self._scheme_view.configRequested.disconnect(self.showConfigWidget)
         self._scheme.setCustomDropEvent(self.toolbox().DragMimeType, None)
 
     self._scheme = scheme
 
     if self._scheme is not None:
-        self._scheme_view = self._scheme.getView()
-
-        # Set the scheme as the central widget
-        self.setCentralWidget(self._scheme_view)
+        self._scheme_view.setScene(self._scheme)
 
         # Conect the signal for config widget
         self._scheme_view.configRequested.connect(self.showConfigWidget)
@@ -288,6 +309,19 @@ This function is automatically connected as a slot to the scheme view's configRe
     return self._toolbox</code></pre>
 </details>
 </dd>
+<dt id="nfb_studio.scheme.editor.SchemeEditor.toolboxView"><code class="name flex">
+<span>def <span class="ident">toolboxView</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def toolboxView(self):
+    return self.toolbox_dock.widget()</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -310,11 +344,13 @@ This function is automatically connected as a slot to the scheme view's configRe
 <h4><code><a title="nfb_studio.scheme.editor.SchemeEditor" href="#nfb_studio.scheme.editor.SchemeEditor">SchemeEditor</a></code></h4>
 <ul class="two-column">
 <li><code><a title="nfb_studio.scheme.editor.SchemeEditor.scheme" href="#nfb_studio.scheme.editor.SchemeEditor.scheme">scheme</a></code></li>
+<li><code><a title="nfb_studio.scheme.editor.SchemeEditor.schemeView" href="#nfb_studio.scheme.editor.SchemeEditor.schemeView">schemeView</a></code></li>
 <li><code><a title="nfb_studio.scheme.editor.SchemeEditor.setScheme" href="#nfb_studio.scheme.editor.SchemeEditor.setScheme">setScheme</a></code></li>
 <li><code><a title="nfb_studio.scheme.editor.SchemeEditor.setToolbox" href="#nfb_studio.scheme.editor.SchemeEditor.setToolbox">setToolbox</a></code></li>
 <li><code><a title="nfb_studio.scheme.editor.SchemeEditor.showConfigWidget" href="#nfb_studio.scheme.editor.SchemeEditor.showConfigWidget">showConfigWidget</a></code></li>
 <li><code><a title="nfb_studio.scheme.editor.SchemeEditor.staticMetaObject" href="#nfb_studio.scheme.editor.SchemeEditor.staticMetaObject">staticMetaObject</a></code></li>
 <li><code><a title="nfb_studio.scheme.editor.SchemeEditor.toolbox" href="#nfb_studio.scheme.editor.SchemeEditor.toolbox">toolbox</a></code></li>
+<li><code><a title="nfb_studio.scheme.editor.SchemeEditor.toolboxView" href="#nfb_studio.scheme.editor.SchemeEditor.toolboxView">toolboxView</a></code></li>
 </ul>
 </li>
 </ul>
@@ -323,7 +359,7 @@ This function is automatically connected as a slot to the scheme view's configRe
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
 </footer>
 </body>
 </html>

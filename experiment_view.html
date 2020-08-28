@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.8.4" />
+<meta name="generator" content="pdoc 0.9.1" />
 <title>nfb_studio.experiment_view API documentation</title>
 <meta name="description" content="View widget for Experiment class and the main window of this application." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
-<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
 <style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
 </head>
 <body>
@@ -30,10 +30,11 @@
 <pre><code class="python">&#34;&#34;&#34;View widget for Experiment class and the main window of this application.&#34;&#34;&#34;
 import os
 import subprocess
+from datetime import datetime
 from typing import Optional
 from pathlib import Path
 
-from PySide2.QtCore import Qt, QModelIndex
+from PySide2.QtCore import Qt, QModelIndex, QDir
 from PySide2.QtGui import QStandardItem, QKeySequence
 from PySide2.QtWidgets import QMainWindow, QDockWidget, QStackedWidget, QFileDialog, QMessageBox, QScrollArea
 
@@ -45,8 +46,8 @@ from .group import GroupView
 from .util import StackedDictWidget
 from .general_view import GeneralView
 from .property_tree import PropertyTree
-from .export_wizard import ExportWizard
 from .scheme import SchemeEditor
+from .sequence_editor import SequenceEditor
 from .signal_nodes import *
 from .sequence_nodes import *
 
@@ -116,7 +117,7 @@ class ExperimentView(QMainWindow):
         self.groups = StackedDictWidget()
 
         # Sequence editor ----------------------------------------------------------------------------------------------
-        self.sequence_editor = SchemeEditor()
+        self.sequence_editor = SequenceEditor()
 
         # Central widget -----------------------------------------------------------------------------------------------
         self.central_widget = QStackedWidget()
@@ -133,9 +134,11 @@ class ExperimentView(QMainWindow):
         # New experiment view is created with a new experiment ---------------------------------------------------------
         self.actionNew()
 
+        #self.sequence_editor.schemeView().setWidget(QLabel(&#34;Hello!&#34;))
+
     # Get/Set methods ==================================================================================================
     def model(self) -&gt; Optional[Experiment]:
-        &#34;&#34;&#34;Return the experiment, assosiated with this view.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return the experiment assosiated with this view.&#34;&#34;&#34;
         return self._model
     
     def projectTitle(self) -&gt; str:
@@ -165,8 +168,7 @@ class ExperimentView(QMainWindow):
         ex.groups.itemRenamed.connect(self._onGroupRenamed)
         ex.groups.itemRemoved.connect(self._onGroupRemoved)
 
-        ex._view = self
-        ex.updateView()
+        self.updateView()
 
     # Experiment syncronization ========================================================================================
     def updateModel(self):
@@ -187,6 +189,71 @@ class ExperimentView(QMainWindow):
 
         # Write general experiment data
         self.general_view.updateModel(ex)
+
+        # Write the selected sequence
+        ex.sequence = [node.title() for node in self.sequence_editor.selectedSequence()[1]]
+
+    def updateView(self):
+        ex = self.model()
+        if ex is None:
+            return
+
+        # General properties -------------------------------------------------------------------------------------------
+        general = self.general_view
+        
+        general.name.setText(ex.name)
+        general.inlet_type.setCurrentText(general.inlet_type_import_values[ex.inlet])
+        general.lsl_stream_name.setCurrentText(ex.lsl_stream_name)
+        general.lsl_filename.setText(ex.raw_data_path)
+        general.hostname_port.setText(ex.hostname_port)
+        general.dc.setChecked(ex.dc)
+
+        if ex.prefilter_band[0] is None:
+            general.prefilter_lower_bound_enable.setChecked(False)
+            general.prefilter_lower_bound.setValue(0)
+        else:
+            general.prefilter_lower_bound_enable.setChecked(True)
+            general.prefilter_lower_bound.setValue(ex.prefilter_band[0])
+        
+        if ex.prefilter_band[1] is None:
+            general.prefilter_upper_bound_enable.setChecked(False)
+            general.prefilter_upper_bound.setValue(0)
+        else:
+            general.prefilter_upper_bound_enable.setChecked(True)
+            general.prefilter_upper_bound.setValue(ex.prefilter_band[1])
+        
+        general.plot_raw.setChecked(ex.plot_raw)
+        general.plot_signals.setChecked(ex.plot_signals)
+        general.show_subject_window.setChecked(ex.show_subject_window)
+        general.discard_channels.setText(ex.discard_channels)
+        general.reference_sub.setText(ex.reference_sub)
+        general.show_proto_rectangle.setChecked(ex.show_proto_rectangle)
+        general.show_notch_filters.setChecked(ex.show_notch_filters)
+
+        # Blocks and groups --------------------------------------------------------------------------------------------
+        while self.tree.blocks.rowCount() &gt; 0:
+            name = self.tree.blocks.child(0).text()
+            self.tree.blocks.takeChild(0)
+            self.blocks.removeWidget(name)
+            self.sequence_editor.toolbox().removeItem(name)
+        
+        while self.tree.groups.rowCount() &gt; 0:
+            name = self.tree.groups.child(0).text()
+            self.tree.groups.takeChild(0)
+            self.groups.removeWidget(name)
+            self.sequence_editor.toolbox().removeItem(name)
+
+        for name in ex.blocks:
+            ex.blocks.itemAdded.emit(name)
+        
+        for name in ex.groups:
+            ex.groups.itemAdded.emit(name)
+        
+        # Sequence -----------------------------------------------------------------------------------------------------
+        for sgraph, slist, button in self.sequence_editor.sequences():
+            if ex.sequence == [node.title() for node in slist]:
+                button.setChecked(True)
+                break
 
     def _onBlockAdded(self, name):
         &#34;&#34;&#34;Function that gets called when a new block has been added to the experiment.&#34;&#34;&#34;
@@ -252,11 +319,18 @@ class ExperimentView(QMainWindow):
 
         # Rename in the sequence editor
         node = self.sequence_editor.toolbox().removeItem(old_name)
+        node.setTitle(new_name)
         self.sequence_editor.toolbox().addItem(new_name, node)
 
         for node in self.sequence_editor.scheme().graph.nodes:
             if node.title() == old_name:
                 node.setTitle(new_name)
+        
+        # Rename it in the sequence editor&#39;s current sequence widget
+        for _1, _2, button in self.sequence_editor.sequences():
+            label = button.text()
+            new_label = &#34; → &#34;.join([new_name if x == old_name else x for x in label.split(&#34; → &#34;)])
+            button.setText(new_label)
 
     def _onGroupRenamed(self, old_name, new_name):
         &#34;&#34;&#34;Function that gets called when a group has been renamed.&#34;&#34;&#34;
@@ -278,11 +352,18 @@ class ExperimentView(QMainWindow):
 
         # Rename in the sequence editor
         node = self.sequence_editor.toolbox().removeItem(old_name)
+        node.setTitle(new_name)
         self.sequence_editor.toolbox().addItem(new_name, node)
 
         for node in self.sequence_editor.scheme().graph.nodes:
             if node.title() == old_name:
                 node.setTitle(new_name)
+        
+        # Rename it in the sequence editor&#39;s current sequence widget
+        for _1, _2, button in self.sequence_editor.sequences():
+            label = button.text()
+            new_label = &#34; → &#34;.join([new_name if x == old_name else x for x in label.split(&#34; → &#34;)])
+            button.setText(new_label)
 
     def _onBlockRemoved(self, name):
         &#34;&#34;&#34;Function that gets called when a block has been removed from the experiment.&#34;&#34;&#34;
@@ -352,16 +433,18 @@ class ExperimentView(QMainWindow):
             # No nodes in sequence scheme, cancel operation
             # TODO: A better way to signal to the user that he needs to create a sequence?
             self.central_widget.setCurrentWidget(self.sequence_editor)
-            return
+            return False
 
-        wiz = ExportWizard(self, self.model())
-        ok = wiz.exec_()
-        
-        if not ok:
-            return  # User cancelled operation
+        data = self.model().export()
 
-        data = self.model().export(wiz.sequence())
-        with open(wiz.savePath(), &#34;w&#34;) as file:
+        file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
+        if file_path == &#34;&#34;:
+            return False  # Action was cancelled
+
+        if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
+            file_path = file_path + &#34;.xml&#34;
+
+        with open(file_path, &#34;w&#34;) as file:
             file.write(data)
         return True
 
@@ -434,18 +517,34 @@ class ExperimentView(QMainWindow):
             self.central_widget.setCurrentWidget(self.sequence_editor)
             return
 
-        wiz = ExportWizard(self, self.model())
-        ok = wiz.exec_()
-        
-        if not ok:
-            return  # User cancelled operation
+        results_path = QFileDialog.getExistingDirectory(
+            caption=&#34;Select a folder to save experiment results&#34;,
+            options=QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks
+        )
+        if results_path == &#34;&#34;:
+            return False  # Action was cancelled
 
-        data = self.model().export(wiz.sequence())
-        with open(wiz.savePath(), &#34;w&#34;) as file:
+        data = self.model().export()
+
+        temp_dir = QDir.tempPath() + &#34;/nfb_studio&#34;
+        os.makedirs(temp_dir, exist_ok=True)
+
+        timestamp = datetime.now()
+        file_path = &#34;{}/experiment ({:04d}-{:02d}-{:02d} {:02d}-{:02d}-{:02d}).xml&#34;.format(
+            temp_dir,
+            timestamp.year,
+            timestamp.month,
+            timestamp.day,
+            timestamp.hour,
+            timestamp.minute,
+            timestamp.second
+        )
+
+        with open(file_path, &#34;w&#34;) as file:
             file.write(data)
         
         pynfb_path = os.path.dirname(nfb_studio.__file__) + &#34;/bin/pynfb.exe&#34;
-        subprocess.run([pynfb_path, &#34;-x&#34;, wiz.savePath()])
+        subprocess.run([pynfb_path, &#34;-x&#34;, file_path], cwd=results_path)
 
     def promptSaveChanges(self) -&gt; bool:
         &#34;&#34;&#34;Prompt the user to save changes to current project.
@@ -483,7 +582,7 @@ class ExperimentView(QMainWindow):
         self._save_path = path
 
     def fileSave(self, path):
-        self.model().view().updateModel()
+        self.updateModel()
         data = self.model().save()
 
         with open(path, &#34;w&#34;) as file:
@@ -574,7 +673,7 @@ class ExperimentView(QMainWindow):
         self.groups = StackedDictWidget()
 
         # Sequence editor ----------------------------------------------------------------------------------------------
-        self.sequence_editor = SchemeEditor()
+        self.sequence_editor = SequenceEditor()
 
         # Central widget -----------------------------------------------------------------------------------------------
         self.central_widget = QStackedWidget()
@@ -591,9 +690,11 @@ class ExperimentView(QMainWindow):
         # New experiment view is created with a new experiment ---------------------------------------------------------
         self.actionNew()
 
+        #self.sequence_editor.schemeView().setWidget(QLabel(&#34;Hello!&#34;))
+
     # Get/Set methods ==================================================================================================
     def model(self) -&gt; Optional[Experiment]:
-        &#34;&#34;&#34;Return the experiment, assosiated with this view.&#34;&#34;&#34;
+        &#34;&#34;&#34;Return the experiment assosiated with this view.&#34;&#34;&#34;
         return self._model
     
     def projectTitle(self) -&gt; str:
@@ -623,8 +724,7 @@ class ExperimentView(QMainWindow):
         ex.groups.itemRenamed.connect(self._onGroupRenamed)
         ex.groups.itemRemoved.connect(self._onGroupRemoved)
 
-        ex._view = self
-        ex.updateView()
+        self.updateView()
 
     # Experiment syncronization ========================================================================================
     def updateModel(self):
@@ -645,6 +745,71 @@ class ExperimentView(QMainWindow):
 
         # Write general experiment data
         self.general_view.updateModel(ex)
+
+        # Write the selected sequence
+        ex.sequence = [node.title() for node in self.sequence_editor.selectedSequence()[1]]
+
+    def updateView(self):
+        ex = self.model()
+        if ex is None:
+            return
+
+        # General properties -------------------------------------------------------------------------------------------
+        general = self.general_view
+        
+        general.name.setText(ex.name)
+        general.inlet_type.setCurrentText(general.inlet_type_import_values[ex.inlet])
+        general.lsl_stream_name.setCurrentText(ex.lsl_stream_name)
+        general.lsl_filename.setText(ex.raw_data_path)
+        general.hostname_port.setText(ex.hostname_port)
+        general.dc.setChecked(ex.dc)
+
+        if ex.prefilter_band[0] is None:
+            general.prefilter_lower_bound_enable.setChecked(False)
+            general.prefilter_lower_bound.setValue(0)
+        else:
+            general.prefilter_lower_bound_enable.setChecked(True)
+            general.prefilter_lower_bound.setValue(ex.prefilter_band[0])
+        
+        if ex.prefilter_band[1] is None:
+            general.prefilter_upper_bound_enable.setChecked(False)
+            general.prefilter_upper_bound.setValue(0)
+        else:
+            general.prefilter_upper_bound_enable.setChecked(True)
+            general.prefilter_upper_bound.setValue(ex.prefilter_band[1])
+        
+        general.plot_raw.setChecked(ex.plot_raw)
+        general.plot_signals.setChecked(ex.plot_signals)
+        general.show_subject_window.setChecked(ex.show_subject_window)
+        general.discard_channels.setText(ex.discard_channels)
+        general.reference_sub.setText(ex.reference_sub)
+        general.show_proto_rectangle.setChecked(ex.show_proto_rectangle)
+        general.show_notch_filters.setChecked(ex.show_notch_filters)
+
+        # Blocks and groups --------------------------------------------------------------------------------------------
+        while self.tree.blocks.rowCount() &gt; 0:
+            name = self.tree.blocks.child(0).text()
+            self.tree.blocks.takeChild(0)
+            self.blocks.removeWidget(name)
+            self.sequence_editor.toolbox().removeItem(name)
+        
+        while self.tree.groups.rowCount() &gt; 0:
+            name = self.tree.groups.child(0).text()
+            self.tree.groups.takeChild(0)
+            self.groups.removeWidget(name)
+            self.sequence_editor.toolbox().removeItem(name)
+
+        for name in ex.blocks:
+            ex.blocks.itemAdded.emit(name)
+        
+        for name in ex.groups:
+            ex.groups.itemAdded.emit(name)
+        
+        # Sequence -----------------------------------------------------------------------------------------------------
+        for sgraph, slist, button in self.sequence_editor.sequences():
+            if ex.sequence == [node.title() for node in slist]:
+                button.setChecked(True)
+                break
 
     def _onBlockAdded(self, name):
         &#34;&#34;&#34;Function that gets called when a new block has been added to the experiment.&#34;&#34;&#34;
@@ -710,11 +875,18 @@ class ExperimentView(QMainWindow):
 
         # Rename in the sequence editor
         node = self.sequence_editor.toolbox().removeItem(old_name)
+        node.setTitle(new_name)
         self.sequence_editor.toolbox().addItem(new_name, node)
 
         for node in self.sequence_editor.scheme().graph.nodes:
             if node.title() == old_name:
                 node.setTitle(new_name)
+        
+        # Rename it in the sequence editor&#39;s current sequence widget
+        for _1, _2, button in self.sequence_editor.sequences():
+            label = button.text()
+            new_label = &#34; → &#34;.join([new_name if x == old_name else x for x in label.split(&#34; → &#34;)])
+            button.setText(new_label)
 
     def _onGroupRenamed(self, old_name, new_name):
         &#34;&#34;&#34;Function that gets called when a group has been renamed.&#34;&#34;&#34;
@@ -736,11 +908,18 @@ class ExperimentView(QMainWindow):
 
         # Rename in the sequence editor
         node = self.sequence_editor.toolbox().removeItem(old_name)
+        node.setTitle(new_name)
         self.sequence_editor.toolbox().addItem(new_name, node)
 
         for node in self.sequence_editor.scheme().graph.nodes:
             if node.title() == old_name:
                 node.setTitle(new_name)
+        
+        # Rename it in the sequence editor&#39;s current sequence widget
+        for _1, _2, button in self.sequence_editor.sequences():
+            label = button.text()
+            new_label = &#34; → &#34;.join([new_name if x == old_name else x for x in label.split(&#34; → &#34;)])
+            button.setText(new_label)
 
     def _onBlockRemoved(self, name):
         &#34;&#34;&#34;Function that gets called when a block has been removed from the experiment.&#34;&#34;&#34;
@@ -810,16 +989,18 @@ class ExperimentView(QMainWindow):
             # No nodes in sequence scheme, cancel operation
             # TODO: A better way to signal to the user that he needs to create a sequence?
             self.central_widget.setCurrentWidget(self.sequence_editor)
-            return
+            return False
 
-        wiz = ExportWizard(self, self.model())
-        ok = wiz.exec_()
-        
-        if not ok:
-            return  # User cancelled operation
+        data = self.model().export()
 
-        data = self.model().export(wiz.sequence())
-        with open(wiz.savePath(), &#34;w&#34;) as file:
+        file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
+        if file_path == &#34;&#34;:
+            return False  # Action was cancelled
+
+        if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
+            file_path = file_path + &#34;.xml&#34;
+
+        with open(file_path, &#34;w&#34;) as file:
             file.write(data)
         return True
 
@@ -892,18 +1073,34 @@ class ExperimentView(QMainWindow):
             self.central_widget.setCurrentWidget(self.sequence_editor)
             return
 
-        wiz = ExportWizard(self, self.model())
-        ok = wiz.exec_()
-        
-        if not ok:
-            return  # User cancelled operation
+        results_path = QFileDialog.getExistingDirectory(
+            caption=&#34;Select a folder to save experiment results&#34;,
+            options=QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks
+        )
+        if results_path == &#34;&#34;:
+            return False  # Action was cancelled
 
-        data = self.model().export(wiz.sequence())
-        with open(wiz.savePath(), &#34;w&#34;) as file:
+        data = self.model().export()
+
+        temp_dir = QDir.tempPath() + &#34;/nfb_studio&#34;
+        os.makedirs(temp_dir, exist_ok=True)
+
+        timestamp = datetime.now()
+        file_path = &#34;{}/experiment ({:04d}-{:02d}-{:02d} {:02d}-{:02d}-{:02d}).xml&#34;.format(
+            temp_dir,
+            timestamp.year,
+            timestamp.month,
+            timestamp.day,
+            timestamp.hour,
+            timestamp.minute,
+            timestamp.second
+        )
+
+        with open(file_path, &#34;w&#34;) as file:
             file.write(data)
         
         pynfb_path = os.path.dirname(nfb_studio.__file__) + &#34;/bin/pynfb.exe&#34;
-        subprocess.run([pynfb_path, &#34;-x&#34;, wiz.savePath()])
+        subprocess.run([pynfb_path, &#34;-x&#34;, file_path], cwd=results_path)
 
     def promptSaveChanges(self) -&gt; bool:
         &#34;&#34;&#34;Prompt the user to save changes to current project.
@@ -941,7 +1138,7 @@ class ExperimentView(QMainWindow):
         self._save_path = path
 
     def fileSave(self, path):
-        self.model().view().updateModel()
+        self.updateModel()
         data = self.model().save()
 
         with open(path, &#34;w&#34;) as file:
@@ -980,16 +1177,18 @@ class ExperimentView(QMainWindow):
         # No nodes in sequence scheme, cancel operation
         # TODO: A better way to signal to the user that he needs to create a sequence?
         self.central_widget.setCurrentWidget(self.sequence_editor)
-        return
+        return False
 
-    wiz = ExportWizard(self, self.model())
-    ok = wiz.exec_()
-    
-    if not ok:
-        return  # User cancelled operation
+    data = self.model().export()
 
-    data = self.model().export(wiz.sequence())
-    with open(wiz.savePath(), &#34;w&#34;) as file:
+    file_path = QFileDialog.getSaveFileName(filter=&#34;XML Files (*.xml)&#34;)[0]
+    if file_path == &#34;&#34;:
+        return False  # Action was cancelled
+
+    if os.path.splitext(file_path)[1] == &#34;&#34;:  # No extension
+        file_path = file_path + &#34;.xml&#34;
+
+    with open(file_path, &#34;w&#34;) as file:
         file.write(data)
     return True</code></pre>
 </details>
@@ -1135,18 +1334,34 @@ Returns True if file was saved, and False if action was cancelled.</p></div>
         self.central_widget.setCurrentWidget(self.sequence_editor)
         return
 
-    wiz = ExportWizard(self, self.model())
-    ok = wiz.exec_()
-    
-    if not ok:
-        return  # User cancelled operation
+    results_path = QFileDialog.getExistingDirectory(
+        caption=&#34;Select a folder to save experiment results&#34;,
+        options=QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks
+    )
+    if results_path == &#34;&#34;:
+        return False  # Action was cancelled
 
-    data = self.model().export(wiz.sequence())
-    with open(wiz.savePath(), &#34;w&#34;) as file:
+    data = self.model().export()
+
+    temp_dir = QDir.tempPath() + &#34;/nfb_studio&#34;
+    os.makedirs(temp_dir, exist_ok=True)
+
+    timestamp = datetime.now()
+    file_path = &#34;{}/experiment ({:04d}-{:02d}-{:02d} {:02d}-{:02d}-{:02d}).xml&#34;.format(
+        temp_dir,
+        timestamp.year,
+        timestamp.month,
+        timestamp.day,
+        timestamp.hour,
+        timestamp.minute,
+        timestamp.second
+    )
+
+    with open(file_path, &#34;w&#34;) as file:
         file.write(data)
     
     pynfb_path = os.path.dirname(nfb_studio.__file__) + &#34;/bin/pynfb.exe&#34;
-    subprocess.run([pynfb_path, &#34;-x&#34;, wiz.savePath()])</code></pre>
+    subprocess.run([pynfb_path, &#34;-x&#34;, file_path], cwd=results_path)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.experiment_view.ExperimentView.closeEvent"><code class="name flex">
@@ -1227,7 +1442,7 @@ Returns True if file was saved, and False if action was cancelled.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def fileSave(self, path):
-    self.model().view().updateModel()
+    self.updateModel()
     data = self.model().save()
 
     with open(path, &#34;w&#34;) as file:
@@ -1238,13 +1453,13 @@ Returns True if file was saved, and False if action was cancelled.</p></div>
 <span>def <span class="ident">model</span></span>(<span>self) ‑> typing.Union[<a title="nfb_studio.experiment.Experiment" href="experiment.html#nfb_studio.experiment.Experiment">Experiment</a>, NoneType]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return the experiment, assosiated with this view.</p></div>
+<div class="desc"><p>Return the experiment assosiated with this view.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def model(self) -&gt; Optional[Experiment]:
-    &#34;&#34;&#34;Return the experiment, assosiated with this view.&#34;&#34;&#34;
+    &#34;&#34;&#34;Return the experiment assosiated with this view.&#34;&#34;&#34;
     return self._model</code></pre>
 </details>
 </dd>
@@ -1338,8 +1553,7 @@ either during prompt or during save.</p></div>
     ex.groups.itemRenamed.connect(self._onGroupRenamed)
     ex.groups.itemRemoved.connect(self._onGroupRemoved)
 
-    ex._view = self
-    ex.updateView()</code></pre>
+    self.updateView()</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.experiment_view.ExperimentView.updateModel"><code class="name flex">
@@ -1368,7 +1582,82 @@ either during prompt or during save.</p></div>
         group_view.updateModel()
 
     # Write general experiment data
-    self.general_view.updateModel(ex)</code></pre>
+    self.general_view.updateModel(ex)
+
+    # Write the selected sequence
+    ex.sequence = [node.title() for node in self.sequence_editor.selectedSequence()[1]]</code></pre>
+</details>
+</dd>
+<dt id="nfb_studio.experiment_view.ExperimentView.updateView"><code class="name flex">
+<span>def <span class="ident">updateView</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def updateView(self):
+    ex = self.model()
+    if ex is None:
+        return
+
+    # General properties -------------------------------------------------------------------------------------------
+    general = self.general_view
+    
+    general.name.setText(ex.name)
+    general.inlet_type.setCurrentText(general.inlet_type_import_values[ex.inlet])
+    general.lsl_stream_name.setCurrentText(ex.lsl_stream_name)
+    general.lsl_filename.setText(ex.raw_data_path)
+    general.hostname_port.setText(ex.hostname_port)
+    general.dc.setChecked(ex.dc)
+
+    if ex.prefilter_band[0] is None:
+        general.prefilter_lower_bound_enable.setChecked(False)
+        general.prefilter_lower_bound.setValue(0)
+    else:
+        general.prefilter_lower_bound_enable.setChecked(True)
+        general.prefilter_lower_bound.setValue(ex.prefilter_band[0])
+    
+    if ex.prefilter_band[1] is None:
+        general.prefilter_upper_bound_enable.setChecked(False)
+        general.prefilter_upper_bound.setValue(0)
+    else:
+        general.prefilter_upper_bound_enable.setChecked(True)
+        general.prefilter_upper_bound.setValue(ex.prefilter_band[1])
+    
+    general.plot_raw.setChecked(ex.plot_raw)
+    general.plot_signals.setChecked(ex.plot_signals)
+    general.show_subject_window.setChecked(ex.show_subject_window)
+    general.discard_channels.setText(ex.discard_channels)
+    general.reference_sub.setText(ex.reference_sub)
+    general.show_proto_rectangle.setChecked(ex.show_proto_rectangle)
+    general.show_notch_filters.setChecked(ex.show_notch_filters)
+
+    # Blocks and groups --------------------------------------------------------------------------------------------
+    while self.tree.blocks.rowCount() &gt; 0:
+        name = self.tree.blocks.child(0).text()
+        self.tree.blocks.takeChild(0)
+        self.blocks.removeWidget(name)
+        self.sequence_editor.toolbox().removeItem(name)
+    
+    while self.tree.groups.rowCount() &gt; 0:
+        name = self.tree.groups.child(0).text()
+        self.tree.groups.takeChild(0)
+        self.groups.removeWidget(name)
+        self.sequence_editor.toolbox().removeItem(name)
+
+    for name in ex.blocks:
+        ex.blocks.itemAdded.emit(name)
+    
+    for name in ex.groups:
+        ex.groups.itemAdded.emit(name)
+    
+    # Sequence -----------------------------------------------------------------------------------------------------
+    for sgraph, slist, button in self.sequence_editor.sequences():
+        if ex.sequence == [node.title() for node in slist]:
+            button.setChecked(True)
+            break</code></pre>
 </details>
 </dd>
 </dl>
@@ -1410,6 +1699,7 @@ either during prompt or during save.</p></div>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.setModel" href="#nfb_studio.experiment_view.ExperimentView.setModel">setModel</a></code></li>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.staticMetaObject" href="#nfb_studio.experiment_view.ExperimentView.staticMetaObject">staticMetaObject</a></code></li>
 <li><code><a title="nfb_studio.experiment_view.ExperimentView.updateModel" href="#nfb_studio.experiment_view.ExperimentView.updateModel">updateModel</a></code></li>
+<li><code><a title="nfb_studio.experiment_view.ExperimentView.updateView" href="#nfb_studio.experiment_view.ExperimentView.updateView">updateView</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1418,7 +1708,7 @@ either during prompt or during save.</p></div>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
 </footer>
 </body>
 </html>

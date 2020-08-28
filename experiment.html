@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.8.4" />
+<meta name="generator" content="pdoc 0.9.1" />
 <title>nfb_studio.experiment API documentation</title>
 <meta name="description" content="NFB Experiment." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
-<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
 <style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
 <style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
 <style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
 <script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
 </head>
 <body>
@@ -68,13 +68,14 @@ class Experiment:
 
         self.signal_scheme = Scheme()
         self.sequence_scheme = Scheme()
+        self.sequence = []
+        &#34;&#34;&#34;A list of nodes that is the subset of scheme to be exported.&#34;&#34;&#34;
+
         self.blocks = BlockDict()
         self.groups = GroupDict()
 
         self.blocks.setExperiment(self)
         self.groups.setExperiment(self)
-
-        self._view = None
     
     def checkName(self, name: str):
         &#34;&#34;&#34;Check if a name is appropriate for adding a new block or group.
@@ -94,20 +95,13 @@ class Experiment:
             return (False, &#34;Name already in use.&#34;)
         
         return (True, None)
-
-    # Access functions =================================================================================================
-    def view(self):
-        return self._view
-    
-    def setView(self, view, /):
-        view.setModel(self)
     
     # Serialization ====================================================================================================
-    def export(self, sequence) -&gt; str:
+    def export(self) -&gt; str:
         data = {&#34;NeurofeedbackSignalSpecs&#34;: self}
 
         enc_hooks = {
-            Experiment: lambda e: e.nfb_export_data(sequence),
+            Experiment: Experiment.nfb_export_data,
             Block: Block.nfb_export_data,
             Group: Group.nfb_export_data,
             bool: lambda x: int(x)
@@ -189,8 +183,8 @@ class Experiment:
 
         # Decode signals -----------------------------------------------------------------------------------------------
         node_pos = [0, 0]
-        node_xdiff = -100  # TODO: Change to a size dependent on node default width
-        node_ydiff = 100
+        node_xdiff = -250  # TODO: Change to a size dependent on node default width
+        node_ydiff = 250
 
         for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
             # Assemble the signal front to back, starting with the signal name.
@@ -291,11 +285,13 @@ class Experiment:
             ex.groups[name] = group
         
         # Decode sequence ----------------------------------------------------------------------------------------------
+        ex.sequence = data[&#34;vPSequence&#34;][&#34;s&#34;]
+
         node = None
         node_pos = [0, 0]
-        node_xdiff = 100
+        node_xdiff = 250
 
-        for name in data[&#34;vPSequence&#34;][&#34;s&#34;]:
+        for name in ex.sequence:
             last = node
 
             if name in ex.blocks:
@@ -314,62 +310,6 @@ class Experiment:
 
         # --------------------------------------------------------------------------------------------------------------
         return ex
-
-    def updateView(self):
-        view = self.view()
-        if view is None:
-            return
-
-        # General properties -------------------------------------------------------------------------------------------
-        general = view.general_view
-        
-        general.name.setText(self.name)
-        general.inlet_type.setCurrentText(general.inlet_type_import_values[self.inlet])
-        general.lsl_stream_name.setCurrentText(self.lsl_stream_name)
-        general.lsl_filename.setText(self.raw_data_path)
-        general.hostname_port.setText(self.hostname_port)
-        general.dc.setChecked(self.dc)
-
-        if self.prefilter_band[0] is None:
-            general.prefilter_lower_bound_enable.setChecked(False)
-            general.prefilter_lower_bound.setValue(0)
-        else:
-            general.prefilter_lower_bound_enable.setChecked(True)
-            general.prefilter_lower_bound.setValue(self.prefilter_band[0])
-        
-        if self.prefilter_band[1] is None:
-            general.prefilter_upper_bound_enable.setChecked(False)
-            general.prefilter_upper_bound.setValue(0)
-        else:
-            general.prefilter_upper_bound_enable.setChecked(True)
-            general.prefilter_upper_bound.setValue(self.prefilter_band[1])
-        
-        general.plot_raw.setChecked(self.plot_raw)
-        general.plot_signals.setChecked(self.plot_signals)
-        general.show_subject_window.setChecked(self.show_subject_window)
-        general.discard_channels.setText(self.discard_channels)
-        general.reference_sub.setText(self.reference_sub)
-        general.show_proto_rectangle.setChecked(self.show_proto_rectangle)
-        general.show_notch_filters.setChecked(self.show_notch_filters)
-
-        # Blocks and groups --------------------------------------------------------------------------------------------
-        while view.tree.blocks.rowCount() &gt; 0:
-            name = view.tree.blocks.child(0).text(0)
-            view.tree.blocks.takeChild(0)
-            view.blocks.removeWidget(name)
-            view.sequence_editor.toolbox().removeItem(name)
-        
-        while view.tree.groups.rowCount() &gt; 0:
-            name = view.tree.groups.child(0).text(0)
-            view.tree.groups.takeChild(0)
-            view.groups.removeWidget(name)
-            view.sequence_editor.toolbox().removeItem(name)
-
-        for name in self.blocks:
-            self.blocks.itemAdded.emit(name)
-        
-        for name in self.groups:
-            self.groups.itemAdded.emit(name)
 
     def serialize(self) -&gt; dict:
         return {
@@ -392,6 +332,7 @@ class Experiment:
             &#34;sequence_scheme&#34;: self.sequence_scheme,
             &#34;blocks&#34;: self.blocks,
             &#34;groups&#34;: self.groups,
+            &#34;sequence&#34;: self.sequence
         }
     
     @classmethod
@@ -416,13 +357,14 @@ class Experiment:
         obj.sequence_scheme = data[&#34;sequence_scheme&#34;]
         obj.blocks = data[&#34;blocks&#34;]
         obj.groups = data[&#34;groups&#34;]
+        obj.sequence = data[&#34;sequence&#34;]
 
         obj.blocks.setExperiment(obj)
         obj.groups.setExperiment(obj)
 
         return obj
 
-    def nfb_export_data(self, sequence) -&gt; dict:
+    def nfb_export_data(self) -&gt; dict:
         &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
         data = {}
 
@@ -511,25 +453,8 @@ class Experiment:
         data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = signals
 
         # Experiment sequence ------------------------------------------------------------------------------------------
-        sequence_names = []
-
-        # Find starting node in sequence
-        node = None
-        for node in sequence.nodes:
-            if len(node.inputs[0].edges) == 0:
-                break
-        
-        sequence_names.append(node.title())
-        # Go to next node in this sequence
-        while len(node.outputs[0].edges) != 0:
-            for edge in node.outputs[0].edges:
-                if edge.targetNode() in sequence.nodes:
-                    node = edge.targetNode()
-                    sequence_names.append(node.title())
-                    break
-
         data[&#34;vPSequence&#34;] = {
-            &#34;s&#34;: sequence_names
+            &#34;s&#34;: self.sequence
         }
 
         return data</code></pre>
@@ -584,13 +509,14 @@ An instance of Experiment represents a collection</p></div>
 
         self.signal_scheme = Scheme()
         self.sequence_scheme = Scheme()
+        self.sequence = []
+        &#34;&#34;&#34;A list of nodes that is the subset of scheme to be exported.&#34;&#34;&#34;
+
         self.blocks = BlockDict()
         self.groups = GroupDict()
 
         self.blocks.setExperiment(self)
         self.groups.setExperiment(self)
-
-        self._view = None
     
     def checkName(self, name: str):
         &#34;&#34;&#34;Check if a name is appropriate for adding a new block or group.
@@ -610,20 +536,13 @@ An instance of Experiment represents a collection</p></div>
             return (False, &#34;Name already in use.&#34;)
         
         return (True, None)
-
-    # Access functions =================================================================================================
-    def view(self):
-        return self._view
-    
-    def setView(self, view, /):
-        view.setModel(self)
     
     # Serialization ====================================================================================================
-    def export(self, sequence) -&gt; str:
+    def export(self) -&gt; str:
         data = {&#34;NeurofeedbackSignalSpecs&#34;: self}
 
         enc_hooks = {
-            Experiment: lambda e: e.nfb_export_data(sequence),
+            Experiment: Experiment.nfb_export_data,
             Block: Block.nfb_export_data,
             Group: Group.nfb_export_data,
             bool: lambda x: int(x)
@@ -705,8 +624,8 @@ An instance of Experiment represents a collection</p></div>
 
         # Decode signals -----------------------------------------------------------------------------------------------
         node_pos = [0, 0]
-        node_xdiff = -100  # TODO: Change to a size dependent on node default width
-        node_ydiff = 100
+        node_xdiff = -250  # TODO: Change to a size dependent on node default width
+        node_ydiff = 250
 
         for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
             # Assemble the signal front to back, starting with the signal name.
@@ -807,11 +726,13 @@ An instance of Experiment represents a collection</p></div>
             ex.groups[name] = group
         
         # Decode sequence ----------------------------------------------------------------------------------------------
+        ex.sequence = data[&#34;vPSequence&#34;][&#34;s&#34;]
+
         node = None
         node_pos = [0, 0]
-        node_xdiff = 100
+        node_xdiff = 250
 
-        for name in data[&#34;vPSequence&#34;][&#34;s&#34;]:
+        for name in ex.sequence:
             last = node
 
             if name in ex.blocks:
@@ -830,62 +751,6 @@ An instance of Experiment represents a collection</p></div>
 
         # --------------------------------------------------------------------------------------------------------------
         return ex
-
-    def updateView(self):
-        view = self.view()
-        if view is None:
-            return
-
-        # General properties -------------------------------------------------------------------------------------------
-        general = view.general_view
-        
-        general.name.setText(self.name)
-        general.inlet_type.setCurrentText(general.inlet_type_import_values[self.inlet])
-        general.lsl_stream_name.setCurrentText(self.lsl_stream_name)
-        general.lsl_filename.setText(self.raw_data_path)
-        general.hostname_port.setText(self.hostname_port)
-        general.dc.setChecked(self.dc)
-
-        if self.prefilter_band[0] is None:
-            general.prefilter_lower_bound_enable.setChecked(False)
-            general.prefilter_lower_bound.setValue(0)
-        else:
-            general.prefilter_lower_bound_enable.setChecked(True)
-            general.prefilter_lower_bound.setValue(self.prefilter_band[0])
-        
-        if self.prefilter_band[1] is None:
-            general.prefilter_upper_bound_enable.setChecked(False)
-            general.prefilter_upper_bound.setValue(0)
-        else:
-            general.prefilter_upper_bound_enable.setChecked(True)
-            general.prefilter_upper_bound.setValue(self.prefilter_band[1])
-        
-        general.plot_raw.setChecked(self.plot_raw)
-        general.plot_signals.setChecked(self.plot_signals)
-        general.show_subject_window.setChecked(self.show_subject_window)
-        general.discard_channels.setText(self.discard_channels)
-        general.reference_sub.setText(self.reference_sub)
-        general.show_proto_rectangle.setChecked(self.show_proto_rectangle)
-        general.show_notch_filters.setChecked(self.show_notch_filters)
-
-        # Blocks and groups --------------------------------------------------------------------------------------------
-        while view.tree.blocks.rowCount() &gt; 0:
-            name = view.tree.blocks.child(0).text(0)
-            view.tree.blocks.takeChild(0)
-            view.blocks.removeWidget(name)
-            view.sequence_editor.toolbox().removeItem(name)
-        
-        while view.tree.groups.rowCount() &gt; 0:
-            name = view.tree.groups.child(0).text(0)
-            view.tree.groups.takeChild(0)
-            view.groups.removeWidget(name)
-            view.sequence_editor.toolbox().removeItem(name)
-
-        for name in self.blocks:
-            self.blocks.itemAdded.emit(name)
-        
-        for name in self.groups:
-            self.groups.itemAdded.emit(name)
 
     def serialize(self) -&gt; dict:
         return {
@@ -908,6 +773,7 @@ An instance of Experiment represents a collection</p></div>
             &#34;sequence_scheme&#34;: self.sequence_scheme,
             &#34;blocks&#34;: self.blocks,
             &#34;groups&#34;: self.groups,
+            &#34;sequence&#34;: self.sequence
         }
     
     @classmethod
@@ -932,13 +798,14 @@ An instance of Experiment represents a collection</p></div>
         obj.sequence_scheme = data[&#34;sequence_scheme&#34;]
         obj.blocks = data[&#34;blocks&#34;]
         obj.groups = data[&#34;groups&#34;]
+        obj.sequence = data[&#34;sequence&#34;]
 
         obj.blocks.setExperiment(obj)
         obj.groups.setExperiment(obj)
 
         return obj
 
-    def nfb_export_data(self, sequence) -&gt; dict:
+    def nfb_export_data(self) -&gt; dict:
         &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
         data = {}
 
@@ -1027,25 +894,8 @@ An instance of Experiment represents a collection</p></div>
         data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = signals
 
         # Experiment sequence ------------------------------------------------------------------------------------------
-        sequence_names = []
-
-        # Find starting node in sequence
-        node = None
-        for node in sequence.nodes:
-            if len(node.inputs[0].edges) == 0:
-                break
-        
-        sequence_names.append(node.title())
-        # Go to next node in this sequence
-        while len(node.outputs[0].edges) != 0:
-            for edge in node.outputs[0].edges:
-                if edge.targetNode() in sequence.nodes:
-                    node = edge.targetNode()
-                    sequence_names.append(node.title())
-                    break
-
         data[&#34;vPSequence&#34;] = {
-            &#34;s&#34;: sequence_names
+            &#34;s&#34;: self.sequence
         }
 
         return data</code></pre>
@@ -1094,6 +944,7 @@ def deserialize(cls, data: dict):
     obj.sequence_scheme = data[&#34;sequence_scheme&#34;]
     obj.blocks = data[&#34;blocks&#34;]
     obj.groups = data[&#34;groups&#34;]
+    obj.sequence = data[&#34;sequence&#34;]
 
     obj.blocks.setExperiment(obj)
     obj.groups.setExperiment(obj)
@@ -1174,8 +1025,8 @@ def import_xml(cls, xml_string: str):
 
     # Decode signals -----------------------------------------------------------------------------------------------
     node_pos = [0, 0]
-    node_xdiff = -100  # TODO: Change to a size dependent on node default width
-    node_ydiff = 100
+    node_xdiff = -250  # TODO: Change to a size dependent on node default width
+    node_ydiff = 250
 
     for signal_data in data[&#34;vSignals&#34;][&#34;DerivedSignal&#34;]:
         # Assemble the signal front to back, starting with the signal name.
@@ -1276,11 +1127,13 @@ def import_xml(cls, xml_string: str):
         ex.groups[name] = group
     
     # Decode sequence ----------------------------------------------------------------------------------------------
+    ex.sequence = data[&#34;vPSequence&#34;][&#34;s&#34;]
+
     node = None
     node_pos = [0, 0]
-    node_xdiff = 100
+    node_xdiff = 250
 
-    for name in data[&#34;vPSequence&#34;][&#34;s&#34;]:
+    for name in ex.sequence:
         last = node
 
         if name in ex.blocks:
@@ -1317,6 +1170,13 @@ def load(cls, data: str):
 </details>
 </dd>
 </dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="nfb_studio.experiment.Experiment.sequence"><code class="name">var <span class="ident">sequence</span></code></dt>
+<dd>
+<div class="desc"><p>A list of nodes that is the subset of scheme to be exported.</p></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="nfb_studio.experiment.Experiment.checkName"><code class="name flex">
@@ -1350,7 +1210,7 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
 </details>
 </dd>
 <dt id="nfb_studio.experiment.Experiment.export"><code class="name flex">
-<span>def <span class="ident">export</span></span>(<span>self, sequence) ‑> str</span>
+<span>def <span class="ident">export</span></span>(<span>self) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1358,11 +1218,11 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def export(self, sequence) -&gt; str:
+<pre><code class="python">def export(self) -&gt; str:
     data = {&#34;NeurofeedbackSignalSpecs&#34;: self}
 
     enc_hooks = {
-        Experiment: lambda e: e.nfb_export_data(sequence),
+        Experiment: Experiment.nfb_export_data,
         Block: Block.nfb_export_data,
         Group: Group.nfb_export_data,
         bool: lambda x: int(x)
@@ -1374,7 +1234,7 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
 </details>
 </dd>
 <dt id="nfb_studio.experiment.Experiment.nfb_export_data"><code class="name flex">
-<span>def <span class="ident">nfb_export_data</span></span>(<span>self, sequence) ‑> dict</span>
+<span>def <span class="ident">nfb_export_data</span></span>(<span>self) ‑> dict</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Export data in a dict format for encoding to XML and usage in NFBLab.</p></div>
@@ -1382,7 +1242,7 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def nfb_export_data(self, sequence) -&gt; dict:
+<pre><code class="python">def nfb_export_data(self) -&gt; dict:
     &#34;&#34;&#34;Export data in a dict format for encoding to XML and usage in NFBLab.&#34;&#34;&#34;
     data = {}
 
@@ -1471,25 +1331,8 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
     data[&#34;vSignals&#34;][&#34;CompositeSignal&#34;] = signals
 
     # Experiment sequence ------------------------------------------------------------------------------------------
-    sequence_names = []
-
-    # Find starting node in sequence
-    node = None
-    for node in sequence.nodes:
-        if len(node.inputs[0].edges) == 0:
-            break
-    
-    sequence_names.append(node.title())
-    # Go to next node in this sequence
-    while len(node.outputs[0].edges) != 0:
-        for edge in node.outputs[0].edges:
-            if edge.targetNode() in sequence.nodes:
-                node = edge.targetNode()
-                sequence_names.append(node.title())
-                break
-
     data[&#34;vPSequence&#34;] = {
-        &#34;s&#34;: sequence_names
+        &#34;s&#34;: self.sequence
     }
 
     return data</code></pre>
@@ -1540,99 +1383,8 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
         &#34;sequence_scheme&#34;: self.sequence_scheme,
         &#34;blocks&#34;: self.blocks,
         &#34;groups&#34;: self.groups,
+        &#34;sequence&#34;: self.sequence
     }</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.experiment.Experiment.setView"><code class="name flex">
-<span>def <span class="ident">setView</span></span>(<span>self, view, /)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def setView(self, view, /):
-    view.setModel(self)</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.experiment.Experiment.updateView"><code class="name flex">
-<span>def <span class="ident">updateView</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def updateView(self):
-    view = self.view()
-    if view is None:
-        return
-
-    # General properties -------------------------------------------------------------------------------------------
-    general = view.general_view
-    
-    general.name.setText(self.name)
-    general.inlet_type.setCurrentText(general.inlet_type_import_values[self.inlet])
-    general.lsl_stream_name.setCurrentText(self.lsl_stream_name)
-    general.lsl_filename.setText(self.raw_data_path)
-    general.hostname_port.setText(self.hostname_port)
-    general.dc.setChecked(self.dc)
-
-    if self.prefilter_band[0] is None:
-        general.prefilter_lower_bound_enable.setChecked(False)
-        general.prefilter_lower_bound.setValue(0)
-    else:
-        general.prefilter_lower_bound_enable.setChecked(True)
-        general.prefilter_lower_bound.setValue(self.prefilter_band[0])
-    
-    if self.prefilter_band[1] is None:
-        general.prefilter_upper_bound_enable.setChecked(False)
-        general.prefilter_upper_bound.setValue(0)
-    else:
-        general.prefilter_upper_bound_enable.setChecked(True)
-        general.prefilter_upper_bound.setValue(self.prefilter_band[1])
-    
-    general.plot_raw.setChecked(self.plot_raw)
-    general.plot_signals.setChecked(self.plot_signals)
-    general.show_subject_window.setChecked(self.show_subject_window)
-    general.discard_channels.setText(self.discard_channels)
-    general.reference_sub.setText(self.reference_sub)
-    general.show_proto_rectangle.setChecked(self.show_proto_rectangle)
-    general.show_notch_filters.setChecked(self.show_notch_filters)
-
-    # Blocks and groups --------------------------------------------------------------------------------------------
-    while view.tree.blocks.rowCount() &gt; 0:
-        name = view.tree.blocks.child(0).text(0)
-        view.tree.blocks.takeChild(0)
-        view.blocks.removeWidget(name)
-        view.sequence_editor.toolbox().removeItem(name)
-    
-    while view.tree.groups.rowCount() &gt; 0:
-        name = view.tree.groups.child(0).text(0)
-        view.tree.groups.takeChild(0)
-        view.groups.removeWidget(name)
-        view.sequence_editor.toolbox().removeItem(name)
-
-    for name in self.blocks:
-        self.blocks.itemAdded.emit(name)
-    
-    for name in self.groups:
-        self.groups.itemAdded.emit(name)</code></pre>
-</details>
-</dd>
-<dt id="nfb_studio.experiment.Experiment.view"><code class="name flex">
-<span>def <span class="ident">view</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def view(self):
-    return self._view</code></pre>
 </details>
 </dd>
 </dl>
@@ -1665,10 +1417,8 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
 <li><code><a title="nfb_studio.experiment.Experiment.load" href="#nfb_studio.experiment.Experiment.load">load</a></code></li>
 <li><code><a title="nfb_studio.experiment.Experiment.nfb_export_data" href="#nfb_studio.experiment.Experiment.nfb_export_data">nfb_export_data</a></code></li>
 <li><code><a title="nfb_studio.experiment.Experiment.save" href="#nfb_studio.experiment.Experiment.save">save</a></code></li>
+<li><code><a title="nfb_studio.experiment.Experiment.sequence" href="#nfb_studio.experiment.Experiment.sequence">sequence</a></code></li>
 <li><code><a title="nfb_studio.experiment.Experiment.serialize" href="#nfb_studio.experiment.Experiment.serialize">serialize</a></code></li>
-<li><code><a title="nfb_studio.experiment.Experiment.setView" href="#nfb_studio.experiment.Experiment.setView">setView</a></code></li>
-<li><code><a title="nfb_studio.experiment.Experiment.updateView" href="#nfb_studio.experiment.Experiment.updateView">updateView</a></code></li>
-<li><code><a title="nfb_studio.experiment.Experiment.view" href="#nfb_studio.experiment.Experiment.view">view</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1677,7 +1427,7 @@ Returns a bool (name good or not) and a reason why the name is not good (or None
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
 </footer>
 </body>
 </html>
