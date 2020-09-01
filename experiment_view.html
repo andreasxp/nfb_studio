@@ -543,8 +543,7 @@ class ExperimentView(QMainWindow):
         with open(file_path, &#34;w&#34;) as file:
             file.write(data)
         
-        pynfb_path = os.path.dirname(nfb_studio.__file__) + &#34;/bin/pynfb.exe&#34;
-        subprocess.run([pynfb_path, &#34;-x&#34;, file_path], cwd=results_path)
+        subprocess.run([&#34;pynfb&#34;, &#34;-x&#34;, file_path], cwd=results_path)
 
     def promptSaveChanges(self) -&gt; bool:
         &#34;&#34;&#34;Prompt the user to save changes to current project.
@@ -1099,8 +1098,7 @@ class ExperimentView(QMainWindow):
         with open(file_path, &#34;w&#34;) as file:
             file.write(data)
         
-        pynfb_path = os.path.dirname(nfb_studio.__file__) + &#34;/bin/pynfb.exe&#34;
-        subprocess.run([pynfb_path, &#34;-x&#34;, file_path], cwd=results_path)
+        subprocess.run([&#34;pynfb&#34;, &#34;-x&#34;, file_path], cwd=results_path)
 
     def promptSaveChanges(self) -&gt; bool:
         &#34;&#34;&#34;Prompt the user to save changes to current project.
@@ -1360,8 +1358,7 @@ Returns True if file was saved, and False if action was cancelled.</p></div>
     with open(file_path, &#34;w&#34;) as file:
         file.write(data)
     
-    pynfb_path = os.path.dirname(nfb_studio.__file__) + &#34;/bin/pynfb.exe&#34;
-    subprocess.run([pynfb_path, &#34;-x&#34;, file_path], cwd=results_path)</code></pre>
+    subprocess.run([&#34;pynfb&#34;, &#34;-x&#34;, file_path], cwd=results_path)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.experiment_view.ExperimentView.closeEvent"><code class="name flex">
