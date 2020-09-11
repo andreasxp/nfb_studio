@@ -54,13 +54,6 @@ class PropertyTreeView(QTreeView):
         super().currentChanged(current, previous)
         self.currentIndexChanged.emit(current, previous)
 
-    def editItem(self, item, column):
-        &#34;&#34;&#34;Called when by some action user wants to edit the item.
-        Reimplements base class function to silence the warning when double-clicking non-editable items.
-        &#34;&#34;&#34;
-        if item.flags() &amp; Qt.ItemIsEditable:
-            super().editItem(item, column)
-
     def showContextMenu(self, point: QPoint):
         model = self.model()
         if model is None:
@@ -87,6 +80,10 @@ class PropertyTreeView(QTreeView):
         elif item.parent() is model.blocks:
             # Menu for an individual block -----------------------------------------------------------------------------
             menu = QMenu()
+
+            rename = menu.addAction(&#34;Rename&#34;)
+            rename.triggered.connect(lambda: self.edit(index))
+
             delete = menu.addAction(&#34;Delete&#34;)
             delete.triggered.connect(lambda: model.removeBlock(item.text()))
 
@@ -94,6 +91,10 @@ class PropertyTreeView(QTreeView):
         elif item.parent() is model.groups:
             # Menu for an individual group -----------------------------------------------------------------------------
             menu = QMenu()
+
+            rename = menu.addAction(&#34;Rename&#34;)
+            rename.triggered.connect(lambda: self.edit(index))
+
             delete = menu.addAction(&#34;Delete&#34;)
             delete.triggered.connect(lambda: model.removeBlock(item.text()))
 
@@ -139,13 +140,6 @@ class PropertyTreeView(QTreeView):
         super().currentChanged(current, previous)
         self.currentIndexChanged.emit(current, previous)
 
-    def editItem(self, item, column):
-        &#34;&#34;&#34;Called when by some action user wants to edit the item.
-        Reimplements base class function to silence the warning when double-clicking non-editable items.
-        &#34;&#34;&#34;
-        if item.flags() &amp; Qt.ItemIsEditable:
-            super().editItem(item, column)
-
     def showContextMenu(self, point: QPoint):
         model = self.model()
         if model is None:
@@ -172,6 +166,10 @@ class PropertyTreeView(QTreeView):
         elif item.parent() is model.blocks:
             # Menu for an individual block -----------------------------------------------------------------------------
             menu = QMenu()
+
+            rename = menu.addAction(&#34;Rename&#34;)
+            rename.triggered.connect(lambda: self.edit(index))
+
             delete = menu.addAction(&#34;Delete&#34;)
             delete.triggered.connect(lambda: model.removeBlock(item.text()))
 
@@ -179,6 +177,10 @@ class PropertyTreeView(QTreeView):
         elif item.parent() is model.groups:
             # Menu for an individual group -----------------------------------------------------------------------------
             menu = QMenu()
+
+            rename = menu.addAction(&#34;Rename&#34;)
+            rename.triggered.connect(lambda: self.edit(index))
+
             delete = menu.addAction(&#34;Delete&#34;)
             delete.triggered.connect(lambda: model.removeBlock(item.text()))
 
@@ -226,24 +228,6 @@ Emits currentIndexChanged.</p></div>
     self.currentIndexChanged.emit(current, previous)</code></pre>
 </details>
 </dd>
-<dt id="nfb_studio.property_tree.view.PropertyTreeView.editItem"><code class="name flex">
-<span>def <span class="ident">editItem</span></span>(<span>self, item, column)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Called when by some action user wants to edit the item.
-Reimplements base class function to silence the warning when double-clicking non-editable items.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def editItem(self, item, column):
-    &#34;&#34;&#34;Called when by some action user wants to edit the item.
-    Reimplements base class function to silence the warning when double-clicking non-editable items.
-    &#34;&#34;&#34;
-    if item.flags() &amp; Qt.ItemIsEditable:
-        super().editItem(item, column)</code></pre>
-</details>
-</dd>
 <dt id="nfb_studio.property_tree.view.PropertyTreeView.showContextMenu"><code class="name flex">
 <span>def <span class="ident">showContextMenu</span></span>(<span>self, point: PySide2.QtCore.QPoint)</span>
 </code></dt>
@@ -279,6 +263,10 @@ Reimplements base class function to silence the warning when double-clicking non
     elif item.parent() is model.blocks:
         # Menu for an individual block -----------------------------------------------------------------------------
         menu = QMenu()
+
+        rename = menu.addAction(&#34;Rename&#34;)
+        rename.triggered.connect(lambda: self.edit(index))
+
         delete = menu.addAction(&#34;Delete&#34;)
         delete.triggered.connect(lambda: model.removeBlock(item.text()))
 
@@ -286,6 +274,10 @@ Reimplements base class function to silence the warning when double-clicking non
     elif item.parent() is model.groups:
         # Menu for an individual group -----------------------------------------------------------------------------
         menu = QMenu()
+
+        rename = menu.addAction(&#34;Rename&#34;)
+        rename.triggered.connect(lambda: self.edit(index))
+
         delete = menu.addAction(&#34;Delete&#34;)
         delete.triggered.connect(lambda: model.removeBlock(item.text()))
 
@@ -315,7 +307,6 @@ Reimplements base class function to silence the warning when double-clicking non
 <ul class="">
 <li><code><a title="nfb_studio.property_tree.view.PropertyTreeView.currentChanged" href="#nfb_studio.property_tree.view.PropertyTreeView.currentChanged">currentChanged</a></code></li>
 <li><code><a title="nfb_studio.property_tree.view.PropertyTreeView.currentIndexChanged" href="#nfb_studio.property_tree.view.PropertyTreeView.currentIndexChanged">currentIndexChanged</a></code></li>
-<li><code><a title="nfb_studio.property_tree.view.PropertyTreeView.editItem" href="#nfb_studio.property_tree.view.PropertyTreeView.editItem">editItem</a></code></li>
 <li><code><a title="nfb_studio.property_tree.view.PropertyTreeView.showContextMenu" href="#nfb_studio.property_tree.view.PropertyTreeView.showContextMenu">showContextMenu</a></code></li>
 <li><code><a title="nfb_studio.property_tree.view.PropertyTreeView.staticMetaObject" href="#nfb_studio.property_tree.view.PropertyTreeView.staticMetaObject">staticMetaObject</a></code></li>
 </ul>

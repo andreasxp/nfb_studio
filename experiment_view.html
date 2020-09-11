@@ -29,7 +29,7 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34;View widget for Experiment class and the main window of this application.&#34;&#34;&#34;
 import os
-import subprocess
+from subprocess import Popen
 from datetime import datetime
 from typing import Optional
 from pathlib import Path
@@ -61,13 +61,25 @@ class ExperimentView(QMainWindow):
         self._save_path = None
         &#34;&#34;&#34;Save path of the experiment that is being edited.&#34;&#34;&#34;
 
+        self._processes = []
+        &#34;&#34;&#34;Process handles for experiments that were started.&#34;&#34;&#34;
+
         # Menu bar -----------------------------------------------------------------------------------------------------
         menubar = self.menuBar()
         filemenu = menubar.addMenu(&#34;File&#34;)
 
+        action_new = filemenu.addAction(&#34;New&#34;)
+        action_new.triggered.connect(self.actionNew)
+        action_new.setShortcut(QKeySequence.New)
+
         action_open = filemenu.addAction(&#34;Open&#34;)
         action_open.triggered.connect(self.actionOpen)
         action_open.setShortcut(QKeySequence.Open)
+
+        action_import = filemenu.addAction(&#34;Import&#34;)
+        action_import.triggered.connect(self.actionImport)
+
+        filemenu.addSeparator()
 
         action_save = filemenu.addAction(&#34;Save&#34;)
         action_save.triggered.connect(self.actionSave)
@@ -80,8 +92,10 @@ class ExperimentView(QMainWindow):
         action_export = filemenu.addAction(&#34;Export...&#34;)
         action_export.triggered.connect(self.actionExport)
 
-        action_import = filemenu.addAction(&#34;Import&#34;)
-        action_import.triggered.connect(self.actionImport)
+        filemenu.addSeparator()
+
+        action_exit = filemenu.addAction(&#34;Exit&#34;)
+        action_exit.triggered.connect(self.close)
 
         runmenu = menubar.addMenu(&#34;Run&#34;)
 
@@ -133,8 +147,6 @@ class ExperimentView(QMainWindow):
 
         # New experiment view is created with a new experiment ---------------------------------------------------------
         self.actionNew()
-
-        #self.sequence_editor.schemeView().setWidget(QLabel(&#34;Hello!&#34;))
 
     # Get/Set methods ==================================================================================================
     def model(self) -&gt; Optional[Experiment]:
@@ -233,13 +245,13 @@ class ExperimentView(QMainWindow):
         # Blocks and groups --------------------------------------------------------------------------------------------
         while self.tree.blocks.rowCount() &gt; 0:
             name = self.tree.blocks.child(0).text()
-            self.tree.blocks.takeChild(0)
+            self.tree.blocks.removeRow(0)
             self.blocks.removeWidget(name)
             self.sequence_editor.toolbox().removeItem(name)
         
         while self.tree.groups.rowCount() &gt; 0:
             name = self.tree.groups.child(0).text()
-            self.tree.groups.takeChild(0)
+            self.tree.groups.removeRow(0)
             self.groups.removeWidget(name)
             self.sequence_editor.toolbox().removeItem(name)
 
@@ -543,7 +555,8 @@ class ExperimentView(QMainWindow):
         with open(file_path, &#34;w&#34;) as file:
             file.write(data)
         
-        subprocess.run([&#34;pynfb&#34;, &#34;-x&#34;, file_path], cwd=results_path, check=True)
+        proc = Popen([&#34;pynfb&#34;, &#34;-x&#34;, file_path], cwd=results_path)
+        self._processes.append(proc)
 
     def promptSaveChanges(self) -&gt; bool:
         &#34;&#34;&#34;Prompt the user to save changes to current project.
@@ -616,13 +629,25 @@ class ExperimentView(QMainWindow):
         self._save_path = None
         &#34;&#34;&#34;Save path of the experiment that is being edited.&#34;&#34;&#34;
 
+        self._processes = []
+        &#34;&#34;&#34;Process handles for experiments that were started.&#34;&#34;&#34;
+
         # Menu bar -----------------------------------------------------------------------------------------------------
         menubar = self.menuBar()
         filemenu = menubar.addMenu(&#34;File&#34;)
 
+        action_new = filemenu.addAction(&#34;New&#34;)
+        action_new.triggered.connect(self.actionNew)
+        action_new.setShortcut(QKeySequence.New)
+
         action_open = filemenu.addAction(&#34;Open&#34;)
         action_open.triggered.connect(self.actionOpen)
         action_open.setShortcut(QKeySequence.Open)
+
+        action_import = filemenu.addAction(&#34;Import&#34;)
+        action_import.triggered.connect(self.actionImport)
+
+        filemenu.addSeparator()
 
         action_save = filemenu.addAction(&#34;Save&#34;)
         action_save.triggered.connect(self.actionSave)
@@ -635,8 +660,10 @@ class ExperimentView(QMainWindow):
         action_export = filemenu.addAction(&#34;Export...&#34;)
         action_export.triggered.connect(self.actionExport)
 
-        action_import = filemenu.addAction(&#34;Import&#34;)
-        action_import.triggered.connect(self.actionImport)
+        filemenu.addSeparator()
+
+        action_exit = filemenu.addAction(&#34;Exit&#34;)
+        action_exit.triggered.connect(self.close)
 
         runmenu = menubar.addMenu(&#34;Run&#34;)
 
@@ -688,8 +715,6 @@ class ExperimentView(QMainWindow):
 
         # New experiment view is created with a new experiment ---------------------------------------------------------
         self.actionNew()
-
-        #self.sequence_editor.schemeView().setWidget(QLabel(&#34;Hello!&#34;))
 
     # Get/Set methods ==================================================================================================
     def model(self) -&gt; Optional[Experiment]:
@@ -788,13 +813,13 @@ class ExperimentView(QMainWindow):
         # Blocks and groups --------------------------------------------------------------------------------------------
         while self.tree.blocks.rowCount() &gt; 0:
             name = self.tree.blocks.child(0).text()
-            self.tree.blocks.takeChild(0)
+            self.tree.blocks.removeRow(0)
             self.blocks.removeWidget(name)
             self.sequence_editor.toolbox().removeItem(name)
         
         while self.tree.groups.rowCount() &gt; 0:
             name = self.tree.groups.child(0).text()
-            self.tree.groups.takeChild(0)
+            self.tree.groups.removeRow(0)
             self.groups.removeWidget(name)
             self.sequence_editor.toolbox().removeItem(name)
 
@@ -1098,7 +1123,8 @@ class ExperimentView(QMainWindow):
         with open(file_path, &#34;w&#34;) as file:
             file.write(data)
         
-        subprocess.run([&#34;pynfb&#34;, &#34;-x&#34;, file_path], cwd=results_path, check=True)
+        proc = Popen([&#34;pynfb&#34;, &#34;-x&#34;, file_path], cwd=results_path)
+        self._processes.append(proc)
 
     def promptSaveChanges(self) -&gt; bool:
         &#34;&#34;&#34;Prompt the user to save changes to current project.
@@ -1358,7 +1384,8 @@ Returns True if file was saved, and False if action was cancelled.</p></div>
     with open(file_path, &#34;w&#34;) as file:
         file.write(data)
     
-    subprocess.run([&#34;pynfb&#34;, &#34;-x&#34;, file_path], cwd=results_path, check=True)</code></pre>
+    proc = Popen([&#34;pynfb&#34;, &#34;-x&#34;, file_path], cwd=results_path)
+    self._processes.append(proc)</code></pre>
 </details>
 </dd>
 <dt id="nfb_studio.experiment_view.ExperimentView.closeEvent"><code class="name flex">
@@ -1634,13 +1661,13 @@ either during prompt or during save.</p></div>
     # Blocks and groups --------------------------------------------------------------------------------------------
     while self.tree.blocks.rowCount() &gt; 0:
         name = self.tree.blocks.child(0).text()
-        self.tree.blocks.takeChild(0)
+        self.tree.blocks.removeRow(0)
         self.blocks.removeWidget(name)
         self.sequence_editor.toolbox().removeItem(name)
     
     while self.tree.groups.rowCount() &gt; 0:
         name = self.tree.groups.child(0).text()
-        self.tree.groups.takeChild(0)
+        self.tree.groups.removeRow(0)
         self.groups.removeWidget(name)
         self.sequence_editor.toolbox().removeItem(name)
 
